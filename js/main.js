@@ -109,15 +109,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Dynamic header background on scroll
+// Header color change on scroll
 window.addEventListener('scroll', function() {
     const header = document.querySelector('header');
-    if(window.scrollY > 100) {
-        header.style.backgroundColor = 'rgba(250, 245, 245, 0.98)';
-        header.style.boxShadow = '0 5px 20px rgba(0,0,0,0.1)';
+    if (window.scrollY > 10) {
+        header.classList.add('sticky');
     } else {
-        header.style.backgroundColor = 'var(--cream)';
-        header.style.boxShadow = '0 2px 10px rgba(0,0,0,0.05)';
+        header.classList.remove('sticky');
     }
 });
 

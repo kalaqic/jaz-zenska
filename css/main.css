@@ -4,19 +4,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary-pink: #d4a5a5;
-    --dark-pink: #a67575;
-    --light-pink: #f5e6e6;
-    --cream: #faf5f5;
-    --brown: #8b5a3c;
+    --dark-violet: #643843;
+    --mid-violet: #99627A;
+    --pinky: #C88EA7;
+    --almost-white: #E7CBCB;
     --text-dark: #3a3a3a;
     --text-light: #666;
     --white: #ffffff;
-    --orange: #ffd27f;
-    --violet: #472747;
-    --light-violet: #FDF2FD;
-    --dark-violet: #8d5f8c;
-    --secondary: #e7cbcb;
+    --secondary: #E7CBCB;
+    --footer-violet: #643843;
+    --header-violet: #C88EA7;
+    --hero-image-bg: #E7CBCB;
+    --main-white: #fff6f9;
+    --hero-light: #f8f0f2;
 }
 
 * {
@@ -29,7 +29,7 @@ body {
     font-family: 'Montserrat', sans-serif;
     line-height: 1.6;
     color: var(--text-dark);
-    background-color: var(--cream);
+    background-color: var(--main-white);
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
@@ -37,7 +37,7 @@ body {
 
 /* ===== TOP BAR ===== */
 .top-bar {
-    background: var(--violet);
+    background: var(--mid-violet);
     padding: 10px 0;
     position: relative;
     width: 100%;
@@ -72,7 +72,9 @@ header {
     padding: 20px 0;
     position: sticky;
     top: 0;
-     background-color: var(--dark-violet);
+     background-color: var(--header-violet);
+    width: 100vw;
+    left: 0;
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
@@ -81,7 +83,7 @@ header {
     max-width: 1200px;
     text-decoration: var(--white);
     margin: 0 auto;
-    background-color: var(--dark-violet);
+    background-color: transparent;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -91,7 +93,7 @@ header {
 .logo {
     font-family: 'Playfair Display', serif;
     font-size: 48px;
-    color: var(--primary-pink);
+    color: var(--pinky);
     font-style: italic;
     cursor: pointer;
 }
@@ -105,7 +107,7 @@ nav ul {
 }
 
 nav a {
-    color: var(--text-dark);
+    color: var(--white);
     text-decoration: none;
     font-weight: 500;
     text-transform: uppercase;
@@ -122,7 +124,7 @@ nav a::after {
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--primary-pink);
+    background-color: var(--pinky);
     transition: width 0.3s ease;
 }
 
@@ -141,7 +143,7 @@ nav a:hover::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--primary-pink);
+    background-color: var(--pinky);
     color: var(--white);
     border-radius: 50%;
     transition: transform 0.3s ease, background-color 0.3s ease;
@@ -149,7 +151,7 @@ nav a:hover::after {
 
 .social-icons a:hover {
     transform: translateY(-3px);
-    background-color: var(--dark-pink);
+    background-color: var(--dark-violet);
 }
 
 .social-icons img {
@@ -165,27 +167,17 @@ nav a:hover::after {
     display: flex;
     align-items: center;
     overflow: hidden;
-    background: none;
+    background: linear-gradient(to right, var(--hero-image-bg) 0%, var(--hero-image-bg) 50%, var(--hero-light) 50%, var(--hero-light) 100%);
     width: 100%;
 }
 
-
-
-
-
 .hero-image {
-    position: absolute;
-    left: 0;
-    top: 0;
-    position: absolute;
+    position: relative;
     left: 0;
     top: 0;
     width: 50%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--secondary);
+    background: transparent;
     z-index: 1;
     padding: 0;
     animation: none;
@@ -199,7 +191,7 @@ nav a:hover::after {
 .hero-image-placeholder {
     width: 100%;
     height: 100%;
-    background: var(--light-violet);
+    background: var(--almost-white);
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -219,7 +211,7 @@ nav a:hover::after {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    background: var(--light-violet);
+    background: transparent;
     padding: 80px 60px 80px 100px;
     color: var(--text-dark);
     z-index: 1;
@@ -232,7 +224,7 @@ nav a:hover::after {
     right: -50px;
     width: 300px;
     height: 300px;
-    background: var(--light-violet);
+    background: var(--almost-white);
     border-radius: 50%;
     opacity: 0.08;
     z-index: 0;
@@ -245,7 +237,7 @@ nav a:hover::after {
     margin-bottom: 20px;
     position: relative;
     z-index: 1;
-    color: var(--brown);
+    color: var(--dark-violet);
 }
 
 .hero h2 {
@@ -271,8 +263,8 @@ nav a:hover::after {
     display: inline-block;
     margin-top: 30px;
     padding: 18px 50px;
-    background: linear-gradient(135deg, var(--primary-pink), var(--dark-pink));
-    color: var(--white);
+    background: var(--mid-violet);
+    color: var(--almost-white);
     text-decoration: none;
     border-radius: 50px;
     font-weight: 700;
@@ -286,13 +278,13 @@ nav a:hover::after {
 }
 
 .cta-button:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(166, 117, 117, 0.4);
+    background: var(--pinky);
+    color: var(--dark-violet);
 }
 
 /* ===== WHY JOIN SECTION ===== */
 .why-join {
-    background: linear-gradient(180deg, var(--cream) 0%, var(--light-pink) 100%);
+    background: linear-gradient(180deg, var(--main-white) 0%, var(--almost-white) 100%);
     padding: 120px 0;
     position: relative;
     overflow: hidden;
@@ -304,7 +296,7 @@ nav a:hover::after {
     top: 20px;
     left: 5%;
     font-size: 40px;
-    color: var(--primary-pink);
+    color: var(--pinky);
     opacity: 0.3;
 }
 
@@ -314,7 +306,7 @@ nav a:hover::after {
     bottom: 20px;
     right: 5%;
     font-size: 40px;
-    color: var(--primary-pink);
+    color: var(--pinky);
     opacity: 0.3;
 }
 
@@ -327,7 +319,7 @@ nav a:hover::after {
 .why-join h2 {
     font-family: 'Playfair Display', serif;
     font-size: 48px;
-    color: var(--brown);
+    color: var(--dark-violet);
     text-align: center;
     margin-bottom: 60px;
     position: relative;
@@ -350,7 +342,7 @@ nav a:hover::after {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
-    border-left: 5px solid var(--primary-pink);
+    border-left: 5px solid var(--pinky);
 }
 
 .why-join-card::before {
@@ -374,12 +366,13 @@ nav a:hover::after {
     font-size: 48px;
     margin-bottom: 20px;
     display: inline-block;
+    color: var(--pinky);
 }
 
 .why-join-card h3 {
     font-family: 'Playfair Display', serif;
     font-size: 28px;
-    color: var(--brown);
+    color: var(--dark-violet);
     margin-bottom: 15px;
     position: relative;
     z-index: 1;
@@ -395,7 +388,7 @@ nav a:hover::after {
 
 /* ===== SERVICES SECTION ===== */
 .services {
-    background: linear-gradient(180deg, var(--cream) 0%, var(--light-pink) 100%);
+    background: linear-gradient(180deg, var(--main-white) 0%, var(--almost-white) 100%);
     padding: 120px 0;
 }
 
@@ -408,7 +401,7 @@ nav a:hover::after {
 .section-title {
     font-family: 'Playfair Display', serif;
     font-size: 48px;
-    color: var(--brown);
+    color: var(--mid-violet);
     text-align: center;
     margin-bottom: 40px;
     margin-top: 20px;
@@ -423,9 +416,9 @@ nav a:hover::after {
 
 .tab-button {
     padding: 15px 40px;
-    background-color: transparent;
-    border: 2px solid var(--primary-pink);
-    color: var(--primary-pink);
+    background-color: var(--white);
+    border: 2px solid var(--mid-violet);
+    color: var(--mid-violet);
     border-radius: 50px;
     font-weight: 600;
     cursor: pointer;
@@ -436,7 +429,7 @@ nav a:hover::after {
 
 .tab-button.active,
 .tab-button:hover {
-    background-color: var(--primary-pink);
+    background-color: var(--mid-violet);
     color: var(--white);
 }
 
@@ -469,7 +462,7 @@ nav a:hover::after {
 }
 
 .service-card-image {
-    background: linear-gradient(135deg, var(--light-pink), var(--cream));
+    background: linear-gradient(135deg, var(--almost-white), var(--main-white));
     height: 200px;
     display: flex;
     align-items: center;
@@ -484,7 +477,7 @@ nav a:hover::after {
 .service-card h3 {
     font-family: 'Playfair Display', serif;
     font-size: 24px;
-    color: var(--brown);
+    color: var(--dark-violet);
     margin-bottom: 15px;
 }
 
@@ -525,7 +518,7 @@ nav a:hover::after {
 .packages-title {
     font-family: 'Playfair Display', serif;
     font-size: 32px;
-    color: var(--brown);
+    color: var(--dark-violet);
     text-align: center;
     margin-bottom: 40px;
     position: relative;
@@ -546,7 +539,7 @@ nav a:hover::after {
     padding: 30px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-top: 4px solid var(--primary-pink);
+    border-top: 4px solid var(--pinky);
 }
 
 .package-card:hover {
@@ -557,7 +550,7 @@ nav a:hover::after {
 .package-card h4 {
     font-family: 'Playfair Display', serif;
     font-size: 22px;
-    color: var(--brown);
+    color: var(--dark-violet);
     margin-bottom: 20px;
 }
 
@@ -649,7 +642,7 @@ nav a:hover::after {
 
 .media-meta {
     font-size: 14px;
-    color: var(--primary-pink);
+    color: var(--pinky);
     margin-bottom: 12px;
 }
 
@@ -660,7 +653,7 @@ nav a:hover::after {
 }
 
 .media-cta {
-    background: var(--primary-pink);
+    background: var(--pinky);
     color: white;
     padding: 10px 14px;
     border-radius: 8px;
@@ -685,7 +678,7 @@ nav a:hover::after {
 
 /* ===== BOOK SECTION ===== */
 .book-section {
-    background: linear-gradient(135deg, var(--light-pink) 0%, var(--cream) 100%);
+    background: linear-gradient(135deg, var(--almost-white) 0%, var(--main-white) 100%);
     padding: 120px 0;
 }
 
@@ -706,7 +699,7 @@ nav a:hover::after {
 .book-cover {
     width: 300px;
     height: 450px;
-    background: linear-gradient(135deg, var(--primary-pink), var(--light-pink));
+    background: linear-gradient(135deg, var(--pinky), var(--almost-white));
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -726,13 +719,13 @@ nav a:hover::after {
 .book-content h2 {
     font-family: 'Playfair Display', serif;
     font-size: 36px;
-    color: var(--brown);
+    color: var(--dark-violet);
     margin-bottom: 10px;
 }
 
 .book-content h3 {
     font-size: 48px;
-    color: var(--primary-pink);
+    color: var(--pinky);
     margin-bottom: 30px;
     font-weight: 300;
 }
@@ -747,7 +740,7 @@ nav a:hover::after {
 .book-button {
     display: inline-block;
     padding: 15px 40px;
-    background-color: var(--brown);
+    background-color: var(--mid-violet);
     color: var(--white);
     text-decoration: none;
     border-radius: 50px;
@@ -772,7 +765,7 @@ nav a:hover::after {
 .blog h2 {
     font-family: 'Playfair Display', serif;
     font-size: 48px;
-    color: var(--brown);
+    color: var(--dark-violet);
     margin-bottom: 60px;
 }
 
@@ -808,7 +801,7 @@ nav a:hover::after {
 }
 
 .blog-date {
-    color: var(--primary-pink);
+    color: var(--pinky);
     font-size: 14px;
     margin-bottom: 10px;
 }
@@ -830,9 +823,9 @@ nav a:hover::after {
     width: 200px;
     margin: 60px auto 0;
     padding: 15px 40px;
-    background-color: transparent;
-    border: 2px solid var(--primary-pink);
-    color: var(--primary-pink);
+    background-color: var(--mid-violet);
+    border: 2px solid var(--mid-violet);
+    color: var(--white);
     text-align: center;
     text-decoration: none;
     border-radius: 50px;
@@ -843,24 +836,28 @@ nav a:hover::after {
 }
 
 .more-posts-btn:hover {
-    background-color: var(--primary-pink);
+    background-color: var(--dark-violet);
     color: var(--white);
 }
 
 /* ===== TESTIMONIALS SECTION ===== */
 .testimonials-section {
     margin: 120px 0;
-    padding: 0;
+    padding: 80px 0;
     width: 100%;
+    background: linear-gradient(135deg, var(--almost-white) 0%, var(--hero-light) 100%);
+    position: relative;
+}
+
+.testimonials-container {
     max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 }
 
 .testimonials-section h2 {
     font-family: 'Playfair Display', serif;
     font-size: 48px;
-    color: var(--brown);
+    color: var(--dark-violet);
     margin: 0 0 50px 0;
     padding: 0 20px;
 }
@@ -882,7 +879,7 @@ nav a:hover::after {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    background: var(--light-violet);
+    background: var(--almost-white);
     padding: 80px 60px 80px 100px;
     color: var(--text-dark);
     content: '';
@@ -912,7 +909,7 @@ nav a:hover::after {
 }
 
 .testimonials-track::-webkit-scrollbar-thumb {
-    background: var(--primary-pink);
+    background: var(--pinky);
     border-radius: 3px;
 }
 
@@ -927,6 +924,7 @@ nav a:hover::after {
     box-shadow: 0 8px 24px rgba(0,0,0,0.06);
     position: relative;
     transition: all 0.3s ease;
+    background: var(--almost-white);
 }
 
 .testimonial-card::before {
@@ -935,7 +933,7 @@ nav a:hover::after {
     top: 15px;
     left: 20px;
     font-size: 60px;
-    color: var(--primary-pink);
+    color: var(--pinky);
     opacity: 0.3;
     font-family: 'Playfair Display', serif;
 }
@@ -956,7 +954,7 @@ nav a:hover::after {
 
 .testimonial-author {
     font-size: 16px;
-    color: var(--primary-pink);
+    color: var(--pinky);
     font-weight: 700;
     margin: 0;
     letter-spacing: 0.05em;
@@ -1013,7 +1011,7 @@ nav a:hover::after {
 .shop h2 {
     font-family: 'Playfair Display', serif;
     font-size: 48px;
-    color: var(--brown);
+    color: var(--dark-violet);
     margin-bottom: 20px;
 }
 
@@ -1047,7 +1045,7 @@ nav a:hover::after {
     width: 100%;
     height: 300px;
     object-fit: cover;
-    background: linear-gradient(135deg, var(--light-pink), var(--cream));
+    background: linear-gradient(135deg, var(--almost-white), var(--main-white));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1067,7 +1065,7 @@ nav a:hover::after {
 
 .price {
     font-size: 24px;
-    color: var(--primary-pink);
+    color: var(--pinky);
     margin-bottom: 10px;
 }
 
@@ -1082,8 +1080,8 @@ nav a:hover::after {
     width: 100%;
     padding: 12px;
     background-color: transparent;
-    border: 2px solid var(--primary-pink);
-    color: var(--primary-pink);
+    border: 2px solid var(--pinky);
+    color: var(--pinky);
     text-align: center;
     border-radius: 50px;
     font-weight: 600;
@@ -1094,7 +1092,7 @@ nav a:hover::after {
 }
 
 .product-button:hover {
-    background-color: var(--primary-pink);
+    background-color: var(--pinky);
     color: var(--white);
 }
 
@@ -1103,7 +1101,7 @@ nav a:hover::after {
     width: 200px;
     margin: 60px auto 0;
     padding: 15px 40px;
-    background-color: var(--brown);
+    background-color: var(--dark-violet);
     color: var(--white);
     text-align: center;
     text-decoration: none;
@@ -1121,7 +1119,7 @@ nav a:hover::after {
 
 /* ===== NEWSLETTER SECTION ===== */
 .newsletter {
-    background: linear-gradient(135deg, var(--primary-pink), var(--dark-pink));
+    background: linear-gradient(135deg, var(--mid-violet), var(--dark-violet));
     padding: 120px 0;
     position: relative;
     overflow: hidden;
@@ -1185,7 +1183,7 @@ nav a:hover::after {
 
 .newsletter-form button {
     padding: 15px 40px;
-    background-color: var(--brown);
+    background-color: var(--dark-violet);
     color: var(--white);
     border: none;
     border-radius: 50px;
@@ -1210,7 +1208,7 @@ nav a:hover::after {
 
 /* ===== FOOTER ===== */
 footer {
-    background-color: var(--brown);
+    background-color: var(--dark-violet);
     padding: 60px 0 30px;
     color: var(--white);
     width: 100%;
@@ -1290,7 +1288,7 @@ footer {
 }
 
 .footer-social a:hover {
-    background-color: var(--primary-pink);
+    background-color: var(--pinky);
 }
 
 .footer-social img {
@@ -1318,7 +1316,7 @@ footer {
     right: 30px;
     width: 60px;
     height: 60px;
-    background-color: var(--primary-pink);
+    background-color: var(--pinky);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1339,7 +1337,7 @@ footer {
     position: absolute;
     top: -5px;
     right: -5px;
-    background-color: var(--brown);
+    background-color: var(--dark-violet);
     color: var(--white);
     width: 25px;
     height: 25px;
