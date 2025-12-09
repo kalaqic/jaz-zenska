@@ -33,6 +33,16 @@ body {
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
+    position: relative;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+}
+
+html {
+    scroll-behavior: smooth;
+    background-color: var(--main-white);
+    overscroll-behavior: none;
+    overflow-x: hidden;
 }
 
 /* ===== TOP BAR ===== */
@@ -171,6 +181,7 @@ nav a:hover::after {
     overflow: hidden;
     background: var(--hero-light);
     width: 100%;
+    z-index: 10;
 }
 
 .hero-image {
@@ -283,6 +294,7 @@ nav a:hover::after {
     padding: 120px 0;
     position: relative;
     overflow: hidden;
+    z-index: 10;
 }
 
 .why-join-container {
@@ -439,6 +451,8 @@ nav a:hover::after {
 .services {
     background: linear-gradient(180deg, var(--main-white) 0%, var(--almost-white) 100%);
     padding: 120px 0;
+    position: relative;
+    z-index: 10;
 }
 
 .services-container {
@@ -636,9 +650,12 @@ nav a:hover::after {
 }
 /* ===== MEDIA SECTION ===== */
 .media {
-    max-width: 1200px;
-    margin: 140px auto;
-    padding: 0 20px;
+    width: 100%;
+    margin: 0;
+    padding: 140px 0;
+    position: relative;
+    z-index: 10;
+    background-color: var(--main-white);
 }
 
 .media-grid {
@@ -646,7 +663,11 @@ nav a:hover::after {
     grid-template-columns: 1fr 1fr;
     gap: 28px;
     align-items: stretch;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
+
 
 .media-card {
     display: flex;
@@ -729,6 +750,8 @@ nav a:hover::after {
 .book-section {
     background: linear-gradient(135deg, var(--almost-white) 0%, var(--main-white) 100%);
     padding: 120px 0;
+    position: relative;
+    z-index: 10;
 }
 
 .book-container {
@@ -806,19 +829,28 @@ nav a:hover::after {
 
 /* ===== BLOG SECTION ===== */
 .blog {
+    width: 100%;
+    margin: 0;
+    padding: 140px 0;
+    position: relative;
+    z-index: 10;
+    background-color: var(--main-white);
+}
+
+.blog-container {
     max-width: 1200px;
-    margin: 140px auto;
+    margin: 0 auto;
     padding: 0 20px;
 }
 
-.blog h2 {
+.blog-container h2 {
     font-family: 'Playfair Display', serif;
     font-size: 48px;
     color: var(--dark-violet);
     margin-bottom: 60px;
 }
 
-.blog-grid {
+.blog-container .blog-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 40px;
@@ -891,11 +923,12 @@ nav a:hover::after {
 
 /* ===== TESTIMONIALS SECTION ===== */
 .testimonials-section {
-    margin: 120px 0;
-    padding: 80px 0;
+    margin: 0;
+    padding: 120px 0;
     width: 100%;
     background: linear-gradient(135deg, var(--almost-white) 0%, var(--hero-light) 100%);
     position: relative;
+    z-index: 10;
 }
 
 .testimonials-container {
@@ -1052,19 +1085,28 @@ nav a:hover::after {
 
 /* ===== SHOP SECTION ===== */
 .shop {
+    width: 100%;
+    margin: 0;
+    padding: 140px 0;
+    position: relative;
+    z-index: 10;
+    background-color: var(--main-white);
+}
+
+.shop-container {
     max-width: 1200px;
-    margin: 140px auto;
+    margin: 0 auto;
     padding: 0 20px;
 }
 
-.shop h2 {
+.shop-container h2 {
     font-family: 'Playfair Display', serif;
     font-size: 48px;
     color: var(--dark-violet);
     margin-bottom: 20px;
 }
 
-.shop-intro {
+.shop-container .shop-intro {
     color: var(--text-light);
     font-size: 18px;
     line-height: 1.8;
@@ -1072,7 +1114,7 @@ nav a:hover::after {
     max-width: 800px;
 }
 
-.shop-grid {
+.shop-container .shop-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 40px;
@@ -1174,7 +1216,18 @@ nav a:hover::after {
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
+    z-index: 10;
+    margin-bottom: 0;
 }
+
+/* Add space after newsletter equal to footer height - will be set by JS */
+.newsletter::after {
+    content: '';
+    display: block;
+    width: 100%;
+    background: transparent;
+}
+
 
 .newsletter::before {
     content: '';
@@ -1258,10 +1311,14 @@ nav a:hover::after {
 /* ===== FOOTER ===== */
 footer {
     background-color: var(--dark-violet);
-    padding: 60px 0 30px;
+    padding: 120px 0 60px;
     color: var(--white);
     width: 100%;
     box-sizing: border-box;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
 }
 
 .footer-content {
@@ -1300,11 +1357,14 @@ footer {
 }
 
 .footer-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 64px;
-    font-style: italic;
-    opacity: 0.3;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.footer-logo img {
+    max-width: 120px;
+    height: auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
 }
 
 .footer-bottom {

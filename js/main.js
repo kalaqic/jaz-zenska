@@ -140,6 +140,89 @@ window.addEventListener('scroll', function() {
     }
 });
 
+// Set newsletter spacing to match footer height for perfect scroll limit
+function setNewsletterSpacing() {
+    const footer = document.querySelector('footer');
+    const newsletter = document.querySelector('.newsletter');
+    
+    if (footer && newsletter) {
+        // Temporarily show footer to measure its height
+        const originalTransform = footer.style.transform;
+        const originalVisibility = footer.style.visibility;
+        const originalPosition = footer.style.position;
+        
+        footer.style.transform = 'translateY(0)';
+        footer.style.visibility = 'hidden';
+        footer.style.position = 'absolute';
+        
+        const footerHeight = footer.offsetHeight;
+        
+        // Restore footer
+        footer.style.transform = originalTransform;
+        footer.style.visibility = originalVisibility;
+        footer.style.position = originalPosition;
+        
+        // Set newsletter spacing to match footer height (slightly shorter to eliminate gap)
+        newsletter.style.marginBottom = (footerHeight - 5) + 'px';
+    }
+}
+
+// Prevent scroll bounce/overscroll at the bottom
+function preventScrollBounce() {
+    let ticking = false;
+    
+    window.addEventListener('scroll', function() {
+        if (ticking) return;
+        
+        ticking = true;
+        requestAnimationFrame(function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = Math.max(
+                document.body.scrollHeight,
+                document.body.offsetHeight,
+                document.documentElement.clientHeight,
+                document.documentElement.scrollHeight,
+                document.documentElement.offsetHeight
+            );
+            const maxScroll = documentHeight - windowHeight;
+            
+            // If scrolled past the maximum (with tiny tolerance), snap back
+            if (scrollTop > maxScroll + 1) {
+                window.scrollTo({
+                    top: maxScroll,
+                    behavior: 'auto'
+                });
+            }
+            
+            ticking = false;
+        });
+    }, { passive: true });
+    
+    // Prevent touch overscroll on mobile
+    let touchStartY = 0;
+    
+    document.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', function(e) {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const maxScroll = documentHeight - windowHeight;
+        const touchY = e.touches[0].clientY;
+        const deltaY = touchStartY - touchY;
+        
+        // Prevent scrolling down when at bottom, or scrolling up when at top
+        if ((scrollTop >= maxScroll && deltaY < 0) || (scrollTop <= 0 && deltaY > 0)) {
+            e.preventDefault();
+        }
+        
+        touchStartY = touchY;
+    }, { passive: false });
+}
+
 // Initialize animations on page load
 document.addEventListener('DOMContentLoaded', function() {
     // Add fade-in class to elements
@@ -151,4 +234,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Start testimonials auto-scroll
     startAutoScroll();
+    
+    // Set newsletter spacing to match footer height
+    setNewsletterSpacing();
+    window.addEventListener('resize', setNewsletterSpacing);
+    
+    // Prevent scroll bounce
+    preventScrollBounce();
 });
