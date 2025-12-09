@@ -1,0 +1,28 @@
+/* Top Bar */
+.top-bar {
+    background: var(--orange);
+    padding: 60px 0;
+    position: relative;
+}
+
+.top-bar-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.top-bar a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 1px;
+    transition: opacity 0.3s ease;
+}
+
+.top-bar a:hover {
+    opacity: 0.8;
+}

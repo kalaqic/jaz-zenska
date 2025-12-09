@@ -1,0 +1,108 @@
+/* Why Join Section */
+.why-join {
+    background: linear-gradient(180deg, var(--cream) 0%, var(--light-pink) 100%);
+    padding: 60px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.why-join::before {
+    content: '✦';
+    position: absolute;
+    top: 20px;
+    left: 5%;
+    font-size: 40px;
+    color: var(--primary-pink);
+    opacity: 0.3;
+}
+
+.why-join::after {
+    content: '✦';
+    position: absolute;
+    bottom: 20px;
+    right: 5%;
+    font-size: 40px;
+    color: var(--primary-pink);
+    opacity: 0.3;
+}
+
+.why-join-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.why-join h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    color: var(--brown);
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 1;
+}
+
+.why-join-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.why-join-card {
+    background-color: var(--white);
+    border-radius: 20px;
+    padding: 50px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border-left: 5px solid var(--primary-pink);
+}
+
+.why-join-card::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, var(--light-pink), transparent);
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+.why-join-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.why-join-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.why-join-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--brown);
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.why-join-card p {
+    color: var(--text-light);
+    line-height: 1.8;
+    font-size: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .why-join-grid {
+        grid-template-columns: 1fr;
+    }
+}
