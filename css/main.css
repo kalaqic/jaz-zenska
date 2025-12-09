@@ -165,36 +165,18 @@ nav a:hover::after {
     display: flex;
     align-items: center;
     overflow: hidden;
-    background: var(--secondary);
+    background: none;
     width: 100%;
 }
 
-.hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(110deg, transparent 48%, var(--light-pink) 50%, var(--light-pink) 100%);
-    pointer-events: none;
-    z-index: 0;
-}
 
-.hero::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 2px;
-    height: 100%;
-    background: linear-gradient(180deg, transparent, var(--primary-pink), transparent);
-    transform: skewX(-20deg);
-    transform-origin: left;
-    z-index: 2;
-}
+
+
 
 .hero-image {
+    position: absolute;
+    left: 0;
+    top: 0;
     position: absolute;
     left: 0;
     top: 0;
@@ -203,9 +185,10 @@ nav a:hover::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px;
-    animation: float 6s ease-in-out infinite;
+    background: var(--secondary);
     z-index: 1;
+    padding: 0;
+    animation: none;
 }
 
 @keyframes float {
@@ -892,16 +875,16 @@ nav a:hover::after {
 .testimonials-carousel::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 100px;
-    background: linear-gradient(to right, var(--cream) 0%, var(--cream) 40%, rgba(255,255,255,0) 100%);
-    z-index: 5;
-    pointer-events: none;
-}
-
-.testimonials-carousel::after {
+    right: 0;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    background: var(--light-violet);
+    padding: 80px 60px 80px 100px;
+    color: var(--text-dark);
     content: '';
     position: absolute;
     right: 0;
