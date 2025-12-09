@@ -95,6 +95,27 @@ document.querySelectorAll('.fade-in').forEach(el => {
     observer.observe(el);
 });
 
+// Why Join Steps Animation - triggers when section comes into view
+const whyJoinObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        if(entry.isIntersecting) {
+            const steps = entry.target.querySelectorAll('.why-join-step');
+            steps.forEach((step) => {
+                step.classList.add('animate-in');
+            });
+            whyJoinObserver.unobserve(entry.target);
+        }
+    });
+}, {
+    threshold: 0.2,
+    rootMargin: '0px 0px -100px 0px'
+});
+
+const whyJoinSection = document.querySelector('.why-join');
+if (whyJoinSection) {
+    whyJoinObserver.observe(whyJoinSection);
+}
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
