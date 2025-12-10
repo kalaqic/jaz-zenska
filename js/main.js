@@ -1,32 +1,25 @@
-// Tab switching functionality
-function showTab(tabName) {
-    // Hide all tab contents
-    const allTabs = document.querySelectorAll('.tab-content');
-    allTabs.forEach(tab => {
-        tab.classList.remove('active');
+// Programs section animation on scroll
+function initProgramsAnimation() {
+    const programsSection = document.querySelector('.programs');
+    if (!programsSection) return;
+    
+    const programObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const programCards = entry.target.querySelectorAll('.program-card');
+                programCards.forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.2}s`;
+                    card.classList.add('animate-in');
+                });
+                programObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.2,
+        rootMargin: '0px 0px -100px 0px'
     });
     
-    // Remove active class from all buttons
-    const allButtons = document.querySelectorAll('.tab-button');
-    allButtons.forEach(button => {
-        button.classList.remove('active');
-    });
-    
-    // Show selected tab content
-    const selectedTab = document.getElementById(tabName);
-    if(selectedTab) {
-        selectedTab.classList.add('active');
-    }
-    
-    // Activate the matching tab button by data attribute (safer than relying on event)
-    const activeButton = document.querySelector(`.tab-button[data-tab="${tabName}"]`);
-    if (activeButton) activeButton.classList.add('active');
-
-    // Show corresponding package info (if present)
-    const packageInfo = document.getElementById(tabName + '-packages');
-    if(packageInfo) {
-        packageInfo.classList.add('active');
-    }
+    programObserver.observe(programsSection);
 }
 
 // Testimonials carousel scrolling
@@ -241,4 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Prevent scroll bounce
     preventScrollBounce();
+    
+    // Initialize programs animation
+    initProgramsAnimation();
 });
