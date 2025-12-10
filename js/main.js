@@ -49,26 +49,6 @@ function handleNewsletterSubmit(event) {
     alert('Hvala za prijavo! Prejeli boste potrditveno e-pošto.');
 }
 
-// Cart functionality
-let cartItems = 0;
-
-function toggleCart() {
-    alert('Košarica je trenutno prazna');
-}
-
-// Add to cart functionality for product buttons
-document.querySelectorAll('.product-button').forEach(button => {
-    button.addEventListener('click', function() {
-        cartItems++;
-        document.querySelector('.cart-count').textContent = cartItems;
-        this.textContent = 'DODANO ✓';
-        setTimeout(() => {
-            if(this.textContent === 'DODANO ✓') {
-                this.textContent = this.textContent.includes('KOŠARICO') ? 'DODAJ V KOŠARICO' : 'IZBERITE MOŽNOSTI';
-            }
-        }, 2000);
-    });
-});
 
 // Scroll animations
 const observerOptions = {
@@ -237,4 +217,38 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize programs animation
     initProgramsAnimation();
+    
+    // Initialize back to top button
+    initBackToTop();
 });
+
+// Back to Top Button
+function initBackToTop() {
+    const backToTopButton = document.getElementById('backToTop');
+    
+    if (!backToTopButton) return;
+    
+    // Show/hide button based on scroll position
+    function toggleBackToTop() {
+        if (window.pageYOffset > 300) {
+            backToTopButton.classList.add('show');
+        } else {
+            backToTopButton.classList.remove('show');
+        }
+    }
+    
+    // Scroll to top function
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+    
+    // Event listeners
+    window.addEventListener('scroll', toggleBackToTop);
+    backToTopButton.addEventListener('click', scrollToTop);
+    
+    // Initial check
+    toggleBackToTop();
+}
