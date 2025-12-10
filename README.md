@@ -233,7 +233,7 @@ Potential areas for improvement:
 
 ## 📄 License
 
-Copyright © 2024 Jaz Ženska. All rights reserved.
+Copyright © 2025 Jaz Ženska. All rights reserved.
 
 ## 📧 Contact
 
