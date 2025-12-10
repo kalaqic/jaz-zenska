@@ -92,6 +92,30 @@
         </div>
     </section>
 
+    <!-- Current Event Section -->
+    <section class="current-event">
+        <div class="current-event-container">
+            <span class="event-label">Aktualen dogodek</span>
+            <div class="current-event-content">
+                <h2 class="event-title">Naslov dogodka</h2>
+                <p class="event-description">Opis dogodka. Tu lahko dodate podrobnosti o dogodku, kaj se bo zgodilo, kdo je vabljen in kakšne so pričakovane izkušnje.</p>
+                <div class="event-date">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="date-text">Datum</span>
+                </div>
+                <div class="event-actions">
+                    <a href="#" class="event-button-primary">Prijavi se</a>
+                    <a href="#" class="event-button-secondary">Več o dogodku</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Programs Section -->
     <section class="programs">
         <div class="programs-container">
@@ -136,35 +160,13 @@
         </div>
     </section>
 
-    <!-- Media Section -->
-    <section class="media">
-        <div class="media-grid">
-            <article class="media-card media-youtube">
-                <div class="media-thumb" style="background-image:url('https://images.unsplash.com/photo-1504198453319-5ce911bafcde?fit=crop&w=1200&q=60');"></div>
-                <div class="media-body">
-                    <span class="media-label">YouTube kanal</span>
-                    <h3 class="media-title">Video: Pot do ženske modrosti</h3>
-                    <p class="media-desc">Kratek izbor naših najbolj priljubljenih videov o samoodkrivanju, ritualih in vsakdanjih praksah za žensko rast.</p>
-                    <div class="media-actions">
-                        <a class="media-cta" href="#">Poglejte na YouTube ▶</a>
-                        <a class="media-cta-outline" href="#">Več videov</a>
-                    </div>
-                </div>
-            </article>
-
-            <article class="media-card media-live">
-                <div class="media-thumb" style="background-image:url('https://images.unsplash.com/photo-1524504388940-b1c1722653e1?fit=crop&w=1200&q=60');"></div>
-                <div class="media-body">
-                    <span class="media-label">Facebook Live</span>
-                    <h3 class="media-title" style="color:var(--primary-pink);">ŽENSKA MOČ — v živo</h3>
-                    <p class="media-desc">Pridružite se nam vsak četrtek v živo za pogovore, vodene prakse in Q&amp;A z voditelji.</p>
-                    <div class="media-meta">Vsak četrtek ob 19:00</div>
-                    <div class="media-actions">
-                        <a class="media-cta" href="#">Pridruži se v živo</a>
-                        <a class="media-cta-outline" href="#">Opomnik</a>
-                    </div>
-                </div>
-            </article>
+    <!-- Real Life Events Section -->
+    <section class="real-life-events">
+        <div class="events-content">
+            <h1>Marjanca V živo</h1>
+            <h2>Pridružite se nam na dogodkih v živo</h2>
+            <p>Odkrijte svojo pristno identiteto in moč skozi <span class="boxed-text">transformacijske delavnice in dogodke</span>,<br>kjer se ženske zbirajo, delijo modrost in se<br>podpirajo na skupni poti rasti.</p>
+            <a href="#" class="events-cta-button">PRIJAVI SE</a>
         </div>
     </section>
 
@@ -219,32 +221,47 @@
 
     <!-- Testimonials Section -->
     <section class="testimonials-section">
-        <h2>Pričevanja</h2>
-        <div class="testimonials-carousel">
-            <div class="testimonials-track" id="testimonialsTrack">
+        <div class="testimonials-container">
+            <h2>Pričevanja</h2>
+            <div class="testimonials-grid">
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"Zahvaljujem se Marjanci, ker me je vodila skozi to čudovito pot transformacije. Nikoli nisem mislila, da sem sposobna toliko sprememb."</p>
-                    <p class="testimonial-author">— Nataša</p>
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">Zahvaljujem se Marjanci, ker me je vodila skozi to čudovito pot transformacije. Nikoli nisem mislila, da sem sposobna toliko sprememb.</p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Nataša</span>
+                    </div>
                 </div>
                 
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"Marjanca je imela vedno pravo besedo in me je podprla, ko sem se počutila izgubljeno. Rituali in delavnice so zdaj del mojega vsakdana."</p>
-                    <p class="testimonial-author">— Petra</p>
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">Marjanca je imela vedno pravo besedo in me je podprla, ko sem se počutila izgubljeno. Rituali in delavnice so zdaj del mojega vsakdana.</p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Petra</span>
+                    </div>
                 </div>
                 
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"Hvala Marjanci za njeno modrost in ljubezen. Skupnost, ki sem je del, je neprecenljiva in napolnjena s sestrami, ki me razumejo."</p>
-                    <p class="testimonial-author">— Alenka</p>
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">Hvala Marjanci za njeno modrost in ljubezen. Skupnost, ki sem je del, je neprecenljiva in napolnjena s sestrami, ki me razumejo.</p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Alenka</span>
+                    </div>
                 </div>
                 
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"Marjanca je spremenila način, kako se pojavljam v svetu. Zdaj sem bolj avtentična, bolj svobodna in čutim svojo pravo moč."</p>
-                    <p class="testimonial-author">— Katja</p>
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">Marjanca je spremenila način, kako se pojavljam v svetu. Zdaj sem bolj avtentična, bolj svobodna in čutim svojo pravo moč.</p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Katja</span>
+                    </div>
                 </div>
                 
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"Iskrena hvala Marjanci, ker je verjela v mene in me naučila ponovno verjeti vase. Ta akademija je bila prava transformacija moje duše."</p>
-                    <p class="testimonial-author">— Maja</p>
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">Iskrena hvala Marjanci, ker je verjela v mene in me naučila ponovno verjeti vase. Ta akademija je bila prava transformacija moje duše.</p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Maja</span>
+                    </div>
                 </div>
             </div>
         </div>

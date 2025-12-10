@@ -22,26 +22,6 @@ function initProgramsAnimation() {
     programObserver.observe(programsSection);
 }
 
-// Testimonials carousel scrolling
-function scrollTestimonials(direction) {
-    const track = document.querySelector('.testimonials-track');
-    if (track) {
-        const cardWidth = track.querySelector('.testimonial-card').offsetWidth + 20;
-        track.scrollBy({
-            left: direction * cardWidth,
-            behavior: 'smooth'
-        });
-    }
-}
-
-// Testimonials carousel auto-scroll
-let autoScrollInterval = null;
-
-function startAutoScroll() {
-    autoScrollInterval = setInterval(() => {
-        scrollTestimonials(1);
-    }, 4000);
-}
 
 // Newsletter form submission
 function handleNewsletterSubmit(event) {
@@ -204,9 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
         el.classList.add('fade-in');
         el.style.animationDelay = `${index * 0.1}s`;
     });
-    
-    // Start testimonials auto-scroll
-    startAutoScroll();
     
     // Set newsletter spacing to match footer height
     setNewsletterSpacing();
