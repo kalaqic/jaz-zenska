@@ -197,6 +197,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize back to top button
     initBackToTop();
+    
+    // Initialize event modal
+    initEventModal();
 });
 
 // Back to Top Button
@@ -228,4 +231,42 @@ function initBackToTop() {
     
     // Initial check
     toggleBackToTop();
+}
+
+// Event Modal functionality
+function initEventModal() {
+    const eventDetailsButton = document.getElementById('event-details-button');
+    const modal = document.getElementById('event-modal');
+    const closeButton = document.querySelector('.event-modal-close');
+    const overlay = document.querySelector('.event-modal-overlay');
+    
+    if (!eventDetailsButton || !modal) return;
+    
+    // Open modal when clicking on "Več o dogodku" button
+    eventDetailsButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+    
+    // Close modal functions
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    if (closeButton) {
+        closeButton.addEventListener('click', closeModal);
+    }
+    
+    if (overlay) {
+        overlay.addEventListener('click', closeModal);
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
 }
