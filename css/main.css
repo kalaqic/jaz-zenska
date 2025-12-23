@@ -208,7 +208,7 @@ nav a:hover::after {
     overflow: hidden;
     background: var(--hero-light);
     width: 100%;
-    z-index: 10;
+    z-index: 2;
 }
 
 .hero-image {
@@ -321,7 +321,7 @@ nav a:hover::after {
     padding: 120px 0;
     position: relative;
     overflow: hidden;
-    z-index: 10;
+    z-index: 2;
 }
 
 .why-join-container {
@@ -479,7 +479,7 @@ nav a:hover::after {
     background: linear-gradient(135deg, var(--almost-white) 0%, var(--main-white) 100%);
     padding: 100px 0;
     position: relative;
-    z-index: 10;
+    z-index: 2;
     overflow: hidden;
 }
 
@@ -714,7 +714,7 @@ nav a:hover::after {
     }
     
     .date-text {
-        font-size: 24px;
+    font-size: 24px;
     }
     
     .event-actions {
@@ -743,7 +743,7 @@ nav a:hover::after {
     background: linear-gradient(180deg, var(--main-white) 0%, var(--almost-white) 100%);
     padding: 120px 0;
     position: relative;
-    z-index: 10;
+    z-index: 2;
     overflow: hidden;
 }
 
@@ -1034,7 +1034,7 @@ nav a:hover::after {
     margin: 0;
     padding: 140px 0;
     position: relative;
-    z-index: 10;
+    z-index: 2;
     background-color: var(--hero-light);
     display: flex;
     align-items: center;
@@ -1161,7 +1161,7 @@ nav a:hover::after {
     background: linear-gradient(135deg, var(--almost-white) 0%, var(--main-white) 100%);
     padding: 120px 0;
     position: relative;
-    z-index: 10;
+    z-index: 2;
 }
 
 .book-container {
@@ -1243,7 +1243,7 @@ nav a:hover::after {
     margin: 0;
     padding: 140px 0;
     position: relative;
-    z-index: 10;
+    z-index: 2;
     background-color: var(--main-white);
 }
 
@@ -1338,7 +1338,7 @@ nav a:hover::after {
     width: 100%;
     background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
     position: relative;
-    z-index: 10;
+    z-index: 2;
     overflow: hidden;
 }
 
@@ -1503,7 +1503,7 @@ nav a:hover::after {
     width: 100%;
     background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
     position: relative;
-    z-index: 10;
+    z-index: 2;
     overflow: hidden;
 }
 
@@ -1667,7 +1667,7 @@ nav a:hover::after {
     margin: 0;
     padding: 140px 0;
     position: relative;
-    z-index: 10;
+    z-index: 2;
     background-color: var(--main-white);
 }
 
@@ -1787,6 +1787,743 @@ nav a:hover::after {
 }
 
 /* ===== NEWSLETTER SECTION ===== */
+/* ===== NEW SECTIONS ===== */
+.jaz-zenska-section,
+.aktualno-section,
+.intervju-section,
+.e-trgovina-section,
+.stik-z-nami-section {
+    padding: 80px 0;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 2;
+}
+
+.jaz-zenska-section,
+.stik-z-nami-section {
+    background-color: var(--main-white);
+    padding: 140px 0;
+}
+
+/* Featured Steps Showcase */
+.jaz-zenska-featured {
+    margin-bottom: 120px;
+}
+
+.jaz-featured-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    color: var(--dark-violet);
+    margin-bottom: 80px;
+    text-align: center;
+    position: relative;
+}
+
+.jaz-steps-showcase {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 50px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(100, 56, 67, 0.2);
+    max-width: 100%;
+    width: 100%;
+}
+
+.jaz-step-featured {
+    position: relative;
+    padding: 70px 60px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    min-height: 600px;
+}
+
+.jaz-step-featured[data-step="1"] {
+    background: linear-gradient(135deg, rgba(200, 142, 167, 0.5) 0%, rgba(153, 98, 122, 0.4) 100%);
+}
+
+.jaz-step-featured[data-step="2"] {
+    background: linear-gradient(135deg, rgba(153, 98, 122, 0.6) 0%, rgba(100, 56, 67, 0.5) 100%);
+}
+
+.jaz-step-featured[data-step="3"] {
+    background: linear-gradient(135deg, rgba(100, 56, 67, 0.7) 0%, rgba(153, 98, 122, 0.6) 100%);
+}
+
+.jaz-step-featured[data-step="4"] {
+    background: linear-gradient(135deg, rgba(100, 56, 67, 0.85) 0%, rgba(74, 45, 53, 0.75) 100%);
+}
+
+.step-bg-number {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    font-family: 'Playfair Display', serif;
+    font-size: 140px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.15);
+    line-height: 1;
+    z-index: 0;
+}
+
+.step-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: var(--white);
+}
+
+.jaz-step-featured h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--white);
+    margin-bottom: 30px;
+    line-height: 1.3;
+    font-weight: 700;
+}
+
+.jaz-step-featured p {
+    font-size: 18px;
+    line-height: 1.9;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 40px;
+    flex-grow: 1;
+}
+
+.jaz-featured-btn {
+    display: inline-block;
+    padding: 18px 40px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+    margin-top: auto;
+}
+
+.jaz-featured-btn:hover {
+    background: var(--white);
+    color: var(--dark-violet);
+    border-color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* About Showcase */
+.jaz-about-showcase {
+    margin: 120px 0;
+}
+
+.jaz-about-hero {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 100px;
+    align-items: center;
+    margin-bottom: 100px;
+    background: linear-gradient(135deg, rgba(200, 142, 167, 0.1) 0%, rgba(153, 98, 122, 0.05) 100%);
+    padding: 80px 90px;
+    border-radius: 28px;
+    border: 2px solid var(--almost-white);
+}
+
+.about-image-placeholder {
+    width: 100%;
+    height: 380px;
+    background: linear-gradient(135deg, var(--pinky), var(--mid-violet));
+    border-radius: 24px;
+    box-shadow: 0 15px 40px rgba(100, 56, 67, 0.2);
+}
+
+.about-portrait-image {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    border-radius: 24px;
+    box-shadow: 0 15px 40px rgba(100, 56, 67, 0.2);
+}
+
+.jaz-about-text h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    color: var(--dark-violet);
+    margin-bottom: 30px;
+}
+
+.jaz-about-text p {
+    font-size: 20px;
+    line-height: 1.9;
+    color: var(--text-dark);
+}
+
+.jaz-vision-mission {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 60px;
+    max-width: 100%;
+}
+
+.vision-card,
+.mission-card {
+    background: var(--white);
+    padding: 60px 50px;
+    border-radius: 24px;
+    border: 2px solid var(--almost-white);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.vision-card::before,
+.mission-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, var(--pinky), var(--mid-violet));
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.vision-card:hover::before,
+.mission-card:hover::before {
+    transform: scaleX(1);
+}
+
+.vision-card:hover,
+.mission-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(100, 56, 67, 0.15);
+    border-color: var(--pinky);
+}
+
+.vision-card h3,
+.mission-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    color: var(--dark-violet);
+    margin-bottom: 25px;
+}
+
+.vision-card p,
+.mission-card p {
+    font-size: 18px;
+    line-height: 1.9;
+    color: var(--text-dark);
+}
+
+/* Media Showcase */
+.jaz-media-showcase {
+    margin-top: 120px;
+}
+
+.jaz-media-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    color: var(--dark-violet);
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+.jaz-media-featured {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px;
+    max-width: 100%;
+}
+
+.jaz-media-item {
+    background: linear-gradient(135deg, var(--white) 0%, rgba(231, 203, 203, 0.3) 100%);
+    padding: 50px 40px;
+    border-radius: 20px;
+    text-align: center;
+    border: 2px solid var(--almost-white);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.jaz-media-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--pinky), var(--mid-violet));
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.jaz-media-item:hover::after {
+    transform: scaleX(1);
+}
+
+.jaz-media-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(100, 56, 67, 0.15);
+    border-color: var(--pinky);
+}
+
+.jaz-media-item h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--dark-violet);
+    margin-bottom: 18px;
+}
+
+.jaz-media-item p {
+    font-size: 17px;
+    color: var(--text-light);
+    line-height: 1.7;
+}
+
+.jaz-zenska-main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    color: var(--dark-violet);
+    margin-bottom: 100px;
+    text-align: center;
+    position: relative;
+}
+
+.jaz-zenska-main-title::after {
+    content: '';
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 5px;
+    background: linear-gradient(90deg, transparent, var(--mid-violet), transparent);
+}
+
+.intervju-section,
+.e-trgovina-section {
+    background-color: var(--hero-light);
+}
+
+.aktualno-section {
+    background: linear-gradient(180deg, var(--main-white) 0%, var(--hero-light) 100%);
+}
+
+.jaz-zenska-container {
+    max-width: 95%;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.aktualno-container,
+.intervju-container,
+.e-trgovina-container,
+.stik-z-nami-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.jaz-zenska-section h2,
+.aktualno-section h2,
+.intervju-section h2,
+.e-trgovina-section h2,
+.stik-z-nami-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    color: var(--dark-violet);
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.jaz-zenska-subsection,
+.aktualno-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.aktualno-card {
+    background: var(--white);
+    padding: 40px 30px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid var(--almost-white);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.aktualno-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--pinky), var(--mid-violet));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.aktualno-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(100, 56, 67, 0.15);
+    border-color: var(--pinky);
+}
+
+.aktualno-card:hover::before {
+    transform: scaleX(1);
+}
+
+.aktualno-card.featured {
+    border-color: var(--mid-violet);
+    background: linear-gradient(135deg, rgba(200, 142, 167, 0.05) 0%, rgba(153, 98, 122, 0.05) 100%);
+}
+
+.aktualno-card.featured::before {
+    transform: scaleX(1);
+}
+
+.aktualno-icon {
+    font-size: 56px;
+    margin-bottom: 20px;
+    display: block;
+    line-height: 1;
+}
+
+.aktualno-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--dark-violet);
+    margin-bottom: 15px;
+}
+
+.aktualno-card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+
+.aktualno-button {
+    display: inline-block;
+    padding: 12px 28px;
+    background-color: var(--mid-violet);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.aktualno-button:hover {
+    background-color: var(--dark-violet);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(100, 56, 67, 0.3);
+}
+
+.aktualno-subsection,
+.stik-subsection {
+    margin-bottom: 50px;
+}
+
+.jaz-zenska-subsection h3,
+.stik-subsection h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--dark-violet);
+    margin-bottom: 20px;
+}
+
+.jaz-zenska-subsection p,
+.aktualno-subsection p,
+.stik-subsection p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-dark);
+    margin-bottom: 15px;
+}
+
+.media-grid,
+.intervju-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.media-card,
+.intervju-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid var(--almost-white);
+}
+
+.media-card h4,
+.intervju-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--dark-violet);
+    margin-bottom: 15px;
+}
+
+.media-card p,
+.intervju-card p {
+    font-size: 15px;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.intervju-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 25px;
+    background-color: var(--mid-violet);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.intervju-button:hover {
+    background-color: var(--dark-violet);
+}
+
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin: 30px 0;
+}
+
+.product-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    border: 1px solid var(--almost-white);
+}
+
+.product-image {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.product-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--dark-violet);
+    margin-bottom: 12px;
+}
+
+.price {
+    font-size: 18px;
+    color: var(--mid-violet);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: var(--text-light);
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.product-button {
+    padding: 10px 25px;
+    background-color: var(--mid-violet);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.product-button:hover {
+    background-color: var(--dark-violet);
+}
+
+.view-all-products {
+    display: block;
+    width: 180px;
+    margin: 30px auto 0;
+    padding: 12px 30px;
+    background-color: var(--mid-violet);
+    color: var(--white);
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.view-all-products:hover {
+    background-color: var(--dark-violet);
+}
+
+.contact-info p {
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: var(--text-dark);
+    line-height: 1.8;
+}
+
+.contact-info strong {
+    color: var(--dark-violet);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .jaz-zenska-section,
+    .aktualno-section,
+    .intervju-section,
+    .e-trgovina-section,
+    .stik-z-nami-section {
+        padding: 60px 0;
+    }
+    
+    .jaz-zenska-section h2,
+    .aktualno-section h2,
+    .intervju-section h2,
+    .e-trgovina-section h2,
+    .stik-z-nami-section h2 {
+        font-size: 32px;
+        margin-bottom: 40px;
+    }
+    
+    .jaz-zenska-main-title {
+        font-size: 42px;
+    }
+    
+    .jaz-featured-title,
+    .jaz-media-title {
+        font-size: 36px;
+    }
+    
+    .jaz-steps-showcase {
+        grid-template-columns: 1fr;
+        gap: 0;
+        border-radius: 0;
+    }
+    
+    .jaz-step-featured {
+        padding: 50px 30px;
+        min-height: auto;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .jaz-step-featured:last-child {
+        border-bottom: none;
+    }
+    
+    .jaz-vision-mission,
+    .jaz-media-featured {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .jaz-about-hero {
+        grid-template-columns: 1fr;
+        gap: 50px;
+        padding: 50px 35px;
+    }
+    
+    .about-image-placeholder {
+        height: 300px;
+    }
+    
+    .step-bg-number {
+        font-size: 100px;
+        top: 20px;
+        right: 20px;
+    }
+    
+    .jaz-step-featured h4 {
+        font-size: 28px;
+    }
+    
+    .jaz-step-featured p {
+        font-size: 17px;
+    }
+    
+    .jaz-featured-title,
+    .jaz-media-title {
+        font-size: 42px;
+    }
+    
+    .jaz-zenska-main-title {
+        font-size: 48px;
+    }
+    
+    .vision-card h3,
+    .mission-card h3 {
+        font-size: 32px;
+    }
+    
+    .vision-card p,
+    .mission-card p {
+        font-size: 17px;
+    }
+    
+    .jaz-about-text h3 {
+        font-size: 36px;
+    }
+    
+    .jaz-media-item h4 {
+        font-size: 24px;
+    }
+    
+    .vision-card,
+    .mission-card {
+        padding: 35px 25px;
+    }
+    
+    .jaz-zenska-subsection h3,
+    .aktualno-subsection h3,
+    .stik-subsection h3 {
+        font-size: 24px;
+    }
+    
+    .media-grid,
+    .intervju-grid,
+    .shop-grid,
+    .aktualno-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .aktualno-card {
+        padding: 30px 20px;
+    }
+    
+    .aktualno-icon {
+        font-size: 48px;
+    }
+}
+
 .newsletter {
     background: linear-gradient(135deg, var(--mid-violet), var(--dark-violet));
     padding: 120px 0;
@@ -1805,6 +2542,7 @@ nav a:hover::after {
     width: 100%;
     background: transparent;
 }
+
 
 
 .newsletter::before {
