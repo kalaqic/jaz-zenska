@@ -176,8 +176,41 @@ function preventScrollBounce() {
     }, { passive: false });
 }
 
+// Loading Screen Handler
+function initLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    const body = document.body;
+    
+    if (loadingScreen) {
+        // DISABLED FOR TESTING - Hide immediately
+        loadingScreen.style.display = 'none';
+        body.classList.remove('loading');
+        
+        // Original code (disabled):
+        // // Prevent scrolling while loading
+        // body.classList.add('loading');
+        // 
+        // // Hide loading screen after 2.5 seconds
+        // setTimeout(function() {
+        //     loadingScreen.classList.add('fade-out');
+        //     
+        //     // Remove from DOM and re-enable scrolling after fade-out completes
+        //     setTimeout(function() {
+        //         loadingScreen.style.display = 'none';
+        //         body.classList.remove('loading');
+        //     }, 800); // Match CSS transition duration
+        // }, 2500); // Show for 2.5 seconds
+    }
+}
+
+// Initialize loading screen immediately
+initLoadingScreen();
+
 // Initialize animations on page load
 document.addEventListener('DOMContentLoaded', function() {
+    // Ensure page starts at top
+    window.scrollTo(0, 0);
+    
     // Add fade-in class to elements
     const elements = document.querySelectorAll('.value-card, .service-card, .blog-card');
     elements.forEach((el, index) => {
