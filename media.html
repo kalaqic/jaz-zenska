@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iz medijev - Jaz Ženska</title>
+    <meta name="description" content="Odkrijte intervjuje, članke in predstavitve, kjer Marjanca deli svojo modrost o ženski moči, transformaciji in osebni rasti.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/media-page.css">
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <a href="index.html#about">O nas</a>
+            <a href="index.html#institute">Inštitut</a>
+            <a href="index.html#blog">Blog</a>
+            <a href="index.html#media">Mediji</a>
+            <a href="index.html#affirmations">Meditacije</a>
+            <a href="index.html#contact">Moj račun</a>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="index.html" aria-label="logo"><img src="images/logo/logo jaz zenska.png" width="140px" alt="Jaz Ženska Logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html#jaz-zenska">Jaz ženska</a></li>
+                    <li><a href="index.html#aktualno">Aktualno</a></li>
+                    <li><a href="index.html#blog">Blog</a></li>
+                    <li><a href="index.html#intervju">Intervju</a></li>
+                    <li><a href="index.html#e-trgovina">E-trgovina</a></li>
+                    <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
+                </ul>
+            </nav>
+            <div class="social-icons">
+                <a href="#" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
+                <a href="#" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
+                <a href="#" aria-label="LinkedIn"><img src="images/svg/linkedin.svg" alt="LinkedIn"></a>
+                <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Media Board Section -->
+    <section class="media-board-section">
+        <div class="media-board-container">
+            <h1 class="media-board-title">Iz medijev</h1>
+            <p class="media-board-subtitle">Odkrijte intervjuje, članke in predstavitve z Marjanco</p>
+            
+            <div class="media-board">
+                <!-- Media Note 1 -->
+                <div class="media-note" data-note="1">
+                    <div class="note-pin"></div>
+                    <div class="note-image">
+                        <img src="images/inervju.jpg" alt="Intervju z Marjanco">
+                    </div>
+                    <div class="note-content">
+                        <h3>Intervju v reviji</h3>
+                        <p>Marjanca o ženski moči</p>
+                        <span class="note-date">Marec 2024</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Media Modal -->
+    <div id="mediaModal" class="media-modal">
+        <div class="media-modal-overlay"></div>
+        <div class="media-modal-content">
+            <button class="media-modal-close" aria-label="Zapri">&times;</button>
+            <div class="media-modal-image">
+                <img id="modalImage" src="" alt="">
+            </div>
+            <div class="media-modal-info">
+                <h2 id="modalTitle"></h2>
+                <div class="media-modal-meta">
+                    <span id="modalDate"></span>
+                    <span id="modalSource"></span>
+                </div>
+                <div id="modalDescription" class="media-modal-description"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/media-page.js"></script>
+</body>
+</html>
+
