@@ -20,10 +20,7 @@
     <div class="top-bar">
         <div class="top-bar-content">
             <a href="index.html#about">O nas</a>
-            <a href="index.html#institute">Inštitut</a>
-            <a href="index.html#blog">Blog</a>
-            <a href="index.html#media">Mediji</a>
-            <a href="index.html#affirmations">Meditacije</a>
+            <a href="media.html">Mediji</a>
             <a href="index.html#contact">Moj račun</a>
         </div>
     </div>
@@ -32,24 +29,62 @@
     <header>
         <div class="header-content">
             <a href="index.html" aria-label="logo"><img src="images/logo/logo jaz zenska.png" width="140px" alt="Jaz Ženska Logo"></a>
-            <nav>
+            <nav class="desktop-nav">
                 <ul>
                     <li><a href="index.html#jaz-zenska">Jaz ženska</a></li>
                     <li><a href="index.html#aktualno">Aktualno</a></li>
-                    <li><a href="index.html#blog">Blog</a></li>
+                    <li><a href="blog.html">Blog</a></li>
                     <li><a href="index.html#intervju">Intervju</a></li>
-                    <li><a href="index.html#e-trgovina">E-trgovina</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
                     <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
                 </ul>
             </nav>
-            <div class="social-icons">
+            <div class="social-icons desktop-social">
+                <a href="#" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
+                <a href="#" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
+                <a href="#" aria-label="LinkedIn"><img src="images/svg/linkedin.svg" alt="LinkedIn"></a>
+                <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
+            </div>
+            <button class="burger-menu" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay">
+        <button class="mobile-menu-close" aria-label="Close menu">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+        <div class="mobile-menu-content">
+            <div class="mobile-top-links">
+                <a href="index.html#about">O nas</a>
+                <a href="media.html">Mediji</a>
+                <a href="index.html#contact">Moj račun</a>
+            </div>
+            <nav class="mobile-nav">
+                <ul>
+                    <li><a href="index.html#jaz-zenska">Jaz ženska</a></li>
+                    <li><a href="index.html#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#intervju">Intervju</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
+                    <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-social-icons">
                 <a href="#" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
                 <a href="#" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
                 <a href="#" aria-label="LinkedIn"><img src="images/svg/linkedin.svg" alt="LinkedIn"></a>
                 <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
             </div>
         </div>
-    </header>
+    </div>
 
     <!-- Media Board Section -->
     <section class="media-board-section">

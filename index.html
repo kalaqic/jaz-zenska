@@ -39,10 +39,7 @@
     <div class="top-bar">
         <div class="top-bar-content">
             <a href="#about">O nas</a>
-            <a href="#institute">Inštitut</a>
-            <a href="#blog">Blog</a>
-            <a href="#media">Mediji</a>
-            <a href="#affirmations">Meditacije</a>
+            <a href="media.html">Mediji</a>
             <a href="#contact">Moj račun</a>
         </div>
     </div>
@@ -51,24 +48,62 @@
     <header>
         <div class="header-content">
             <a href="#" aria-label="logo"><img src="images/logo/logo jaz zenska.png" width="140px" alt="Jaz Ženska Logo"></a>
-            <nav>
+            <nav class="desktop-nav">
                 <ul>
                     <li><a href="#jaz-zenska">Jaz ženska</a></li>
                     <li><a href="#aktualno">Aktualno</a></li>
-                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="blog.html">Blog</a></li>
                     <li><a href="#intervju">Intervju</a></li>
-                    <li><a href="#e-trgovina">E-trgovina</a></li>
+                    <li><a href="#affirmations">Meditacije</a></li>
                     <li><a href="#stik-z-nami">Stik z nami</a></li>
                 </ul>
             </nav>
-            <div class="social-icons">
+            <div class="social-icons desktop-social">
+                <a href="#" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
+                <a href="#" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
+                <a href="#" aria-label="LinkedIn"><img src="images/svg/linkedin.svg" alt="LinkedIn"></a>
+                <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
+            </div>
+            <button class="burger-menu" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay">
+        <button class="mobile-menu-close" aria-label="Close menu">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+        <div class="mobile-menu-content">
+            <div class="mobile-top-links">
+                <a href="#about">O nas</a>
+                <a href="media.html">Mediji</a>
+                <a href="#contact">Moj račun</a>
+            </div>
+            <nav class="mobile-nav">
+                <ul>
+                    <li><a href="#jaz-zenska">Jaz ženska</a></li>
+                    <li><a href="#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="#intervju">Intervju</a></li>
+                    <li><a href="#affirmations">Meditacije</a></li>
+                    <li><a href="#stik-z-nami">Stik z nami</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-social-icons">
                 <a href="#" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
                 <a href="#" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
                 <a href="#" aria-label="LinkedIn"><img src="images/svg/linkedin.svg" alt="LinkedIn"></a>
                 <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
             </div>
         </div>
-    </header>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -132,9 +167,6 @@
             <!-- About Section -->
             <div class="jaz-about-showcase">
                 <div class="jaz-about-hero">
-                    <div class="jaz-about-image">
-                        <img src="images/portret.jpg" alt="Marjanca Trščinar Antić" class="about-portrait-image">
-                    </div>
                     <div class="jaz-about-text">
                         <h3>Marjanca Trščinar Antić</h3>
                         <p>Ustanoviteljica in vodja skupnosti Jaz Ženska. Z več kot 20 leti izkušenj v področju osebnega razvoja, transformacijske terapije in ženske modrosti, pomaga ženskam odkriti njihovo notranjo moč in avtentičnost.</p>
@@ -175,7 +207,7 @@
     </section>
 
     <!-- Aktualno Section -->
-    <section id="aktualno" class="aktualno-section">
+    <section id="aktualno" class="aktualno-section in-progress">
         <div class="aktualno-container">
             <h2>Aktualno</h2>
             
@@ -308,7 +340,7 @@
     </div>
 
     <!-- Programs Section -->
-    <section class="programs">
+    <section class="programs in-progress">
         <div class="programs-container">
             <h2 class="programs-title">Razišči naše programe:</h2>
             
@@ -368,7 +400,7 @@
     </section>
 
     <!-- Real Life Events Section -->
-    <section class="real-life-events">
+    <section class="real-life-events in-progress">
         <div class="events-content">
             <h1>Marjanca V živo</h1>
             <h2>Pridružite se nam na dogodkih v živo</h2>
@@ -378,7 +410,7 @@
     </section>
 
     <!-- Book Section -->
-    <section class="book-section">
+    <section class="book-section in-progress">
         <div class="book-container">
             <div class="book-image">
                 <div class="book-cover">
@@ -396,7 +428,7 @@
     </section>
 
     <!-- Blog Section -->
-    <section id="blog" class="blog">
+    <section id="blog" class="blog in-progress">
         <div class="blog-container">
             <h2>Blog</h2>
             
@@ -437,73 +469,10 @@
                 </div>
     </section>
 
-    <!-- Intervju Section -->
-    <section id="intervju" class="intervju-section">
-        <div class="intervju-container">
-            <h2>Intervju</h2>
-            <p>Odkrijte več o Marjanci Trščinar Antić in njeni poti skozi intervjuje, kjer deli svojo zgodbo, modrost in izkušnje.</p>
-            <div class="intervju-grid">
-                <div class="intervju-card">
-                    <h3>Intervju v reviji</h3>
-                    <p>Marjanca o ženski moči in transformaciji</p>
-                    <a href="#" class="intervju-button">Preberi več</a>
-                </div>
-                <div class="intervju-card">
-                    <h3>TV oddaja</h3>
-                    <p>Pogovor o osebni rasti in samoodkrivanju</p>
-                    <a href="#" class="intervju-button">Oglej si</a>
-                </div>
-                <div class="intervju-card">
-                    <h3>Podcast</h3>
-                    <p>Ženska modrost in skupnost</p>
-                    <a href="#" class="intervju-button">Poslušaj</a>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- E-trgovina Section -->
-    <section id="e-trgovina" class="e-trgovina-section">
-        <div class="e-trgovina-container">
-            <h2>E-trgovina</h2>
-            <p>Odkrijte našo kolekcijo izdelkov, ki vas podpirajo na poti samoodkrivanja. Od knjig in priročnikov do ritualnih pripomočkov in navdihujočih daril.</p>
-        <div class="shop-grid">
-            <div class="product-card">
-                <div class="product-image">✨</div>
-                <div class="product-info">
-                    <h3>Dnevnik Hvaležnosti</h3>
-                    <div class="price">
-                        <span class="original-price">€49,90</span>
-                        <span>29,90 €</span>
-                    </div>
-                    <button class="product-button">IZBERITE MOŽNOSTI</button>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-image">📚</div>
-                <div class="product-info">
-                    <h3>Knjiga Moja pot</h3>
-                    <div class="price">34,00 €</div>
-                    <button class="product-button">DODAJ V KOŠARICO</button>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-image">🌙</div>
-                <div class="product-info">
-                    <h3>Lunin Koledar 2025</h3>
-                    <div class="price">24,99 €</div>
-                    <button class="product-button">IZBERITE MOŽNOSTI</button>
-                </div>
-                </div>
-            </div>
-            <a href="#" class="view-all-products">VSI IZDELKI</a>
-        </div>
-    </section>
 
     <!-- Stik z nami Section -->
-    <section id="stik-z-nami" class="stik-z-nami-section">
+    <section id="stik-z-nami" class="stik-z-nami-section in-progress">
         <div class="stik-z-nami-container">
             <h2>Stik z nami</h2>
             
