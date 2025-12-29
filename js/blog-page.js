@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initBlogModal();
     setBlogPageSpacing();
     window.addEventListener('resize', setBlogPageSpacing);
+    initPageTransitionLoader();
 });
 
 // Set blog page spacing to match footer height for perfect scroll limit

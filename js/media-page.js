@@ -25,6 +25,7 @@ const mediaData = {
 document.addEventListener('DOMContentLoaded', function() {
     initMediaNotes();
     initMediaModal();
+    initPageTransitionLoader();
 });
 
 function initMediaNotes() {

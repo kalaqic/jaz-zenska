@@ -35,12 +35,49 @@
         </div>
     </div>
 
+    <!-- Page Transition Loading Screen -->
+    <div class="page-transition-loader" id="pageTransitionLoader">
+        <div class="page-transition-content">
+            <img src="images/logo/logo jaz zenska.png" alt="Jaz Ženska Logo" class="page-transition-logo">
+            <div class="page-transition-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Welcome Popup Modal -->
+    <div class="welcome-popup-overlay" id="welcomePopup">
+        <div class="welcome-popup-container">
+            <button class="welcome-popup-close" id="welcomePopupClose" aria-label="Zapri">&times;</button>
+            <div class="welcome-popup-content">
+                <div class="welcome-popup-image">
+                    <img src="images/naroci se.jpg" alt="Pridružite se nam">
+                </div>
+                <div class="welcome-popup-text">
+                    <div class="welcome-popup-badge">🎉 POSEBNO PRILOŽNOST 🎉</div>
+                    <h2>Zdaj je pravi čas, da se nam pridružiš!</h2>
+                    <div class="welcome-popup-highlights">
+                        <p>✨ <strong>Brezplačen e-book</strong> ob pristopu</p>
+                        <p>📅 <strong>Polno načrtovanih dogodkov</strong> in delavnic</p>
+                        <p>💎 <strong>Ekskluzivne vsebine</strong> samo za člane</p>
+                        <p>🤝 <strong>Skupnost podpore</strong> in povezovanja</p>
+                    </div>
+                    <p class="welcome-popup-description">Ne zamudi te priložnosti! Pridruži se skupnosti žensk, ki skupaj rastejo, se razvijajo in si pomagajo na poti do najboljše verzije sebe.</p>
+                    <a href="https://www.skool.com/jzenska-4779/about" class="welcome-popup-button" target="_blank" rel="noopener noreferrer">
+                        <span>PRIJAVI SE ZDAJ - BREZPLAČNO!</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-bar-content">
             <a href="#about">O nas</a>
             <a href="media.html">Mediji</a>
-            <a href="https://www.skool.com/@david-kalabic-6680?g=jzenska-4779" target="_blank" rel="noopener noreferrer">Moj račun</a>
+            <a href="https://www.skool.com/settings?t=profile" target="_blank" rel="noopener noreferrer">Moj račun</a>
         </div>
     </div>
 
@@ -53,17 +90,11 @@
                     <li><a href="#jaz-zenska">Jaz ženska</a></li>
                     <li><a href="#aktualno">Aktualno</a></li>
                     <li><a href="blog.html">Blog</a></li>
-                    <li><a href="#intervju">Intervju</a></li>
                     <li><a href="#affirmations">Meditacije</a></li>
                     <li><a href="#stik-z-nami">Stik z nami</a></li>
                 </ul>
             </nav>
-            <div class="social-icons desktop-social">
-                <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
-                <a href="#" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
-                <a href="#" aria-label="LinkedIn"><img src="images/svg/linkedin.svg" alt="LinkedIn"></a>
-                <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
-            </div>
+            <a href="https://www.skool.com/jzenska-4779/calendar" class="header-consultation-btn desktop-social" target="_blank" rel="noopener noreferrer">PRIJAVI SE ZA BREZPLAČEN POSVET</a>
             <button class="burger-menu" aria-label="Toggle menu">
                 <span></span>
                 <span></span>
@@ -84,14 +115,13 @@
             <div class="mobile-top-links">
                 <a href="#about">O nas</a>
                 <a href="media.html">Mediji</a>
-                <a href="https://www.skool.com/@david-kalabic-6680?g=jzenska-4779" target="_blank" rel="noopener noreferrer">Moj račun</a>
+                <a href="https://www.skool.com/settings?t=profile" target="_blank" rel="noopener noreferrer">Moj račun</a>
             </div>
             <nav class="mobile-nav">
                 <ul>
                     <li><a href="#jaz-zenska">Jaz ženska</a></li>
                     <li><a href="#aktualno">Aktualno</a></li>
                     <li><a href="blog.html">Blog</a></li>
-                    <li><a href="#intervju">Intervju</a></li>
                     <li><a href="#affirmations">Meditacije</a></li>
                     <li><a href="#stik-z-nami">Stik z nami</a></li>
                 </ul>
@@ -140,7 +170,7 @@
                         <div class="step-content">
                             <h4>Odkrivanje Notranje Lepote</h4>
                             <p>Naučila se boš kako povečati in kreativno upravljati z življenjsko energijo, kako se povezati s sabo in kako prisluhniti sebi, intuiciji in vedenju, ki ga nosiš v sebi.</p>
-                            <a href="https://www.skool.com/jzenska-4779/about" class="jaz-featured-btn" target="_blank" rel="noopener noreferrer">Brezplačen posvet</a>
+                            <a href="https://www.skool.com/jzenska-4779/calendar" class="jaz-featured-btn" target="_blank" rel="noopener noreferrer">Brezplačen posvet</a>
                         </div>
                     </div>
                     
@@ -158,7 +188,7 @@
                         <div class="step-content">
                             <h4>Tedenski Vsebini za Rast</h4>
                             <p>Vsak teden boš prejela nove vsebine, ki ti bodo pomagale na tvoji poti spremembe in doseganja ciljev.</p>
-                            <a href="https://www.skool.com/jzenska-4779/about" class="jaz-featured-btn" target="_blank" rel="noopener noreferrer">Brezplačen posvet</a>
+                            <a href="https://www.skool.com/jzenska-4779/calendar" class="jaz-featured-btn" target="_blank" rel="noopener noreferrer">Brezplačen posvet</a>
                         </div>
                     </div>
                 </div>
@@ -167,6 +197,7 @@
             <!-- About Section -->
             <div class="jaz-about-showcase">
                 <div class="jaz-about-hero">
+                    <div class="jaz-about-image-mobile"></div>
                     <div class="jaz-about-text">
                         <h3>Marjanca Trščinar Antić</h3>
                         <p>Ustanoviteljica in vodja skupnosti Jaz Ženska. Z več kot 20 leti izkušenj v področju osebnega razvoja, transformacijske terapije in ženske modrosti, pomaga ženskam odkriti njihovo notranjo moč in avtentičnost.</p>
@@ -291,17 +322,13 @@
                         <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                         <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
                     </svg>
-                    <span class="date-text">- datum</span>
+                    <span class="date-text">3. januarja | 9:00 - 13:00</span>
                 </div>
                 <div class="event-actions">
-                    <a href="https://www.skool.com/jzenska-4779/about" class="event-button-primary" target="_blank" rel="noopener noreferrer">Prijavi se</a>
+                    <a href="https://www.skool.com/jzenska-4779/calendar?eid=3791bc19df0e4137b4d7d60ea0d04091" class="event-button-primary" target="_blank" rel="noopener noreferrer">Prijavi se</a>
                     <a href="#" class="event-button-secondary" id="event-details-button">Več o dogodku</a>
                 </div>
             </div>
-            <a href="#newsletter" class="event-button-notify">Obveščaj me o podobnih dogodkih <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-left: 8px;">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg></a>
         </div>
     </section>
 
@@ -322,7 +349,7 @@
                         <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                         <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
                     </svg>
-                    <span>- datum</span>
+                    <span>3. januarja | 9:00 - 13:00</span>
                 </div>
                 
                 <div class="event-modal-description">
@@ -364,8 +391,7 @@
                     </div>
 
                 <div class="event-modal-actions">
-                    <a href="https://www.skool.com/jzenska-4779/about" class="event-button-primary" target="_blank" rel="noopener noreferrer">Prijavi se</a>
-                    <a href="#" class="event-button-secondary">Več o dogodku</a>
+                    <a href="https://www.skool.com/jzenska-4779/calendar?eid=3791bc19df0e4137b4d7d60ea0d04091" class="event-button-primary" target="_blank" rel="noopener noreferrer">Prijavi se</a>
                 </div>
             </div>
         </div>
@@ -431,16 +457,6 @@
         </div>
     </section>
 
-    <!-- Real Life Events Section -->
-    <section class="real-life-events">
-        <div class="events-content">
-            <h1>Marjanca V živo</h1>
-            <h2>Pridružite se nam na dogodkih v živo</h2>
-            <p>Odkrijte svojo pristno identiteto in moč skozi <span class="boxed-text">transformacijske delavnice in dogodke</span>,<br>kjer se ženske zbirajo, delijo modrost in se<br>podpirajo na skupni poti rasti.</p>
-            <a href="https://www.skool.com/jzenska-4779/about" class="events-cta-button" target="_blank" rel="noopener noreferrer">PRIJAVI SE</a>
-        </div>
-    </section>
-
     <!-- Book Section -->
     <section class="book-section">
         <div class="book-offer-badge">LIMITIRANA PONUDBA</div>
@@ -478,9 +494,6 @@
         <div class="blog-container">
             <h2>Blog</h2>
             
-            <!-- 25 stopnic do sreče -->
-            <div class="blog-subsection">
-                <h3>25 stopnic do sreče</h3>
         <div class="blog-grid">
             <div class="blog-card fade-in">
                 <div class="blog-card-image" style="background: linear-gradient(135deg, #2d5016, #4a7c28); color: white;">
@@ -504,15 +517,8 @@
                 </div>
             </div>
         </div>
-        <a href="#" class="more-posts-btn">VEČ PRISPEVKOV</a>
-                </div>
-                
-            <!-- Vrednote -->
-            <div class="blog-subsection">
-                <h3>Vrednote</h3>
-                <p>Naše vrednote so temelj vsega, kar počnemo. Verjamemo v avtentičnost, sočutje, skupnost in osebno rast. Vsaka ženska zasluži živeti življenje, ki jo napolnjuje in navdihuje.</p>
-            </div>
-                </div>
+        <a href="blog.html" class="more-posts-btn">VEČ PRISPEVKOV</a>
+        </div>
     </section>
 
 
@@ -520,20 +526,25 @@
     <!-- Stik z nami Section -->
     <section id="stik-z-nami" class="stik-z-nami-section">
         <div class="stik-z-nami-container">
-            <div class="stik-z-nami-content">
-                <div class="stik-z-nami-decoration">
-                    <div class="stik-z-nami-flower">🌸</div>
-                    <div class="stik-z-nami-sparkle">✨</div>
-                    <div class="stik-z-nami-heart">💖</div>
+            <div class="stik-z-nami-wrapper">
+                <div class="stik-z-nami-image">
+                    <img src="images/naroci se.jpg" alt="Naroči se na brezplačni pogovor">
                 </div>
-                <h3>Naroči se na brezplačni pogovor</h3>
-                <p>Začnite svojo pot z brezplačnim posvetom, kjer bomo skupaj raziskali vaše potrebe in cilje ter našli najboljšo pot za vas.</p>
-                <a href="https://www.skool.com/jzenska-4779/about" class="stik-z-nami-button" target="_blank" rel="noopener noreferrer">
-                    <span>Naroči se na brezplačni pogovor</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </a>
+                <div class="stik-z-nami-content">
+                    <div class="stik-z-nami-decoration">
+                        <div class="stik-z-nami-flower">🌸</div>
+                        <div class="stik-z-nami-sparkle">✨</div>
+                        <div class="stik-z-nami-heart">💖</div>
+                    </div>
+                    <h3>Naroči se na brezplačni pogovor</h3>
+                    <p>Začnite svojo pot z brezplačnim posvetom, kjer bomo skupaj raziskali vaše potrebe in cilje ter našli najboljšo pot za vas.</p>
+                    <a href="https://www.skool.com/jzenska-4779/calendar" class="stik-z-nami-button" target="_blank" rel="noopener noreferrer">
+                        <span>Naroči se na brezplačni pogovor</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -586,31 +597,12 @@
         </div>
     </section>
 
-    <!-- Newsletter Section -->
-    <section class="newsletter" id="newsletter">
-        <div class="newsletter-container">
-            <h2>Prijavite se na prejemanje naših navdihov.</h2>
-            <p>Prijavite se na naše e-novičke in prejmite navdihujoče vsebine za osebno rast, žensko modrost in podporo na vaši poti. ❤️</p>
-            
-            <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
-                <div class="newsletter-form-row">
-                <input type="text" placeholder="Ime" required>
-                <input type="text" placeholder="Priimek" required>
-                </div>
-                <div class="newsletter-form-row newsletter-form-row-email">
-                    <input type="email" placeholder="Email" required>
-                <button type="submit">PRIJAVI ME</button>
-                </div>
-            </form>
-            
-            <p class="newsletter-note">*S prijavo na novice se strinjate s politiko zasebnosti.</p>
-        </div>
-    </section>
-
     <!-- Footer -->
     <footer>
         <div class="footer-logo-text">
-            <img src="images/logo/logo_text.png" alt="Jaz Ženska Logo">
+            <a href="#" class="footer-logo-link" id="footer-logo-link">
+                <img src="images/logo/logo_text.png" alt="Jaz Ženska Logo">
+            </a>
         </div>
         
         <div class="footer-content">
@@ -652,6 +644,22 @@
             <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </button>
+
+    <!-- Floating Social Media Icons (Right Side) -->
+    <div class="floating-social-container" id="floatingSocial">
+        <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="floating-social-link">
+            <img src="images/svg/facebook.svg" alt="Facebook">
+        </a>
+        <a href="#" aria-label="Instagram" class="floating-social-link">
+            <img src="images/svg/instagram.svg" alt="Instagram">
+        </a>
+        <a href="#" aria-label="LinkedIn" class="floating-social-link">
+            <img src="images/svg/linkedin.svg" alt="LinkedIn">
+        </a>
+        <a href="#" aria-label="YouTube" class="floating-social-link">
+            <img src="images/svg/youtube.svg" alt="YouTube">
+        </a>
+    </div>
 
     <script src="js/main.js"></script>
 </body>

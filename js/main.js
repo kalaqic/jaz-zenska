@@ -22,6 +22,45 @@ function initProgramsAnimation() {
     programObserver.observe(programsSection);
 }
 
+// Steps section animation on scroll (fade in from left to right)
+function initStepsAnimation() {
+    const stepsShowcase = document.querySelector('.jaz-steps-showcase');
+    if (!stepsShowcase) return;
+    
+    const steps = stepsShowcase.querySelectorAll('.jaz-step-featured');
+    
+    // Check if already in view on page load
+    const checkIfInView = () => {
+        const rect = stepsShowcase.getBoundingClientRect();
+        const isInView = rect.top < window.innerHeight && rect.bottom > 0;
+        return isInView;
+    };
+    
+    // If already in view, animate immediately
+    if (checkIfInView()) {
+        steps.forEach((step) => {
+            step.classList.add('animate-in');
+        });
+    } else {
+        // Otherwise, use Intersection Observer
+        const stepsObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    steps.forEach((step) => {
+                        step.classList.add('animate-in');
+                    });
+                    stepsObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        });
+        
+        stepsObserver.observe(stepsShowcase);
+    }
+}
+
 
 // Newsletter form submission
 function handleNewsletterSubmit(event) {
@@ -99,6 +138,8 @@ function setNewsletterSpacing() {
     const newsletter = document.querySelector('.newsletter');
     
     if (footer && newsletter) {
+        const isMobile = window.innerWidth <= 768;
+        
         // Temporarily show footer to measure its height
         const originalTransform = footer.style.transform;
         const originalVisibility = footer.style.visibility;
@@ -115,8 +156,47 @@ function setNewsletterSpacing() {
         footer.style.visibility = originalVisibility;
         footer.style.position = originalPosition;
         
-        // Set newsletter spacing to match footer height (slightly shorter to eliminate gap)
-        newsletter.style.marginBottom = (footerHeight - 5) + 'px';
+        // On mobile, add extra padding to ensure footer is visible
+        if (isMobile) {
+            newsletter.style.marginBottom = (footerHeight + 50) + 'px';
+        } else {
+            // Set newsletter spacing to match footer height (slightly shorter to eliminate gap)
+            newsletter.style.marginBottom = (footerHeight - 5) + 'px';
+        }
+    }
+}
+
+// Set testimonials spacing to match footer height for perfect scroll limit
+function setTestimonialsSpacing() {
+    const footer = document.querySelector('footer');
+    const testimonials = document.querySelector('.testimonials-section');
+    
+    if (footer && testimonials) {
+        const isMobile = window.innerWidth <= 768;
+        
+        // Temporarily show footer to measure its height
+        const originalTransform = footer.style.transform;
+        const originalVisibility = footer.style.visibility;
+        const originalPosition = footer.style.position;
+        
+        footer.style.transform = 'translateY(0)';
+        footer.style.visibility = 'hidden';
+        footer.style.position = 'absolute';
+        
+        const footerHeight = footer.offsetHeight;
+        
+        // Restore footer
+        footer.style.transform = originalTransform;
+        footer.style.visibility = originalVisibility;
+        footer.style.position = originalPosition;
+        
+        // On mobile, add extra padding to ensure footer is visible
+        if (isMobile) {
+            testimonials.style.marginBottom = (footerHeight + 50) + 'px';
+        } else {
+            // Set testimonials spacing to match footer height (slightly shorter to eliminate gap)
+            testimonials.style.marginBottom = (footerHeight - 5) + 'px';
+        }
     }
 }
 
@@ -193,9 +273,54 @@ function initLoadingScreen() {
             setTimeout(function() {
                 loadingScreen.style.display = 'none';
                 body.classList.remove('loading');
+                // Show welcome popup after loading screen
+                initWelcomePopup();
             }, 800); // Match CSS transition duration
         }, 5000); // Show for 5 seconds
+    } else {
+        // If no loading screen, show popup immediately
+        initWelcomePopup();
     }
+}
+
+// Welcome Popup Handler
+function initWelcomePopup() {
+    const welcomePopup = document.getElementById('welcomePopup');
+    const welcomePopupClose = document.getElementById('welcomePopupClose');
+    const body = document.body;
+    
+    if (!welcomePopup) return;
+    
+    // Show popup after a short delay
+    setTimeout(function() {
+        welcomePopup.classList.add('active');
+        body.style.overflow = 'hidden';
+    }, 500);
+    
+    // Close popup function
+    function closePopup() {
+        welcomePopup.classList.remove('active');
+        body.style.overflow = '';
+    }
+    
+    // Close button
+    if (welcomePopupClose) {
+        welcomePopupClose.addEventListener('click', closePopup);
+    }
+    
+    // Close on overlay click
+    welcomePopup.addEventListener('click', function(e) {
+        if (e.target === welcomePopup) {
+            closePopup();
+        }
+    });
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && welcomePopup.classList.contains('active')) {
+            closePopup();
+        }
+    });
 }
 
 // Initialize loading screen immediately
@@ -266,17 +391,33 @@ document.addEventListener('DOMContentLoaded', function() {
     setNewsletterSpacing();
     window.addEventListener('resize', setNewsletterSpacing);
     
+    // Set testimonials spacing to match footer height
+    setTestimonialsSpacing();
+    window.addEventListener('resize', setTestimonialsSpacing);
+    
     // Prevent scroll bounce
     preventScrollBounce();
     
     // Initialize programs animation
     initProgramsAnimation();
     
+    // Initialize steps animation
+    initStepsAnimation();
+    
     // Initialize back to top button
     initBackToTop();
     
     // Initialize event modal
     initEventModal();
+    
+    // Initialize footer logo scroll to top
+    initFooterLogoScroll();
+    
+    // Initialize floating social media button
+    initFloatingSocial();
+    
+    // Initialize page transition loader
+    initPageTransitionLoader();
 });
 
 // Back to Top Button
@@ -308,6 +449,83 @@ function initBackToTop() {
     
     // Initial check
     toggleBackToTop();
+}
+
+// Footer Logo Scroll to Top
+function initFooterLogoScroll() {
+    const footerLogoLink = document.getElementById('footer-logo-link');
+    
+    if (footerLogoLink) {
+        footerLogoLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+}
+
+// Floating Social Media Icons
+function initFloatingSocial() {
+    // No additional functionality needed - icons are always visible
+}
+
+// Page Transition Loader
+function initPageTransitionLoader() {
+    const pageTransitionLoader = document.getElementById('pageTransitionLoader');
+    if (!pageTransitionLoader) return;
+    
+    // Hide loader when page finishes loading (with a small delay for smooth transition)
+    function hideLoader() {
+        setTimeout(function() {
+            pageTransitionLoader.classList.remove('active');
+        }, 300);
+    }
+    
+    // Hide loader on page load
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        hideLoader();
+    } else {
+        window.addEventListener('load', hideLoader);
+        document.addEventListener('DOMContentLoaded', hideLoader);
+    }
+    
+    // Get all internal links (links to other pages on the site)
+    const internalLinks = document.querySelectorAll('a[href]');
+    
+    internalLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        
+        // Skip external links, anchor links, and links with target="_blank"
+        if (!href) return;
+        if (href.startsWith('#')) return;
+        if (link.getAttribute('target') === '_blank') return;
+        if (href.startsWith('http') && !href.includes(window.location.hostname)) return;
+        
+        // Check if it's an internal page link
+        const isInternalPage = href.endsWith('.html') || 
+                               href.startsWith('/') || 
+                               href.startsWith('./') || 
+                               href.startsWith('../') ||
+                               (!href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:'));
+        
+        if (isInternalPage) {
+            link.addEventListener('click', function(e) {
+                // Show loader immediately
+                pageTransitionLoader.classList.add('active');
+                
+                // Store in sessionStorage so new page knows to show loader
+                sessionStorage.setItem('showPageLoader', 'true');
+            });
+        }
+    });
+    
+    // Show loader if coming from another page
+    if (sessionStorage.getItem('showPageLoader') === 'true') {
+        pageTransitionLoader.classList.add('active');
+        sessionStorage.removeItem('showPageLoader');
+    }
 }
 
 // Event Modal functionality
