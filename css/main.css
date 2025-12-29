@@ -572,6 +572,8 @@ nav a:hover::after {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.4s ease, visibility 0.4s ease;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .welcome-popup-overlay.active {
@@ -590,6 +592,10 @@ nav a:hover::after {
     transform: scale(0.9) translateY(20px);
     transition: transform 0.4s ease;
     animation: popupPulse 2s ease-in-out infinite;
+    margin: auto;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .welcome-popup-overlay.active .welcome-popup-container {
@@ -790,9 +796,17 @@ nav a:hover::after {
 }
 
 @media (max-width: 768px) {
+    .welcome-popup-overlay {
+        padding: 10px;
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+    
     .welcome-popup-container {
         max-width: 100%;
         border-radius: 20px;
+        max-height: calc(100vh - 20px);
+        margin: 0;
     }
     
     .welcome-popup-content {
@@ -837,6 +851,7 @@ nav a:hover::after {
         width: 35px;
         height: 35px;
         font-size: 24px;
+        z-index: 10003;
     }
     
     .welcome-popup-badge {

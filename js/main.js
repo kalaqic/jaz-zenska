@@ -294,7 +294,10 @@ function initWelcomePopup() {
     // Show popup after a short delay
     setTimeout(function() {
         welcomePopup.classList.add('active');
-        body.style.overflow = 'hidden';
+        // Only prevent body scroll on desktop, not mobile
+        if (window.innerWidth > 768) {
+            body.style.overflow = 'hidden';
+        }
     }, 500);
     
     // Close popup function
