@@ -232,9 +232,8 @@ function preventScrollBounce() {
         });
     }, { passive: true });
     
-    // Prevent touch overscroll on mobile - only at the very edges
-    // Disabled for now to allow normal scrolling
-    // The CSS overscroll-behavior: contain should handle bounce prevention
+    // Use CSS overscroll-behavior for bounce prevention
+    // This is handled by CSS, no need for aggressive JavaScript
 }
 
 // Loading Screen Handler

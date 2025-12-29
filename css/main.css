@@ -34,9 +34,9 @@ body {
     width: 100%;
     max-width: 100vw;
     position: relative;
-    overscroll-behavior-y: contain;
+    overscroll-behavior-y: none;
     padding-bottom: 0;
-    touch-action: pan-y;
+    touch-action: pan-y pan-x;
 }
 
 body.loading {
@@ -46,9 +46,9 @@ body.loading {
 html {
     scroll-behavior: smooth;
     background-color: var(--main-white);
-    overscroll-behavior-y: contain;
+    overscroll-behavior-y: none;
     overflow-x: hidden;
-    touch-action: pan-y;
+    touch-action: pan-y pan-x;
 }
 
 /* ===== LOADING SCREEN ===== */
@@ -1968,14 +1968,7 @@ nav a:hover::after {
 }
 
 .book-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--mid-violet) 0%, var(--pinky) 50%, var(--mid-violet) 100%);
-    animation: shimmer 3s ease-in-out infinite;
+    display: none;
 }
 
 @keyframes shimmer {
@@ -2045,6 +2038,12 @@ nav a:hover::after {
     transition: transform 0.3s ease;
     position: relative;
     border: 3px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+}
+
+.book-cover > div {
+    text-align: center;
+    width: 100%;
 }
 
 .book-cover:hover {
@@ -3068,6 +3067,14 @@ nav a:hover::after {
     box-shadow: 0 30px 80px rgba(100, 56, 67, 0.3);
 }
 
+.jaz-media-image-mobile {
+    display: none;
+}
+
+.jaz-media-content-mobile {
+    display: none;
+}
+
 .jaz-media-image {
     position: relative;
     width: 100%;
@@ -3083,55 +3090,77 @@ nav a:hover::after {
 }
 
 @media (max-width: 768px) {
-    .jaz-media-hero-card {
-        flex-direction: column;
+    .jaz-media-showcase {
+        margin-top: 80px;
     }
     
+    .jaz-media-title {
+        font-size: 42px;
+        margin-bottom: 40px;
+    }
+    
+    .jaz-media-hero-card {
+        flex-direction: column;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+    
+    /* Hide desktop overlay on mobile */
     .jaz-media-image {
-        height: 350px;
-        position: relative;
+        display: none;
+    }
+    
+    /* Show mobile image first */
+    .jaz-media-image-mobile {
+        display: block;
+        width: 100%;
+        height: 200px;
+        background-image: url('../images/inervju.webp');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 20px 20px 0 0;
         order: 1;
     }
     
-    .jaz-media-image img {
-        object-fit: contain;
-        object-position: center;
-    }
-    
-    .jaz-media-overlay {
-        position: relative;
+    /* Show mobile content below image */
+    .jaz-media-content-mobile {
+        display: block;
+        width: 100%;
+        padding: 40px 25px;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 0 0 20px 20px;
+        margin-top: -2px;
         order: 2;
-        padding: 40px 30px;
-        background: linear-gradient(135deg, rgba(100, 56, 67, 0.95) 0%, rgba(0, 0, 0, 0.9) 100%);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        min-height: auto;
+        text-align: center;
     }
     
-    .jaz-media-content {
-        max-width: 100%;
-        position: relative;
-        z-index: 1;
+    .jaz-media-content-mobile h4 {
+    font-family: 'Playfair Display', serif;
+        font-size: 24px;
+        color: var(--white);
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     }
     
-    .jaz-media-content h4 {
-    font-size: 28px;
-        margin-bottom: 20px;
-    }
-    
-    .jaz-media-content p {
-        font-size: 16px;
-        margin-bottom: 30px;
-    line-height: 1.7;
-    }
-    
-    .jaz-media-button {
-        padding: 16px 35px;
+    .jaz-media-content-mobile p {
         font-size: 14px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 25px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    .jaz-media-content-mobile .jaz-media-button {
+        padding: 14px 30px;
+        font-size: 12px;
         white-space: normal;
         word-wrap: break-word;
         text-align: center;
+        display: inline-block;
     }
 }
 
@@ -3937,20 +3966,26 @@ nav a:hover::after {
     
     .book-content {
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     
     .book-content h2 {
         font-size: 28px;
+        text-align: center;
     }
     
     .book-content h3 {
         font-size: 22px;
         margin-bottom: 20px;
+        text-align: center;
     }
     
     .book-content p {
         font-size: 15px;
         margin-bottom: 20px;
+        text-align: center;
     }
     
     .book-button {
@@ -3961,9 +3996,26 @@ nav a:hover::after {
         justify-content: center;
     }
     
+    .book-offer-header {
+        text-align: center;
+    }
+    
+    .book-offer-tag {
+        text-align: center;
+    }
+    
     .book-offer-highlight {
+        text-align: center;
         padding: 20px 20px;
         margin: 25px 0;
+    }
+    
+    .book-offer-highlight p {
+        text-align: center;
+    }
+    
+    .book-offer-note {
+        text-align: center;
     }
     
     .book-offer-highlight p {
@@ -4196,16 +4248,12 @@ nav a:hover::after {
     
         .jaz-about-image-mobile {
         width: 100%;
-        height: 400px;
+        height: 200px;
         background-image: url('../images/portret.webp');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         border-radius: 20px 20px 0 0;
-        display: block;
-    }
-    
-    .jaz-about-image-mobile {
         display: block;
     }
     
