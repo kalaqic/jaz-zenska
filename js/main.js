@@ -232,28 +232,9 @@ function preventScrollBounce() {
         });
     }, { passive: true });
     
-    // Prevent touch overscroll on mobile
-    let touchStartY = 0;
-    
-    document.addEventListener('touchstart', function(e) {
-        touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-    
-    document.addEventListener('touchmove', function(e) {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
-        const maxScroll = documentHeight - windowHeight;
-        const touchY = e.touches[0].clientY;
-        const deltaY = touchStartY - touchY;
-        
-        // Prevent scrolling down when at bottom, or scrolling up when at top
-        if ((scrollTop >= maxScroll && deltaY < 0) || (scrollTop <= 0 && deltaY > 0)) {
-            e.preventDefault();
-        }
-        
-        touchStartY = touchY;
-    }, { passive: false });
+    // Prevent touch overscroll on mobile - only at the very edges
+    // Disabled for now to allow normal scrolling
+    // The CSS overscroll-behavior: contain should handle bounce prevention
 }
 
 // Loading Screen Handler
