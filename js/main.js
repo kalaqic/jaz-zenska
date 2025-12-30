@@ -239,11 +239,32 @@ function preventScrollBounce() {
 // Loading Screen Handler
 function initLoadingScreen() {
     const loadingScreen = document.getElementById('loadingScreen');
+    const quoteElement = document.getElementById('loadingQuote');
     const body = document.body;
+    
+    // Empowering quotes in Slovenian
+    const quotes = [
+        "Vsaka ženska nosi v sebi vso modrost in moč, ki jo potrebuje.",
+        "Tvoja notranja moč je neomejena. Odkrij jo in živi svojo polno moč.",
+        "Avtentičnost je najlepša oblika lepote. Bodi, kdo si res.",
+        "Vsaka ženska zasluži živeti življenje, ki jo napolnjuje in navdihuje.",
+        "Poveži se s svojo notranjo modrostjo in ustvari življenje, ki si ga zaslužiš.",
+        "Tvoja transformacija se začne z odločitvijo, da verjameš vase.",
+        "V skupnosti žensk najdemo moč, ki nas vodi na poti rasti in spremembe."
+    ];
     
     if (loadingScreen) {
         // Prevent scrolling while loading
         body.classList.add('loading');
+        
+        // Display random quote
+        if (quoteElement) {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            const quoteText = quoteElement.querySelector('.quote-text');
+            if (quoteText) {
+                quoteText.textContent = randomQuote;
+            }
+        }
         
         // Hide loading screen after 5 seconds
         setTimeout(function() {

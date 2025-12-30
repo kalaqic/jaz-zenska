@@ -77,12 +77,63 @@ html {
     flex-direction: column;
     align-items: center;
     gap: 40px;
+    max-width: 600px;
+    padding: 0 30px;
 }
 
 .loading-logo {
     width: 200px;
     height: auto;
     animation: fadeInScale 0.8s ease-out;
+}
+
+.loading-quote {
+    text-align: center;
+    opacity: 0;
+    animation: fadeInQuote 1s ease-out 0.5s forwards;
+    max-width: 500px;
+    padding: 30px 40px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+.quote-decoration-top {
+    font-size: 48px;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1;
+    margin-bottom: 10px;
+    font-family: 'Playfair Display', serif;
+}
+
+.quote-decoration-bottom {
+    font-size: 48px;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1;
+    margin-top: 10px;
+    font-family: 'Playfair Display', serif;
+}
+
+.quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.8;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15);
+    font-style: italic;
+    margin: 0;
+    font-weight: 400;
+}
+
+.quote-author {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 20px;
+    font-style: italic;
+    letter-spacing: 0.5px;
 }
 
 .loader {
@@ -92,6 +143,54 @@ html {
     border-top: 4px solid var(--white);
     border-radius: 50%;
     animation: spin 1s linear infinite;
+}
+
+@keyframes fadeInQuote {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading Screen Mobile Styles */
+@media (max-width: 768px) {
+    .loading-content {
+        gap: 30px;
+        padding: 0 20px;
+    }
+    
+    .loading-logo {
+        width: 150px;
+    }
+    
+    .loading-quote {
+        padding: 25px 25px;
+        max-width: 100%;
+    }
+    
+    .quote-decoration-top,
+    .quote-decoration-bottom {
+        font-size: 36px;
+    }
+    
+    .quote-text {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+    
+    .quote-author {
+        font-size: 12px;
+        margin-top: 15px;
+    }
+    
+    .loader {
+        width: 50px;
+        height: 50px;
+    }
 }
 
 @keyframes spin {
@@ -1186,7 +1285,7 @@ nav a:hover::after {
 /* ===== CURRENT EVENT SECTION ===== */
 .current-event {
     background: linear-gradient(135deg, var(--almost-white) 0%, var(--main-white) 100%);
-    padding: 120px 0 100px 0;
+    padding: 60px 0 60px 0;
     position: relative;
     z-index: 2;
     overflow: visible;
@@ -1455,7 +1554,7 @@ nav a:hover::after {
 /* ===== PROGRAMS SECTION ===== */
 .programs {
     background: linear-gradient(180deg, var(--main-white) 0%, var(--almost-white) 100%);
-    padding: 120px 0;
+    padding: 60px 0;
     position: relative;
     z-index: 2;
     overflow: hidden;
@@ -1961,7 +2060,7 @@ nav a:hover::after {
 /* ===== BOOK SECTION ===== */
 .book-section {
     background: var(--almost-white);
-    padding: 140px 0 400px 0;
+    padding: 60px 0 200px 0;
     position: relative;
     z-index: 2;
     overflow: hidden;
@@ -2197,7 +2296,7 @@ nav a:hover::after {
 .blog {
     width: 100%;
     margin: 0;
-    padding: 140px 0 400px 0;
+    padding: 140px 0 200px 0;
     position: relative;
     z-index: 2;
     background-color: var(--main-white);
@@ -2268,7 +2367,7 @@ nav a:hover::after {
 .more-posts-btn {
     display: block;
     width: 200px;
-    margin: 60px auto 0;
+    margin: 30px auto 0;
     padding: 15px 40px;
     background-color: var(--mid-violet);
     border: 2px solid var(--mid-violet);
@@ -2749,7 +2848,7 @@ nav a:hover::after {
 .intervju-section,
 .e-trgovina-section,
 .stik-z-nami-section {
-    padding: 120px 0;
+    padding: 60px 0;
     position: relative;
     width: 100%;
     box-sizing: border-box;
@@ -2760,7 +2859,7 @@ nav a:hover::after {
 
 .jaz-zenska-section,
 .stik-z-nami-section {
-    padding: 140px 0 400px 0;
+    padding: 60px 0 200px 0;
 }
 
 /* Featured Steps Showcase */
@@ -3036,6 +3135,7 @@ nav a:hover::after {
 /* Media Showcase */
 .jaz-media-showcase {
     margin-top: 120px;
+    margin-bottom: 60px;
 }
 
 .jaz-media-title {
@@ -3255,7 +3355,7 @@ nav a:hover::after {
 
 .aktualno-section {
     background: linear-gradient(180deg, var(--main-white) 0%, var(--hero-light) 100%);
-    padding: 100px 0;
+    padding: 60px 0;
     position: relative;
     overflow: hidden;
 }
