@@ -27,28 +27,6 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-content">
-            <img src="images/logo/logo jaz zenska.webp" alt="Jaz Ženska Logo" class="loading-logo">
-            <div class="loading-quote" id="loadingQuote">
-                <div class="quote-decoration-top">❝</div>
-                <p class="quote-text">Vsaka ženska nosi v sebi vso modrost in moč, ki jo potrebuje.</p>
-                <div class="quote-decoration-bottom">❞</div>
-                <div class="quote-author">— Iz knjige "Moja pot"</div>
-            </div>
-            <div class="loader"></div>
-        </div>
-    </div>
-
-    <!-- Page Transition Loading Screen -->
-    <div class="page-transition-loader" id="pageTransitionLoader">
-        <div class="page-transition-content">
-            <img src="images/logo/logo jaz zenska.webp" alt="Jaz Ženska Logo" class="page-transition-logo">
-            <div class="page-transition-spinner"></div>
-        </div>
-    </div>
-
     <!-- Welcome Popup Modal -->
     <div class="welcome-popup-overlay" id="welcomePopup">
         <div class="welcome-popup-container">
@@ -197,8 +175,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
+                </div>
+                
             <!-- About Section -->
             <div class="jaz-about-showcase">
                 <div class="jaz-about-hero">
@@ -219,8 +197,8 @@
                         <p>Podpirati ženske na njihovi poti samoodkrivanja, osebne rasti in transformacije skozi skupnost, delavnice, izobraževanja in individualno delo.</p>
                     </div>
                 </div>
-            </div>
-            
+                </div>
+                
             <!-- Iz medijev -->
             <div class="jaz-media-showcase">
                 <h3 class="jaz-media-title">Iz medijev</h3>
@@ -444,7 +422,7 @@
                                 <p>Postanite aktivna ustvarjalka svojega življenja. Ta program vas nauči identificirati in spremeniti omejujoča prepričanja ter postaviti jasne cilje z močjo namere in dejanja.</p>
                                 <a href="#" class="program-button">Preberi več</a>
                     </div>
-                    </div>
+                </div>
                     </div>
                 </div>
                 
@@ -462,40 +440,8 @@
                                 <a href="#" class="program-button">Preberi več</a>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
         </div>
-    </section>
-
-    <!-- Book Section -->
-    <section class="book-section">
-        <div class="book-offer-badge">LIMITIRANA PONUDBA</div>
-        <div class="book-container">
-            <div class="book-image">
-                <div class="book-cover">
-                    <div style="font-size: 18px; margin-bottom: 20px;">JAZ ŽENSKA</div>
-                    <div style="font-size: 32px; font-weight: bold;">MOJA POT</div>
                 </div>
-                <div class="book-free-badge">BREZPLAČNO</div>
-            </div>
-            <div class="book-content">
-                <div class="book-offer-header">
-                    <span class="book-offer-tag">Ekskluzivna ponudba</span>
-                    <h2>Knjiga "Moja pot"</h2>
-                </div>
-                <h3>Pridružite se skupnosti in prejmite e-knjigo brezplačno!</h3>
-                <p>Odkrijte svojo notranjo modrost in moč skozi starodavne ženske prakse in sodobne tehnike samoodkrivanja. Ta knjiga je vodnik vsake ženske na poti k avtentičnemu jazu.</p>
-                <div class="book-offer-highlight">
-                    <p><strong>Pridružite se naši skupnosti zdaj in prejmite e-knjigo "Moja pot" popolnoma brezplačno!</strong></p>
-                    <p class="book-offer-note">Ta ekskluzivna ponudba je na voljo le za nove članice skupnosti.</p>
-                </div>
-                <a href="https://www.skool.com/jzenska-4779/about" class="book-button" target="_blank" rel="noopener noreferrer">
-                    <span>Pridruži se - BREZPLAČNO</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </a>
             </div>
         </div>
     </section>
@@ -586,7 +532,7 @@
                     <p class="testimonial-text">Hvala Marjanci za njeno modrost in ljubezen. Skupnost, ki sem je del, je neprecenljiva in napolnjena s sestrami, ki me razumejo.</p>
                     <div class="testimonial-author">
                         <span class="author-name">Alenka</span>
-                    </div>
+                </div>
                 </div>
                 
                 <div class="testimonial-card">
@@ -604,6 +550,28 @@
                         <span class="author-name">Maja</span>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Golden Separator Line -->
+            <div class="testimonials-newsletter-separator"></div>
+            
+            <!-- Newsletter Form -->
+            <div class="newsletter-form-wrapper">
+                <h2 class="newsletter-title">Prijavite se na prejemanje naših navdihov</h2>
+                <p class="newsletter-description">Prijavite se na naše e-novičke in prejmite navdihujoče vsebine za osebno rast, žensko modrost in podporo na vaši poti. ❤️</p>
+            
+            <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+                    <div class="newsletter-form-row">
+                <input type="text" placeholder="Ime" required>
+                <input type="text" placeholder="Priimek" required>
+                    </div>
+                    <div class="newsletter-form-row newsletter-form-row-email">
+                        <input type="email" placeholder="Email" required>
+                <button type="submit">PRIJAVI ME</button>
+                    </div>
+            </form>
+            
+            <p class="newsletter-note">*S prijavo na novice se strinjate s politiko zasebnosti.</p>
             </div>
         </div>
     </section>

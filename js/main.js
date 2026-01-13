@@ -236,53 +236,6 @@ function preventScrollBounce() {
     // This is handled by CSS, no need for aggressive JavaScript
 }
 
-// Loading Screen Handler
-function initLoadingScreen() {
-    const loadingScreen = document.getElementById('loadingScreen');
-    const quoteElement = document.getElementById('loadingQuote');
-    const body = document.body;
-    
-    // Empowering quotes in Slovenian
-    const quotes = [
-        "Vsaka ženska nosi v sebi vso modrost in moč, ki jo potrebuje.",
-        "Tvoja notranja moč je neomejena. Odkrij jo in živi svojo polno moč.",
-        "Avtentičnost je najlepša oblika lepote. Bodi, kdo si res.",
-        "Vsaka ženska zasluži živeti življenje, ki jo napolnjuje in navdihuje.",
-        "Poveži se s svojo notranjo modrostjo in ustvari življenje, ki si ga zaslužiš.",
-        "Tvoja transformacija se začne z odločitvijo, da verjameš vase.",
-        "V skupnosti žensk najdemo moč, ki nas vodi na poti rasti in spremembe."
-    ];
-    
-    if (loadingScreen) {
-        // Prevent scrolling while loading
-        body.classList.add('loading');
-        
-        // Display random quote
-        if (quoteElement) {
-            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-            const quoteText = quoteElement.querySelector('.quote-text');
-            if (quoteText) {
-                quoteText.textContent = randomQuote;
-            }
-        }
-        
-        // Hide loading screen after 5 seconds
-        setTimeout(function() {
-            loadingScreen.classList.add('fade-out');
-            
-            // Remove from DOM and re-enable scrolling after fade-out completes
-            setTimeout(function() {
-                loadingScreen.style.display = 'none';
-                body.classList.remove('loading');
-                // Show welcome popup after loading screen
-                initWelcomePopup();
-            }, 800); // Match CSS transition duration
-        }, 5000); // Show for 5 seconds
-    } else {
-        // If no loading screen, show popup immediately
-        initWelcomePopup();
-    }
-}
 
 // Welcome Popup Handler
 function initWelcomePopup() {
@@ -327,8 +280,8 @@ function initWelcomePopup() {
     });
 }
 
-// Initialize loading screen immediately
-initLoadingScreen();
+// Initialize welcome popup immediately
+initWelcomePopup();
 
 // Initialize animations on page load
 // ===== BURGER MENU TOGGLE =====
@@ -421,7 +374,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initFloatingSocial();
     
     // Initialize page transition loader
-    initPageTransitionLoader();
 });
 
 // Back to Top Button
@@ -476,61 +428,6 @@ function initFloatingSocial() {
 }
 
 // Page Transition Loader
-function initPageTransitionLoader() {
-    const pageTransitionLoader = document.getElementById('pageTransitionLoader');
-    if (!pageTransitionLoader) return;
-    
-    // Hide loader when page finishes loading (with a small delay for smooth transition)
-    function hideLoader() {
-        setTimeout(function() {
-            pageTransitionLoader.classList.remove('active');
-        }, 300);
-    }
-    
-    // Hide loader on page load
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        hideLoader();
-    } else {
-        window.addEventListener('load', hideLoader);
-        document.addEventListener('DOMContentLoaded', hideLoader);
-    }
-    
-    // Get all internal links (links to other pages on the site)
-    const internalLinks = document.querySelectorAll('a[href]');
-    
-    internalLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        
-        // Skip external links, anchor links, and links with target="_blank"
-        if (!href) return;
-        if (href.startsWith('#')) return;
-        if (link.getAttribute('target') === '_blank') return;
-        if (href.startsWith('http') && !href.includes(window.location.hostname)) return;
-        
-        // Check if it's an internal page link
-        const isInternalPage = href.endsWith('.html') || 
-                               href.startsWith('/') || 
-                               href.startsWith('./') || 
-                               href.startsWith('../') ||
-                               (!href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:'));
-        
-        if (isInternalPage) {
-            link.addEventListener('click', function(e) {
-                // Show loader immediately
-                pageTransitionLoader.classList.add('active');
-                
-                // Store in sessionStorage so new page knows to show loader
-                sessionStorage.setItem('showPageLoader', 'true');
-            });
-        }
-    });
-    
-    // Show loader if coming from another page
-    if (sessionStorage.getItem('showPageLoader') === 'true') {
-        pageTransitionLoader.classList.add('active');
-        sessionStorage.removeItem('showPageLoader');
-    }
-}
 
 // Event Modal functionality
 function initEventModal() {
