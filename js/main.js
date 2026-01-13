@@ -352,6 +352,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setTestimonialsSpacing();
     window.addEventListener('resize', setTestimonialsSpacing);
     
+    // Initialize scheduling system
+    initSchedulingSystem();
+    
     // Prevent scroll bounce
     preventScrollBounce();
     
@@ -465,4 +468,269 @@ function initEventModal() {
             closeModal();
         }
     });
+}
+
+// Scheduling System
+function initSchedulingSystem() {
+    const scheduleBtn = document.getElementById('schedule-btn');
+    const wrapper = document.getElementById('stik-z-nami-wrapper');
+    const image = document.getElementById('stik-z-nami-image');
+    const content = document.getElementById('stik-z-nami-content');
+    const schedulingInterface = document.getElementById('scheduling-interface');
+    const successMessage = document.getElementById('scheduling-success');
+    const scheduleCallBtn = document.getElementById('schedule-call-btn');
+    
+    if (!scheduleBtn || !wrapper) return;
+    
+    let currentDate = new Date();
+    let selectedDate = null;
+    let selectedTime = null;
+    
+    // Initialize calendar
+    function initCalendar() {
+        renderCalendar();
+        renderTimeSlots();
+    }
+    
+    // Render calendar
+    function renderCalendar() {
+        const calendarGrid = document.getElementById('calendar-grid');
+        const monthYear = document.getElementById('calendar-month-year');
+        if (!calendarGrid || !monthYear) return;
+        
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        
+        monthYear.textContent = new Date(year, month).toLocaleDateString('sl-SI', { month: 'long', year: 'numeric' });
+        
+        // Get first day of month and number of days
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+        
+        // Clear grid
+        calendarGrid.innerHTML = '';
+        
+        // Add day headers
+        const dayHeaders = ['Po', 'To', 'Sr', 'Če', 'Pe', 'So', 'Ne'];
+        dayHeaders.forEach(day => {
+            const header = document.createElement('div');
+            header.className = 'calendar-day-header';
+            header.textContent = day;
+            calendarGrid.appendChild(header);
+        });
+        
+        // Add empty cells for days before month starts
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement('div');
+            calendarGrid.appendChild(empty);
+        }
+        
+        // Add days
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            dayElement.textContent = day;
+            
+            const date = new Date(year, month, day);
+            const isPast = date < today && date.toDateString() !== today.toDateString();
+            const isToday = date.toDateString() === today.toDateString();
+            
+            if (isPast) {
+                dayElement.classList.add('disabled');
+            } else if (isToday) {
+                dayElement.classList.add('today');
+            }
+            
+            if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
+                dayElement.classList.add('selected');
+            }
+            
+            if (!isPast) {
+                dayElement.addEventListener('click', () => {
+                    selectedDate = date;
+                    selectedTime = null;
+                    renderCalendar();
+                    renderTimeSlots();
+                    updateSelectedInfo();
+                });
+            }
+            
+            calendarGrid.appendChild(dayElement);
+        }
+    }
+    
+    // Render time slots
+    function renderTimeSlots() {
+        const timeSlotsGrid = document.getElementById('time-slots-grid');
+        if (!timeSlotsGrid) return;
+        
+        timeSlotsGrid.innerHTML = '';
+        
+        if (!selectedDate) {
+            timeSlotsGrid.innerHTML = '<p style="grid-column: 1/-1; color: var(--dark-violet);">Izberite najprej datum</p>';
+            return;
+        }
+        
+        // Generate time slots (9:00 to 17:00, every hour)
+        const timeSlots = [];
+        for (let hour = 9; hour <= 17; hour++) {
+            timeSlots.push(`${hour.toString().padStart(2, '0')}:00`);
+        }
+        
+        timeSlots.forEach(time => {
+            const slot = document.createElement('div');
+            slot.className = 'time-slot';
+            slot.textContent = time;
+            
+            if (selectedTime === time) {
+                slot.classList.add('selected');
+            }
+            
+            slot.addEventListener('click', () => {
+                selectedTime = time;
+                renderTimeSlots();
+                updateSelectedInfo();
+            });
+            
+            timeSlotsGrid.appendChild(slot);
+        });
+    }
+    
+    // Update selected info and validate form
+    function updateSelectedInfo() {
+        const selectedInfo = document.getElementById('selected-info');
+        const userEmailInput = document.getElementById('user-email');
+        if (!selectedInfo) return;
+        
+        if (selectedDate && selectedTime) {
+            const dateStr = selectedDate.toLocaleDateString('sl-SI', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            selectedInfo.innerHTML = `<p><strong>Izbrano:</strong> ${dateStr} ob ${selectedTime}</p>`;
+        } else if (selectedDate) {
+            const dateStr = selectedDate.toLocaleDateString('sl-SI', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            selectedInfo.innerHTML = `<p><strong>Datum:</strong> ${dateStr}</p>`;
+        } else {
+            selectedInfo.innerHTML = '<p>Izberite datum in uro</p>';
+        }
+        
+        // Enable/disable schedule button based on form completion
+        if (scheduleCallBtn) {
+            const hasEmail = userEmailInput && userEmailInput.value.trim() && userEmailInput.value.includes('@');
+            scheduleCallBtn.disabled = !(selectedDate && selectedTime && hasEmail);
+        }
+    }
+    
+    // Add email input listener
+    const userEmailInput = document.getElementById('user-email');
+    if (userEmailInput) {
+        userEmailInput.addEventListener('input', updateSelectedInfo);
+    }
+    
+    // Month navigation
+    const prevMonthBtn = document.getElementById('prev-month');
+    const nextMonthBtn = document.getElementById('next-month');
+    
+    if (prevMonthBtn) {
+        prevMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+    }
+    
+    if (nextMonthBtn) {
+        nextMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+    }
+    
+    // Schedule button click
+    scheduleBtn.addEventListener('click', () => {
+        wrapper.classList.add('animate');
+        
+        setTimeout(() => {
+            schedulingInterface.classList.add('active');
+            initCalendar();
+        }, 800);
+    });
+    
+    // Schedule call button
+    if (scheduleCallBtn) {
+        scheduleCallBtn.addEventListener('click', async () => {
+            if (!selectedDate || !selectedTime) return;
+            
+            // Get user email
+            const userEmailInput = document.getElementById('user-email');
+            const userEmail = userEmailInput ? userEmailInput.value.trim() : '';
+            
+            // Validate email
+            if (!userEmail || !userEmail.includes('@')) {
+                alert('Prosimo, vnesite veljaven email naslov.');
+                if (userEmailInput) userEmailInput.focus();
+                return;
+            }
+            
+            // Disable button to prevent multiple submissions
+            scheduleCallBtn.disabled = true;
+            scheduleCallBtn.textContent = 'Pošiljanje...';
+            
+            // Format date for email
+            const dateStr = selectedDate.toLocaleDateString('sl-SI', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Prepare email template parameters
+            const templateParams = {
+                to_email: userEmail,
+                date: dateStr,
+                time: selectedTime,
+                message: `Nova prijava za brezplačen posvet:\n\nEmail: ${userEmail}\nDatum: ${dateStr}\nUra: ${selectedTime}\n\n${dateStr} ob ${selectedTime}`,
+                formatted_datetime: `${dateStr} ob ${selectedTime}`,
+                from_name: 'Jaz Ženska Spletna Stran',
+                user_email: userEmail
+            };
+            
+            try {
+                // Send email using EmailJS
+                const response = await emailjs.send(
+                    'service_9ssi5g8',
+                    'template_s29mxpr',
+                    templateParams
+                );
+                
+                console.log('Email sent successfully:', response);
+                
+                // Fade out scheduling interface
+                schedulingInterface.style.transition = 'opacity 0.5s ease';
+                schedulingInterface.style.opacity = '0';
+                
+                setTimeout(() => {
+                    schedulingInterface.classList.remove('active');
+                    successMessage.classList.add('active');
+                }, 500);
+            } catch (error) {
+                console.error('Error sending email:', error);
+                console.error('Error details:', error.text || error.message);
+                alert('Prišlo je do napake pri pošiljanju. Prosimo, poskusite znova.');
+                scheduleCallBtn.disabled = false;
+                scheduleCallBtn.textContent = 'Zakazi posvet';
+            }
+        });
+    }
+    
+    // Initialize
+    updateSelectedInfo();
 }

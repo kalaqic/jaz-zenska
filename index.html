@@ -25,6 +25,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
+    
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            emailjs.init("qiqFSsAwoBNFDxP7n");
+        })();
+    </script>
 </head>
 <body>
     <!-- Welcome Popup Modal -->
@@ -483,11 +491,11 @@
     <!-- Stik z nami Section -->
     <section id="stik-z-nami" class="stik-z-nami-section">
         <div class="stik-z-nami-container">
-            <div class="stik-z-nami-wrapper">
-                <div class="stik-z-nami-image">
+            <div class="stik-z-nami-wrapper" id="stik-z-nami-wrapper">
+                <div class="stik-z-nami-image" id="stik-z-nami-image">
                     <img src="images/naroci se.webp" alt="Naroči se na brezplačni pogovor">
                 </div>
-                <div class="stik-z-nami-content">
+                <div class="stik-z-nami-content" id="stik-z-nami-content">
                     <div class="stik-z-nami-decoration">
                         <div class="stik-z-nami-flower">🌸</div>
                         <div class="stik-z-nami-sparkle">✨</div>
@@ -495,12 +503,46 @@
                     </div>
                     <h3>Naroči se na brezplačni posvet</h3>
                     <p>Začnite svojo pot z brezplačnim posvetom, kjer bomo skupaj raziskali vaše potrebe in cilje ter našli najboljšo pot za vas.</p>
-                    <a href="https://www.skool.com/jzenska-4779/calendar" class="stik-z-nami-button" target="_blank" rel="noopener noreferrer">
+                    <button class="stik-z-nami-button" id="schedule-btn">
                         <span>Naroči se na brezplačni pogovor</span>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                    </a>
+                    </button>
+                </div>
+                
+                <!-- Calendar/Scheduling Interface -->
+                <div class="scheduling-interface" id="scheduling-interface">
+                    <div class="scheduling-content">
+                        <h3>Izberite datum in uro</h3>
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button class="calendar-nav-btn" id="prev-month">‹</button>
+                                <h4 id="calendar-month-year"></h4>
+                                <button class="calendar-nav-btn" id="next-month">›</button>
+                            </div>
+                            <div class="calendar-grid" id="calendar-grid"></div>
+                        </div>
+                        <div class="time-slots-container" id="time-slots-container">
+                            <h4>Izberite uro:</h4>
+                            <div class="time-slots-grid" id="time-slots-grid"></div>
+                        </div>
+                        <div class="selected-info" id="selected-info"></div>
+                        <div class="email-input-container">
+                            <label for="user-email">Vaš email:</label>
+                            <input type="email" id="user-email" class="user-email-input" placeholder="vas@email.com" required>
+                        </div>
+                        <button class="schedule-call-btn" id="schedule-call-btn" disabled>Zakazi posvet</button>
+                    </div>
+                </div>
+                
+                <!-- Success Message -->
+                <div class="scheduling-success" id="scheduling-success">
+                    <div class="success-content">
+                        <div class="success-icon">✓</div>
+                        <h3>Uspešno ste zakazali brezplačen posvet</h3>
+                        <p>Kontakiracemo vas okoli nasljendjih korakov.</p>
+                    </div>
                 </div>
             </div>
         </div>
