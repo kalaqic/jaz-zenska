@@ -141,11 +141,12 @@
     <!-- Jaz ženska Section -->
     <section id="jaz-zenska" class="jaz-zenska-section">
         <div class="jaz-zenska-container">
-            <h2 class="jaz-zenska-main-title">Jaz ženska</h2>
+            <div class="jaz-zenska-main-title">
+                <img src="images/Jaz Zenska-LOGO-Gold.svg" alt="Jaz Ženska Logo" class="jaz-zenska-logo">
+            </div>
             
             <!-- Skupnost Jaz Ženska -->
             <div class="jaz-zenska-featured">
-                <h3 class="jaz-featured-title">Skupnost Jaz Ženska</h3>
                 <div class="jaz-steps-showcase">
                     <div class="jaz-step-featured" data-step="1">
                         <div class="step-bg-number">01</div>
@@ -423,14 +424,14 @@
                             <div class="program-number">02</div>
                             <h3>Jaz Ženska kreatorka svojega življenja</h3>
                             <div class="program-decoration"></div>
-            </div>
+                        </div>
                         <div class="program-card-back">
                             <h3>Jaz Ženska kreatorka svojega življenja</h3>
                             <div class="program-back-content">
                                 <p>Postanite aktivna ustvarjalka svojega življenja. Ta program vas nauči identificirati in spremeniti omejujoča prepričanja ter postaviti jasne cilje z močjo namere in dejanja.</p>
                                 <a href="#" class="program-button">Preberi več</a>
-                    </div>
-                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -448,7 +449,40 @@
                                 <a href="#" class="program-button">Preberi več</a>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
+
+    <!-- Money Back Guarantee Section -->
+    <section class="guarantee-section">
+        <div class="guarantee-container">
+            <div class="guarantee-content">
+                <h2 class="guarantee-title">100% Garancija vračila denarja</h2>
+                <div class="guarantee-icon">
+                    <img src="images/money-back-guarantee.png" alt="Money Back Guarantee">
+                </div>
+                <p class="guarantee-text">Če program ne izpolni vaših pričakovanj, vam vrnemo 100% denarja. Brez vprašanj. Brez komplikacij.</p>
+                <div class="guarantee-details">
+                    <div class="guarantee-detail-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>100% vračilo denarja</span>
+                    </div>
+                    <div class="guarantee-detail-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>14 dni za odločitev</span>
+                    </div>
+                    <div class="guarantee-detail-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Brez vprašanj</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -457,32 +491,65 @@
     <!-- Blog Section -->
     <section id="blog" class="blog">
         <div class="blog-container">
-            <h2>Blog</h2>
-            
-        <div class="blog-grid">
-            <div class="blog-card fade-in">
-                <div class="blog-card-image" style="background: linear-gradient(135deg, #2d5016, #4a7c28); color: white;">
-                    🌿
-                </div>
-                <div class="blog-content">
-                    <div class="blog-date">11 decembra, 2024</div>
-                    <h3>Moč Ženskih Krogov: Zakaj jih potrebujemo</h3>
-                    <p>Skozi tisočletja so se ženske zbirale v krogih, delile modrost in se podpirale. Odkrijte, kako lahko ženski krogi transformirajo vaše življenje...</p>
-                </div>
+            <div class="blog-header">
+                <h2>Blog</h2>
+                <p class="blog-subtitle">Odkrijte članke, nasvete in modrost o ženski moči, transformaciji in osebni rasti</p>
             </div>
             
-            <div class="blog-card fade-in">
-                <div class="blog-card-image" style="background: linear-gradient(135deg, var(--light-pink), var(--cream));">
-                    🌸
-                </div>
-                <div class="blog-content">
-                    <div class="blog-date">5 decembra, 2024</div>
-                    <h3>Lunini cikli in ženska energija</h3>
-                    <p>Kako uskladiti svoje življenje z luninimi fazami in odkrivati globlje povezave s svojo ciklično naravo. Praktični nasveti za vsakdanje življenje...</p>
-                </div>
+            <div class="blog-grid">
+                <a href="blog.html" class="blog-card-link">
+                    <article class="blog-card fade-in">
+                        <div class="blog-card-image-wrapper">
+                            <div class="blog-card-image" style="background: linear-gradient(135deg, #2d5016, #4a7c28);">
+                                <div class="blog-card-emoji">🌿</div>
+                            </div>
+                            <div class="blog-card-category">Skupnost</div>
+                        </div>
+                        <div class="blog-content">
+                            <div class="blog-date">11 decembra, 2024</div>
+                            <h3>Moč Ženskih Krogov: Zakaj jih potrebujemo</h3>
+                            <p>Skozi tisočletja so se ženske zbirale v krogih, delile modrost in se podpirale. Odkrijte, kako lahko ženski krogi transformirajo vaše življenje...</p>
+                            <div class="blog-read-more-link">
+                                Preberi več
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </article>
+                </a>
+                
+                <a href="blog.html" class="blog-card-link">
+                    <article class="blog-card fade-in">
+                        <div class="blog-card-image-wrapper">
+                            <div class="blog-card-image" style="background: linear-gradient(135deg, var(--pinky), var(--mid-violet));">
+                                <div class="blog-card-emoji">🌸</div>
+                            </div>
+                            <div class="blog-card-category">Ženska moč</div>
+                        </div>
+                        <div class="blog-content">
+                            <div class="blog-date">5 decembra, 2024</div>
+                            <h3>Lunini cikli in ženska energija</h3>
+                            <p>Kako uskladiti svoje življenje z luninimi fazami in odkrivati globlje povezave s svojo ciklično naravo. Praktični nasveti za vsakdanje življenje...</p>
+                            <div class="blog-read-more-link">
+                                Preberi več
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </article>
+                </a>
             </div>
-        </div>
-        <a href="blog.html" class="more-posts-btn">VEČ PRISPEVKOV</a>
+            
+            <div class="blog-footer">
+                <a href="blog.html" class="more-posts-btn">
+                    <span>VEČ PRISPEVKOV</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -501,12 +568,14 @@
                         <div class="stik-z-nami-sparkle">✨</div>
                         <div class="stik-z-nami-heart">💖</div>
                     </div>
+                    <div class="stik-z-nami-badge">Brezplačno</div>
                     <h3>Naroči se na brezplačni posvet</h3>
                     <p>Začnite svojo pot z brezplačnim posvetom, kjer bomo skupaj raziskali vaše potrebe in cilje ter našli najboljšo pot za vas.</p>
+                    <p class="stik-z-nami-instruction">Kliknite na gumb spodaj in izberite datum ter uro, ki vam ustreza, na koledarju.</p>
                     <button class="stik-z-nami-button" id="schedule-btn">
-                        <span>Naroči se na brezplačni pogovor</span>
+                        <span>Izberi datum in uro</span>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
                 </div>
@@ -629,17 +698,19 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>KONTAKT</h3>
-                <p>info@jazzenska.si</p>
+                <p><a href="mailto:info@jazzenska.si">info@jazzenska.si</a></p>
                 <p>Novo mesto, Slovenija</p>
             </div>
             
             <div class="footer-section">
                 <h3>NAVIGACIJA</h3>
                 <ul>
-                    <li><a href="#">O meni</a></li>
-                    <li><a href="#">Naša zgodba</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Meditacije</a></li>
+                    <li><a href="#about">O meni</a></li>
+                    <li><a href="#jaz-zenska">Naša zgodba</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="#affirmations">Meditacije</a></li>
+                    <li><a href="pravilnik-o-zasebnosti.html">Pravilnik o zasebnosti</a></li>
+                    <li><a href="splosni-pogoji.html">Splošni pogoji</a></li>
                 </ul>
             </div>
         </div>
@@ -648,7 +719,7 @@
         
         <div class="footer-bottom">
             <p>Jaz Ženska © 2025. Vse pravice pridržane.</p>
-            <p>Piškotki in politika zasebnosti</p>
+            <p><a href="pravilnik-o-zasebnosti.html" style="color: inherit; text-decoration: underline; opacity: 0.8;">Piškotki in politika zasebnosti</a></p>
             
             <div class="footer-social">
                 <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer"><img src="images/svg/facebook.svg" alt="Facebook"></a>
@@ -676,6 +747,81 @@
         <a href="#" aria-label="YouTube" class="floating-social-link">
             <img src="images/svg/youtube.svg" alt="YouTube">
         </a>
+    </div>
+
+    <!-- Cookie Banner -->
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-banner-content">
+            <div class="cookie-banner-text">
+                <h3>Uporabljamo piškotke</h3>
+                <p>Ta spletna stran uporablja piškotke za zagotavljanje pravilnega delovanja, analizo obiska in izboljšanje uporabniške izkušnje.</p>
+                <p class="cookie-banner-links">
+                    Več informacij najdeš v <a href="pravilnik-o-zasebnosti.html">Pravilniku o zasebnosti</a> in Politiki piškotkov.
+                </p>
+            </div>
+            <div class="cookie-banner-buttons">
+                <button class="cookie-btn cookie-btn-accept" id="cookieAccept">Sprejmi vse</button>
+                <button class="cookie-btn cookie-btn-settings" id="cookieSettings">Nastavitve</button>
+                <button class="cookie-btn cookie-btn-reject" id="cookieReject">Zavrni</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Settings Modal -->
+    <div class="cookie-settings-modal" id="cookieSettingsModal">
+        <div class="cookie-settings-overlay"></div>
+        <div class="cookie-settings-content">
+            <div class="cookie-settings-header">
+                <h2>Nastavitve piškotkov</h2>
+                <button class="cookie-settings-close" id="cookieSettingsClose" aria-label="Zapri">&times;</button>
+            </div>
+            <div class="cookie-settings-body">
+                <p>Izberite, katere piškotke želite sprejeti. Nujno potrebni piškotki so vedno aktivirani, saj so potrebni za osnovno delovanje spletne strani.</p>
+                
+                <div class="cookie-setting-item">
+                    <div class="cookie-setting-header-item">
+                        <div>
+                            <h3>Nujno potrebni piškotki</h3>
+                            <p>Ti piškotki so potrebni za osnovno delovanje spletne strani in jih ni mogoče onemogočiti.</p>
+                        </div>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" id="cookieNecessary" checked disabled>
+                            <span class="cookie-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="cookie-setting-item">
+                    <div class="cookie-setting-header-item">
+                        <div>
+                            <h3>Analitični piškotki</h3>
+                            <p>Ti piškotki omogočajo anonimno analizo obiska in uporabe spletnega mesta.</p>
+                        </div>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" id="cookieAnalytics">
+                            <span class="cookie-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="cookie-setting-item">
+                    <div class="cookie-setting-header-item">
+                        <div>
+                            <h3>Funkcionalni piškotki</h3>
+                            <p>Ti piškotki omogočajo izboljšano uporabniško izkušnjo.</p>
+                        </div>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" id="cookieFunctional">
+                            <span class="cookie-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="cookie-settings-footer">
+                <button class="cookie-btn cookie-btn-reject" id="cookieSettingsReject">Zavrni vse</button>
+                <button class="cookie-btn cookie-btn-accept" id="cookieSettingsSave">Shrani nastavitve</button>
+            </div>
+        </div>
     </div>
 
     <script src="js/main.js"></script>

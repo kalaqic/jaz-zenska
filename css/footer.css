@@ -3,6 +3,11 @@ footer {
     background-color: var(--brown);
     padding: 60px 0 30px;
     color: var(--white);
+    margin-top: 0;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    clear: both;
 }
 
 .footer-content {
@@ -33,10 +38,23 @@ footer {
     color: var(--white);
     text-decoration: none;
     opacity: 0.8;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, text-decoration 0.3s ease;
 }
 
 .footer-section a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.footer-section p a {
+    color: var(--white);
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.5);
+    text-underline-offset: 3px;
+}
+
+.footer-section p a:hover {
+    text-decoration-color: var(--white);
     opacity: 1;
 }
 

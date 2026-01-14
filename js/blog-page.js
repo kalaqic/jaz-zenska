@@ -1,37 +1,8 @@
 // Blog page functionality
 document.addEventListener('DOMContentLoaded', function() {
     initBlogModal();
-    setBlogPageSpacing();
-    window.addEventListener('resize', setBlogPageSpacing);
     initPageTransitionLoader();
 });
-
-// Set blog page spacing to match footer height for perfect scroll limit
-function setBlogPageSpacing() {
-    const footer = document.querySelector('footer');
-    const blogSection = document.querySelector('.blog-page-section');
-    
-    if (footer && blogSection) {
-        // Temporarily show footer to measure its height
-        const originalTransform = footer.style.transform;
-        const originalVisibility = footer.style.visibility;
-        const originalPosition = footer.style.position;
-        
-        footer.style.transform = 'translateY(0)';
-        footer.style.visibility = 'hidden';
-        footer.style.position = 'absolute';
-        
-        const footerHeight = footer.offsetHeight;
-        
-        // Restore footer
-        footer.style.transform = originalTransform;
-        footer.style.visibility = originalVisibility;
-        footer.style.position = originalPosition;
-        
-        // Set blog page spacing to match footer height (slightly shorter to eliminate gap)
-        blogSection.style.marginBottom = (footerHeight - 5) + 'px';
-    }
-}
 
 // Blog content data
 const blogContent = {

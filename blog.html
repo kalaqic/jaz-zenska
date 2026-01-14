@@ -16,14 +16,6 @@
     <link rel="stylesheet" href="css/blog-page.css">
 </head>
 <body>
-    <!-- Page Transition Loading Screen -->
-    <div class="page-transition-loader" id="pageTransitionLoader">
-        <div class="page-transition-content">
-            <img src="images/logo/logo jaz zenska.webp" alt="Jaz Ženska Logo" class="page-transition-logo">
-            <div class="page-transition-spinner"></div>
-        </div>
-    </div>
-
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-bar-content">
@@ -197,43 +189,90 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-logo-text">
-            <img src="images/logo/logo_text.webp" alt="Jaz Ženska Logo">
-        </div>
-        
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>KONTAKT</h3>
-                <p>info@jazzenska.si</p>
-                <p>Novo mesto, Slovenija</p>
+    <!-- Back Button -->
+    <div class="blog-back-button-container">
+        <a href="index.html" class="blog-back-button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Nazaj</span>
+        </a>
+    </div>
+
+    <!-- Cookie Banner -->
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-banner-content">
+            <div class="cookie-banner-text">
+                <h3>Uporabljamo piškotke</h3>
+                <p>Ta spletna stran uporablja piškotke za zagotavljanje pravilnega delovanja, analizo obiska in izboljšanje uporabniške izkušnje.</p>
+                <p class="cookie-banner-links">
+                    Več informacij najdeš v <a href="pravilnik-o-zasebnosti.html">Pravilniku o zasebnosti</a> in Politiki piškotkov.
+                </p>
             </div>
-            
-            <div class="footer-section">
-                <h3>NAVIGACIJA</h3>
-                <ul>
-                    <li><a href="index.html#about">O nas</a></li>
-                    <li><a href="index.html#jaz-zenska">Naša zgodba</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="index.html#affirmations">Meditacije</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="footer-heart-text">Ustvarjeno z ❤ za vse ženske</div>
-        
-        <div class="footer-bottom">
-            <p>Jaz Ženska © 2025. Vse pravice pridržane.</p>
-            <p>Piškotki in politika zasebnosti</p>
-            
-            <div class="footer-social">
-                <a href="#"><img src="images/svg/facebook.svg" alt="Facebook"></a>
-                <a href="#"><img src="images/svg/instagram.svg" alt="Instagram"></a>
-                <a href="#"><img src="images/svg/youtube.svg" alt="YouTube"></a>
+            <div class="cookie-banner-buttons">
+                <button class="cookie-btn cookie-btn-accept" id="cookieAccept">Sprejmi vse</button>
+                <button class="cookie-btn cookie-btn-settings" id="cookieSettings">Nastavitve</button>
+                <button class="cookie-btn cookie-btn-reject" id="cookieReject">Zavrni</button>
             </div>
         </div>
-    </footer>
+    </div>
+
+    <!-- Cookie Settings Modal -->
+    <div class="cookie-settings-modal" id="cookieSettingsModal">
+        <div class="cookie-settings-overlay"></div>
+        <div class="cookie-settings-content">
+            <div class="cookie-settings-header">
+                <h2>Nastavitve piškotkov</h2>
+                <button class="cookie-settings-close" id="cookieSettingsClose" aria-label="Zapri">&times;</button>
+            </div>
+            <div class="cookie-settings-body">
+                <p>Izberite, katere piškotke želite sprejeti. Nujno potrebni piškotki so vedno aktivirani, saj so potrebni za osnovno delovanje spletne strani.</p>
+                
+                <div class="cookie-setting-item">
+                    <div class="cookie-setting-header-item">
+                        <div>
+                            <h3>Nujno potrebni piškotki</h3>
+                            <p>Ti piškotki so potrebni za osnovno delovanje spletne strani in jih ni mogoče onemogočiti.</p>
+                        </div>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" id="cookieNecessary" checked disabled>
+                            <span class="cookie-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="cookie-setting-item">
+                    <div class="cookie-setting-header-item">
+                        <div>
+                            <h3>Analitični piškotki</h3>
+                            <p>Ti piškotki omogočajo anonimno analizo obiska in uporabe spletnega mesta.</p>
+                        </div>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" id="cookieAnalytics">
+                            <span class="cookie-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="cookie-setting-item">
+                    <div class="cookie-setting-header-item">
+                        <div>
+                            <h3>Funkcionalni piškotki</h3>
+                            <p>Ti piškotki omogočajo izboljšano uporabniško izkušnjo.</p>
+                        </div>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" id="cookieFunctional">
+                            <span class="cookie-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="cookie-settings-footer">
+                <button class="cookie-btn cookie-btn-reject" id="cookieSettingsReject">Zavrni vse</button>
+                <button class="cookie-btn cookie-btn-accept" id="cookieSettingsSave">Shrani nastavitve</button>
+            </div>
+        </div>
+    </div>
 
     <script src="js/main.js"></script>
     <script src="js/blog-page.js"></script>

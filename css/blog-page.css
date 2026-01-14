@@ -1,27 +1,25 @@
 /* ===== BLOG PAGE ===== */
 .blog-page-section {
-    padding: 100px 0;
+    padding: 0 0 0 0;
     background: var(--main-white);
     position: relative;
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
-    z-index: 10;
+    z-index: 2;
+    margin-top: 0;
     margin-bottom: 0;
 }
 
-/* Add space after blog section equal to footer height - will be set by JS */
+/* Remove the after pseudo-element that was adding extra space */
 .blog-page-section::after {
-    content: '';
-    display: block;
-    width: 100%;
-    background: transparent;
+    display: none;
 }
 
 .blog-page-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 40px 20px 0;
     position: relative;
     z-index: 1;
 }
@@ -281,6 +279,45 @@
 
 .blog-modal-text p:last-child {
     margin-bottom: 0;
+}
+
+/* ===== BACK BUTTON ===== */
+.blog-back-button-container {
+    max-width: 1200px;
+    margin: 60px auto 40px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.blog-back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(100, 56, 67, 0.2);
+}
+
+.blog-back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(100, 56, 67, 0.3);
+    background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+}
+
+.blog-back-button svg {
+    transition: transform 0.3s ease;
+}
+
+.blog-back-button:hover svg {
+    transform: translateX(-4px);
 }
 
 /* Responsive Design */
