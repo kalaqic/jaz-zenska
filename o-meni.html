@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pravilnik o zasebnosti - Jaz Ženska</title>
-    <meta name="description" content="Pravilnik o zasebnosti za spletno mesto Jaz Ženska">
+    <title>O meni - Jaz Ženska</title>
+    <meta name="description" content="Spoznajte Marjanco Trščinar Antić, ustanoviteljico skupnosti Jaz Ženska">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/blog-page.css">
     <style>
-        .legal-page-section {
+        .about-page-section {
             padding: 40px 0 60px 0;
             background: var(--main-white);
             position: relative;
@@ -27,7 +27,7 @@
             margin-bottom: 0;
         }
         
-        .legal-page-container {
+        .about-page-container {
             max-width: 900px;
             margin: 0 auto;
             padding: 0 20px;
@@ -35,7 +35,7 @@
             z-index: 1;
         }
         
-        .legal-page-section h1 {
+        .about-page-section h1 {
             font-family: 'Playfair Display', serif;
             font-size: 48px;
             color: var(--dark-violet);
@@ -43,7 +43,7 @@
             text-align: center;
         }
         
-        .legal-page-section h2 {
+        .about-page-section h2 {
             font-family: 'Playfair Display', serif;
             font-size: 32px;
             color: var(--dark-violet);
@@ -51,7 +51,7 @@
             margin-bottom: 20px;
         }
         
-        .legal-page-section h3 {
+        .about-page-section h3 {
             font-family: 'Montserrat', sans-serif;
             font-size: 20px;
             color: var(--mid-violet);
@@ -60,50 +60,66 @@
             font-weight: 600;
         }
         
-        .legal-page-section p {
-            font-size: 16px;
-            line-height: 1.8;
+        .about-page-section p {
+            font-size: 18px;
+            line-height: 1.9;
             color: var(--text-dark);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
-        .legal-page-section ul, .legal-page-section ol {
-            margin-left: 30px;
-            margin-bottom: 20px;
-        }
-        
-        .legal-page-section li {
-            font-size: 16px;
-            line-height: 1.8;
+        .about-page-section .intro {
+            font-size: 20px;
+            line-height: 1.9;
             color: var(--text-dark);
-            margin-bottom: 10px;
+            margin-bottom: 30px;
+            font-weight: 500;
         }
         
-        .legal-page-section strong {
-            color: var(--dark-violet);
-            font-weight: 600;
+        .about-highlight {
+            background: linear-gradient(135deg, var(--almost-white) 0%, var(--pinky) 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            border-left: 5px solid var(--mid-violet);
         }
         
-        .legal-date {
-            text-align: center;
-            color: var(--text-light);
-            font-style: italic;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid var(--almost-white);
+        .about-list {
+            list-style: none;
+            padding-left: 0;
+            margin: 25px 0;
+        }
+        
+        .about-list li {
+            font-size: 18px;
+            line-height: 1.9;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .about-list li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
         }
         
         @media (max-width: 768px) {
-            .legal-page-section h1 {
+            .about-page-section h1 {
                 font-size: 36px;
             }
             
-            .legal-page-section h2 {
+            .about-page-section h2 {
                 font-size: 28px;
             }
             
-            .legal-page-section h3 {
-                font-size: 18px;
+            .about-page-section p,
+            .about-page-section .intro {
+                font-size: 16px;
+            }
+            
+            .about-page-container {
+                padding: 0 15px;
             }
         }
     </style>
@@ -112,9 +128,9 @@
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-bar-content">
-            <a href="index.html#about">O nas</a>
+            <a href="o-meni.html">O meni</a>
             <a href="media.html">Mediji</a>
-            <a href="https://www.skool.com/@david-kalabic-6680?g=jzenska-4779" target="_blank" rel="noopener noreferrer">Moj račun</a>
+            <a href="https://www.skool.com/settings?t=profile" target="_blank" rel="noopener noreferrer">Moj račun</a>
         </div>
     </div>
 
@@ -127,7 +143,6 @@
                     <li><a href="index.html#jaz-zenska">Jaz ženska</a></li>
                     <li><a href="index.html#aktualno">Aktualno</a></li>
                     <li><a href="blog.html">Blog</a></li>
-                    <li><a href="index.html#intervju">Intervju</a></li>
                     <li><a href="index.html#affirmations">Meditacije</a></li>
                     <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
                 </ul>
@@ -155,16 +170,15 @@
         </button>
         <div class="mobile-menu-content">
             <div class="mobile-top-links">
-                <a href="index.html#about">O nas</a>
+                <a href="o-meni.html">O meni</a>
                 <a href="media.html">Mediji</a>
-                <a href="https://www.skool.com/@david-kalabic-6680?g=jzenska-4779" target="_blank" rel="noopener noreferrer">Moj račun</a>
+                <a href="https://www.skool.com/settings?t=profile" target="_blank" rel="noopener noreferrer">Moj račun</a>
             </div>
             <nav class="mobile-nav">
                 <ul>
                     <li><a href="index.html#jaz-zenska">Jaz ženska</a></li>
                     <li><a href="index.html#aktualno">Aktualno</a></li>
                     <li><a href="blog.html">Blog</a></li>
-                    <li><a href="index.html#intervju">Intervju</a></li>
                     <li><a href="index.html#affirmations">Meditacije</a></li>
                     <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
                 </ul>
@@ -177,145 +191,55 @@
         </div>
     </div>
 
-    <!-- Legal Page Content -->
-    <section class="legal-page-section">
-        <div class="legal-page-container">
-            <h1>PRAVILNIK O ZASEBNOSTI</h1>
+    <!-- About Page Content -->
+    <section class="about-page-section">
+        <div class="about-page-container">
+            <h1>O meni</h1>
             
-            <p><strong>Upravljavec osebnih podatkov je:</strong></p>
+            <p class="intro"><strong>Marjanca Trščinar Antić</strong>, rojena 21. 8. 1961 v Novem mestu</p>
             
-            <p>Jaz Ženska<br>
-            Marjanca Trščinar Antić<br>
-            Maistrova ulica 3, 8000 Novo mesto, Slovenija<br>
-            E-pošta: junona.marjanca@gmail.com</p>
-
-            <p>Telefon: 031 350 400</p>
-
-            <p>Ta Pravilnik o zasebnosti pojasnjuje, kako se obdelujejo osebni podatki uporabnikov spletnega mesta v skladu z Uredbo (EU) 2016/679 (GDPR) in veljavno slovensko zakonodajo.</p>
-
-            <p>Z uporabo spletnega mesta potrjujete, da ste seznanjeni s tem pravilnikom.</p>
-
-            <h2>1. VRSTE PODATKOV, KI JIH ZBIRAMO</h2>
+            <p>Samostojna podjetnica, ki je v svojem življenju spoznala borbo, večkrat padla na kolena in se vedno znova pobrala z novim upanjem, žarom in odločnostjo, da nekaj spremeni in naredi, kar bo dobro za njeno družino, zanjo in tudi vse, ki jih na svoji poti srečuje.</p>
             
-            <h3>a) Prometni podatki</h3>
-            <p>Samodejno se zbirajo anonimni tehnični podatki:</p>
-            <ul>
-                <li>IP naslov (anonimiziran),</li>
-                <li>vrsta naprave,</li>
-                <li>vrsta brskalnika,</li>
-                <li>datum in čas obiska.</li>
-            </ul>
-            <p>Ti podatki ne omogočajo osebne identifikacije.</p>
-
-            <h3>b) Piškotki</h3>
-            <p>Spletno mesto uporablja piškotke za:</p>
-            <ul>
-                <li>osnovno delovanje spletne strani,</li>
-                <li>analitiko obiska,</li>
-                <li>izboljšanje uporabniške izkušnje.</li>
-            </ul>
-            <p>Uporabnik lahko uporabo piškotkov kadarkoli upravlja ali zavrne preko pojavnega obvestila (cookie banner).<br>
-            Podrobnosti so navedene v Politiki piškotkov.</p>
-
-            <h3>c) Osebni podatki</h3>
-            <p>Zbiramo le podatke, ki jih uporabnik prostovoljno posreduje, kot so:</p>
-            <ul>
-                <li>ime in priimek,</li>
-                <li>e-poštni naslov,</li>
-                <li>drugi podatki, ki jih uporabnik vnese v obrazce.</li>
-            </ul>
-            <p>Ne zbiramo in ne shranjujemo podatkov o plačilnih karticah.<br>
-            Plačila obdelujejo zunanji ponudniki (Skool), ki delujejo kot samostojni upravljavci podatkov.</p>
-
-            <h2>2. NAMEN IN PRAVNA PODLAGA OBDELAVE</h2>
-            <p>Osebni podatki se obdelujejo za:</p>
-            <ul>
-                <li>izvedbo naročil in dostavo digitalnih produktov (pogodba),</li>
-                <li>komunikacijo z uporabniki (zakoniti interes),</li>
-                <li>pošiljanje obvestil in novic (izrecna privolitev),</li>
-                <li>izboljšanje delovanja spletnega mesta (zakoniti interes).</li>
-            </ul>
-
-            <h2>3. HRAMBA PODATKOV</h2>
-            <p>Osebni podatki se hranijo:</p>
-            <ul>
-                <li>toliko časa, kolikor je potrebno za dosego namena,</li>
-                <li>oziroma do preklica privolitve,</li>
-                <li>oziroma skladno z zakonskimi obveznostmi.</li>
-            </ul>
-
-            <h2>4. POSREDOVANJE PODATKOV TRETJIM OSEBAM</h2>
-            <p>Osebni podatki se ne prodajajo.</p>
-            <p>Lahko se posredujejo:</p>
-            <ul>
-                <li>ponudnikom tehničnih storitev (gostovanje, e-pošta),</li>
-                <li>ponudnikom plačilnih storitev,</li>
-            </ul>
-            <p>Vsi obdelovalci podatkov so pogodbeno zavezani k varstvu podatkov.</p>
-
-            <h2>5. PRAVICE UPORABNIKOV</h2>
-            <p>Uporabnik ima pravico do:</p>
-            <ul>
-                <li>dostopa do svojih podatkov,</li>
-                <li>popravka netočnih podatkov,</li>
-                <li>izbrisa podatkov („pravica do pozabe"),</li>
-                <li>omejitve obdelave,</li>
-                <li>prenosljivosti podatkov,</li>
-                <li>ugovora obdelavi,</li>
-                <li>preklica privolitve kadarkoli.</li>
-            </ul>
-            <p>Zahtevo lahko pošlje na: <a href="mailto:junona.marjanca@gmail.com">junona.marjanca@gmail.com</a></p>
-
-            <p>Uporabnik ima pravico vložiti pritožbo pri:<br>
-            <strong>Informacijski pooblaščenec RS</strong><br>
-            (<a href="https://www.ip-rs.si" target="_blank" rel="noopener noreferrer">www.ip-rs.si</a>)</p>
-
-            <h2>6. VARNOST PODATKOV</h2>
-            <p>Izvajamo ustrezne tehnične in organizacijske ukrepe za zaščito osebnih podatkov pred:</p>
-            <ul>
-                <li>nepooblaščenim dostopom,</li>
-                <li>izgubo,</li>
-                <li>zlorabo,</li>
-                <li>razkritjem.</li>
-            </ul>
-
-            <h2>7. OTROCI</h2>
-            <p>Spletno mesto ni namenjeno osebam, mlajšim od 18 let.<br>
-            Zavestno ne zbiramo podatkov mladoletnih oseb.</p>
-
-            <h2>8. E-POŠTNA SPOROČILA</h2>
-            <p>E-poštna sporočila se pošiljajo izključno na podlagi izrecne privolitve.<br>
-            Od prejemanja se je mogoče kadarkoli odjaviti preko povezave v e-pošti ali s sporočilom na zgornji naslov.</p>
-
-            <h2>9. SPLETNA MESTA TRETJIH OSEB</h2>
-            <p>Ta pravilnik ne velja za spletna mesta tretjih oseb, do katerih lahko dostopate preko povezav.</p>
-
-            <h2>10. POLITIKA PIŠKOTKOV</h2>
-            <p>Spletno mesto uporablja piškotke za zagotavljanje pravilnega delovanja, analizo obiska in izboljšanje uporabniške izkušnje.</p>
-
-            <h3>Vrste piškotkov:</h3>
-            <ul>
-                <li><strong>Nujno potrebni piškotki</strong> – omogočajo osnovno delovanje spletne strani.</li>
-                <li><strong>Analitični piškotki</strong> – omogočajo anonimno analizo obiska in uporabe spletnega mesta.</li>
-                <li><strong>Funkcionalni piškotki</strong> – omogočajo izboljšano uporabniško izkušnjo.</li>
-            </ul>
-
-            <p>Uporabnik lahko uporabo piškotkov:</p>
-            <ul>
-                <li>sprejme,</li>
-                <li>zavrne,</li>
-                <li>ali prilagodi preko pojavnega obvestila (cookie banner).</li>
-            </ul>
-
-            <p>Več informacij o obdelavi osebnih podatkov je na voljo v Pravilniku o zasebnosti.</p>
-
-            <h2>11. SPREMEMBE PRAVILNIKA</h2>
-            <p>Pridržujemo si pravico do sprememb pravilnika.<br>
-            Veljavna je vedno zadnja objavljena različica.</p>
-
-            <div class="legal-date">
-                <p>Novo mesto, 14.1.2026</p>
+            <p>Od malega je bila željna znanja in vedno je iskala nove poti, bila uspešna športnica, z veliko strasti pa se je posvečala gimnastiki in baletu. Ljubezen jo je odpeljala na Korčulo, kjer je živela in ustvarila družino. 2002 se je z družina vrnila nazaj v Slovenijo in od takrat se intenzivno izobražuje in dela z ljudmi.</p>
+            
+            <div class="about-highlight">
+                <p>Izkušnje med vojno, v kateri je bil njen mož ranjen, sama pa je ostala brez dela z dvema majhnima otrokoma, kreditom in nedokončano hišo so jo naučile, da je življenje darilo, ki ga je potrebno odkrivati, ceniti in graditi, še posebno takrat, ko se pojavijo izzivi.</p>
             </div>
+            
+            <h2>Izobrazba in znanja</h2>
+            
+            <p>Tako je skozi dolgoletno delo in parmanentno izobraževanje, pridobila številna znanja in danes je:</p>
+            
+            <ul class="about-list">
+                <li>Licenciran NLP mojster</li>
+                <li>Life in business coach</li>
+                <li>Praktik hipnoze in mojster manifestacije</li>
+                <li>Hipnoterapevtka</li>
+                <li>Reiki mojstrica</li>
+            </ul>
+            
+            <h2>Ustvarjanje in delo</h2>
+            
+            <p>Napisala je otroško motivacisko pravljico <strong>Zmajček išče prijatelje</strong>, že leta na radiu Sraka ustvarja in vodi svojo oddajo <strong>Ujemi dan</strong>, snema filme <strong>Potepanja z babico</strong>, organizira in vodi dogodke...</p>
+            
+            <p>Na osnovi neprestanega učenja in dolgoletnega dela z ljudmi, predvsem pa na osnovi bogatih življenjskih izkušenj, vodi delavnice in znanje podaja na enostaven, razumljiv in uporaben način.</p>
+            
+            <h2>Celostna vadba</h2>
+            
+            <p>Kot gimnastičarka in baletka je svoje športno znanje obogatila z novimi znanji in pripravila program celostne vadbe, ki je primerna tudi za začetnike in starejše osebe. Velik poudarek daje mentalni aktivnosti, dihanju, uravnoteženju uma, duha in telesa, jačanju mišic, ohranjanju ravnotežje in notranjega balansa.</p>
+            
+            <h2>Projekti</h2>
+            
+            <ul class="about-list">
+                <li><strong>Zmajček išče prijatelje</strong> – Napisala in izdala je otroško knjigico, za katero so čudovite ilustracije narisali otroci s posebnimi potrebami iz O.Š. Dragotin Kette.</li>
+                <li><strong>Ujemi dan</strong> – Že leta vodi radijsko oddajo za osebno rast in motivacijo na radiu Sraka.</li>
+                <li><strong>Potepanje z babico</strong> – Z vnučki snema filme, ki jih objavlja na youtube kanalu, kar številni pa so se predvajali tudi na televiziji Vaš kanal.</li>
+                <li><strong>JAZ ŽENSKA</strong> – Je ustanoviteljica skupnosti JAZ ŽENSKA.</li>
+            </ul>
+            
+            <h2>Moj pristop</h2>
+            
+            <p>Vodi delavnice in svetovanja na temo osebnostne rasti in komunikacije, predvsem pa širi dobro voljo in optimizem povsod kjer se pojavi.</p>
         </div>
     </section>
 
@@ -328,15 +252,14 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>KONTAKT</h3>
-                <p><a href="mailto:junona.marjanca@gmail.com">junona.marjanca@gmail.com</a></p>
-                <p><a href="tel:+38631350400">031 350400</a></p>
-                <p>Maistrova ulica 3, Novo mesto, 8000 Novo mesto</p>
+                <p><a href="mailto:info@jazzenska.si">info@jazzenska.si</a></p>
+                <p>Novo mesto, Slovenija</p>
             </div>
             
             <div class="footer-section">
                 <h3>NAVIGACIJA</h3>
                 <ul>
-                    <li><a href="index.html#about">O nas</a></li>
+                    <li><a href="o-meni.html">O meni</a></li>
                     <li><a href="index.html#jaz-zenska">Naša zgodba</a></li>
                     <li><a href="blog.html">Blog</a></li>
                     <li><a href="index.html#affirmations">Meditacije</a></li>
@@ -350,7 +273,7 @@
         
         <div class="footer-bottom">
             <p>Jaz Ženska © 2025. Vse pravice pridržane.</p>
-            <p>Piškotki in politika zasebnosti</p>
+            <p><a href="pravilnik-o-zasebnosti.html" style="color: inherit; text-decoration: underline; opacity: 0.8;">Piškotki in politika zasebnosti</a></p>
             
             <div class="footer-social">
                 <a href="#"><img src="images/svg/facebook.svg" alt="Facebook"></a>

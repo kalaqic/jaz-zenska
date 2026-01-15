@@ -3236,6 +3236,29 @@ nav a:hover::after {
     line-height: 1.8;
     color: var(--text-dark);
     margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.jaz-about-button {
+    display: inline-block;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(100, 56, 67, 0.2);
+    margin-top: 10px;
+}
+
+.jaz-about-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(100, 56, 67, 0.3);
+    background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
 }
 
 .jaz-vision-mission {
@@ -5029,6 +5052,13 @@ nav a:hover::after {
     
     .jaz-about-text p {
         font-size: 16px;
+    }
+    
+    .jaz-about-button {
+        padding: 12px 28px;
+        font-size: 14px;
+        width: 100%;
+        text-align: center;
     }
     
     /* Vision Mission - Mobile */
