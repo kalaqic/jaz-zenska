@@ -22,6 +22,66 @@ function initProgramsAnimation() {
     programObserver.observe(programsSection);
 }
 
+// Program card click handler for mobile devices
+function initProgramCardClicks() {
+    const programCardWrappers = document.querySelectorAll('.program-card-wrapper');
+    
+    programCardWrappers.forEach(wrapper => {
+        const card = wrapper.querySelector('.program-card');
+        const programButton = wrapper.querySelector('.program-button');
+        const cardFront = wrapper.querySelector('.program-card-front');
+        const cardBack = wrapper.querySelector('.program-card-back');
+        
+        // Prevent button click from triggering card flip
+        if (programButton) {
+            programButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+        
+        // Add click handler to both front and back cards for mobile
+        function handleCardClick(e) {
+            // Only handle clicks on mobile
+            if (window.innerWidth > 768) {
+                return;
+            }
+            
+            // Don't flip if clicking the button
+            if (e.target.closest('.program-button')) {
+                return;
+            }
+            
+            // Toggle flip state
+            wrapper.classList.toggle('mobile-flipped');
+        }
+        
+        // Add click handlers to both sides
+        if (cardFront) {
+            cardFront.addEventListener('click', handleCardClick);
+        }
+        if (cardBack) {
+            cardBack.addEventListener('click', handleCardClick);
+        }
+        
+        // Also add to wrapper as fallback
+        wrapper.addEventListener('click', handleCardClick);
+    });
+    
+    // Reset flip state on window resize to desktop
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            const newIsMobile = window.innerWidth <= 768;
+            programCardWrappers.forEach(wrapper => {
+                if (!newIsMobile) {
+                    wrapper.classList.remove('mobile-flipped');
+                }
+            });
+        }, 250);
+    });
+}
+
 // Steps section animation on scroll (fade in from left to right)
 function initStepsAnimation() {
     const stepsShowcase = document.querySelector('.jaz-steps-showcase');
@@ -482,6 +542,7 @@ function initMediaSlider() {
 document.addEventListener('DOMContentLoaded', function() {
     initBurgerMenu();
     initMediaSlider();
+    initProgramCardClicks();
     // Ensure page starts at top
     window.scrollTo(0, 0);
     
