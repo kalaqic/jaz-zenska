@@ -669,11 +669,9 @@ function initSchedulingSystem() {
             return;
         }
         
-        // Generate time slots (9:00 to 17:00, every hour)
-        const timeSlots = [];
-        for (let hour = 9; hour <= 17; hour++) {
-            timeSlots.push(`${hour.toString().padStart(2, '0')}:00`);
-        }
+        // Generate time slots - only available options from GetResponse custom field
+        // Available: 18:00, 19:00, 20:00, 21:00, 22:00
+        const timeSlots = ['18:00', '19:00', '20:00', '21:00', '22:00'];
         
         timeSlots.forEach(time => {
             const slot = document.createElement('div');

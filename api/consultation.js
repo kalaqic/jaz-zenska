@@ -167,6 +167,12 @@ module.exports = async function handler(req, res) {
         if (isSuccess) {
             console.log('=== Step 2: Basic contact worked! Adding custom fields ===');
             
+            // call_time custom field accepts only these values:
+            // 18:00, 19:00, 20:00, 21:00, 22:00
+            // Make sure we send it in correct format (should already be correct from frontend)
+            const callTimeValue = callTime; // Frontend now sends only valid options
+            console.log('Call time being sent:', callTimeValue);
+            
             const contactDataWithFields = {
                 email: email,
                 name: email,
@@ -180,10 +186,13 @@ module.exports = async function handler(req, res) {
                     },
                     {
                         customFieldId: CUSTOM_FIELD_CALL_TIME_ID,
-                        value: [callTime] // Text format (e.g., "18:00")
+                        value: [callTimeValue] // Try different formats
                     }
                 ]
             };
+            
+            console.log('Call time original:', callTime);
+            console.log('Call time being sent:', callTimeValue);
             
             console.log('Step 2 - Custom Field IDs:', CUSTOM_FIELD_CALL_DATE_ID, CUSTOM_FIELD_CALL_TIME_ID);
             console.log('Step 2 - Request data:', JSON.stringify(contactDataWithFields, null, 2));
