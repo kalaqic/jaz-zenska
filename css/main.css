@@ -3232,7 +3232,7 @@ nav a:hover::after {
     transform: translateY(-50%);
     width: 500px;
     height: 500px;
-    background-image: url('../images/background-decorations.png');
+    background-image: url('../images/background-decorations.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -3397,7 +3397,7 @@ nav a:hover::after {
     transform: translateY(-50%);
     width: 500px;
     height: 500px;
-    background-image: url('../images/background-decorations.png');
+    background-image: url('../images/background-decorations.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -3587,7 +3587,7 @@ nav a:hover::after {
     transform: translateY(-50%);
     width: 500px;
     height: 500px;
-    background-image: url('../images/background-decorations.png');
+    background-image: url('../images/background-decorations.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
