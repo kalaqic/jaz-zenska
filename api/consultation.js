@@ -85,33 +85,39 @@ module.exports = async function handler(req, res) {
             });
         }
 
-        // Prepare contact data for GetResponse API v3
-        // According to GetResponse docs, POST requests MUST have Content-Type: application/json
-        // Try simplest format first - just email and campaign
-        const contactDataBasic = {
+        // Prepare complete contact data - send everything at once (not in steps)
+        // This avoids duplicate contacts and ensures all data is saved together
+        const contactData = {
             email: email,
+            name: email, // Required field
             campaign: {
                 campaignId: CAMPAIGN_ID
-            }
+            },
+            customFieldValues: [
+                {
+                    customFieldId: CUSTOM_FIELD_CALL_DATE_ID,
+                    value: [callDate] // Format: YYYY-MM-DD
+                },
+                {
+                    customFieldId: CUSTOM_FIELD_CALL_TIME_ID,
+                    value: [callTime] // One of: 18:00, 19:00, 20:00, 21:00, 22:00
+                }
+            ],
+            tags: ['consultation']
         };
         
-        console.log('=== Step 1: Testing with basic contact (no custom fields) ===');
+        console.log('=== Sending complete contact data (all at once) ===');
         console.log('Campaign ID:', CAMPAIGN_ID);
-        console.log('Request data:', JSON.stringify(contactDataBasic, null, 2));
+        console.log('Custom Field IDs:', CUSTOM_FIELD_CALL_DATE_ID, CUSTOM_FIELD_CALL_TIME_ID);
+        console.log('Complete request data:', JSON.stringify(contactData, null, 2));
         
-        // Send to GetResponse API - basic contact first
-        // Make sure headers are exactly as GetResponse expects (exactly like curl)
-        const requestBody = JSON.stringify(contactDataBasic);
+        // Send to GetResponse API with all data at once
+        const requestBody = JSON.stringify(contactData);
         
-        // Debug: Log everything exactly as it will be sent
-        console.log('=== Request Details (exactly like curl) ===');
+        console.log('=== Request Details ===');
         console.log('URL:', GETRESPONSE_API_URL);
         console.log('Method: POST');
-        console.log('Header X-Auth-Token:', `api-key ${GETRESPONSE_API_KEY.substring(0, 10)}...`);
-        console.log('Header Content-Type: application/json');
-        console.log('Request body (JSON string):', requestBody);
-        console.log('Request body (parsed):', JSON.parse(requestBody));
-        console.log('Request body length:', requestBody.length);
+        console.log('Request body:', requestBody);
         
         // Make request
         let response;
@@ -129,19 +135,21 @@ module.exports = async function handler(req, res) {
             console.error('Fetch threw error:', fetchError);
             return res.status(500).json({
                 error: 'Network error',
-                message: fetchError.message,
-                stack: fetchError.stack
+                message: fetchError.message
             });
         }
         
         console.log('Response status:', response.status);
-        console.log('Response ok?', response.ok);
-        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
         
-        // GetResponse returns 202 Accepted (not 201 Created) for successful contact creation
-        // 202 is in 2xx range, so response.ok should be true
+        // GetResponse returns 202 Accepted - this means request is accepted
+        // Contact will be processed asynchronously (may take a few minutes)
         const isSuccess = response.status >= 200 && response.status < 300;
         console.log('Is success (2xx)?', isSuccess);
+        
+        // Check response headers for contact ID or location
+        const responseHeaders = Object.fromEntries(response.headers.entries());
+        const locationHeader = response.headers.get('location') || response.headers.get('Location');
+        const contactId = locationHeader ? locationHeader.split('/').pop() : null;
         
         let data = {};
         const responseText = await response.text();
@@ -152,105 +160,26 @@ module.exports = async function handler(req, res) {
             try {
                 data = JSON.parse(responseText);
             } catch (e) {
-                console.log('Response is not JSON (might be empty for 202):', e.message);
                 data = { message: 'Contact accepted (202)', raw: responseText };
             }
         } else {
             // 202 often has empty body
-            data = { message: 'Contact accepted (202 - empty body)' };
-        }
-        
-        console.log('Step 1 - Response status:', response.status);
-        console.log('Step 1 - Response data:', JSON.stringify(data, null, 2));
-        
-        // If basic contact works (202 or 201), try with custom fields
-        if (isSuccess) {
-            console.log('=== Step 2: Basic contact worked! Adding custom fields ===');
-            
-            // call_time custom field accepts only these values:
-            // 18:00, 19:00, 20:00, 21:00, 22:00
-            // Make sure we send it in correct format (should already be correct from frontend)
-            const callTimeValue = callTime; // Frontend now sends only valid options
-            console.log('Call time being sent:', callTimeValue);
-            
-            const contactDataWithFields = {
-                email: email,
-                name: email,
-                campaign: {
-                    campaignId: CAMPAIGN_ID
-                },
-                customFieldValues: [
-                    {
-                        customFieldId: CUSTOM_FIELD_CALL_DATE_ID,
-                        value: [callDate] // Format: YYYY-MM-DD
-                    },
-                    {
-                        customFieldId: CUSTOM_FIELD_CALL_TIME_ID,
-                        value: [callTimeValue] // Try different formats
-                    }
-                ]
+            data = { 
+                message: 'Contact accepted (202)',
+                location: locationHeader,
+                contactId: contactId,
+                note: 'Contact creation is asynchronous. It may take a few minutes to appear in GetResponse.'
             };
-            
-            console.log('Call time original:', callTime);
-            console.log('Call time being sent:', callTimeValue);
-            
-            console.log('Step 2 - Custom Field IDs:', CUSTOM_FIELD_CALL_DATE_ID, CUSTOM_FIELD_CALL_TIME_ID);
-            console.log('Step 2 - Request data:', JSON.stringify(contactDataWithFields, null, 2));
-            
-            // Update existing contact with custom fields (or create new if doesn't exist)
-            response = await fetch(GETRESPONSE_API_URL, {
-                method: 'POST',
-                headers: {
-                    'X-Auth-Token': `api-key ${GETRESPONSE_API_KEY}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(contactDataWithFields)
-            });
-            
-            console.log('Step 2 - Response status:', response.status);
-            const responseText2 = await response.text();
-            console.log('Step 2 - Response text:', responseText2);
-            
-            if (responseText2 && responseText2.length > 0) {
-                try {
-                    data = JSON.parse(responseText2);
-                } catch (e) {
-                    data = { message: 'Contact accepted (202)', raw: responseText2 };
-                }
-            } else {
-                data = { message: 'Contact accepted (202 - empty body)' };
-            }
-            
-            const isSuccess2 = response.status >= 200 && response.status < 300;
-            console.log('Step 2 - Is success?', isSuccess2);
-            console.log('Step 2 - Response data:', JSON.stringify(data, null, 2));
-            
-            // If Step 2 also succeeded, use this as final result
-            if (!isSuccess2) {
-                console.error('Step 2 failed - custom fields might be invalid');
-                console.error('Step 2 error:', data);
-                
-                let errorMessage = 'Failed to add custom fields';
-                if (data.message) {
-                    errorMessage = data.message;
-                } else if (data.error) {
-                    errorMessage = data.error;
-                }
-                
-                return res.status(response.status).json({ 
-                    error: errorMessage,
-                    details: data
-                });
-            }
         }
-
-        // If we get here, either Step 1 succeeded (basic contact) or Step 2 succeeded (with fields)
-        // Both 202 and 201 are success statuses
-        const isSuccessFinal = response.status >= 200 && response.status < 300;
         
-        if (!isSuccessFinal) {
+        console.log('Response data:', JSON.stringify(data, null, 2));
+        console.log('Location header:', locationHeader);
+        console.log('Contact ID:', contactId);
+
+        // Handle response
+        if (!isSuccess) {
             console.error('GetResponse API error:', data);
-            console.error('Request that failed:', JSON.stringify(contactDataBasic, null, 2));
+            console.error('Request that failed:', JSON.stringify(contactData, null, 2));
             
             let errorMessage = 'Failed to schedule consultation';
             if (data.message) {
