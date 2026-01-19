@@ -345,6 +345,7 @@ function preventScrollBounce() {
 function initWelcomePopup() {
     const welcomePopup = document.getElementById('welcomePopup');
     const welcomePopupClose = document.getElementById('welcomePopupClose');
+    const welcomePopupButton = document.querySelector('.welcome-popup-button');
     const body = document.body;
     
     if (!welcomePopup) return;
@@ -367,6 +368,13 @@ function initWelcomePopup() {
     // Close button
     if (welcomePopupClose) {
         welcomePopupClose.addEventListener('click', closePopup);
+    }
+    
+    // Close popup when button is clicked
+    if (welcomePopupButton) {
+        welcomePopupButton.addEventListener('click', function(e) {
+            closePopup();
+        });
     }
     
     // Close on overlay click

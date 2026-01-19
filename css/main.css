@@ -3985,6 +3985,7 @@ nav a:hover::after {
     border: none;
     text-transform: uppercase;
     letter-spacing: 1px;
+    cursor: pointer;
 }
 
 .stik-z-nami-button::before {
