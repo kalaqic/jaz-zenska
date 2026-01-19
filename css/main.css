@@ -1599,6 +1599,13 @@ nav a:hover::after {
     animation-delay: 0.4s;
 }
 
+.program-card-wrapper:nth-child(3) {
+    animation-delay: 0.6s;
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc((100% - 40px) / 2);
+}
+
 @keyframes programSlideIn {
     from {
         opacity: 0;
@@ -1847,6 +1854,11 @@ nav a:hover::after {
 @media (max-width: 1024px) {
     .programs-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .program-card-wrapper:nth-child(3) {
+        grid-column: 1;
+        max-width: 100%;
     }
     
     .program-card {
@@ -4787,6 +4799,11 @@ nav a:hover::after {
     .programs-grid {
         grid-template-columns: 1fr;
         gap: 30px;
+    }
+    
+    .program-card-wrapper:nth-child(3) {
+        grid-column: 1;
+        max-width: 100%;
     }
     
     .program-card {

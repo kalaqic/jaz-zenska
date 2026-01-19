@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iz medijev - Jaz Ženska</title>
     <meta name="description" content="Odkrijte intervjuje, članke in predstavitve, kjer Marjanca deli svojo modrost o ženski moči, transformaciji in osebni rasti.">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
@@ -82,19 +85,39 @@
     <section class="media-board-section">
         <div class="media-board-container">
             <h1 class="media-board-title">Iz medijev</h1>
-            <p class="media-board-subtitle">Odkrijte intervjuje, članke in predstavitve z Marjanco</p>
+            <p class="media-board-subtitle">Odkrijte navdihujoče projekte in zgodbe Marjanci, ki so dokumentirane v medijih.<br>Raziščite njeno delo, ki navdihuje in spreminja skupnosti.</p>
             
-            <div class="media-board">
-                <!-- Media Note 1 -->
-                <div class="media-note" data-note="1">
-                    <div class="note-pin"></div>
-                    <div class="note-image">
-                        <img src="images/inervju.webp" alt="Intervju z Marjanco">
+            <div class="media-grid">
+                <!-- Media Entry 1 - Projektni teden Zmajček išče prijatelje (grouped project) -->
+                <div class="media-card" data-media="1">
+                    <div class="media-card-image">
+                        <img src="images/media/zmajcek isce prijatelje.jpg" alt="Projektni teden Zmajček išče prijatelje">
                     </div>
-                    <div class="note-content">
-                        <h3>Intervju v reviji</h3>
-                        <p>Marjanca o ženski moči</p>
-                        <span class="note-date">Marec 2024</span>
+                    <div class="media-card-content">
+                        <h3>Projektni teden Zmajček išče prijatelje</h3>
+                        <button class="media-card-button" data-media="1">Preberi več</button>
+                    </div>
+                </div>
+
+                <!-- Media Entry 3 -->
+                <div class="media-card" data-media="3">
+                    <div class="media-card-image">
+                        <img src="images/media/obscinska nagrajevalka.jpeg" alt="Marjanca Trščinar Antić - Občinska nagrajenka">
+                    </div>
+                    <div class="media-card-content">
+                        <h3>Občinska nagrajenka Marjanca Trščinar Antić</h3>
+                        <button class="media-card-button" data-media="3">Preberi več</button>
+                    </div>
+                </div>
+
+                <!-- Media Entry 4 - Potepanje z babico (grouped project) -->
+                <div class="media-card" data-media="4">
+                    <div class="media-card-image">
+                        <img src="images/media/potepanje z babico.jpg" alt="Potepanje z babico">
+                    </div>
+                    <div class="media-card-content">
+                        <h3>Potepanje z babico</h3>
+                        <button class="media-card-button" data-media="4">Preberi več</button>
                     </div>
                 </div>
             </div>
@@ -111,11 +134,8 @@
             </div>
             <div class="media-modal-info">
                 <h2 id="modalTitle"></h2>
-                <div class="media-modal-meta">
-                    <span id="modalDate"></span>
-                    <span id="modalSource"></span>
-                </div>
                 <div id="modalDescription" class="media-modal-description"></div>
+                <div id="modalLinks" class="media-modal-links"></div>
             </div>
         </div>
     </div>
