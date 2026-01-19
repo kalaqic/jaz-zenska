@@ -333,8 +333,13 @@ nav a {
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 13px;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, opacity 0.3s ease;
     position: relative;
+}
+
+nav a:hover {
+    color: rgba(255, 255, 255, 0.6);
+    opacity: 0.8;
 }
 
 nav a::after {
@@ -401,6 +406,7 @@ nav a:hover::after {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(100, 56, 67, 0.4);
     background: linear-gradient(135deg, var(--dark-violet) 0%, var(--mid-violet) 100%);
+    color: rgba(255, 255, 255, 0.85);
 }
 
 /* Floating Social Media Icons (Right Side) */
