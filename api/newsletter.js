@@ -48,7 +48,7 @@ module.exports = async function handler(req, res) {
             email: email,
             name: `${firstName} ${lastName}`,
             campaign: {
-                campaignId: 'HljnR'
+                campaignId: 'C5wYq'
             }
         };
 

@@ -806,14 +806,30 @@ function initSchedulingSystem() {
                     body: JSON.stringify(requestData)
                 });
                 
-                const result = await response.json();
+                let result;
+                try {
+                    result = await response.json();
+                } catch (e) {
+                    const text = await response.text();
+                    console.error('Failed to parse response as JSON:', text);
+                    alert('Prišlo je do napake pri pošiljanju. Prosimo, poskusite znova.');
+                    scheduleCallBtn.disabled = false;
+                    scheduleCallBtn.textContent = 'Zakazi posvet';
+                    return;
+                }
+                
+                console.log('API Response:', result);
+                console.log('Response status:', response.status);
                 
                 if (!response.ok) {
                     console.error('API error:', result);
+                    console.error('Full error details:', JSON.stringify(result, null, 2));
                     
                     // Check for specific error messages
                     if (result.error && result.error.includes('already')) {
                         alert('Ta email naslov je že prijavljen. Hvala!');
+                    } else if (result.error) {
+                        alert(`Napaka: ${result.error}. Prosimo, kontaktirajte nas direktno.`);
                     } else {
                         alert('Prišlo je do napake pri pošiljanju. Prosimo, poskusite znova.');
                     }
