@@ -444,8 +444,44 @@ function initBurgerMenu() {
     });
 }
 
+// Media slider functionality
+function initMediaSlider() {
+    const slideContainers = document.querySelectorAll('.jaz-media-image, .jaz-media-image-mobile');
+    
+    slideContainers.forEach(container => {
+        const slides = container.querySelectorAll('.jaz-media-slide');
+        if (slides.length === 0) return;
+        
+        // Ensure first slide is active initially
+        slides.forEach((slide, index) => {
+            if (index === 0) {
+                slide.classList.add('active');
+            } else {
+                slide.classList.remove('active');
+            }
+        });
+        
+        let currentSlide = 0;
+        
+        function showNextSlide() {
+            // Remove active class from current slide
+            slides[currentSlide].classList.remove('active');
+            
+            // Move to next slide (loop back to 0 after last slide)
+            currentSlide = (currentSlide + 1) % slides.length;
+            
+            // Add active class to new slide
+            slides[currentSlide].classList.add('active');
+        }
+        
+        // Start the rotation - change slide every 2 seconds, loop forever
+        setInterval(showNextSlide, 2000);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     initBurgerMenu();
+    initMediaSlider();
     // Ensure page starts at top
     window.scrollTo(0, 0);
     
@@ -645,20 +681,36 @@ function initSchedulingSystem() {
             dayElement.textContent = day;
             
             const date = new Date(year, month, day);
-            const isPast = date < today && date.toDateString() !== today.toDateString();
-            const isToday = date.toDateString() === today.toDateString();
+            const todayStr = today.toDateString();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toDateString();
+            const dateStr = date.toDateString();
             
-            if (isPast) {
+            const isPast = date < today && dateStr !== todayStr;
+            const isToday = dateStr === todayStr;
+            const isTomorrow = dateStr === tomorrowStr;
+            const isDisabled = isPast || isToday || isTomorrow;
+            
+            // Calculate column position (0-6, where 5 and 6 are the last two columns)
+            const column = (firstDay + day - 1) % 7;
+            if (column === 5 || column === 6) {
+                dayElement.classList.add('weekend');
+            }
+            
+            if (isPast || isToday || isTomorrow) {
                 dayElement.classList.add('disabled');
-            } else if (isToday) {
+            }
+            
+            if (isToday) {
                 dayElement.classList.add('today');
             }
             
-            if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
+            if (selectedDate && dateStr === selectedDate.toDateString()) {
                 dayElement.classList.add('selected');
             }
             
-            if (!isPast) {
+            if (!isDisabled) {
                 dayElement.addEventListener('click', () => {
                     selectedDate = date;
                     selectedTime = null;

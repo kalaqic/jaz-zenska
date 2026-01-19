@@ -157,3 +157,30 @@ function openMediaModal(mediaId) {
     document.body.style.overflow = 'hidden';
 }
 
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    initMediaModal();
+    initMediaHeroSlider();
+});
+
+// Hero Image Slider
+function initMediaHeroSlider() {
+    const slides = document.querySelectorAll('.media-hero-slide');
+    if (slides.length === 0) return;
+    
+    let currentSlide = 0;
+    
+    function showNextSlide() {
+        // Remove active class from current slide
+        slides[currentSlide].classList.remove('active');
+        
+        // Move to next slide
+        currentSlide = (currentSlide + 1) % slides.length;
+        
+        // Add active class to new slide
+        slides[currentSlide].classList.add('active');
+    }
+    
+    // Start the rotation - change slide every 5 seconds
+    setInterval(showNextSlide, 5000);
+}
