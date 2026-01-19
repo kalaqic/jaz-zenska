@@ -76,44 +76,175 @@
         }
         
         .jaz-zenska-cta {
+            margin: 60px 0;
+            padding: 0;
+            position: relative;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(100, 56, 67, 0.3);
+            background: linear-gradient(135deg, #643843 0%, #99627A 25%, #C88EA7 50%, #99627A 75%, #643843 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .jaz-zenska-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .jaz-zenska-cta::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+        
+        .jaz-zenska-cta-content {
+            position: relative;
+            z-index: 2;
             text-align: center;
-            margin: 50px 0;
-            padding: 40px;
-            background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
-            border-radius: 25px;
+            padding: 60px 50px;
             color: var(--white);
+        }
+        
+        .jaz-zenska-cta-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
         }
         
         .jaz-zenska-cta h2 {
             color: var(--white);
             margin-bottom: 20px;
+            font-size: 42px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
         }
         
-        .jaz-zenska-cta p {
+        .jaz-zenska-cta-subtitle {
             color: rgba(255, 255, 255, 0.95);
-            font-size: 18px;
-            margin-bottom: 30px;
+            font-size: 22px;
+            margin-bottom: 35px;
+            font-weight: 500;
+            line-height: 1.6;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .jaz-zenska-cta-features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .cta-feature {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .jaz-zenska-cta-guarantee {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            margin-top: 25px;
+            margin-bottom: 0;
+            font-weight: 500;
+            font-style: italic;
         }
         
         .jaz-zenska-button {
-            display: inline-block;
-            padding: 18px 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 50px;
             background: var(--white);
-            color: var(--mid-violet);
+            color: var(--dark-violet);
             text-decoration: none;
             border-radius: 50px;
             font-weight: 700;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            font-size: 19px;
+            letter-spacing: 0.5px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .jaz-zenska-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .jaz-zenska-button:hover::before {
+            left: 100%;
+        }
+        
+        .jaz-zenska-button svg {
+            transition: transform 0.3s ease;
         }
         
         .jaz-zenska-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
-            background: var(--almost-white);
+            transform: translateY(-5px) scale(1.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, #fff 0%, #f8f0f2 100%);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .jaz-zenska-button:hover svg {
+            transform: translateX(8px);
         }
         
         @media (max-width: 768px) {
@@ -134,14 +265,38 @@
                 padding: 0 15px;
             }
             
-            .jaz-zenska-cta {
-                padding: 30px 20px;
+            .jaz-zenska-cta-content {
+                padding: 40px 25px;
+            }
+            
+            .jaz-zenska-cta h2 {
+                font-size: 28px;
+            }
+            
+            .jaz-zenska-cta-subtitle {
+                font-size: 18px;
+                margin-bottom: 25px;
+            }
+            
+            .jaz-zenska-cta-features {
+                gap: 15px;
+                margin-bottom: 30px;
+            }
+            
+            .cta-feature {
+                font-size: 14px;
+                padding: 10px 18px;
             }
             
             .jaz-zenska-button {
-                padding: 16px 40px;
-                font-size: 14px;
+                padding: 18px 35px;
+                font-size: 16px;
                 width: 100%;
+                justify-content: center;
+            }
+            
+            .jaz-zenska-cta-guarantee {
+                font-size: 14px;
             }
         }
     </style>
@@ -245,9 +400,23 @@
             <p>Poglej kaj ti nudimo in kaj vse lahko pridobiš, če se nam pridružiš sedaj!</p>
             
             <div class="jaz-zenska-cta">
-                <h2>Pridruži se nam</h2>
-                <p>Začni svojo pot do najboljše verzije sebe</p>
-                <a href="https://www.skool.com/jzenska-4779/about" class="jaz-zenska-button" target="_blank" rel="noopener noreferrer">GUMB ZA PRIJAVO</a>
+                <div class="jaz-zenska-cta-content">
+                    <div class="jaz-zenska-cta-badge">✨ Brezplačna priložnost ✨</div>
+                    <h2>Še nisi 100% pripravljena?</h2>
+                    <p class="jaz-zenska-cta-subtitle">Ponujamo ti brezplačen posvet, da skupaj najdemo pravo pot zate. Odkrij, kako lahko skupnost JAZ ŽENSKA pomaga ravno tebi.</p>
+                    <div class="jaz-zenska-cta-features">
+                        <div class="cta-feature">✓ Popolnoma brezplačno</div>
+                        <div class="cta-feature">✓ Brez obveznosti</div>
+                        <div class="cta-feature">✓ Osebni pristop</div>
+                    </div>
+                    <a href="index.html#stik-z-nami" class="jaz-zenska-button">
+                        <span>Rezerviraj brezplačen posvet</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <p class="jaz-zenska-cta-guarantee">💬 Prilagodimo se tvojim potrebam in ciljem</p>
+                </div>
             </div>
         </div>
     </section>
