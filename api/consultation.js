@@ -86,6 +86,8 @@ module.exports = async function handler(req, res) {
         }
 
         // Prepare complete contact data - send everything at once
+        // Note: tags field removed - GetResponse requires tag IDs, not tag names
+        // If tags are needed, they must be created first and their IDs used here
         const contactData = {
             email: email,
             name: email, // Required field
@@ -101,8 +103,8 @@ module.exports = async function handler(req, res) {
                     customFieldId: CUSTOM_FIELD_CALL_TIME_ID,
                     value: [callTime] // One of: 18:00, 19:00, 20:00, 21:00, 22:00
                 }
-            ],
-            tags: ['consultation']
+            ]
+            // tags: ['consultation'] // Removed - requires tag ID, not name
         };
         
         console.log('=== Creating consultation contact ===');
