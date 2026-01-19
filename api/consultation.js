@@ -22,12 +22,25 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        const { email, callDate, callTime } = req.body;
+        // Parse body if it's a string (Vercel sometimes sends string)
+        let body = req.body;
+        if (typeof body === 'string') {
+            try {
+                body = JSON.parse(body);
+            } catch (e) {
+                return res.status(400).json({ 
+                    error: 'Invalid JSON in request body' 
+                });
+            }
+        }
+
+        const { email, callDate, callTime } = body;
 
         // Validate input
         if (!email || !callDate || !callTime) {
             return res.status(400).json({ 
-                error: 'Missing required fields: email, callDate, callTime' 
+                error: 'Missing required fields: email, callDate, callTime',
+                received: { email: !!email, callDate: !!callDate, callTime: !!callTime }
             });
         }
 
@@ -46,8 +59,8 @@ module.exports = async function handler(req, res) {
                     customFieldId: 'hPO0d2',
                     value: [callTime] // Text format (e.g., "18:00")
                 }
-            ],
-            tags: ['consultation']
+            ]
+            // Note: tags removed - GetResponse might require tagId instead of tag name
         };
 
         // Send to GetResponse API
@@ -60,12 +73,23 @@ module.exports = async function handler(req, res) {
             body: JSON.stringify(contactData)
         });
 
-        const data = await response.json();
+        let data;
+        try {
+            data = await response.json();
+        } catch (e) {
+            const text = await response.text();
+            console.error('GetResponse API error - non-JSON response:', text);
+            return res.status(response.status).json({ 
+                error: 'GetResponse API returned invalid response',
+                details: text
+            });
+        }
 
         if (!response.ok) {
             console.error('GetResponse API error:', data);
+            console.error('Request sent:', JSON.stringify(contactData, null, 2));
             return res.status(response.status).json({ 
-                error: data.message || 'Failed to schedule consultation',
+                error: data.message || data.error || 'Failed to schedule consultation',
                 details: data
             });
         }

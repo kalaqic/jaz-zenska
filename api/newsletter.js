@@ -22,7 +22,19 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        const { email, firstName, lastName } = req.body;
+        // Parse body if it's a string (Vercel sometimes sends string)
+        let body = req.body;
+        if (typeof body === 'string') {
+            try {
+                body = JSON.parse(body);
+            } catch (e) {
+                return res.status(400).json({ 
+                    error: 'Invalid JSON in request body' 
+                });
+            }
+        }
+
+        const { email, firstName, lastName } = body;
 
         // Validate input
         if (!email || !firstName || !lastName) {
