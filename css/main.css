@@ -4792,28 +4792,47 @@ nav a:hover::after {
 
 /* Responsive Design */
 @media (max-width: 1024px) {
+    .aktualno-container {
+        padding: 60px 30px;
+    }
+    
     .aktualno-creative-grid {
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: 1fr;
+        gap: 30px;
     }
     
     .aktualno-card-large {
-        grid-column: 1 / 7;
-        grid-row: 1 / 2;
+        grid-column: 1;
+        grid-row: auto;
+        padding: 50px 40px;
+    }
+    
+    .aktualno-card-large h3 {
+        font-size: 32px;
+    }
+    
+    .aktualno-card-large p {
+        font-size: 16px;
+        line-height: 2;
     }
     
     .aktualno-card-medium {
-        grid-column: 1 / 4;
-        grid-row: 2;
+        grid-column: 1;
+        grid-row: auto;
+        padding: 40px 35px;
     }
     
-    .aktualno-card-small {
-        grid-column: 4 / 7;
-        grid-row: 2;
+    .aktualno-card-medium h3 {
+        font-size: 26px;
+    }
+    
+    .aktualno-card-medium p {
+        font-size: 15px;
     }
     
     .aktualno-card-medium.with-button {
-        grid-column: 1 / 7;
-        grid-row: 3;
+        grid-column: 1;
+        grid-row: auto;
     }
 }
 
