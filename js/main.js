@@ -62,10 +62,109 @@ function initStepsAnimation() {
 }
 
 
-// Newsletter form submission
+// API Configuration
+// For local testing: 'http://localhost:3000'
+// For Vercel: 'https://your-project.vercel.app'
+// For Netlify: 'https://your-site.netlify.app'
+// You can also set window.API_BASE_URL in HTML before loading this script
+const API_BASE_URL = window.API_BASE_URL || 'http://localhost:3000';
+
+// Newsletter form submission with GetResponse API
+// Uses backend proxy to avoid CORS issues
 function handleNewsletterSubmit(event) {
     event.preventDefault();
-    alert('Hvala za prijavo! Prejeli boste potrditveno e-pošto.');
+    
+    // Get form elements
+    const firstNameInput = document.getElementById('newsletter-firstname');
+    const lastNameInput = document.getElementById('newsletter-lastname');
+    const emailInput = document.getElementById('newsletter-email');
+    const submitBtn = document.getElementById('newsletter-submit-btn');
+    const form = event.target;
+    
+    // Get form values
+    const firstName = firstNameInput ? firstNameInput.value.trim() : '';
+    const lastName = lastNameInput ? lastNameInput.value.trim() : '';
+    const email = emailInput ? emailInput.value.trim() : '';
+    
+    // Validate email
+    if (!email || !email.includes('@')) {
+        alert('Prosimo, vnesite veljaven email naslov.');
+        if (emailInput) emailInput.focus();
+        return;
+    }
+    
+    // Validate name fields
+    if (!firstName || !lastName) {
+        alert('Prosimo, izpolnite vsa polja.');
+        return;
+    }
+    
+    // Disable submit button to prevent multiple submissions
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Pošiljanje...';
+    }
+    
+    // Backend API endpoint (proxy to GetResponse)
+    const API_URL = `${API_BASE_URL}/api/newsletter`;
+    
+    // Prepare data for backend
+    const requestData = {
+        email: email,
+        firstName: firstName,
+        lastName: lastName
+    };
+    
+    // Make API request to backend proxy
+    fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(async response => {
+        const data = await response.json();
+        
+        if (!response.ok) {
+            // Check for specific error messages
+            if (data.error && data.error.includes('already')) {
+                throw new Error('Contact already exists');
+            }
+            throw new Error(data.error || data.message || `HTTP error! status: ${response.status}`);
+        }
+        
+        return data;
+    })
+    .then(data => {
+        // Success
+        alert('Hvala za prijavo! Uspešno ste se prijavili na naše e-novičke. Prejeli boste potrditveno e-pošto.');
+        
+        // Reset form
+        if (form) form.reset();
+        
+        // Re-enable submit button
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'PRIJAVI ME';
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting to newsletter:', error);
+        
+        // Check if contact already exists (common error)
+        if (error.message && (error.message.includes('already') || error.message.includes('Contact already'))) {
+            alert('Ta email naslov je že prijavljen na naše e-novičke. Hvala!');
+        } else {
+            alert('Prišlo je do napake pri prijavi. Prosimo, poskusite znova pozneje ali nas kontaktirajte neposredno.');
+        }
+        
+        // Re-enable submit button
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'PRIJAVI ME';
+        }
+    });
 }
 
 
@@ -684,34 +783,49 @@ function initSchedulingSystem() {
             scheduleCallBtn.disabled = true;
             scheduleCallBtn.textContent = 'Pošiljanje...';
             
-            // Format date for email
-            const dateStr = selectedDate.toLocaleDateString('sl-SI', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
+            // Format date for GetResponse API (YYYY-MM-DD)
+            const year = selectedDate.getFullYear();
+            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+            const day = String(selectedDate.getDate()).padStart(2, '0');
+            const callDate = `${year}-${month}-${day}`;
             
-            // Prepare email template parameters
-            const templateParams = {
-                to_email: userEmail,
-                date: dateStr,
-                time: selectedTime,
-                message: `Nova prijava za brezplačen posvet:\n\nEmail: ${userEmail}\nDatum: ${dateStr}\nUra: ${selectedTime}\n\n${dateStr} ob ${selectedTime}`,
-                formatted_datetime: `${dateStr} ob ${selectedTime}`,
-                from_name: 'Jaz Ženska Spletna Stran',
-                user_email: userEmail
-            };
+            // Backend API endpoint (proxy to GetResponse)
+            const API_URL = `${API_BASE_URL}/api/consultation`;
             
             try {
-                // Send email using EmailJS
-                const response = await emailjs.send(
-                    'service_9ssi5g8',
-                    'template_s29mxpr',
-                    templateParams
-                );
+                // Send to backend proxy
+                const requestData = {
+                    email: userEmail,
+                    callDate: callDate, // Format: YYYY-MM-DD
+                    callTime: selectedTime // Text format (e.g., "18:00")
+                };
                 
-                console.log('Email sent successfully:', response);
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    console.error('API error:', result);
+                    
+                    // Check for specific error messages
+                    if (result.error && result.error.includes('already')) {
+                        alert('Ta email naslov je že prijavljen. Hvala!');
+                    } else {
+                        alert('Prišlo je do napake pri pošiljanju. Prosimo, poskusite znova.');
+                    }
+                    
+                    scheduleCallBtn.disabled = false;
+                    scheduleCallBtn.textContent = 'Zakazi posvet';
+                    return;
+                }
+                
+                console.log('Consultation scheduled successfully:', result);
                 
                 // Fade out scheduling interface
                 schedulingInterface.style.transition = 'opacity 0.5s ease';
@@ -722,8 +836,7 @@ function initSchedulingSystem() {
                     successMessage.classList.add('active');
                 }, 500);
             } catch (error) {
-                console.error('Error sending email:', error);
-                console.error('Error details:', error.text || error.message);
+                console.error('Error sending to GetResponse:', error);
                 alert('Prišlo je do napake pri pošiljanju. Prosimo, poskusite znova.');
                 scheduleCallBtn.disabled = false;
                 scheduleCallBtn.textContent = 'Zakazi posvet';

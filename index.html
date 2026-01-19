@@ -26,13 +26,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     
-    <!-- EmailJS -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function(){
-            emailjs.init("qiqFSsAwoBNFDxP7n");
-        })();
-    </script>
 </head>
 <body>
     <!-- Welcome Popup Modal -->
@@ -650,12 +643,12 @@
             
             <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
                     <div class="newsletter-form-row">
-                <input type="text" placeholder="Ime" required>
-                <input type="text" placeholder="Priimek" required>
+                <input type="text" id="newsletter-firstname" name="firstname" placeholder="Ime" required>
+                <input type="text" id="newsletter-lastname" name="lastname" placeholder="Priimek" required>
                     </div>
                     <div class="newsletter-form-row newsletter-form-row-email">
-                        <input type="email" placeholder="Email" required>
-                <button type="submit">PRIJAVI ME</button>
+                        <input type="email" id="newsletter-email" name="email" placeholder="Email" required>
+                <button type="submit" id="newsletter-submit-btn">PRIJAVI ME</button>
                     </div>
             </form>
             
