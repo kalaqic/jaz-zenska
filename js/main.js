@@ -149,12 +149,19 @@ function handleNewsletterSubmit(event) {
     })
     .catch(error => {
         console.error('Error submitting to newsletter:', error);
+        console.error('Error details:', error);
         
-        // Check if contact already exists (common error)
-        if (error.message && (error.message.includes('already') || error.message.includes('Contact already'))) {
+        // Check if contact already exists - only show "already" message if status is 409
+        // AND error message specifically says "already"
+        if (error.message && error.message.includes('Contact already')) {
             alert('Ta email naslov je že prijavljen na naše e-novičke. Hvala!');
         } else {
-            alert('Prišlo je do napake pri prijavi. Prosimo, poskusite znova pozneje ali nas kontaktirajte neposredno.');
+            // Show actual error message for debugging
+            let errorMsg = 'Prišlo je do napake pri prijavi. Prosimo, poskusite znova pozneje ali nas kontaktirajte neposredno.';
+            if (error.message && !error.message.includes('already')) {
+                errorMsg += '\n\nNapaka: ' + error.message;
+            }
+            alert(errorMsg);
         }
         
         // Re-enable submit button

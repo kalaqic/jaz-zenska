@@ -1,8 +1,10 @@
 // Vercel Serverless Function for Newsletter Subscription
 // This file should be in /api/newsletter.js for Vercel deployment
 
+const fetch = require('node-fetch');
 const GETRESPONSE_API_KEY = 'zn0yitbcr5jsxt6xf349zq37epsysj2b';
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
+const CAMPAIGN_ID = 'C5wYq';
 
 module.exports = async function handler(req, res) {
     // Set CORS headers for all requests
@@ -48,11 +50,16 @@ module.exports = async function handler(req, res) {
             email: email,
             name: `${firstName} ${lastName}`,
             campaign: {
-                campaignId: 'C5wYq'
+                campaignId: CAMPAIGN_ID
             }
         };
 
-        // Send to GetResponse API
+        console.log('=== Creating new contact ===');
+        console.log('Email:', email);
+        console.log('Campaign ID:', CAMPAIGN_ID);
+        console.log('Contact data:', JSON.stringify(contactData, null, 2));
+
+        // Try to create contact directly - GetResponse will return 409 if it already exists
         const response = await fetch(GETRESPONSE_API_URL, {
             method: 'POST',
             headers: {
@@ -62,16 +69,72 @@ module.exports = async function handler(req, res) {
             body: JSON.stringify(contactData)
         });
 
-        const data = await response.json();
+        // Get response text first (might be empty for 202)
+        const responseText = await response.text();
+        let data = {};
+        
+        if (responseText && responseText.length > 0) {
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                console.log('Response is not JSON (might be empty for 202):', e.message);
+                data = { message: responseText };
+            }
+        }
+
+        // Log full response for debugging
+        console.log('=== GetResponse API Response ===');
+        console.log('Status:', response.status);
+        console.log('Response text:', responseText);
+        console.log('Response data:', JSON.stringify(data, null, 2));
+
+        // Handle response
+        if (response.status === 409) {
+            // 409 = Contact already exists in GetResponse account
+            // BUT check the actual error message to be sure
+            const errorMessage = data.message || data.error || '';
+            const isAlreadyAdded = errorMessage.includes('already') || 
+                                   errorMessage.includes('duplicate') ||
+                                   (data.code === 1008);
+            
+            console.log('409 response received');
+            console.log('Error message:', errorMessage);
+            console.log('Is "already added" error?', isAlreadyAdded);
+            console.log('Error code:', data.code);
+            console.log('Full error data:', JSON.stringify(data, null, 2));
+            
+            if (isAlreadyAdded) {
+                return res.status(409).json({ 
+                    error: 'Contact already added',
+                    message: 'Contact already added',
+                    details: data
+                });
+            } else {
+                // 409 but NOT "already added" - this is a different problem
+                console.error('409 but NOT "already added" error:', data);
+                return res.status(500).json({ 
+                    error: data.message || data.error || 'Failed to subscribe to newsletter',
+                    message: 'Unexpected error occurred',
+                    details: data,
+                    httpStatus: 409
+                });
+            }
+        }
 
         if (!response.ok) {
+            // Other errors (400, 500, etc.)
             console.error('GetResponse API error:', data);
+            console.error('Status:', response.status);
+            console.error('Full error:', JSON.stringify(data, null, 2));
             return res.status(response.status).json({ 
-                error: data.message || 'Failed to subscribe to newsletter',
-                details: data
+                error: data.message || data.error || 'Failed to subscribe to newsletter',
+                details: data,
+                httpStatus: response.status
             });
         }
 
+        // Success (200, 201, 202)
+        console.log('Contact created successfully');
         return res.status(200).json({ 
             success: true, 
             message: 'Successfully subscribed to newsletter',

@@ -85,8 +85,7 @@ module.exports = async function handler(req, res) {
             });
         }
 
-        // Prepare complete contact data - send everything at once (not in steps)
-        // This avoids duplicate contacts and ensures all data is saved together
+        // Prepare complete contact data - send everything at once
         const contactData = {
             email: email,
             name: email, // Required field
@@ -106,20 +105,14 @@ module.exports = async function handler(req, res) {
             tags: ['consultation']
         };
         
-        console.log('=== Sending complete contact data (all at once) ===');
+        console.log('=== Creating consultation contact ===');
+        console.log('Email:', email);
         console.log('Campaign ID:', CAMPAIGN_ID);
-        console.log('Custom Field IDs:', CUSTOM_FIELD_CALL_DATE_ID, CUSTOM_FIELD_CALL_TIME_ID);
+        console.log('Call Date:', callDate);
+        console.log('Call Time:', callTime);
         console.log('Complete request data:', JSON.stringify(contactData, null, 2));
         
-        // Send to GetResponse API with all data at once
-        const requestBody = JSON.stringify(contactData);
-        
-        console.log('=== Request Details ===');
-        console.log('URL:', GETRESPONSE_API_URL);
-        console.log('Method: POST');
-        console.log('Request body:', requestBody);
-        
-        // Make request
+        // Try to create contact directly - GetResponse will return 409 if it already exists
         let response;
         try {
             response = await fetch(GETRESPONSE_API_URL, {
@@ -128,7 +121,7 @@ module.exports = async function handler(req, res) {
                     'X-Auth-Token': `api-key ${GETRESPONSE_API_KEY}`,
                     'Content-Type': 'application/json'
                 },
-                body: requestBody
+                body: JSON.stringify(contactData)
             });
             console.log('Fetch completed successfully');
         } catch (fetchError) {
@@ -141,45 +134,67 @@ module.exports = async function handler(req, res) {
         
         console.log('Response status:', response.status);
         
-        // GetResponse returns 202 Accepted - this means request is accepted
-        // Contact will be processed asynchronously (may take a few minutes)
-        const isSuccess = response.status >= 200 && response.status < 300;
-        console.log('Is success (2xx)?', isSuccess);
-        
-        // Check response headers for contact ID or location
-        const responseHeaders = Object.fromEntries(response.headers.entries());
-        const locationHeader = response.headers.get('location') || response.headers.get('Location');
-        const contactId = locationHeader ? locationHeader.split('/').pop() : null;
-        
-        let data = {};
+        // Get response text first (might be empty for 202)
         const responseText = await response.text();
-        console.log('Response text length:', responseText.length);
-        console.log('Response text:', responseText);
+        let data = {};
         
         if (responseText && responseText.length > 0) {
             try {
                 data = JSON.parse(responseText);
             } catch (e) {
-                data = { message: 'Contact accepted (202)', raw: responseText };
+                console.log('Response is not JSON (might be empty for 202):', e.message);
+                data = { message: responseText };
             }
-        } else {
-            // 202 often has empty body
-            data = { 
-                message: 'Contact accepted (202)',
-                location: locationHeader,
-                contactId: contactId,
-                note: 'Contact creation is asynchronous. It may take a few minutes to appear in GetResponse.'
-            };
         }
         
+        console.log('Response text:', responseText);
         console.log('Response data:', JSON.stringify(data, null, 2));
-        console.log('Location header:', locationHeader);
-        console.log('Contact ID:', contactId);
 
         // Handle response
+        console.log('=== GetResponse API Response ===');
+        console.log('Status:', response.status);
+        console.log('Response text:', responseText);
+        console.log('Response data:', JSON.stringify(data, null, 2));
+        
+        // 409 = Contact already exists in GetResponse account
+        // BUT check the actual error message to be sure
+        if (response.status === 409) {
+            const errorMessage = data.message || data.error || '';
+            const isAlreadyAdded = errorMessage.includes('already') || 
+                                   errorMessage.includes('duplicate') ||
+                                   (data.code === 1008);
+            
+            console.log('409 response received');
+            console.log('Error message:', errorMessage);
+            console.log('Is "already added" error?', isAlreadyAdded);
+            console.log('Error code:', data.code);
+            
+            if (isAlreadyAdded) {
+                return res.status(409).json({ 
+                    error: 'Contact already added',
+                    message: 'Contact already added',
+                    details: data
+                });
+            } else {
+                // 409 but NOT "already added" - this is a different problem
+                console.error('409 but NOT "already added" error:', data);
+                return res.status(500).json({ 
+                    error: data.message || data.error || 'Failed to schedule consultation',
+                    message: 'Unexpected error occurred',
+                    details: data,
+                    httpStatus: 409
+                });
+            }
+        }
+
+        // Check if successful (200, 201, 202)
+        const isSuccess = response.status >= 200 && response.status < 300;
+        
         if (!isSuccess) {
+            // Other errors (400, 500, etc.)
             console.error('GetResponse API error:', data);
-            console.error('Request that failed:', JSON.stringify(contactData, null, 2));
+            console.error('Status:', response.status);
+            console.error('Full error:', JSON.stringify(data, null, 2));
             
             let errorMessage = 'Failed to schedule consultation';
             if (data.message) {
@@ -192,10 +207,13 @@ module.exports = async function handler(req, res) {
             
             return res.status(response.status).json({ 
                 error: errorMessage,
-                details: data
+                details: data,
+                httpStatus: response.status
             });
         }
 
+        // Success (200, 201, 202)
+        console.log('Contact created successfully');
         return res.status(200).json({ 
             success: true, 
             message: 'Successfully scheduled consultation',
