@@ -5,7 +5,7 @@
 // Vercel supports node-fetch v2 in CommonJS format
 const fetch = require('node-fetch');
 
-const GETRESPONSE_API_KEY = 'zn0yitbcr5jsxt6xf349zq37epsysj2b';
+const GETRESPONSE_API_KEY = 'nlsodeb550ot1v6swxanh0bbzjnyhoc2';
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
 const CAMPAIGN_ID = 'frqWU';
 const CUSTOM_FIELD_DATE_TIME_ID = 'noyCaD';
@@ -126,10 +126,15 @@ module.exports = async function handler(req, res) {
         // Try to create contact directly - GetResponse will return 409 if it already exists
         let response;
         try {
+            // Format: api-key YOUR_API_KEY (with space after "api-key")
+            const authHeader = `api-key ${GETRESPONSE_API_KEY}`;
+            console.log('Auth header format check:', authHeader.substring(0, 20) + '...');
+            console.log('API Key length:', GETRESPONSE_API_KEY.length);
+            
             response = await fetch(GETRESPONSE_API_URL, {
                 method: 'POST',
                 headers: {
-                    'X-Auth-Token': `api-key ${GETRESPONSE_API_KEY}`,
+                    'X-Auth-Token': authHeader,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(contactData)

@@ -1,7 +1,7 @@
 // Helper endpoint to list all campaigns in GetResponse
 // This will help us find the correct campaign ID
 
-const GETRESPONSE_API_KEY = 'zn0yitbcr5jsxt6xf349zq37epsysj2b';
+const GETRESPONSE_API_KEY = 'nlsodeb550ot1v6swxanh0bbzjnyhoc2';
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/campaigns';
 
 module.exports = async function handler(req, res) {

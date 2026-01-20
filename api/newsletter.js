@@ -2,7 +2,7 @@
 // This file should be in /api/newsletter.js for Vercel deployment
 
 const fetch = require('node-fetch');
-const GETRESPONSE_API_KEY = 'zn0yitbcr5jsxt6xf349zq37epsysj2b';
+const GETRESPONSE_API_KEY = 'nlsodeb550ot1v6swxanh0bbzjnyhoc2';
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
 const CAMPAIGN_ID = 'C5wYq';
 

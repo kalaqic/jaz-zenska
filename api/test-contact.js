@@ -1,7 +1,7 @@
 // Test endpoint to debug contact creation
 // This will help us test different formats
 
-const GETRESPONSE_API_KEY = 'zn0yitbcr5jsxt6xf349zq37epsysj2b';
+const GETRESPONSE_API_KEY = 'nlsodeb550ot1v6swxanh0bbzjnyhoc2';
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
 
 module.exports = async function handler(req, res) {
