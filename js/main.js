@@ -907,11 +907,26 @@ function initSchedulingSystem() {
             scheduleCallBtn.disabled = true;
             scheduleCallBtn.textContent = 'Pošiljanje...';
             
-            // Format date for GetResponse API (YYYY-MM-DD)
+            // Format date and time for GetResponse API (YYYY-MM-DDTHH:MM:SSZ in UTC)
             const year = selectedDate.getFullYear();
             const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
             const day = String(selectedDate.getDate()).padStart(2, '0');
-            const callDate = `${year}-${month}-${day}`;
+            
+            // Parse time slot (e.g., "18:00" -> hours: 18, minutes: 00)
+            const [hours, minutes] = selectedTime.split(':').map(Number);
+            
+            // Create a Date object in local timezone
+            const localDateTime = new Date(year, selectedDate.getMonth(), day, hours, minutes, 0);
+            
+            // Convert to UTC and format as YYYY-MM-DDTHH:MM:SSZ
+            const utcYear = localDateTime.getUTCFullYear();
+            const utcMonth = String(localDateTime.getUTCMonth() + 1).padStart(2, '0');
+            const utcDay = String(localDateTime.getUTCDate()).padStart(2, '0');
+            const utcHours = String(localDateTime.getUTCHours()).padStart(2, '0');
+            const utcMinutes = String(localDateTime.getUTCMinutes()).padStart(2, '0');
+            const utcSeconds = String(localDateTime.getUTCSeconds()).padStart(2, '0');
+            
+            const noyCaD = `${utcYear}-${utcMonth}-${utcDay}T${utcHours}:${utcMinutes}:${utcSeconds}Z`;
             
             // Backend API endpoint (proxy to GetResponse)
             const API_URL = `${API_BASE_URL}/api/consultation`;
@@ -920,8 +935,7 @@ function initSchedulingSystem() {
                 // Send to backend proxy
                 const requestData = {
                     email: userEmail,
-                    callDate: callDate, // Format: YYYY-MM-DD
-                    callTime: selectedTime // Text format (e.g., "18:00")
+                    noyCaD: noyCaD // Format: YYYY-MM-DDTHH:MM:SSZ (UTC)
                 };
                 
                 const response = await fetch(API_URL, {

@@ -4834,6 +4834,45 @@ nav a:hover::after {
         grid-column: 1;
         grid-row: auto;
     }
+    
+    /* Jaz Zenska Steps Showcase - Tablet */
+    .jaz-steps-showcase {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0;
+    }
+    
+    .jaz-step-featured {
+        padding: 50px 40px;
+        min-height: 500px;
+    }
+    
+    .jaz-step-featured[data-step="1"] {
+        border-radius: 20px 0 0 0;
+    }
+    
+    .jaz-step-featured[data-step="2"] {
+        border-radius: 0 20px 0 0;
+    }
+    
+    .jaz-step-featured[data-step="3"] {
+        border-radius: 0 0 0 20px;
+    }
+    
+    .jaz-step-featured[data-step="4"] {
+        border-radius: 0 0 20px 0;
+    }
+    
+    .jaz-step-featured h4 {
+        font-size: 28px;
+    }
+    
+    .jaz-step-featured p {
+        font-size: 16px;
+    }
+    
+    .step-bg-number {
+        font-size: 100px;
+    }
 }
 
 @media (max-width: 768px) {

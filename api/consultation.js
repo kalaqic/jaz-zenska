@@ -7,9 +7,8 @@ const fetch = require('node-fetch');
 
 const GETRESPONSE_API_KEY = 'zn0yitbcr5jsxt6xf349zq37epsysj2b';
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
-const CAMPAIGN_ID = 'C5wYq';
-const CUSTOM_FIELD_CALL_DATE_ID = 'nIZ5dE';
-const CUSTOM_FIELD_CALL_TIME_ID = 'nIZjvO';
+const CAMPAIGN_ID = 'frqWU';
+const CUSTOM_FIELD_DATE_TIME_ID = 'noyCaD';
 
 // Debug: Log configuration
 console.log('=== GetResponse API Configuration ===');
@@ -73,15 +72,25 @@ module.exports = async function handler(req, res) {
         console.log('Body type:', typeof body);
         console.log('Req.body:', req.body);
 
-        const { email, callDate, callTime } = body;
+        const { email, noyCaD } = body;
 
         // Validate input
-        if (!email || !callDate || !callTime) {
-            console.error('Missing fields:', { email: !!email, callDate: !!callDate, callTime: !!callTime });
+        if (!email || !noyCaD) {
+            console.error('Missing fields:', { email: !!email, noyCaD: !!noyCaD });
             return res.status(400).json({ 
-                error: 'Missing required fields: email, callDate, callTime',
-                received: { email: !!email, callDate: !!callDate, callTime: !!callTime },
+                error: 'Missing required fields: email, noyCaD',
+                received: { email: !!email, noyCaD: !!noyCaD },
                 body: body
+            });
+        }
+
+        // Validate date-time format (YYYY-MM-DDTHH:MM:SSZ)
+        const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+        if (!dateTimeRegex.test(noyCaD)) {
+            console.error('Invalid date-time format:', noyCaD);
+            return res.status(400).json({ 
+                error: 'Invalid date-time format. Expected: YYYY-MM-DDTHH:MM:SSZ',
+                received: noyCaD
             });
         }
 
@@ -96,12 +105,8 @@ module.exports = async function handler(req, res) {
             },
             customFieldValues: [
                 {
-                    customFieldId: CUSTOM_FIELD_CALL_DATE_ID,
-                    value: [callDate] // Format: YYYY-MM-DD
-                },
-                {
-                    customFieldId: CUSTOM_FIELD_CALL_TIME_ID,
-                    value: [callTime] // One of: 18:00, 19:00, 20:00, 21:00, 22:00
+                    customFieldId: CUSTOM_FIELD_DATE_TIME_ID,
+                    value: [noyCaD] // Format: YYYY-MM-DDTHH:MM:SSZ (UTC)
                 }
             ]
             // tags: ['consultation'] // Removed - requires tag ID, not name
@@ -110,8 +115,7 @@ module.exports = async function handler(req, res) {
         console.log('=== Creating consultation contact ===');
         console.log('Email:', email);
         console.log('Campaign ID:', CAMPAIGN_ID);
-        console.log('Call Date:', callDate);
-        console.log('Call Time:', callTime);
+        console.log('Date-Time (noyCaD):', noyCaD);
         console.log('Complete request data:', JSON.stringify(contactData, null, 2));
         
         // Try to create contact directly - GetResponse will return 409 if it already exists
