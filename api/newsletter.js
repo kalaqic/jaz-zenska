@@ -11,12 +11,13 @@ module.exports = async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, GET');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Max-Age', '86400');
 
-    // Handle preflight OPTIONS request first
+    // Handle preflight OPTIONS request first - MUST return 200
     if (req.method === 'OPTIONS') {
-        return res.status(200).json({});
+        res.status(200);
+        res.end();
+        return;
     }
 
     // Only allow POST requests
