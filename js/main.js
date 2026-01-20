@@ -125,7 +125,7 @@ function initStepsAnimation() {
 // API Configuration
 // Production Vercel URL
 // For local testing, set window.API_BASE_URL = 'http://localhost:3000' in HTML before loading this script
-const API_BASE_URL = window.API_BASE_URL || 'https://jaz-zenska-vercel2.vercel.app';
+const API_BASE_URL = window.API_BASE_URL || 'https://jaz-zenska.vercel.app';
 
 // Newsletter form submission with GetResponse API
 // Uses backend proxy to avoid CORS issues
