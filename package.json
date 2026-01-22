@@ -3,8 +3,6 @@
   "version": "1.0.0",
   "description": "Jaz Ženska website with GetResponse API integration",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
   },
   "keywords": [
     "getresponse",
