@@ -2,9 +2,16 @@
 // This file should be in /api/newsletter.js for Vercel deployment
 
 const fetch = require('node-fetch');
-const GETRESPONSE_API_KEY = 'nlsodeb550ot1v6swxanh0bbzjnyhoc2';
+
+// Get API key from environment variable (set in Vercel)
+const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
 const CAMPAIGN_ID = 'C5wYq';
+
+// Validate API key is set
+if (!GETRESPONSE_API_KEY) {
+    console.error('ERROR: GETRESPONSE_API_KEY environment variable is not set!');
+}
 
 module.exports = async function handler(req, res) {
     // Set CORS headers for all requests
@@ -23,6 +30,15 @@ module.exports = async function handler(req, res) {
     // Only allow POST requests
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // Check if API key is configured
+    if (!GETRESPONSE_API_KEY) {
+        console.error('GetResponse API key is not configured');
+        return res.status(500).json({ 
+            error: 'Server configuration error',
+            message: 'API key not configured'
+        });
     }
 
     try {

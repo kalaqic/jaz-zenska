@@ -405,7 +405,7 @@ function preventScrollBounce() {
 function initWelcomePopup() {
     const welcomePopup = document.getElementById('welcomePopup');
     const welcomePopupClose = document.getElementById('welcomePopupClose');
-    const welcomePopupButton = document.querySelector('.welcome-popup-button');
+    const welcomePopupButton = document.getElementById('welcomePopupButton');
     const body = document.body;
     
     if (!welcomePopup) return;
@@ -433,6 +433,7 @@ function initWelcomePopup() {
     // Close popup when button is clicked
     if (welcomePopupButton) {
         welcomePopupButton.addEventListener('click', function(e) {
+            e.preventDefault();
             closePopup();
         });
     }

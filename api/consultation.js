@@ -5,16 +5,22 @@
 // Vercel supports node-fetch v2 in CommonJS format
 const fetch = require('node-fetch');
 
-const GETRESPONSE_API_KEY = 'nlsodeb550ot1v6swxanh0bbzjnyhoc2';
+// Get API key from environment variable (set in Vercel)
+const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
 const CAMPAIGN_ID = 'frqWU';
 const CUSTOM_FIELD_DATE_TIME_ID = 'noyCaD';
 
-// Debug: Log configuration
+// Validate API key is set
+if (!GETRESPONSE_API_KEY) {
+    console.error('ERROR: GETRESPONSE_API_KEY environment variable is not set!');
+}
+
+// Debug: Log configuration (without exposing full API key)
 console.log('=== GetResponse API Configuration ===');
 console.log('API URL:', GETRESPONSE_API_URL);
 console.log('Campaign ID:', CAMPAIGN_ID);
-console.log('API Key (first 15 chars):', GETRESPONSE_API_KEY.substring(0, 15) + '...');
+console.log('API Key configured:', GETRESPONSE_API_KEY ? 'Yes' : 'No');
 console.log('Using fetch:', typeof fetch);
 
 module.exports = async function handler(req, res) {
@@ -37,6 +43,15 @@ module.exports = async function handler(req, res) {
     // Only allow POST requests
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // Check if API key is configured
+    if (!GETRESPONSE_API_KEY) {
+        console.error('GetResponse API key is not configured');
+        return res.status(500).json({ 
+            error: 'Server configuration error',
+            message: 'API key not configured'
+        });
     }
 
     try {
@@ -128,8 +143,9 @@ module.exports = async function handler(req, res) {
         try {
             // Format: api-key YOUR_API_KEY (with space after "api-key")
             const authHeader = `api-key ${GETRESPONSE_API_KEY}`;
-            console.log('Auth header format check:', authHeader.substring(0, 20) + '...');
-            console.log('API Key length:', GETRESPONSE_API_KEY.length);
+            // Don't log the actual API key - only log that it's configured
+            console.log('Auth header format: api-key [HIDDEN]');
+            console.log('API Key configured: Yes');
             
             response = await fetch(GETRESPONSE_API_URL, {
                 method: 'POST',

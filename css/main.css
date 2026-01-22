@@ -531,6 +531,11 @@ nav a:hover::after {
     border: 2px solid var(--pinky);
     color: var(--dark-violet);
     font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
     line-height: 1;
     cursor: pointer;
     display: flex;
@@ -575,6 +580,13 @@ nav a:hover::after {
     background: linear-gradient(135deg, var(--white) 0%, var(--hero-light) 100%);
     position: relative;
     overflow: hidden;
+}
+
+.welcome-popup-text .welcome-popup-button {
+    align-self: flex-start;
+    width: auto;
+    max-width: fit-content;
+    flex-shrink: 0;
 }
 
 .welcome-popup-text::before {
@@ -635,8 +647,10 @@ nav a:hover::after {
 }
 
 .welcome-popup-highlights strong {
-    color: var(--dark-violet);
-    font-weight: 600;
+    color: var(--mid-violet);
+    font-weight: 700;
+    font-size: 18px;
+    margin-right: 8px;
 }
 
 .welcome-popup-description {
@@ -649,14 +663,20 @@ nav a:hover::after {
 .welcome-popup-button {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    padding: 18px 35px;
+    gap: 10px;
+    padding: 14px 24px;
     background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
     color: var(--white);
     text-decoration: none;
+    border: none;
     border-radius: 30px;
     font-weight: 700;
     font-size: 15px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    width: auto;
+    max-width: fit-content;
+    flex-shrink: 0;
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: all 0.3s ease;
@@ -748,9 +768,9 @@ nav a:hover::after {
     }
     
     .welcome-popup-button {
-        padding: 16px 25px;
+        padding: 14px 20px;
         font-size: 13px;
-        width: 100%;
+        width: auto;
         justify-content: center;
     }
     

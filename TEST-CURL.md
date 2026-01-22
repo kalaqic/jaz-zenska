@@ -4,7 +4,7 @@
 
 ```bash
 curl -v -X POST "https://api.getresponse.com/v3/contacts" \
-  -H "X-Auth-Token: api-key zn0yitbcr5jsxt6xf349zq37epsysj2b" \
+  -H "X-Auth-Token: api-key YOUR_API_KEY_HERE" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test123@example.com",
@@ -20,7 +20,7 @@ Ako ovo radi (vraća 201 ili kontakt kreiran), onda je problem u serverless funk
 
 ```bash
 curl -w "\nHTTP Status: %{http_code}\n" -X POST "https://api.getresponse.com/v3/contacts" \
-  -H "X-Auth-Token: api-key zn0yitbcr5jsxt6xf349zq37epsysj2b" \
+  -H "X-Auth-Token: api-key YOUR_API_KEY_HERE" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test456@example.com",

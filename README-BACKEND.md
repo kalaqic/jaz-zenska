@@ -83,7 +83,7 @@ Za bolju sigurnost, možete prebaciti API ključ u environment variable:
 
 1. Kreirajte `.env` fajl:
    ```
-   GETRESPONSE_API_KEY=zn0yitbcr5jsxt6xf349zq37epsysj2b
+   GETRESPONSE_API_KEY=your_api_key_here
    PORT=3000
    ```
 
