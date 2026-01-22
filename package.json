@@ -2,8 +2,6 @@
   "name": "jaz-zenska",
   "version": "1.0.0",
   "description": "Jaz Ženska website with GetResponse API integration",
-  "scripts": {
-  },
   "keywords": [
     "getresponse",
     "api",
@@ -12,11 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
     "node-fetch": "^2.7.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
   }
 }
