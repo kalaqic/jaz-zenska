@@ -9,9 +9,9 @@ const fetch = require('node-fetch');
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
 const CAMPAIGN_ID = 'frqWU';
-const CUSTOM_FIELD_DATE_TIME_ID = 'call_datetime'; // Changed from 'noyCaD' to 'call_datetime'
-const CUSTOM_FIELD_PHONE_ID = 'no8Uze';
-const CUSTOM_FIELD_DAY_ID = 'hVRRwu';
+const CUSTOM_FIELD_DATE_TIME_ID = 'noyCaD'; // call_datetime field - actual GetResponse customFieldId
+const CUSTOM_FIELD_PHONE_ID = 'no8Uze'; // phone field - actual GetResponse customFieldId
+const CUSTOM_FIELD_DAY_ID = 'noqq62'; // day field - actual GetResponse customFieldId
 
 // Validate API key is set
 if (!GETRESPONSE_API_KEY) {
@@ -143,15 +143,15 @@ module.exports = async function handler(req, res) {
             },
             customFieldValues: [
                 {
-                    customFieldId: CUSTOM_FIELD_DATE_TIME_ID, // call_datetime - date-time field
+                    customFieldId: CUSTOM_FIELD_DATE_TIME_ID, // noyCaD - call_datetime field (date type)
                     value: [noyCaD] // Format: YYYY-MM-DDTHH:MM:SSZ (UTC) - ISO 8601 format, must be array
                 },
                 {
-                    customFieldId: CUSTOM_FIELD_PHONE_ID, // no8Uze - phone/text field
+                    customFieldId: CUSTOM_FIELD_PHONE_ID, // no8Uze - phone field (phone type)
                     value: [phone] // Phone number - must be array even for single values
                 },
                 {
-                    customFieldId: CUSTOM_FIELD_DAY_ID, // hVRRwu - day/text field
+                    customFieldId: CUSTOM_FIELD_DAY_ID, // noqq62 - day field (text type)
                     value: [day] // Day name (e.g., "Nedelja", "Ponedeljek") - must be array
                 }
             ]
@@ -174,9 +174,9 @@ module.exports = async function handler(req, res) {
         console.log('Raw input - noyCaD:', noyCaD);
         console.log('Campaign ID:', CAMPAIGN_ID);
         console.log('Custom Field IDs:');
-        console.log('  - Date-Time (call_datetime):', CUSTOM_FIELD_DATE_TIME_ID);
-        console.log('  - Phone (no8Uze):', CUSTOM_FIELD_PHONE_ID);
-        console.log('  - Day (hVRRwu):', CUSTOM_FIELD_DAY_ID);
+        console.log('  - Date-Time (call_datetime):', CUSTOM_FIELD_DATE_TIME_ID, '(noyCaD)');
+        console.log('  - Phone:', CUSTOM_FIELD_PHONE_ID, '(no8Uze)');
+        console.log('  - Day:', CUSTOM_FIELD_DAY_ID, '(noqq62)');
         console.log('Final contactData.name:', contactData.name);
         console.log('Custom field values:', JSON.stringify(contactData.customFieldValues, null, 2));
         console.log('Complete request data:', JSON.stringify(contactData, null, 2));
@@ -238,7 +238,7 @@ module.exports = async function handler(req, res) {
             console.warn('⚠ WARNING: Response does not include customFieldValues array');
             console.warn('This might mean custom fields were not saved. Check if custom field IDs are correct.');
             console.warn('Custom field IDs used:');
-            console.warn('  - Date-Time (call_datetime):', CUSTOM_FIELD_DATE_TIME_ID);
+            console.warn('  - Date-Time:', CUSTOM_FIELD_DATE_TIME_ID, '(noyCaD)');
             console.warn('  - Phone:', CUSTOM_FIELD_PHONE_ID);
             console.warn('  - Day:', CUSTOM_FIELD_DAY_ID);
         }
@@ -246,7 +246,7 @@ module.exports = async function handler(req, res) {
         // Check for any errors related to custom fields
         if (data.context && Array.isArray(data.context)) {
             const customFieldErrors = data.context.filter(ctx => 
-                ctx.field && (ctx.field.includes('customField') || ctx.field.includes('call_datetime') || ctx.field.includes('no8Uze') || ctx.field.includes('hVRRwu'))
+                ctx.field && (ctx.field.includes('customField') || ctx.field.includes('noyCaD') || ctx.field.includes('no8Uze') || ctx.field.includes('noqq62'))
             );
             if (customFieldErrors.length > 0) {
                 console.error('✗ Custom field errors found:', JSON.stringify(customFieldErrors, null, 2));
