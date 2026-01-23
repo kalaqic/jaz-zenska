@@ -9,7 +9,9 @@ const fetch = require('node-fetch');
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
 const CAMPAIGN_ID = 'frqWU';
-const CUSTOM_FIELD_DATE_TIME_ID = 'noyCaD';
+const CUSTOM_FIELD_DATE_TIME_ID = 'call_datetime'; // Changed from 'noyCaD' to 'call_datetime'
+const CUSTOM_FIELD_PHONE_ID = 'no8Uze';
+const CUSTOM_FIELD_DAY_ID = 'hVRRwu';
 
 // Validate API key is set
 if (!GETRESPONSE_API_KEY) {
@@ -92,14 +94,26 @@ module.exports = async function handler(req, res) {
         console.log('Body type:', typeof body);
         console.log('Req.body:', req.body);
 
-        const { email, noyCaD } = body;
+        const { email, name, phone, noyCaD, day } = body;
 
         // Validate input
-        if (!email || !noyCaD) {
-            console.error('Missing fields:', { email: !!email, noyCaD: !!noyCaD });
+        if (!email || !noyCaD || !name || !phone || !day) {
+            console.error('Missing fields:', { 
+                email: !!email, 
+                name: !!name, 
+                phone: !!phone, 
+                noyCaD: !!noyCaD, 
+                day: !!day 
+            });
             return res.status(400).json({ 
-                error: 'Missing required fields: email, noyCaD',
-                received: { email: !!email, noyCaD: !!noyCaD },
+                error: 'Missing required fields: email, name, phone, noyCaD, day',
+                received: { 
+                    email: !!email, 
+                    name: !!name, 
+                    phone: !!phone, 
+                    noyCaD: !!noyCaD, 
+                    day: !!day 
+                },
                 body: body
             });
         }
@@ -114,28 +128,57 @@ module.exports = async function handler(req, res) {
             });
         }
 
+        // Ensure name is properly set (GetResponse requires name field)
+        // Only use email as fallback if name is truly missing/empty
+        const contactName = (name && name.trim()) ? name.trim() : email;
+        
         // Prepare complete contact data - send everything at once
-        // Note: tags field removed - GetResponse requires tag IDs, not tag names
-        // If tags are needed, they must be created first and their IDs used here
+        // GetResponse API v3 format for creating contacts with custom fields
+        // Custom fields must exist in GetResponse account with these exact IDs
         const contactData = {
             email: email,
-            name: email, // Required field
+            name: contactName, // Use actual name, fallback to email only if name is missing
             campaign: {
                 campaignId: CAMPAIGN_ID
             },
             customFieldValues: [
                 {
-                    customFieldId: CUSTOM_FIELD_DATE_TIME_ID,
-                    value: [noyCaD] // Format: YYYY-MM-DDTHH:MM:SSZ (UTC)
+                    customFieldId: CUSTOM_FIELD_DATE_TIME_ID, // call_datetime - date-time field
+                    value: [noyCaD] // Format: YYYY-MM-DDTHH:MM:SSZ (UTC) - ISO 8601 format, must be array
+                },
+                {
+                    customFieldId: CUSTOM_FIELD_PHONE_ID, // no8Uze - phone/text field
+                    value: [phone] // Phone number - must be array even for single values
+                },
+                {
+                    customFieldId: CUSTOM_FIELD_DAY_ID, // hVRRwu - day/text field
+                    value: [day] // Day name (e.g., "Nedelja", "Ponedeljek") - must be array
                 }
             ]
             // tags: ['consultation'] // Removed - requires tag ID, not name
         };
         
+        // Validate that custom field IDs are set
+        if (!CUSTOM_FIELD_DATE_TIME_ID || !CUSTOM_FIELD_PHONE_ID || !CUSTOM_FIELD_DAY_ID) {
+            console.error('ERROR: Custom field IDs are not configured!');
+            console.error('Date-Time ID:', CUSTOM_FIELD_DATE_TIME_ID);
+            console.error('Phone ID:', CUSTOM_FIELD_PHONE_ID);
+            console.error('Day ID:', CUSTOM_FIELD_DAY_ID);
+        }
+        
         console.log('=== Creating consultation contact ===');
-        console.log('Email:', email);
+        console.log('Raw input - Email:', email);
+        console.log('Raw input - Name:', name);
+        console.log('Raw input - Phone:', phone);
+        console.log('Raw input - Day:', day);
+        console.log('Raw input - noyCaD:', noyCaD);
         console.log('Campaign ID:', CAMPAIGN_ID);
-        console.log('Date-Time (noyCaD):', noyCaD);
+        console.log('Custom Field IDs:');
+        console.log('  - Date-Time (call_datetime):', CUSTOM_FIELD_DATE_TIME_ID);
+        console.log('  - Phone (no8Uze):', CUSTOM_FIELD_PHONE_ID);
+        console.log('  - Day (hVRRwu):', CUSTOM_FIELD_DAY_ID);
+        console.log('Final contactData.name:', contactData.name);
+        console.log('Custom field values:', JSON.stringify(contactData.customFieldValues, null, 2));
         console.log('Complete request data:', JSON.stringify(contactData, null, 2));
         
         // Try to create contact directly - GetResponse will return 409 if it already exists
@@ -187,6 +230,28 @@ module.exports = async function handler(req, res) {
         console.log('Status:', response.status);
         console.log('Response text:', responseText);
         console.log('Response data:', JSON.stringify(data, null, 2));
+        
+        // Check if custom fields were saved by examining the response
+        if (data.customFieldValues && Array.isArray(data.customFieldValues)) {
+            console.log('✓ Custom fields found in response:', JSON.stringify(data.customFieldValues, null, 2));
+        } else {
+            console.warn('⚠ WARNING: Response does not include customFieldValues array');
+            console.warn('This might mean custom fields were not saved. Check if custom field IDs are correct.');
+            console.warn('Custom field IDs used:');
+            console.warn('  - Date-Time (call_datetime):', CUSTOM_FIELD_DATE_TIME_ID);
+            console.warn('  - Phone:', CUSTOM_FIELD_PHONE_ID);
+            console.warn('  - Day:', CUSTOM_FIELD_DAY_ID);
+        }
+        
+        // Check for any errors related to custom fields
+        if (data.context && Array.isArray(data.context)) {
+            const customFieldErrors = data.context.filter(ctx => 
+                ctx.field && (ctx.field.includes('customField') || ctx.field.includes('call_datetime') || ctx.field.includes('no8Uze') || ctx.field.includes('hVRRwu'))
+            );
+            if (customFieldErrors.length > 0) {
+                console.error('✗ Custom field errors found:', JSON.stringify(customFieldErrors, null, 2));
+            }
+        }
         
         // 409 = Contact already exists in GetResponse account
         // BUT check the actual error message to be sure
@@ -246,10 +311,20 @@ module.exports = async function handler(req, res) {
 
         // Success (200, 201, 202)
         console.log('Contact created successfully');
+        console.log('Response data includes:', JSON.stringify(data, null, 2));
+        
+        // Check if custom fields were saved by looking at the response
+        if (data.customFieldValues) {
+            console.log('Custom fields in response:', JSON.stringify(data.customFieldValues, null, 2));
+        } else {
+            console.warn('WARNING: Response does not include customFieldValues. Custom fields may not have been saved.');
+        }
+        
         return res.status(200).json({ 
             success: true, 
             message: 'Successfully scheduled consultation',
-            data: data
+            data: data,
+            customFieldsSaved: !!data.customFieldValues
         });
     } catch (error) {
         console.error('Server error:', error);

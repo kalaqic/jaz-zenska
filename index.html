@@ -575,9 +575,19 @@
                             <div class="time-slots-grid" id="time-slots-grid"></div>
                         </div>
                         <div class="selected-info" id="selected-info"></div>
+                        <div class="form-inputs-container">
+                            <div class="email-input-container">
+                                <label for="user-first-name">Vaše ime:</label>
+                                <input type="text" id="user-first-name" class="user-input" placeholder="Vaše ime" required>
+                            </div>
                         <div class="email-input-container">
                             <label for="user-email">Vaš email:</label>
                             <input type="email" id="user-email" class="user-email-input" placeholder="vas@email.com" required>
+                            </div>
+                            <div class="email-input-container">
+                                <label for="user-phone">Vaša telefonska številka:</label>
+                                <input type="tel" id="user-phone" class="user-input" placeholder="+386 XX XXX XXX" required>
+                            </div>
                         </div>
                         <button class="schedule-call-btn" id="schedule-call-btn" disabled>Zakazi posvet</button>
                     </div>
@@ -627,11 +637,10 @@
             
             <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
                     <div class="newsletter-form-row">
-                <input type="text" id="newsletter-firstname" name="firstname" placeholder="Ime" required>
-                <input type="text" id="newsletter-lastname" name="lastname" placeholder="Priimek" required>
+                <input type="text" id="newsletter-name" name="name" placeholder="Vaše ime" required>
+                <input type="email" id="newsletter-email" name="email" placeholder="Email" required>
                     </div>
                     <div class="newsletter-form-row newsletter-form-row-email">
-                        <input type="email" id="newsletter-email" name="email" placeholder="Email" required>
                 <button type="submit" id="newsletter-submit-btn">PRIJAVI ME</button>
                     </div>
             </form>

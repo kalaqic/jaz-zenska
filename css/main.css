@@ -4398,8 +4398,16 @@ nav a:hover::after {
     font-size: 14px;
 }
 
+.form-inputs-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 .email-input-container {
-    margin-bottom: 25px;
+    margin-bottom: 0;
     text-align: left;
 }
 
@@ -4412,7 +4420,8 @@ nav a:hover::after {
     margin-bottom: 8px;
 }
 
-.user-email-input {
+.user-email-input,
+.user-input {
     width: 100%;
     padding: 12px 16px;
     border: 2px solid var(--almost-white);
@@ -4425,13 +4434,15 @@ nav a:hover::after {
     box-sizing: border-box;
 }
 
-.user-email-input:focus {
+.user-email-input:focus,
+.user-input:focus {
     outline: none;
     border-color: var(--mid-violet);
     box-shadow: 0 0 0 3px rgba(100, 56, 67, 0.1);
 }
 
-.user-email-input::placeholder {
+.user-email-input::placeholder,
+.user-input::placeholder {
     color: rgba(100, 56, 67, 0.4);
 }
 

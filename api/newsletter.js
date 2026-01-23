@@ -6,7 +6,7 @@ const fetch = require('node-fetch');
 // Get API key from environment variable (set in Vercel)
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
-const CAMPAIGN_ID = 'C5wYq';
+const CAMPAIGN_ID = 'froXf';
 
 // Validate API key is set
 if (!GETRESPONSE_API_KEY) {
@@ -54,19 +54,19 @@ module.exports = async function handler(req, res) {
             }
         }
 
-        const { email, firstName, lastName } = body;
+        const { email, name } = body;
 
         // Validate input
-        if (!email || !firstName || !lastName) {
+        if (!email || !name) {
             return res.status(400).json({ 
-                error: 'Missing required fields: email, firstName, lastName' 
+                error: 'Missing required fields: email, name' 
             });
         }
 
         // Prepare contact data for GetResponse API v3
         const contactData = {
             email: email,
-            name: `${firstName} ${lastName}`,
+            name: name,
             campaign: {
                 campaignId: CAMPAIGN_ID
             }

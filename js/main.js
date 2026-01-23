@@ -133,15 +133,13 @@ function handleNewsletterSubmit(event) {
     event.preventDefault();
     
     // Get form elements
-    const firstNameInput = document.getElementById('newsletter-firstname');
-    const lastNameInput = document.getElementById('newsletter-lastname');
+    const nameInput = document.getElementById('newsletter-name');
     const emailInput = document.getElementById('newsletter-email');
     const submitBtn = document.getElementById('newsletter-submit-btn');
     const form = event.target;
     
     // Get form values
-    const firstName = firstNameInput ? firstNameInput.value.trim() : '';
-    const lastName = lastNameInput ? lastNameInput.value.trim() : '';
+    const name = nameInput ? nameInput.value.trim() : '';
     const email = emailInput ? emailInput.value.trim() : '';
     
     // Validate email
@@ -151,9 +149,10 @@ function handleNewsletterSubmit(event) {
         return;
     }
     
-    // Validate name fields
-    if (!firstName || !lastName) {
-        alert('Prosimo, izpolnite vsa polja.');
+    // Validate name
+    if (!name) {
+        alert('Prosimo, vnesite vaše ime.');
+        if (nameInput) nameInput.focus();
         return;
     }
     
@@ -169,8 +168,7 @@ function handleNewsletterSubmit(event) {
     // Prepare data for backend
     const requestData = {
         email: email,
-        firstName: firstName,
-        lastName: lastName
+        name: name
     };
     
     // Make API request to backend proxy
@@ -714,14 +712,18 @@ function initSchedulingSystem() {
         monthYear.textContent = new Date(year, month).toLocaleDateString('sl-SI', { month: 'long', year: 'numeric' });
         
         // Get first day of month and number of days
-        const firstDay = new Date(year, month, 1).getDay();
+        // getDay() returns 0=Sunday, 1=Monday, etc.
+        // But our calendar starts with Monday, so we need to adjust:
+        // Sunday (0) should be at position 6, Monday (1) at position 0, etc.
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const firstDay = (firstDayOfMonth + 6) % 7; // Convert Sunday=0 to Sunday=6, Monday=1 to Monday=0
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const today = new Date();
         
         // Clear grid
         calendarGrid.innerHTML = '';
         
-        // Add day headers
+        // Add day headers (Monday to Sunday)
         const dayHeaders = ['Po', 'To', 'Sr', 'Če', 'Pe', 'So', 'Ne'];
         dayHeaders.forEach(day => {
             const header = document.createElement('div');
@@ -849,15 +851,29 @@ function initSchedulingSystem() {
         
         // Enable/disable schedule button based on form completion
         if (scheduleCallBtn) {
+            const userEmailInput = document.getElementById('user-email');
+            const userFirstNameInput = document.getElementById('user-first-name');
+            const userPhoneInput = document.getElementById('user-phone');
             const hasEmail = userEmailInput && userEmailInput.value.trim() && userEmailInput.value.includes('@');
-            scheduleCallBtn.disabled = !(selectedDate && selectedTime && hasEmail);
+            const hasFirstName = userFirstNameInput && userFirstNameInput.value.trim();
+            const hasPhone = userPhoneInput && userPhoneInput.value.trim();
+            scheduleCallBtn.disabled = !(selectedDate && selectedTime && hasEmail && hasFirstName && hasPhone);
         }
     }
     
-    // Add email input listener
+    // Add input listeners for form validation
     const userEmailInput = document.getElementById('user-email');
+    const userFirstNameInput = document.getElementById('user-first-name');
+    const userPhoneInput = document.getElementById('user-phone');
+    
     if (userEmailInput) {
         userEmailInput.addEventListener('input', updateSelectedInfo);
+    }
+    if (userFirstNameInput) {
+        userFirstNameInput.addEventListener('input', updateSelectedInfo);
+    }
+    if (userPhoneInput) {
+        userPhoneInput.addEventListener('input', updateSelectedInfo);
     }
     
     // Month navigation
@@ -893,14 +909,31 @@ function initSchedulingSystem() {
         scheduleCallBtn.addEventListener('click', async () => {
             if (!selectedDate || !selectedTime) return;
             
-            // Get user email
+            // Get user inputs
             const userEmailInput = document.getElementById('user-email');
-            const userEmail = userEmailInput ? userEmailInput.value.trim() : '';
+            const userFirstNameInput = document.getElementById('user-first-name');
+            const userPhoneInput = document.getElementById('user-phone');
             
-            // Validate email
+            const userEmail = userEmailInput ? userEmailInput.value.trim() : '';
+            const userFirstName = userFirstNameInput ? userFirstNameInput.value.trim() : '';
+            const userPhone = userPhoneInput ? userPhoneInput.value.trim() : '';
+            
+            // Validate inputs
             if (!userEmail || !userEmail.includes('@')) {
                 alert('Prosimo, vnesite veljaven email naslov.');
                 if (userEmailInput) userEmailInput.focus();
+                return;
+            }
+            
+            if (!userFirstName) {
+                alert('Prosimo, vnesite vaše ime.');
+                if (userFirstNameInput) userFirstNameInput.focus();
+                return;
+            }
+            
+            if (!userPhone) {
+                alert('Prosimo, vnesite vašo telefonsko številko.');
+                if (userPhoneInput) userPhoneInput.focus();
                 return;
             }
             
@@ -929,6 +962,26 @@ function initSchedulingSystem() {
             
             const noyCaD = `${utcYear}-${utcMonth}-${utcDay}T${utcHours}:${utcMinutes}:${utcSeconds}Z`;
             
+            // Get day name in Slovenian
+            // Use the selected date's year, month, and day to create a fresh date object
+            // This ensures we get the correct day of the week without timezone issues
+            const selectedYear = selectedDate.getFullYear();
+            const selectedMonth = selectedDate.getMonth();
+            const selectedDay = selectedDate.getDate();
+            
+            // Create a date object at noon (12:00) to avoid any timezone edge cases
+            const dateForDayCalculation = new Date(selectedYear, selectedMonth, selectedDay, 12, 0, 0);
+            const dayNames = ['Nedelja', 'Ponedeljek', 'Torek', 'Sreda', 'Četrtek', 'Petek', 'Sobota'];
+            const dayOfWeek = dateForDayCalculation.getDay();
+            const dayName = dayNames[dayOfWeek];
+            
+            // Debug: Log the date and day to verify
+            console.log('Selected date object:', selectedDate);
+            console.log('Date components - Year:', selectedYear, 'Month:', selectedMonth, 'Day:', selectedDay);
+            console.log('Date for day calculation:', dateForDayCalculation);
+            console.log('Day of week (0=Sunday, 1=Monday, etc.):', dayOfWeek);
+            console.log('Day name:', dayName);
+            
             // Backend API endpoint (proxy to GetResponse)
             const API_URL = `${API_BASE_URL}/api/consultation`;
             
@@ -936,7 +989,10 @@ function initSchedulingSystem() {
                 // Send to backend proxy
                 const requestData = {
                     email: userEmail,
-                    noyCaD: noyCaD // Format: YYYY-MM-DDTHH:MM:SSZ (UTC)
+                    name: userFirstName,
+                    phone: userPhone,
+                    noyCaD: noyCaD, // Format: YYYY-MM-DDTHH:MM:SSZ (UTC)
+                    day: dayName // Day name in Slovenian
                 };
                 
                 const response = await fetch(API_URL, {
