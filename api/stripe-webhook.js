@@ -88,6 +88,7 @@ module.exports = async function handler(req, res) {
         console.log('Subscription metadata:', session.metadata);
 
         const customerEmail = session.customer_details?.email || session.customer_email;
+        const customerName = session.customer_details?.name || '';
         
         if (!customerEmail) {
             console.error('No email found in checkout session');
@@ -122,7 +123,7 @@ module.exports = async function handler(req, res) {
                     }
                 }
 
-                // 2. Send password reset email (so user can set their password)
+                // 2. Generate password reset link (so user can set their password)
                 try {
                     const actionCodeSettings = {
                         url: `${req.headers.origin || 'https://jazzenska.si'}/login.html?mode=resetPassword`,
@@ -132,20 +133,22 @@ module.exports = async function handler(req, res) {
                     const link = await auth.generatePasswordResetLink(customerEmail, actionCodeSettings);
                     console.log('Password reset link generated:', link);
 
-                    // 3. Send password reset email via GetResponse
+                    // 3. Add contact to GetResponse campaign (email will be sent via GetResponse automation)
                     try {
-                        const userName = session.customer_details?.name || '';
-                        await sendPasswordResetEmail(customerEmail, link, userName);
-                        console.log('Password reset email processed via GetResponse for:', customerEmail);
+                        console.log('Adding contact to GetResponse after purchase');
+                        console.log('Email:', customerEmail);
+                        console.log('Name:', customerName);
+                        const emailResult = await sendPasswordResetEmail(customerEmail, link, customerName);
+                        console.log('GetResponse result:', JSON.stringify(emailResult, null, 2));
+                        console.log('Contact added to GetResponse campaign for:', customerEmail);
                     } catch (emailError) {
-                        console.error('Error processing password reset email:', emailError);
-                        // Log the link so it can be sent manually if needed
-                        console.log('Password reset link (manual send required):', link);
-                        // Don't fail the webhook if email fails - user can request password reset later
+                        console.error('Error adding contact to GetResponse:', emailError);
+                        console.error('Error stack:', emailError.stack);
+                        // Don't fail the webhook if GetResponse fails
                     }
-                } catch (emailError) {
-                    console.error('Error in email processing:', emailError);
-                    // Don't fail the webhook if email fails
+                } catch (linkError) {
+                    console.error('Error generating password reset link:', linkError);
+                    // Don't fail the webhook if link generation fails
                 }
             } else {
                 console.error('Firebase not initialized');
