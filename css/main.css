@@ -396,10 +396,12 @@ nav a:hover::after {
     font-weight: 600;
     font-size: 14px;
     letter-spacing: 0.5px;
-    text-transform: uppercase;
+    text-transform: none;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
     white-space: nowrap;
+    margin-left: auto;
+    margin-right: 0;
 }
 
 .header-consultation-btn:hover {
@@ -1067,6 +1069,39 @@ nav a:hover::after {
     border: 1px solid rgba(255, 255, 255, 0.5);
     text-shadow: none;
     font-weight: 500;
+}
+
+.hero-description {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    position: relative;
+    z-index: 2;
+    color: #3a3a3a;
+    margin-bottom: 30px;
+    max-width: 750px;
+    padding: 0;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    text-shadow: none;
+    font-weight: 400;
+}
+
+.hero-cta-button {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    margin-top: 0;
+}
+
+.hero-cta-button:hover {
+    transform: translateX(-50%) translateY(-4px) scale(1.03);
 }
 
 .cta-button {
