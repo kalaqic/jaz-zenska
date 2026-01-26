@@ -123,24 +123,38 @@ module.exports = async function handler(req, res) {
     }
 
     // Handle the event
+    console.log('=== PROCESSING EVENT ===');
+    console.log('Event type:', event.type);
+    console.log('Event ID:', event.id);
+    console.log('Event data keys:', Object.keys(event.data || {}));
+    
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
         
-        console.log('Checkout session completed:', session.id);
+        console.log('✅ Checkout session completed event received');
+        console.log('Session ID:', session.id);
         console.log('Mode:', session.mode); // 'subscription' or 'payment'
+        console.log('Payment status:', session.payment_status);
+        console.log('Status:', session.status);
         console.log('Customer email:', session.customer_details?.email);
+        console.log('Customer details:', JSON.stringify(session.customer_details, null, 2));
         console.log('Subscription metadata:', session.metadata);
 
         const customerEmail = session.customer_details?.email || session.customer_email;
         const customerName = session.customer_details?.name || '';
         
+        console.log('Extracted email:', customerEmail);
+        console.log('Extracted name:', customerName);
+        
         if (!customerEmail) {
-            console.error('No email found in checkout session');
+            console.error('❌ No email found in checkout session');
+            console.error('Session object:', JSON.stringify(session, null, 2));
             return res.status(400).json({ error: 'No email found in checkout session' });
         }
 
         try {
             // 1. Create Firebase user (passwordless initially)
+            console.log('Firebase app initialized:', !!firebaseApp);
             if (firebaseApp) {
                 const auth = admin.auth();
                 
@@ -195,7 +209,8 @@ module.exports = async function handler(req, res) {
                     // Don't fail the webhook if link generation fails
                 }
             } else {
-                console.error('Firebase not initialized');
+                console.error('❌ Firebase not initialized - cannot create user');
+                console.error('FIREBASE_SERVICE_ACCOUNT exists:', !!process.env.FIREBASE_SERVICE_ACCOUNT);
             }
         } catch (error) {
             console.error('Error processing checkout completion:', error);
@@ -222,6 +237,15 @@ module.exports = async function handler(req, res) {
         // e.g., disable user access, send notification, etc.
     }
 
+    // Log if event type is not handled
+    if (event.type !== 'checkout.session.completed' && 
+        event.type !== 'customer.subscription.created' && 
+        event.type !== 'customer.subscription.updated' && 
+        event.type !== 'customer.subscription.deleted') {
+        console.log('⚠️ Unhandled event type:', event.type);
+    }
+
     // Return a response to acknowledge receipt of the event
+    console.log('✅ Webhook processed successfully, returning 200');
     res.status(200).json({ received: true });
 }
