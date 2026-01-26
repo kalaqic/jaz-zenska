@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prijava - Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .login-container {
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 40px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .login-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--dark-violet);
+            margin-bottom: 10px;
+        }
+        .login-header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+        .form-group input {
+            padding: 12px 16px;
+            border: 2px solid var(--almost-white);
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--mid-violet);
+        }
+        .login-button {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 10px;
+        }
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(100, 56, 67, 0.3);
+        }
+        .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .forgot-password a {
+            color: var(--mid-violet);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Prijava</h1>
+            <p>Prijavite se v svoj račun</p>
+        </div>
+        <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+            <div class="error-message" id="errorMessage"></div>
+            <div class="form-group">
+                <label for="email">Email naslov</label>
+                <input type="email" id="email" name="email" required autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label for="password">Geslo</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-button" id="loginButton">Prijavi se</button>
+        </form>
+        <div class="forgot-password">
+            <a href="#" onclick="handleForgotPassword(event)">Pozabljeno geslo?</a>
+        </div>
+    </div>
+
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const loginButton = document.getElementById('loginButton');
+            
+            // Clear previous errors
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
+            loginButton.disabled = true;
+            loginButton.textContent = 'Prijavljanje...';
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Napaka pri prijavi');
+                }
+                
+                // Store token
+                if (data.token) {
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userEmail', email);
+                }
+                
+                // Redirect to account page
+                window.location.href = 'account.html';
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.classList.add('show');
+                loginButton.disabled = false;
+                loginButton.textContent = 'Prijavi se';
+            }
+        }
+        
+        async function handleForgotPassword(event) {
+            event.preventDefault();
+            const email = prompt('Vnesite vaš email naslov:');
+            if (!email) return;
+            
+            try {
+                const response = await fetch('/api/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Email z navodili za ponastavitev gesla je bil poslan na vaš naslov.');
+                } else {
+                    alert(data.error || 'Napaka pri pošiljanju emaila');
+                }
+            } catch (error) {
+                alert('Napaka pri pošiljanju emaila');
+            }
+        }
+    </script>
+</body>
+</html>

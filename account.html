@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moj račun - Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .account-container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 40px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        .account-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--almost-white);
+        }
+        .account-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--dark-violet);
+            margin-bottom: 10px;
+        }
+        .account-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .account-section {
+            background: var(--main-white);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid var(--almost-white);
+        }
+        .account-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--dark-violet);
+            margin-bottom: 15px;
+        }
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--almost-white);
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .info-value {
+            color: var(--text-light);
+        }
+        .logout-button {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 20px;
+        }
+        .logout-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(100, 56, 67, 0.3);
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="account-container">
+        <div class="account-header">
+            <h1>Moj račun</h1>
+        </div>
+        <div class="account-content" id="accountContent">
+            <div class="loading">Nalaganje...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadUserData() {
+            const token = localStorage.getItem('authToken');
+            const email = localStorage.getItem('userEmail');
+            
+            if (!token || !email) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/user-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ token, email }),
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    // If unauthorized, redirect to login
+                    if (response.status === 401 || response.status === 404) {
+                        handleLogout();
+                        return;
+                    }
+                    throw new Error(data.error || 'Napaka pri nalaganju podatkov');
+                }
+                
+                // Display user data
+                document.getElementById('accountContent').innerHTML = `
+                    <div class="account-section">
+                        <h2>Osebni podatki</h2>
+                        <div class="account-info">
+                            <div class="info-item">
+                                <span class="info-label">Email naslov:</span>
+                                <span class="info-value">${data.email || email}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Ustvarjeno:</span>
+                                <span class="info-value">${data.createdAt ? new Date(data.createdAt).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Zadnja prijava:</span>
+                                <span class="info-value">${data.lastSignIn ? new Date(data.lastSignIn).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Status:</span>
+                                <span class="info-value">${data.emailVerified ? 'Potrjeno' : 'Nepotrjeno'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="logout-button" onclick="handleLogout()">Odjavi se</button>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('accountContent').innerHTML = `
+                    <div class="error">
+                        <h3>Napaka</h3>
+                        <p>${error.message}</p>
+                        <button class="logout-button" onclick="handleLogout()">Odjavi se</button>
+                    </div>
+                `;
+            }
+        }
+        
+        function handleLogout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userEmail');
+            window.location.href = 'login.html';
+        }
+        
+        // Load data on page load
+        loadUserData();
+    </script>
+</body>
+</html>

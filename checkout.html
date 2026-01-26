@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pridruži se - Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .checkout-container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 40px 20px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .checkout-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--dark-violet);
+            margin-bottom: 10px;
+        }
+        .checkout-header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+        .checkout-content {
+            text-align: center;
+        }
+        .checkout-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .spinner {
+            border: 4px solid var(--almost-white);
+            border-top: 4px solid var(--mid-violet);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .checkout-error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .checkout-button {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 20px;
+        }
+        .checkout-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(100, 56, 67, 0.3);
+        }
+        .checkout-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .product-info {
+            display: flex;
+            justify-content: center;
+        }
+        .product-card {
+            background: var(--main-white);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid var(--almost-white);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .product-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .product-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--dark-violet);
+            margin-bottom: 15px;
+        }
+        .product-description {
+            color: var(--text-light);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .price-info {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 15px;
+        }
+        .price {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--dark-violet);
+            display: block;
+            margin-bottom: 5px;
+        }
+        .price-note {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        .benefits-list {
+            list-style: none;
+            text-align: left;
+            margin: 30px 0;
+            padding: 0;
+        }
+        .benefits-list li {
+            padding: 12px 0;
+            color: var(--text-dark);
+            font-size: 16px;
+            border-bottom: 1px solid var(--almost-white);
+        }
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+        .subscription-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .subscription-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--almost-white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .subscription-card:hover {
+            border-color: var(--mid-violet);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(100, 56, 67, 0.1);
+        }
+        .subscription-card.selected {
+            border-color: var(--mid-violet);
+            background: var(--main-white);
+            box-shadow: 0 5px 20px rgba(100, 56, 67, 0.15);
+        }
+        .subscription-card.recommended::before {
+            content: 'PRIPOROČENO';
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
+            color: var(--white);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .subscription-period {
+            font-size: 14px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .subscription-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark-violet);
+            margin-bottom: 5px;
+        }
+        .subscription-price-unit {
+            font-size: 16px;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+        .subscription-savings {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        .subscription-savings-amount {
+            font-weight: 700;
+        }
+        @media (max-width: 768px) {
+            .subscription-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h1>Pridruži se skupnosti</h1>
+            <p>Skupnost JAZ ŽENSKA</p>
+        </div>
+        <div class="checkout-content" id="checkoutContent">
+            <div class="product-info" id="productInfo">
+                <div class="product-card">
+                    <div class="product-icon">👥</div>
+                    <h3>Skupnost JAZ ŽENSKA</h3>
+                    <p class="product-description">Pridružite se naši skupnosti žensk, ki se zbirajo, delijo modrost in se podpirajo na skupni poti rasti.</p>
+                    
+                    <div class="subscription-options">
+                        <div class="subscription-card" data-plan="monthly" onclick="selectPlan('monthly')">
+                            <div class="subscription-period">Mesečno</div>
+                            <div class="subscription-price">
+                                19,00 €<span class="subscription-price-unit">/mesec</span>
+                            </div>
+                            <div style="font-size: 14px; color: var(--text-light); margin-top: 5px;">
+                                228,00 € na leto
+                            </div>
+                        </div>
+                        <div class="subscription-card recommended selected" data-plan="yearly" onclick="selectPlan('yearly')">
+                            <div class="subscription-period">Letno</div>
+                            <div class="subscription-price">
+                                119,00 €<span class="subscription-price-unit">/leto</span>
+                            </div>
+                            <div class="subscription-savings">
+                                Prihranite <span class="subscription-savings-amount">109,00 €</span> (48% popust)
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <ul class="benefits-list">
+                        <li>✓ Pridružitev skupnosti žensk</li>
+                        <li>✓ Tedenske vsebine in podpora</li>
+                        <li>✓ Dostop do vseh materialov</li>
+                        <li>✓ Osebna rast in transformacija</li>
+                    </ul>
+                    <button class="checkout-button" id="checkoutButton" onclick="initiateCheckout()">
+                        Nadaljuj na plačilo
+                    </button>
+                </div>
+            </div>
+            <div class="checkout-loading" id="checkoutLoading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Pripravljanje plačila...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if opened via file:// protocol
+        if (window.location.protocol === 'file:') {
+            document.getElementById('checkoutContent').innerHTML = `
+                <div class="checkout-error" style="text-align: left; max-width: 600px; margin: 0 auto;">
+                    <h3 style="margin-bottom: 15px;">⚠️ Napaka: Datoteka mora biti odprta preko spletnega strežnika</h3>
+                    <p style="margin-bottom: 15px;">Ta stran ne more delovati, če jo odprete z dvojnim klikom. Uporabite enega od naslednjih načinov:</p>
+                    <ol style="margin-left: 20px; margin-bottom: 15px;">
+                        <li style="margin-bottom: 10px;"><strong>Razvijalski strežnik:</strong> V terminalu poženite <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">npm run dev</code> in odprite <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">http://localhost:3000/checkout.html</code></li>
+                        <li style="margin-bottom: 10px;"><strong>Vercel:</strong> Razširite na Vercel in testirajte na vaši spletni strani (priporočeno za testiranje API-ja)</li>
+                    </ol>
+                    <p style="font-size: 14px; color: var(--text-light);">Za več informacij glejte <code>LOCAL_DEVELOPMENT.md</code></p>
+                </div>
+            `;
+        }
+        
+        let selectedPlan = 'yearly'; // Default to yearly
+        
+        function selectPlan(plan) {
+            selectedPlan = plan;
+            
+            // Update UI
+            document.querySelectorAll('.subscription-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-plan="${plan}"]`).classList.add('selected');
+        }
+        
+        async function initiateCheckout() {
+            const productInfo = document.getElementById('productInfo');
+            const checkoutLoading = document.getElementById('checkoutLoading');
+            const checkoutButton = document.getElementById('checkoutButton');
+            
+            // Hide product info and show loading
+            productInfo.style.display = 'none';
+            checkoutLoading.style.display = 'flex';
+            checkoutButton.disabled = true;
+            
+            try {
+                const response = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        plan: selectedPlan // Send selected plan to API
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Napaka pri ustvarjanju seje za plačilo');
+                }
+
+                // Redirect to Stripe Checkout
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error('Stripe Checkout URL ni na voljo');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                productInfo.style.display = 'block';
+                checkoutLoading.style.display = 'none';
+                checkoutButton.disabled = false;
+                
+                document.getElementById('checkoutContent').innerHTML = `
+                    <div class="checkout-error">
+                        <h3>Napaka</h3>
+                        <p>${error.message}</p>
+                        <button class="checkout-button" onclick="window.location.reload()">Poskusi znova</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Check if canceled
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('canceled') === 'true') {
+            document.getElementById('productInfo').style.display = 'none';
+            document.getElementById('checkoutContent').innerHTML = `
+                <div class="checkout-error" style="background: #fff3cd; color: #856404; border: 2px solid #ffc107;">
+                    <h3>Plačilo preklicano</h3>
+                    <p>Vaše plačilo je bilo preklicano. Če želite nadaljevati, kliknite spodaj.</p>
+                    <button class="checkout-button" onclick="window.location.href='checkout.html'">Nadaljuj z nakupom</button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

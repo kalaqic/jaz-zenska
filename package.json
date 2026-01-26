@@ -9,7 +9,13 @@
   ],
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "dev": "npx http-server -p 3000 -c-1",
+    "start": "npx http-server -p 3000 -c-1"
+  },
   "dependencies": {
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "stripe": "^14.0.0",
+    "firebase-admin": "^12.0.0"
   }
 }

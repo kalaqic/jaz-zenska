@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plačilo uspešno - Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 40px 20px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 40px;
+            color: var(--white);
+        }
+        .success-container h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--dark-violet);
+            margin-bottom: 20px;
+        }
+        .success-container p {
+            color: var(--text-light);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        .success-button {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .success-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(100, 56, 67, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h1>Naročnina uspešna!</h1>
+        <p>Hvala, da ste se pridružili skupnosti JAZ ŽENSKA!</p>
+        <p>Vaša naročnina je bila uspešno aktivirana in vaš račun je bil ustvarjen. Na vaš email naslov boste prejeli povezavo za nastavitev gesla.</p>
+        <p style="font-size: 14px; color: var(--text-light); margin-top: 20px;">Ko nastavite geslo, se boste lahko prijavili v svoj račun in začeli uporabljati vse funkcionalnosti skupnosti.</p>
+        <div style="margin-top: 40px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="index.html" class="success-button">Nazaj na domačo stran</a>
+            <a href="login.html" class="success-button">Prijavi se</a>
+        </div>
+    </div>
+
+    <script>
+        // Extract session_id from URL if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        
+        if (sessionId) {
+            console.log('Checkout session ID:', sessionId);
+            // You can use this session ID to verify the payment on the server if needed
+        }
+    </script>
+</body>
+</html>
