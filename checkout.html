@@ -518,11 +518,33 @@
         </div>
     </div>
 
-    <script>
-        let selectedPlan = 'yearly'; // Default to yearly
-        
-        function selectPlan(plan) {
-            selectedPlan = plan;
+        <script>
+            // Check if page is opened via file:// protocol
+            if (window.location.protocol === 'file:') {
+                document.body.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, #f8f4f7 0%, #f0e8ed 50%, #fff6f9 100%);">
+                        <div style="max-width: 600px; text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+                            <h1 style="font-family: 'Playfair Display', serif; color: #643843; font-size: 32px; margin-bottom: 20px;">⚠️ Stranica mora biti otvorena preko Vercel-a</h1>
+                            <p style="font-size: 18px; line-height: 1.6; color: #3a3a3a; margin-bottom: 30px;">
+                                Ova stranica ne može raditi kada je otvorena direktno iz file sistema.<br>
+                                Molimo vas da koristite vašu Vercel URL adresu.
+                            </p>
+                            <p style="font-size: 16px; color: #666; margin-bottom: 30px;">
+                                <strong>Vaša Vercel URL:</strong><br>
+                                <code style="background: #f0f0f0; padding: 10px 20px; border-radius: 8px; display: inline-block; margin-top: 10px; font-size: 14px;">https://your-domain.vercel.app/checkout.html</code>
+                            </p>
+                            <p style="font-size: 14px; color: #99627A;">
+                                Ako testirate lokalno, koristite: <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px;">npm run dev</code>
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            let selectedPlan = 'yearly'; // Default to yearly
+            
+            function selectPlan(plan) {
+                selectedPlan = plan;
             
             // Update UI
             document.querySelectorAll('.subscription-card').forEach(card => {
@@ -532,6 +554,12 @@
         }
         
         async function initiateCheckout() {
+            // Check if running on file:// protocol
+            if (window.location.protocol === 'file:') {
+                alert('Ova stranica mora biti otvorena preko Vercel-a. Molimo koristite vašu Vercel URL adresu.');
+                return;
+            }
+            
             const productInfo = document.getElementById('productInfo');
             const checkoutLoading = document.getElementById('checkoutLoading');
             const checkoutButton = document.getElementById('checkoutButton');
@@ -552,18 +580,27 @@
                     }),
                 });
 
-                // Check if response is HTML (error page) instead of JSON
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    // If we get HTML back, it means the API endpoint doesn't exist
-                    // This happens when running locally or if the endpoint isn't deployed
-                    throw new Error('API endpoint ni na voljo. Ta funkcionalnost deluje samo na Vercel. Prosimo, razširite spletno stran na Vercel.');
+                console.log('Response status:', response.status);
+                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+                
+                let data;
+                try {
+                    const responseText = await response.text();
+                    console.log('Response text:', responseText);
+                    
+                    if (responseText) {
+                        data = JSON.parse(responseText);
+                    } else {
+                        data = {};
+                    }
+                } catch (jsonError) {
+                    console.error('JSON parse error:', jsonError);
+                    throw new Error(`Napaka pri komunikaciji s strežnikom: ${response.status} ${response.statusText}. Prosimo, preverite Vercel loge.`);
                 }
 
-                const data = await response.json();
-
                 if (!response.ok) {
-                    throw new Error(data.error || 'Napaka pri ustvarjanju seje za plačilo');
+                    console.error('API error response:', data);
+                    throw new Error(data.error || data.message || `Napaka pri ustvarjanju seje za plačilo (${response.status})`);
                 }
 
                 // Redirect to Stripe Checkout
@@ -573,25 +610,23 @@
                     throw new Error('Stripe Checkout URL ni na voljo');
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Checkout Error:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    stack: error.stack
+                });
+                
                 productInfo.style.display = 'block';
                 checkoutLoading.style.display = 'none';
                 checkoutButton.disabled = false;
                 
-                // Check if it's a JSON parse error (means we got HTML instead)
-                let errorMessage = error.message;
-                if (error.message.includes('Unexpected token') || error.message.includes('JSON')) {
-                    errorMessage = 'API endpoint ni na voljo. Ta funkcionalnost deluje samo ko je spletna stran razširjena na Vercel. Prosimo, razširite spletno stran na Vercel za testiranje plačilnega sistema.';
-                }
-                
+                const errorMessage = error.message || 'Neznana napaka';
                 document.getElementById('checkoutContent').innerHTML = `
                     <div class="product-info">
                         <div class="checkout-error">
                             <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 15px;">Napaka pri pripravi plačila</h3>
-                            <p style="font-size: 16px; line-height: 1.6;">${errorMessage}</p>
-                            <p style="font-size: 14px; margin-top: 20px; color: var(--text-light); line-height: 1.6;">
-                                Opomba: API končne točke delujejo samo na Vercel. Za lokalno testiranje uporabite <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">npm run dev</code>, vendar API-ji še vedno ne bodo delovali lokalno.
-                            </p>
+                            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 10px;">${errorMessage}</p>
+                            <p style="font-size: 14px; color: #666; margin-top: 20px;">Prosimo, poskusite znova ali kontaktirajte podporo.</p>
                             <button class="checkout-button" onclick="window.location.reload()" style="margin-top: 30px;">Poskusi znova</button>
                         </div>
                     </div>

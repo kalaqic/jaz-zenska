@@ -10,6 +10,14 @@ if (!STRIPE_SECRET_KEY) {
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 module.exports = async function handler(req, res) {
+    // Log request for debugging
+    console.log('=== Create Checkout Session Request ===');
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
+    console.log('Headers:', JSON.stringify(req.headers, null, 2));
+    console.log('Body:', req.body);
+    console.log('Query:', req.query);
+    
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -17,13 +25,21 @@ module.exports = async function handler(req, res) {
 
     // Handle preflight OPTIONS request
     if (req.method === 'OPTIONS') {
+        console.log('OPTIONS request - returning 200');
         res.status(200).end();
         return;
     }
 
     // Only allow POST requests
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        console.log(`Method ${req.method} not allowed - returning 405`);
+        console.log('Expected: POST');
+        console.log('Received:', req.method);
+        return res.status(405).json({ 
+            error: 'Method not allowed', 
+            receivedMethod: req.method,
+            expectedMethod: 'POST'
+        });
     }
 
     // Check if Stripe key is configured
@@ -36,18 +52,25 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        // Parse request body
+        // Parse request body - Vercel may send it as string or already parsed
         let body = req.body;
+        console.log('Raw body type:', typeof body);
+        console.log('Raw body:', body);
+        
         if (typeof body === 'string') {
             try {
                 body = JSON.parse(body);
+                console.log('Parsed body:', body);
             } catch (e) {
-                // If parsing fails, body might be empty or malformed
+                console.error('JSON parse error:', e);
                 body = {};
             }
+        } else if (!body) {
+            body = {};
         }
 
         const plan = body.plan || 'yearly'; // Default to yearly
+        console.log('Selected plan:', plan);
         const isYearly = plan === 'yearly';
 
         // Get the origin to construct success/cancel URLs

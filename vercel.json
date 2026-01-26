@@ -10,5 +10,10 @@
       "source": "/favicon.ico",
       "destination": "/images/logo/logo jaz zenska.webp"
     }
-  ]
+  ],
+  "functions": {
+    "api/create-checkout-session.js": {
+      "maxDuration": 10
+    }
+  }
 }
