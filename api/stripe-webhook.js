@@ -2,6 +2,7 @@
 const Stripe = require('stripe');
 const admin = require('firebase-admin');
 const fetch = require('node-fetch');
+const { sendPasswordResetEmail } = require('./send-email');
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
@@ -131,45 +132,19 @@ module.exports = async function handler(req, res) {
                     const link = await auth.generatePasswordResetLink(customerEmail, actionCodeSettings);
                     console.log('Password reset link generated:', link);
 
-                    // 3. Send password reset email
-                    // TODO: Integrate with an email service (SendGrid, Mailgun, AWS SES, etc.)
-                    // For now, the link is logged and can be sent manually or via your email service
-                    // The link allows the user to set their password
-                    
-                    // Example: You can use GetResponse API to send transactional emails
-                    // or integrate with a dedicated email service
-                    console.log('Password reset email should be sent to:', customerEmail);
-                    console.log('Password reset link:', link);
-                    
-                    // Store the link in a database or send via email service
-                    // For production, implement actual email sending here
-                    
-                    // Add user to GetResponse campaign
-                    if (GETRESPONSE_API_KEY) {
-                        try {
-                            const contactData = {
-                                email: customerEmail,
-                                name: session.customer_details?.name || customerEmail,
-                                campaign: {
-                                    campaignId: CAMPAIGN_ID
-                                }
-                            };
-
-                            await fetch(GETRESPONSE_API_URL, {
-                                method: 'POST',
-                                headers: {
-                                    'X-Auth-Token': `api-key ${GETRESPONSE_API_KEY}`,
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify(contactData)
-                            });
-                            console.log('Added user to GetResponse campaign');
-                        } catch (grError) {
-                            console.error('GetResponse error (non-critical):', grError.message);
-                        }
+                    // 3. Send password reset email via GetResponse
+                    try {
+                        const userName = session.customer_details?.name || '';
+                        await sendPasswordResetEmail(customerEmail, link, userName);
+                        console.log('Password reset email processed via GetResponse for:', customerEmail);
+                    } catch (emailError) {
+                        console.error('Error processing password reset email:', emailError);
+                        // Log the link so it can be sent manually if needed
+                        console.log('Password reset link (manual send required):', link);
+                        // Don't fail the webhook if email fails - user can request password reset later
                     }
                 } catch (emailError) {
-                    console.error('Error sending password reset email:', emailError);
+                    console.error('Error in email processing:', emailError);
                     // Don't fail the webhook if email fails
                 }
             } else {

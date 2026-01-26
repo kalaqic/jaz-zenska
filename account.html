@@ -108,63 +108,147 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script>
-        async function loadUserData() {
-            const token = localStorage.getItem('authToken');
-            const email = localStorage.getItem('userEmail');
-            
-            if (!token || !email) {
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBsEgrLUI5KLGRauN70LTLHAmoIJOdUvi0",
+            authDomain: "jaz-zenska.firebaseapp.com",
+            projectId: "jaz-zenska",
+            storageBucket: "jaz-zenska.firebasestorage.app",
+            messagingSenderId: "406513810063",
+            appId: "1:406513810063:web:a485e483153ef402fb8efa"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+    </script>
+
+    <script>
+        function loadUserData(user) {
+            if (!user) {
                 window.location.href = 'login.html';
                 return;
             }
             
+            const email = user.email;
+            const createdAt = user.metadata.creationTime;
+            const lastSignIn = user.metadata.lastSignInTime;
+            const emailVerified = user.emailVerified;
+            
+            // Display user data
+            document.getElementById('accountContent').innerHTML = `
+                <div class="account-section">
+                    <h2>Osebni podatki</h2>
+                    <div class="account-info">
+                        <div class="info-item">
+                            <span class="info-label">Email naslov:</span>
+                            <span class="info-value">${email}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Ustvarjeno:</span>
+                            <span class="info-value">${createdAt ? new Date(createdAt).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Zadnja prijava:</span>
+                            <span class="info-value">${lastSignIn ? new Date(lastSignIn).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value">${emailVerified ? 'Potrjeno' : 'Nepotrjeno'}</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <button class="logout-button" onclick="handleLogout()">Odjavi se</button>
+                </div>
+            `;
+        }
+        
+        async function handleLogout() {
+            try {
+                await auth.signOut();
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+            
+            // Clear local storage
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userToken');
+            localStorage.removeItem('authToken');
+            
+            window.location.href = 'login.html';
+        }
+        
+        // Check auth state on page load
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loadUserData(user);
+            } else {
+                // Check if we have stored credentials as fallback
+                const email = localStorage.getItem('userEmail');
+                if (email) {
+                    // Try to get user data from API as fallback
+                    loadUserDataFallback();
+                } else {
+                    window.location.href = 'login.html';
+                }
+            }
+        });
+        
+        async function loadUserDataFallback() {
+            const email = localStorage.getItem('userEmail');
+            if (!email) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Fallback: try API if Firebase Auth not available
             try {
                 const response = await fetch('/api/user-data', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ token, email }),
+                    body: JSON.stringify({ email }),
                 });
                 
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    // If unauthorized, redirect to login
-                    if (response.status === 401 || response.status === 404) {
-                        handleLogout();
-                        return;
-                    }
-                    throw new Error(data.error || 'Napaka pri nalaganju podatkov');
-                }
-                
-                // Display user data
-                document.getElementById('accountContent').innerHTML = `
-                    <div class="account-section">
-                        <h2>Osebni podatki</h2>
-                        <div class="account-info">
-                            <div class="info-item">
-                                <span class="info-label">Email naslov:</span>
-                                <span class="info-value">${data.email || email}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Ustvarjeno:</span>
-                                <span class="info-value">${data.createdAt ? new Date(data.createdAt).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Zadnja prijava:</span>
-                                <span class="info-value">${data.lastSignIn ? new Date(data.lastSignIn).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Status:</span>
-                                <span class="info-value">${data.emailVerified ? 'Potrjeno' : 'Nepotrjeno'}</span>
+                if (response.ok) {
+                    const data = await response.json();
+                    // Display user data
+                    document.getElementById('accountContent').innerHTML = `
+                        <div class="account-section">
+                            <h2>Osebni podatki</h2>
+                            <div class="account-info">
+                                <div class="info-item">
+                                    <span class="info-label">Email naslov:</span>
+                                    <span class="info-value">${data.email || email}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Ustvarjeno:</span>
+                                    <span class="info-value">${data.createdAt ? new Date(data.createdAt).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Zadnja prijava:</span>
+                                    <span class="info-value">${data.lastSignIn ? new Date(data.lastSignIn).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Status:</span>
+                                    <span class="info-value">${data.emailVerified ? 'Potrjeno' : 'Nepotrjeno'}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div style="text-align: center;">
-                        <button class="logout-button" onclick="handleLogout()">Odjavi se</button>
-                    </div>
-                `;
+                        <div style="text-align: center;">
+                            <button class="logout-button" onclick="handleLogout()">Odjavi se</button>
+                        </div>
+                    `;
+                } else {
+                    throw new Error('Napaka pri nalaganju podatkov');
+                }
             } catch (error) {
                 document.getElementById('accountContent').innerHTML = `
                     <div class="error">
@@ -176,14 +260,8 @@
             }
         }
         
-        function handleLogout() {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userEmail');
-            window.location.href = 'login.html';
-        }
-        
-        // Load data on page load
-        loadUserData();
+        // Initialize auth on page load
+        initAuth();
     </script>
 </body>
 </html>

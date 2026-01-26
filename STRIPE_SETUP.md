@@ -49,13 +49,28 @@ Add these environment variables in your Vercel project settings:
    - Checkout success page should redirect correctly
    - User should receive password reset email (if email service is configured)
 
-## Email Sending
+## Email Sending via GetResponse
 
-Currently, the password reset link is generated but not automatically sent via email. You need to:
+Password reset emails are handled through GetResponse automation:
 
-1. Integrate an email service (SendGrid, Mailgun, AWS SES, etc.)
-2. Update `/api/stripe-webhook.js` to send the password reset email
-3. Or use Firebase's built-in email sending (requires Firebase project configuration)
+### How It Works:
+1. When payment completes, user is added to GetResponse with password reset link
+2. Password reset link is stored in GetResponse (logged in Vercel logs)
+3. **You need to set up GetResponse automation** to send the email
+
+### GetResponse Automation Setup:
+1. Go to GetResponse Dashboard → Automation
+2. Create new automation: "When contact is added"
+3. Add action: "Send email"
+4. Use the password reset link from custom field in your email template
+5. Or manually send emails using the links logged in Vercel
+
+### Alternative: Manual Email Sending
+- Password reset links are logged in Vercel function logs
+- You can manually copy and send them to users
+- Check Vercel logs after each successful payment
+
+**Note:** GetResponse doesn't have direct transactional email API, so automation is required for automatic email sending.
 
 ## Subscription Plans
 

@@ -127,6 +127,25 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBsEgrLUI5KLGRauN70LTLHAmoIJOdUvi0",
+            authDomain: "jaz-zenska.firebaseapp.com",
+            projectId: "jaz-zenska",
+            storageBucket: "jaz-zenska.firebasestorage.app",
+            messagingSenderId: "406513810063",
+            appId: "1:406513810063:web:a485e483153ef402fb8efa"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+    </script>
+
     <script>
         async function handleLogin(event) {
             event.preventDefault();
@@ -143,30 +162,42 @@
             loginButton.textContent = 'Prijavljanje...';
             
             try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password }),
-                });
+                // Sign in with Firebase Auth
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
                 
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.error || 'Napaka pri prijavi');
-                }
-                
-                // Store token
-                if (data.token) {
-                    localStorage.setItem('authToken', data.token);
-                    localStorage.setItem('userEmail', email);
-                }
+                // Store user info
+                localStorage.setItem('userEmail', user.email);
+                localStorage.setItem('userId', user.uid);
+                localStorage.setItem('userToken', await user.getIdToken());
                 
                 // Redirect to account page
                 window.location.href = 'account.html';
             } catch (error) {
-                errorMessage.textContent = error.message;
+                let errorMessageText = 'Napaka pri prijavi';
+                
+                // Translate Firebase error codes
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessageText = 'Uporabnik s tem email naslovom ne obstaja.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessageText = 'Napačno geslo.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessageText = 'Neveljaven email naslov.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessageText = 'Ta račun je onemogočen.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessageText = 'Preveč neuspešnih poskusov. Prosimo, poskusite pozneje.';
+                        break;
+                    default:
+                        errorMessageText = error.message || 'Napaka pri prijavi';
+                }
+                
+                errorMessage.textContent = errorMessageText;
                 errorMessage.classList.add('show');
                 loginButton.disabled = false;
                 loginButton.textContent = 'Prijavi se';
@@ -179,23 +210,18 @@
             if (!email) return;
             
             try {
-                const response = await fetch('/api/forgot-password', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email }),
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    alert('Email z navodili za ponastavitev gesla je bil poslan na vaš naslov.');
-                } else {
-                    alert(data.error || 'Napaka pri pošiljanju emaila');
-                }
+                await auth.sendPasswordResetEmail(email);
+                alert('Email z navodili za ponastavitev gesla je bil poslan na vaš naslov.');
             } catch (error) {
-                alert('Napaka pri pošiljanju emaila');
+                let errorMessage = 'Napaka pri pošiljanju emaila';
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'Uporabnik s tem email naslovom ne obstaja.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Neveljaven email naslov.';
+                }
+                
+                alert(errorMessage);
             }
         }
     </script>

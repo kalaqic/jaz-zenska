@@ -14,8 +14,9 @@
     "start": "npx http-server -p 3000 -c-1"
   },
   "dependencies": {
+    "firebase": "^12.8.0",
+    "firebase-admin": "^12.7.0",
     "node-fetch": "^2.7.0",
-    "stripe": "^14.0.0",
-    "firebase-admin": "^12.0.0"
+    "stripe": "^14.0.0"
   }
 }
