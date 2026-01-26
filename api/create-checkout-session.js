@@ -97,6 +97,7 @@ module.exports = async function handler(req, res) {
                 },
             ],
             mode: 'subscription', // Changed to subscription mode
+            locale: 'sl', // Slovenian language
             success_url: `${baseUrl}/checkout-success.html?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${baseUrl}/checkout.html?canceled=true`,
             metadata: {

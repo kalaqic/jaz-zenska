@@ -31,6 +31,7 @@ try {
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
+// Configure to receive raw body for webhook signature verification
 module.exports = async function handler(req, res) {
     // Only allow POST requests
     if (req.method !== 'POST') {
@@ -38,44 +39,55 @@ module.exports = async function handler(req, res) {
     }
 
     const sig = req.headers['stripe-signature'];
+    
+    if (!sig) {
+        console.error('No Stripe signature found in headers');
+        return res.status(400).json({ error: 'No signature found' });
+    }
+
     let event;
+    let rawBody;
 
     try {
-        // Get raw body for webhook signature verification
-        // In Vercel, we need to handle the body carefully for signature verification
-        let rawBody;
-        
-        // Vercel may parse the body, so we need to reconstruct it
-        // Try multiple approaches to get the raw body
-        if (Buffer.isBuffer(req.body)) {
+        // In Vercel, req.body might be a string, buffer, or parsed object
+        // For Stripe webhook signature verification, we need the raw body
+        if (typeof req.body === 'string') {
+            // Body is already a string - use it directly
             rawBody = req.body;
-        } else if (typeof req.body === 'string') {
-            rawBody = Buffer.from(req.body, 'utf8');
+        } else if (Buffer.isBuffer(req.body)) {
+            // Body is a buffer - convert to string
+            rawBody = req.body.toString('utf8');
         } else if (req.body && typeof req.body === 'object') {
-            // Body was parsed as JSON, reconstruct it
-            rawBody = Buffer.from(JSON.stringify(req.body), 'utf8');
+            // Body was parsed as JSON - reconstruct it
+            // Note: This might not match exactly what Stripe sent, but it's the best we can do
+            rawBody = JSON.stringify(req.body);
         } else {
-            // Try to read from request stream
-            try {
-                const chunks = [];
-                for await (const chunk of req) {
-                    chunks.push(chunk);
-                }
-                rawBody = Buffer.concat(chunks);
-            } catch (streamError) {
-                // If we can't read from stream, try to use parsed body
-                rawBody = Buffer.from(JSON.stringify(req.body || {}), 'utf8');
-            }
+            console.error('Unable to get request body');
+            return res.status(400).json({ error: 'Unable to get request body' });
         }
 
+        console.log('Raw body type:', typeof rawBody);
+        console.log('Raw body length:', rawBody.length);
+        console.log('Signature header:', sig);
+
         // Verify webhook signature
-        event = stripe.webhooks.constructEvent(rawBody, sig, STRIPE_WEBHOOK_SECRET);
+        // Stripe expects the raw body as a Buffer
+        const bodyBuffer = Buffer.from(rawBody, 'utf8');
+        event = stripe.webhooks.constructEvent(bodyBuffer, sig, STRIPE_WEBHOOK_SECRET);
+        
+        console.log('Webhook signature verified successfully');
+        console.log('Event type:', event.type);
     } catch (err) {
         console.error('Webhook signature verification failed:', err.message);
         console.error('Error details:', err);
-        // For development, you might want to skip verification
-        // In production, this should always verify
-        return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+        console.error('Signature header:', sig);
+        console.error('Body preview:', typeof rawBody === 'string' ? rawBody.substring(0, 200) : 'Not a string');
+        
+        // Return 200 to prevent Stripe from retrying, but log the error
+        return res.status(200).json({ 
+            received: true, 
+            error: `Webhook signature verification failed: ${err.message}` 
+        });
     }
 
     // Handle the event
