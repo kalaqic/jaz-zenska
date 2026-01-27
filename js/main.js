@@ -139,8 +139,20 @@ function handleNewsletterSubmit(event) {
     const form = event.target;
     
     // Get form values
-    const name = nameInput ? nameInput.value.trim() : '';
+    let name = nameInput ? nameInput.value.trim() : '';
+    // Capitalize first letter of name
+    if (name) {
+        name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    }
     const email = emailInput ? emailInput.value.trim() : '';
+    
+    // Check privacy checkbox
+    const privacyCheckbox = document.getElementById('newsletter-privacy-checkbox');
+    if (!privacyCheckbox || !privacyCheckbox.checked) {
+        alert('Prosimo, strinjajte se s politiko zasebnosti.');
+        if (privacyCheckbox) privacyCheckbox.focus();
+        return;
+    }
     
     // Validate email
     if (!email || !email.includes('@')) {
@@ -420,6 +432,7 @@ function initWelcomePopup() {
     // Close popup function
     function closePopup() {
         welcomePopup.classList.remove('active');
+        document.body.style.overflow = '';
         body.style.overflow = '';
     }
     
@@ -724,7 +737,7 @@ function initSchedulingSystem() {
         calendarGrid.innerHTML = '';
         
         // Add day headers (Monday to Sunday)
-        const dayHeaders = ['Po', 'To', 'Sr', 'Če', 'Pe', 'So', 'Ne'];
+        const dayHeaders = ['Ponedeljek', 'Torek', 'Sredo', 'Četrtek', 'Petek', 'Soboto', 'Nedeljo'];
         dayHeaders.forEach(day => {
             const header = document.createElement('div');
             header.className = 'calendar-day-header';
@@ -915,7 +928,11 @@ function initSchedulingSystem() {
             const userPhoneInput = document.getElementById('user-phone');
             
             const userEmail = userEmailInput ? userEmailInput.value.trim() : '';
-            const userFirstName = userFirstNameInput ? userFirstNameInput.value.trim() : '';
+            let userFirstName = userFirstNameInput ? userFirstNameInput.value.trim() : '';
+            // Capitalize first letter of name
+            if (userFirstName) {
+                userFirstName = userFirstName.charAt(0).toUpperCase() + userFirstName.slice(1).toLowerCase();
+            }
             const userPhone = userPhoneInput ? userPhoneInput.value.trim() : '';
             
             // Validate inputs
@@ -928,6 +945,14 @@ function initSchedulingSystem() {
             if (!userFirstName) {
                 alert('Prosimo, vnesite vaše ime.');
                 if (userFirstNameInput) userFirstNameInput.focus();
+                return;
+            }
+            
+            // Check privacy checkbox
+            const consultationPrivacyCheckbox = document.getElementById('consultation-privacy-checkbox');
+            if (!consultationPrivacyCheckbox || !consultationPrivacyCheckbox.checked) {
+                alert('Prosimo, strinjajte se z uporabo podatkov.');
+                if (consultationPrivacyCheckbox) consultationPrivacyCheckbox.focus();
                 return;
             }
             
@@ -971,7 +996,7 @@ function initSchedulingSystem() {
             
             // Create a date object at noon (12:00) to avoid any timezone edge cases
             const dateForDayCalculation = new Date(selectedYear, selectedMonth, selectedDay, 12, 0, 0);
-            const dayNames = ['Nedelja', 'Ponedeljek', 'Torek', 'Sreda', 'Četrtek', 'Petek', 'Sobota'];
+            const dayNames = ['Nedeljo', 'Ponedeljek', 'Torek', 'Sredo', 'Četrtek', 'Petek', 'Soboto'];
             const dayOfWeek = dateForDayCalculation.getDay();
             const dayName = dayNames[dayOfWeek];
             
@@ -1011,7 +1036,7 @@ function initSchedulingSystem() {
                     console.error('Failed to parse response as JSON:', text);
                     alert('Prišlo je do napake pri pošiljanju. Prosimo, poskusite znova.');
                     scheduleCallBtn.disabled = false;
-                    scheduleCallBtn.textContent = 'Zakazi posvet';
+                    scheduleCallBtn.textContent = 'Prijavi se';
                     return;
                 }
                 
@@ -1032,7 +1057,7 @@ function initSchedulingSystem() {
                     }
                     
                     scheduleCallBtn.disabled = false;
-                    scheduleCallBtn.textContent = 'Zakazi posvet';
+                    scheduleCallBtn.textContent = 'Prijavi se';
                     return;
                 }
                 
@@ -1050,7 +1075,7 @@ function initSchedulingSystem() {
                 console.error('Error sending to GetResponse:', error);
                 alert('Prišlo je do napake pri pošiljanju. Prosimo, poskusite znova.');
                 scheduleCallBtn.disabled = false;
-                scheduleCallBtn.textContent = 'Zakazi posvet';
+                scheduleCallBtn.textContent = 'Prijavi se';
             }
         });
     }
