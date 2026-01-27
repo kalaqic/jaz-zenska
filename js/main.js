@@ -426,14 +426,20 @@ function initWelcomePopup() {
         // Only prevent body scroll on desktop, not mobile
         if (window.innerWidth > 768) {
             body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
         }
     }, 500);
     
     // Close popup function
     function closePopup() {
         welcomePopup.classList.remove('active');
+        // Restore scrolling - clear both body and html overflow
         document.body.style.overflow = '';
+        document.body.style.overflowY = '';
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.overflowY = '';
         body.style.overflow = '';
+        body.style.overflowY = '';
     }
     
     // Close button
