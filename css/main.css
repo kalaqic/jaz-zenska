@@ -26,6 +26,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Garamond 3 Bold';
+    src: url('../fonts/Garamond 3 Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -894,11 +901,11 @@ nav a:hover::after {
 }
 
 .hero-content-left h1 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Garamond 3 Bold', serif;
     font-size: 72px;
     line-height: 1.2;
     color: var(--text-dark);
-    font-weight: 700;
+    font-weight: bold;
     margin-bottom: 40px;
     text-align: left;
     max-width: 100%;
@@ -5990,7 +5997,7 @@ nav a:hover::after {
     text-align: center;
     position: relative;
     z-index: 1;
-    background: linear-gradient(135deg, rgba(100, 56, 67, 0.5) 0%, rgba(153, 98, 122, 0.4) 100%);
+    background: url('../images/psenica.png') center center / cover no-repeat;
     border-radius: 0;
     margin-left: calc(-50vw + 50%);
     margin-right: calc(-50vw + 50%);
