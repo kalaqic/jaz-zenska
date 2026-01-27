@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pridruži se skupnosti JAZ ŽENSKA</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        /* Join Page Sections */
+        .join-section {
+            position: relative;
+            padding: 80px 20px;
+            overflow: hidden;
+        }
+        
+        /* Section 1 - Intro */
+        .join-intro-section {
+            background: linear-gradient(135deg, #f8f0f2 0%, #f5f0f2 50%, #f0e8ed 100%);
+            position: relative;
+        }
+        
+        .join-intro-section .join-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Section 2 - Invitation */
+        .join-invitation-section {
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            position: relative;
+        }
+        
+        .join-invitation-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -100px;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .join-invitation-section .join-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Section 3 - Benefits */
+        .join-benefits-section {
+            background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+            position: relative;
+        }
+        
+        .join-benefits-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -100px;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .join-benefits-section .join-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Section 4 - Gifts */
+        .join-gifts-section {
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            position: relative;
+        }
+        
+        .join-gifts-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -100px;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .join-gifts-section .join-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Section 5 - Final CTA */
+        .join-final-section {
+            background: linear-gradient(135deg, #f5f0f2 0%, #f0e8ed 50%, #ffffff 100%);
+            position: relative;
+        }
+        
+        .join-final-section .join-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .join-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .join-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .join-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: var(--dark-violet);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        .section-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--dark-violet);
+            margin-top: 40px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .section-content h2:first-child {
+            margin-top: 0;
+        }
+        
+        .section-content p {
+            font-size: 17px;
+            line-height: 1.9;
+            color: #4a4a4a;
+            margin-bottom: 22px;
+        }
+        
+        .section-content ul, .section-content ol {
+            margin: 25px 0;
+            padding-left: 30px;
+        }
+        
+        .section-content li {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+        
+        .section-content li strong {
+            color: var(--dark-violet);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+            color: white;
+            padding: 22px 60px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            text-align: center;
+            margin: 30px auto;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4),
+                        0 4px 15px rgba(100, 56, 67, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5),
+                        0 6px 20px rgba(100, 56, 67, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .cta-button:active {
+            transform: translateY(-2px) scale(1.01);
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 50px 0;
+            padding: 0;
+            background: transparent;
+            backdrop-filter: none;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+        }
+        
+        /* VIP Section Styles */
+        .vip-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: var(--dark-violet);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .vip-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border: 3px solid #FFD700;
+            padding: 45px;
+            border-radius: 25px;
+            margin: 45px 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.25),
+                        0 4px 15px rgba(255, 215, 0, 0.15);
+        }
+        
+        .vip-section::before {
+            content: '✨';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 40px;
+            opacity: 0.3;
+        }
+        
+        .vip-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--dark-violet);
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .vip-section h3::before {
+            content: '👑';
+            font-size: 35px;
+        }
+        
+        .gift-item {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 18px;
+            border-left: 5px solid var(--mid-violet);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+        }
+        
+        .gift-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 6px 20px rgba(153, 98, 122, 0.25);
+            background: rgba(255, 255, 255, 1);
+        }
+        
+        .gift-icon {
+            font-size: 30px;
+            flex-shrink: 0;
+        }
+        
+        .gift-content {
+            flex: 1;
+        }
+        
+        .gift-item strong {
+            color: var(--dark-violet);
+            font-size: 18px;
+        }
+        
+        /* Image Placeholders */
+        .content-image {
+            width: 100%;
+            max-width: 700px;
+            margin: 45px auto;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+        
+        .highlight-box {
+            background: rgba(248, 240, 245, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 18px;
+            margin: 35px 0;
+            border-left: 5px solid var(--mid-violet);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .highlight-box::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .highlight-box p {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .highlight-box p {
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .join-header h1 {
+                font-size: 36px;
+            }
+            
+            .section-content h2 {
+                font-size: 28px;
+            }
+            
+            .join-section {
+                padding: 60px 15px;
+            }
+            
+            .cta-button {
+                padding: 15px 35px;
+                font-size: 16px;
+            }
+            
+            .vip-section {
+                padding: 25px 20px;
+            }
+            
+            .gift-item {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <a href="o-meni.html">O meni</a>
+            <a href="media.html">Mediji</a>
+            <a href="login.html">Moj račun</a>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="index.html" aria-label="logo"><img src="images/logo/logo jaz zenska.webp" width="140px" alt="Jaz Ženska Logo"></a>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="index.html#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
+                    <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
+                </ul>
+            </nav>
+            <a href="index.html#newsletter" class="header-consultation-btn desktop-social">Prijavi se na naše e-novičke</a>
+            <button class="burger-menu" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay">
+        <button class="mobile-menu-close" aria-label="Close menu">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+        <div class="mobile-menu-content">
+            <div class="mobile-top-links">
+                <a href="o-meni.html">O meni</a>
+                <a href="media.html">Mediji</a>
+                <a href="login.html">Moj račun</a>
+            </div>
+            <nav class="mobile-nav">
+                <ul>
+                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="index.html#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
+                    <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-social-icons">
+                <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
+                <a href="#" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
+                <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 1: Intro -->
+    <section class="join-section join-intro-section">
+        <div class="join-container">
+            <div class="join-header">
+                <h1>Draga Ženska!</h1>
+            </div>
+            
+            <div class="section-content">
+                <p>Stopila si v najlepše obdobje svojega življenja, v sebi pa čutiš nemir, tiho bolečino, morda celo obžalovanje, jezo in strah pred prihodnostjo. Želiš narediti spremembo, veš da je sedaj pravi čas, pa ne veš kje in kako začeti?</p>
+                
+                <div class="highlight-box">
+                    <p><strong>Si želiš izboljšati svoje počutje, videz in razpoloženje?</strong></p>
+                    <p><strong>Želiš izgubiti kakšen kilogram, sprostiti bolečine in odpraviti stres?</strong></p>
+                    <p><strong>Bi rada vrnila občutke igrivosti, veselja in razigranosti?</strong></p>
+                    <p><strong>Potrebuješ več energije, vitalnosti in lahkotnosti?</strong></p>
+                    <p><strong>Si želiš narediti nekaj zase in se povezati s svojo notranjo močjo?</strong></p>
+                    <p><strong>Želiš prebuditi v sebi vir neskončne življenjske energije?</strong></p>
+                    <p><strong>Želiš družbo isto mislečih žensk, ki te bodo podpirale in bodrile?</strong></p>
+                    <p><strong>Želiš pristopiti k lahkotnemu, kompleksnemu in vodenemu programu spremembe in dela na sebi, ob podpori strokovnjakinj in žensk, ki že stopajo po tej poti.</strong></p>
+                </div>
+                
+                <p>Če si vsaj enkrat zavzdihnila in pomislila: «Da to potrebujem», potem ne odlašaj.</p>
+                
+                <p>Klikni na spodnjo povezavo in se pridruži skupnosti JAZ ŽENSKA v kateri ti bomo pomagale:</p>
+                
+                <ul>
+                    <li><strong>Ustvariti jasno vizijo življenja</strong>, ki ga želiš živeti, postaviti cilje in začrtati pot spremembe.</li>
+                    <li><strong>Prepoznati in odstraniti omejujoča prepričanja</strong>, negativne misli, spremeniti navade in razvade, ki te ne podpirajo in ti škodujejo.</li>
+                    <li><strong>Narediti načrt vadbe</strong>, ki ti bo odgovarjala in te podpirala brez pretiranega napora in bolečine.</li>
+                    <li><strong>Ustvariti jutranjo rutino</strong>, s pomočjo katere boš začenjala dan s pozitivno naravnanostjo, zaupanjem in novo življenjsko energijo.</li>
+                    <li><strong>Skozi številne delavnice, nasvete in druženja</strong> boš dobila znanja, orodja in vaje s področja zdrave prehrane, vadbe, meditacije, pozitivne miselne naravnanosti, manifestacije zdravja in obilja.</li>
+                </ul>
+                
+                <p><strong>Ni pomembno kje si, kako se počutiš, kako izgledaš, koliko si stara, kaj delaš, koliko kilogramov imaš, v kakšni kondiciji si...</strong></p>
+                
+                <p><strong>Pomembno je, da si želiš spremembe na boljše in da si pripravljena nekaj narediti.</strong></p>
+                
+                <p>V skupnosti JAZ ŽENSKA ti nudimo pomoč, stopala bom ob tebi, ti pomagala, te bodrila, ti podala roko, kadar jo boš potrebovala, predvsem pa ti bom pomagala poiskati tvojo notranjo moč, ki jo, draga moja, nosiš v sebi. Pomagal ti bom poiskati tvojo strast, ozavestit in postavit tvoje cilje in te opolnomočit, da boš suvereno in vztrajno stopala po svoji poti.</p>
+                
+                <!-- Image -->
+                <div class="content-image">
+                    <img src="images/join/zenske v krogu.png" alt="Skupnost žensk">
+                </div>
+                
+                <div class="cta-section">
+                    <a href="checkout.html" class="cta-button">Pridruži se</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Invitation -->
+    <section class="join-section join-invitation-section">
+        <div class="join-container">
+            <div class="section-content">
+                <h2>Vabim te, da se pridružiš skupnosti JAZ Ženska</h2>
+                
+                <p>Vabim te, da se pridružiš skupnosti JAZ Ženska, ki je osrednji del našega dela in se ji posvečamo z vso svojo strastjo, znanjem, izkušnji, nežno sočutnostjo in ljubeznivostjo do vseh članic naše skupine. V skupnosti udeleženkam nudimo dodatno izobraževanje, mentorstvo, podporo in pomoč. Skupaj bomo gradile varno skupnost za ženske srednjih let, ki so dovolj pogumne, da stopijo na pot osebne rasti in so pripravljene stopiti iz cone ugodja, ter začeti delovati v smeri doseganja svojih ciljev in želja. Za ženske, ki so pripravljene narediti prvi korak, nato pa vztrajati na poti rasti, tudi če bo kdaj bolelo, ali bo težko, saj se zavedajo, da lahko v sebi odkrijejo neizmerno moč, s pomočjo katere bodo premagale trenutne ovire.</p>
+                
+                <p>Nimam čarobne paličice in ne ponujam hitrih rešitev in čudežev, lahko pa ti obljubim varno okolje, kjer boš vedela, da si sprejeta prav taka kot si in da te brezpogojno podpiram na tvoji poti spremembe in ti stojim ob strani z vsem svojim znanjem, izkušnji in orodji, ki sem jih pridobila skozi leta učenja in dela z ljudmi.</p>
+                
+                <p>Skupnost JAZ Ženska vam ponuja več načinov povezovanja in podpore, kjer se skupaj učimo, rastemo in gradimo nova prijateljstva.</p>
+                
+                <!-- Image -->
+                <div class="content-image">
+                    <img src="images/join/skupnost tece.png" alt="Marjanča ali skupnost">
+                </div>
+                
+                <div class="cta-section">
+                    <a href="checkout.html" class="cta-button">Pridruži se Skupnosti JAZ ŽENSKA</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Benefits -->
+    <section class="join-section join-benefits-section">
+        <div class="join-container">
+            <div class="section-content">
+                <h2>V skupnosti JAZ Ženska gradimo svojo samozavest</h2>
+                
+                <p>V skupnosti JAZ Ženska gradimo svojo samozavest, odgovornost do sebe in drugih in se učimo postaviti sebe na prvo mesto tako, da se zavemo svoje neprecenljive vrednosti in kot take izboljšujemo odnose z drugimi, tako v družinskem kot prijateljskem ali poslovnem okolju in gradimo boljše odnose na enakopravnih in čvrstih osnovah.</p>
+                
+                <p>V skupnosti JAZ Ženska si medsebojno pomagamo, sodelujemo, delimo izkušnje in znanja in druga drugi pomagamo, da se premaknemo iz svoje »zataknjenosti« in ujetosti v stare vzorce, ki nas več ne podpirajo in nam ne omogočajo rasti in doseganja novih ciljev.</p>
+                
+                <p>V skupnost JAZ ŽENSKA se lahko vključiš z letno članarino, ki jo lahko plačuješ mesečno, ali enkratnem znesku. ZA plačilo do 31. marca bo tvoja članarina cenovno zelo ugodna, ob tem pa bo veljala do 31. 12. 2027.</p>
+                
+                <p>Plačilo letne članarine ti omogoča dostop do tedenskih delavnic, vadb, nasvetov, plesnih delavnic, svetovanj in predavanj na teme, ki vključujejo vsa področja našega življenja. Številne raziskave so pokazale, da le celovito delo na sebi vodi do resničnih in dolgotrajnih sprememb in zato smo pripravili celovit program za ženske, ki je primeren za vse, ne glede na predhodno znanje, počutje, kondicijo, starost, izobrazbo...</p>
+                
+                <h2>8 neprecenljivih daril</h2>
+                
+                <p>Kot članica skupnosti JAZ ŽENSKA boš prejele veliko znanj, orodij, vaj in vedenj, ki ti bodo v neizmerno pomoč na tvojipoti spremembe, ob tem pa boš sama sebi podarila 8 neprecenljivih daril:</p>
+                
+                <ol>
+                    <li><strong>Dala si boš dovoljenje, da brez slabega občutka postaviš sebe na prvo mesto.</strong> Spoznala boš, da skrb zase, za boljše počutje, zdravje, počitek, radost srečo in veselje ni samo tvoja pravica, temveč osnovna temeljna dolžnost, ki te obvezuje in zavezuje k nenehni skrbi in delovanju za ustvarjanje najboljše verzije sebe. Na ta način boš poskrbela tudi za svoje najbližje, prijatelje, sodelavce..., kajti ko smo zadovoljne srečne in zdrave, le takrat lahko osrečimo in razveselimo tudi ljudi okoli nas.</li>
+                    
+                    <li><strong>Pridobila boš veščine in orodja, s pomočjo katerih boš znala postavljati jasne meje in živeti v skladu s svojimi vrednotami.</strong> Naučila se boš prijazno in odločno reči ne, povedati resnico in opustiti prepričanja in navade, ki te ne podpirajo, ali ti celo škodijo.</li>
+                    
+                    <li><strong>Naučila se boš sprejemati takšna kot si z vsemi svojimi vrlinami in slabostmi in se boš opolnomočila kot kreatorka svojega življenja,</strong> ki se zaveda, da se v vsakem trenutku lahko odloči za spremembo in stopiš na pot osebne rasti in življenja v skladu s svojim življenjskim poslanstvom.</li>
+                    
+                    <li><strong>Postala boš del skupnosti, kjer se boš počutila sprejeto, varno, slišano...</strong> Kjer boš našla odgovore na svoja vprašanja in začutila, da v svojih izzivih in stiskah nisi sama. V skupnosti JAZ Ženska boš našle čvrsto oporo, razumevanje in zaupanje, brez obsojanja, etiketiranja in potrebe po »nastopanju«, saj se bomo učile sprejemanja, sočutja in medsebojnega spoštovanja.</li>
+                    
+                    <li><strong>Spremenila boš svoj odnos do sebe in drugih.</strong> Naučila se boš pogledati nase brez obsojanja, obtoževanja, obžalovanja in nesprejemanja. S poglobljenim, resnim in vztrajnim delom boš spremenila stara, omejujoča prepričanja, poiskala in odstranila negativne vzorce, navade in razvade. Naučila se boš poslušati sebe, poiskala boš svoj dušni namen in svoje poslanstvo, ter se naučila delovati v skladu s svojimi željami, vrednotami, talenti in zmožnostmi.</li>
+                    
+                    <li><strong>Stopila boš na pot hvaležnosti in zaupanja in postala kreatorka svojega življenja, manifestatorka svojih želja in kreativna ustvarjalka svojih ciljev.</strong></li>
+                    
+                    <li><strong>Naučila se boš vztrajnosti, zaupanja in samospoštovanja in ozavestile svoje možnosti in priložnosti,</strong> ki ti jih življenje ponuja.</li>
+                    
+                    <li><strong>Spoznala boš, da je sreča pot in ne cilj in se naučila uživati in sprejemati življenje v vsej njegovi veličini,</strong> ki se nam predstavi šele takrat, ko smo pripravljene opustit togost, kontrolo, nezaupanje in strah, ter si dovoliti sprejemati radost in lepoto z vso hvaležnostjo, srčnostjo in ljubeznijo tudi takrat, ko nam je težko, ko nas boli ali ko ostanemo same.</li>
+                </ol>
+                
+                <p>Prav sedaj je odlična priložnost, da se pridružiš skupnosti JAZ ŽENSKA, kajti v tem trenutku smo na začetku naše poti in lahko pridobiš dodatne ugodnosti.</p>
+                
+                <!-- Image -->
+                <div class="content-image">
+                    <img src="images/join/zenske roke.png" alt="8 daril">
+                </div>
+                
+                <div class="cta-section">
+                    <a href="checkout.html" class="cta-button">Da, želim se pridružiti skupnosti JAZ ŽENSKA</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: VIP Gifts -->
+    <section class="join-section join-gifts-section">
+        <div class="join-container">
+            <div class="section-content">
+                <!-- VIP Gifts Section -->
+                <div class="vip-section">
+                    <span class="vip-badge">VIP Članica</span>
+                    <h3>5 daril skupnosti JAZ ŽENSKA</h3>
+                    <p style="text-align: center; margin-bottom: 25px;">Tukaj je 5 daril, ki jih boste prejele kot VIP članice skupnosti JAZ ŽENSKA (za vse, ki se nam boste pridružile do 31. marca 2026):</p>
+                    
+                    <div class="gift-item">
+                        <div class="gift-icon">💰</div>
+                        <div class="gift-content">
+                            <strong>Nižja cena letne članarine, ki pa bo, kljub nižji ceni, velja vse do 31. 12. 2027.</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="gift-item">
+                        <div class="gift-icon">👑</div>
+                        <div class="gift-content">
+                            <strong>VIP karta, s katero boš imela brezplačen dostop do vseh spletnih delavnic in 50% popust na vseh dogodkih v živo.</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="gift-item">
+                        <div class="gift-icon">🎉</div>
+                        <div class="gift-content">
+                            <strong>Brezplačna udeležba na prednovoletnem ekskluzivnem dogodku z izjemnimi predavatelji, gosti in pogostitvijo.</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="gift-item">
+                        <div class="gift-icon">🧘</div>
+                        <div class="gift-content">
+                            <strong>Brezplačen pogovor z Marjanco na osnovi katerega boš prejela personalizirano vodeno meditacijo za sproščanje.</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="gift-item">
+                        <div class="gift-icon">🚢</div>
+                        <div class="gift-content">
+                            <strong>Sodelovala boš v nagradni igri, kjer bo glavna nagrada križarjenje z Marjanco po najlepših jadranskih otokih na VIP ladji 5* in še številne druge nagrade.</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2>Je skupnost JAZ ŽENSKA primerna zate?</h2>
+                
+                <p>Draga Ženska, če si prišla z branjem vse do konca in še nisi prepričana, ali je sodelovanje v skupnosti JAZ ŽENSKA primerno zate, potem te vabim na kratek brezplačen pogovor.</p>
+                
+                <p>Tukaj si lahko rezerviraš termin, ki je na voljo, vendar pohiti, kajti število mest je omejeno, saj ima dan tudi zame samo 24 ur.</p>
+                
+                <h2>Pod izvedi več in se pridruži:</h2>
+                
+                <p>Skupnosti jaz ženska se lahko pridružiš s plačilom letne članarine, ki jo lahko plačaš v mesečnih obrokih po 19,00 EUR, ali v enkratnem znesku pa le 119,00 EUR. Za plačilo do 31. marca bo članarina veljala do 31. 12. 2026, ob tem boš za enkratno plačilo članarine do 31. marca prejela še:</p>
+                
+                <!-- Second VIP Gifts Section -->
+                <div class="vip-section">
+                    <span class="vip-badge">VIP Članica</span>
+                    <h3>5 daril skupnosti JAZ ŽENSKA</h3>
+                    <p style="text-align: center; margin-bottom: 25px;">Tukaj je 5 daril, ki jih boš prejele kot VIP članice skupnosti JAZ ŽENSKA (za vse, ki se nam boste pridružile do 31. marca 2026):</p>
+                    
+                    <div class="gift-item">
+                        <div class="gift-icon">📅</div>
+                        <div class="gift-content">
+                            <strong>Članarina bo velja vse do 31. 12. 2027.</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="gift-item">
+                        <div class="gift-icon">💎</div>
+                        <div class="gift-content">
+                            <strong>Pridobila boš VIP kartico, s katero boš imela »VIP« status na dogodkih in prednost in popust pri prijavah na dodatne dogodke, potovanja in izlete.</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="gift-item">
+                        <div class="gift-icon">🎊</div>
+                        <div class="gift-content">
+                            <strong>Brezplačna udeležba na prednovoletnem ekskluzivnem dogodku z izjemnimi predavatelji, gosti in pogostitvijo.</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="gift-item">
+                        <div class="gift-icon">💆</div>
+                        <div class="gift-content">
+                            <strong>Brezplačen pogovor z Marjanco na osnovi katerega boš prejela personalizirano vodeno meditacijo za sproščanje.</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="gift-item">
+                        <div class="gift-icon">⛵</div>
+                        <div class="gift-content">
+                            <strong>Sodelovala boš v nagradni igri, kjer bo glavna nagrada križarjenje z Marjanco po najlepših jadranskih otokih na VIP ladji 5* in še številne druge nagrade.</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Final CTA -->
+    <section class="join-section join-final-section">
+        <div class="join-container">
+            <div class="section-content">
+                <p>S plačilom članarine boš postala del skupnosti JAZ ŽENSKA in prejela dostop do tedenskih vadb: Moj jutranji obred in meditacija, Vadba za lahkotnost, prožnost in vitalnost, Meditativni ples za sproščanje in odpravljanje stresa.</p>
+                
+                <p>1 x tedensko webinar v živo, kjer bomo z gostjami obravnavale teme iz različnih življenjskih področij, delile nasvete, koristne vaje in naloge. Odgovarjali bomo na vaša vprašanja in reševale skupne izzive.</p>
+                
+                <p>Ves čas članstva boš imela dostop do posnetkov, vaj in delovnih listov, nalog, e-delavnic in predavanj.</p>
+                
+                <p>Dobila boš dostop do zaprte skupine, kjer boš lahko postavljala vprašanja, delila izkušnje in se spoznavala z ostalimi članicami skupnosti.</p>
+                
+                <p>3 x letno bomo imele tudi brezplačne delavnice v živo, če pa se ne boš mogla udeležiti, boš lahko sodelovala preko zooma ali si pogledala posnetke.</p>
+                
+                <!-- Image -->
+                <div class="content-image">
+                    <img src="images/join/zenske roke.png" alt="Delavnice in aktivnosti">
+                </div>
+                
+                <div class="cta-section">
+                    <a href="checkout.html" class="cta-button">Da, želim se pridružiti</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Social Media Icons (Right Side) -->
+    <div class="floating-social-container" id="floatingSocial">
+        <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="floating-social-link">
+            <img src="images/svg/facebook.svg" alt="Facebook">
+        </a>
+        <a href="#" aria-label="Instagram" class="floating-social-link">
+            <img src="images/svg/instagram.svg" alt="Instagram">
+        </a>
+        <a href="#" aria-label="YouTube" class="floating-social-link">
+            <img src="images/svg/youtube.svg" alt="YouTube">
+        </a>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
