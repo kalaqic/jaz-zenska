@@ -102,9 +102,31 @@
         .forgot-password a:hover {
             text-decoration: underline;
         }
+        .back-home-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(100, 56, 67, 0.4);
+        }
     </style>
 </head>
 <body>
+    <a href="index.html" class="back-home-btn">← Nazaj na domačo stran</a>
     <div class="login-container">
         <div class="login-header">
             <h1>Prijava</h1>
@@ -113,8 +135,8 @@
         <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
             <div class="error-message" id="errorMessage"></div>
             <div class="form-group">
-                <label for="email">Email naslov</label>
-                <input type="email" id="email" name="email" required autocomplete="email">
+                <label for="email">Email naslov ali uporabniško ime</label>
+                <input type="text" id="email" name="email" required autocomplete="username" placeholder="admin ali member">
             </div>
             <div class="form-group">
                 <label for="password">Geslo</label>
@@ -157,13 +179,33 @@
     </script>
 
     <script>
+        // Initialize test accounts in localStorage if they don't exist
+        function initTestAccounts() {
+            if (!localStorage.getItem('users')) {
+                const testUsers = {
+                    'admin': {
+                        email: 'admin',
+                        password: 'admin',
+                        name: 'Admin',
+                        role: 'admin',
+                        createdAt: new Date().toISOString()
+                    },
+                    'member': {
+                        email: 'member',
+                        password: 'member',
+                        name: 'Member',
+                        role: 'member',
+                        createdAt: new Date().toISOString()
+                    }
+                };
+                localStorage.setItem('users', JSON.stringify(testUsers));
+            }
+        }
+        
+        initTestAccounts();
+
         async function handleLogin(event) {
             event.preventDefault();
-            
-            // Wait for Firebase to initialize
-            if (!auth) {
-                await initFirebase();
-            }
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -177,42 +219,26 @@
             loginButton.textContent = 'Prijavljanje...';
             
             try {
-                // Sign in with Firebase Auth
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const user = userCredential.user;
+                // Check test accounts first
+                const users = JSON.parse(localStorage.getItem('users') || '{}');
+                const user = users[email];
                 
-                // Store user info
-                localStorage.setItem('userEmail', user.email);
-                localStorage.setItem('userId', user.uid);
-                localStorage.setItem('userToken', await user.getIdToken());
-                
-                // Redirect to account page
-                window.location.href = 'account.html';
-            } catch (error) {
-                let errorMessageText = 'Napaka pri prijavi';
-                
-                // Translate Firebase error codes
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        errorMessageText = 'Uporabnik s tem email naslovom ne obstaja.';
-                        break;
-                    case 'auth/wrong-password':
-                        errorMessageText = 'Napačno geslo.';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessageText = 'Neveljaven email naslov.';
-                        break;
-                    case 'auth/user-disabled':
-                        errorMessageText = 'Ta račun je onemogočen.';
-                        break;
-                    case 'auth/too-many-requests':
-                        errorMessageText = 'Preveč neuspešnih poskusov. Prosimo, poskusite pozneje.';
-                        break;
-                    default:
-                        errorMessageText = error.message || 'Napaka pri prijavi';
+                if (user && user.password === password) {
+                    // Store current user session
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        email: user.email,
+                        name: user.name,
+                        role: user.role,
+                        userId: email
+                    }));
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    throw new Error('Napačno geslo ali email naslov.');
                 }
-                
-                errorMessage.textContent = errorMessageText;
+            } catch (error) {
+                errorMessage.textContent = error.message || 'Napaka pri prijavi';
                 errorMessage.classList.add('show');
                 loginButton.disabled = false;
                 loginButton.textContent = 'Prijavi se';

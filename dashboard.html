@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skupnost - Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #F8F1ED 0%, #f5ebe0 100%);
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .dashboard-container-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            padding: 25px 50px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(100, 56, 67, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('images/logo/logo_text.webp');
+            background-size: 48%;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
+        }
+        
+        .dashboard-header > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .dashboard-header h1 {
+            font-family: 'Priestacy', cursive;
+            font-size: 36px;
+            color: var(--white);
+            margin: 0;
+            font-weight: normal;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        @font-face {
+            font-family: 'Priestacy';
+            src: url('fonts/Priestacy.otf') format('opentype');
+        }
+        
+        .back-home-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            padding: 10px 25px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-home-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-details {
+            text-align: right;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--white);
+            font-size: 16px;
+            margin-bottom: 5px;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .user-role {
+            padding: 5px 15px;
+            border-radius: 25px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .user-role.admin {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: var(--dark-violet);
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
+        }
+        
+        .user-role.member {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .dashboard-nav {
+            background: var(--white);
+            padding: 8px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            display: flex;
+            overflow-x: auto;
+            border: 1px solid rgba(100, 56, 67, 0.1);
+        }
+        
+        .nav-item {
+            padding: 18px 35px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            position: relative;
+            text-align: center;
+        }
+        
+        .nav-item:first-child {
+            padding-left: 50px;
+        }
+        
+        .nav-item:last-child {
+            padding-right: 50px;
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
+        }
+        
+        .nav-item:hover {
+            background: var(--main-white);
+            color: var(--dark-violet);
+        }
+        
+        .dashboard-content {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            min-height: 500px;
+            border: 1px solid rgba(100, 56, 67, 0.1);
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            padding: 10px 25px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Post Cards */
+        .post-card {
+            background: linear-gradient(135deg, var(--white) 0%, #fafafa 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(100, 56, 67, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .post-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .post-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--dark-violet);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .post-preview {
+            color: var(--text-dark);
+            line-height: 1.7;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .post-full {
+            display: none;
+            color: var(--text-dark);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+        }
+        
+        .post-full.show {
+            display: block;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(100, 56, 67, 0.1);
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: var(--main-white);
+            color: var(--dark-violet);
+        }
+        
+        .action-btn.liked {
+            color: var(--mid-violet);
+        }
+        
+        /* Course Cards */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .course-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .course-card:hover::before {
+            opacity: 1;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(100, 56, 67, 0.3);
+        }
+        
+        .course-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+        
+        .course-info {
+            font-size: 14px;
+            opacity: 0.9;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        /* Calendar */
+        .calendar-wrapper {
+            max-width: 900px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .calendar-nav-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .calendar-nav-btn {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            border: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
+        }
+        
+        .calendar-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(100, 56, 67, 0.4);
+        }
+        
+        .calendar-nav-label {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .calendar-month {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--dark-violet);
+            font-weight: 700;
+        }
+        
+        .calendar-legend {
+            background: var(--white);
+            padding: 20px 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(100, 56, 67, 0.1);
+        }
+        
+        .legend-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: var(--dark-violet);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .legend-items {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        
+        .legend-item span {
+            font-size: 14px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 700;
+            color: var(--dark-violet);
+            padding: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            background: var(--main-white);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .calendar-day:hover {
+            background: var(--white);
+            border-color: var(--mid-violet);
+            transform: scale(1.05);
+        }
+        
+        .calendar-day.other-month {
+            opacity: 0.3;
+        }
+        
+        .calendar-day.today {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%) !important;
+            color: var(--white);
+            font-weight: 700;
+        }
+        
+        .calendar-day.today .day-number {
+            color: var(--white);
+        }
+        
+        .day-number {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .event-badge {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #FFD700;
+            margin-top: 5px;
+            box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+        }
+        
+        .event-badges-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-top: 5px;
+            width: 100%;
+            align-items: center;
+        }
+        
+        .event-badge-large {
+            border-radius: 12px;
+            padding: 3px 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: fit-content;
+            max-width: 90%;
+        }
+        
+        .event-badge-large:hover {
+            transform: scale(1.08);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+        }
+        
+        .event-badge-title {
+            color: var(--white);
+            font-size: 9px;
+            font-weight: 600;
+            line-height: 1.2;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .event-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .event-modal.show {
+            display: flex;
+        }
+        
+        .event-modal-content {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .event-modal-close {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--dark-violet);
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            color: var(--text-light);
+            line-height: 1;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            color: var(--dark-violet);
+        }
+        
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            padding: 12px 16px;
+            border: 2px solid var(--almost-white);
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .form-group input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
+        }
+        
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .post-image {
+            max-width: 60%;
+            max-height: 400px;
+            width: auto;
+            height: auto;
+            border-radius: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--mid-violet);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(100, 56, 67, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--main-white);
+            color: var(--text-dark);
+            padding: 12px 30px;
+            border: 2px solid var(--almost-white);
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--almost-white);
+        }
+        
+        /* Course Detail Page */
+        .course-detail-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            min-height: 600px;
+        }
+        
+        .course-episodes {
+            background: var(--main-white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .episodes-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--dark-violet);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .episode-item {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .episode-item:hover {
+            background: var(--white);
+            border-color: var(--almost-white);
+        }
+        
+        .episode-item.active {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            border-color: var(--dark-violet);
+        }
+        
+        .episode-item.active .episode-title {
+            color: var(--white);
+        }
+        
+        .episode-number {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        
+        .episode-title {
+            font-weight: 600;
+            color: var(--dark-violet);
+            font-size: 14px;
+        }
+        
+        .course-content {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .course-content-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--dark-violet);
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        
+        .course-video {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 18px;
+        }
+        
+        .course-description {
+            color: var(--text-dark);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .user-details {
+                text-align: center;
+            }
+            
+            .dashboard-content {
+                padding: 25px;
+            }
+            
+            .courses-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .course-detail-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .course-episodes {
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Skupnost Jaz Ženska</h1>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="userName">Nalaganje...</div>
+                    <div class="user-role" id="userRole"></div>
+                </div>
+                <a href="index.html" class="back-home-btn">← Nazaj na domačo stran</a>
+                <button class="logout-btn" onclick="handleLogout()">Odjavi se</button>
+            </div>
+        </div>
+        
+        <nav class="dashboard-nav">
+            <a href="#" class="nav-item active" data-section="community">Skupnost</a>
+            <a href="#" class="nav-item" data-section="classroom">Učilnica</a>
+            <a href="#" class="nav-item" data-section="ebooks">E-Knjige</a>
+            <a href="#" class="nav-item" data-section="calendar">Koledar</a>
+            <a href="#" class="nav-item" data-section="profile">Moj profil</a>
+        </nav>
+        
+        <div class="dashboard-content">
+            <!-- Community Section -->
+            <div id="community" class="content-section active">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Skupnost</h2>
+                <div id="communityContent">
+                    <!-- Posts will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Classroom Section -->
+            <div id="classroom" class="content-section">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Učilnica</h2>
+                <div id="classroomContent">
+                    <!-- Courses will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Calendar Section -->
+            <div id="calendar" class="content-section">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Koledar</h2>
+                <div id="calendarContent">
+                    <!-- Events will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- E-Books Section -->
+            <div id="ebooks" class="content-section">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">E-Knjige</h2>
+                <div id="ebooksContent">
+                    <!-- E-books will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Profile Section -->
+            <div id="profile" class="content-section">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Moj profil</h2>
+                <div id="profileContent">
+                    <!-- Profile form will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Post Modal -->
+    <div id="addPostModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Nova objava</h2>
+                <button class="modal-close" onclick="closeAddPostModal()">&times;</button>
+            </div>
+            <form class="modal-form" onsubmit="submitPost(event)">
+                <div class="form-group">
+                    <label for="postTitle">Naslov</label>
+                    <input type="text" id="postTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="postContent">Vsebina</label>
+                    <textarea id="postContent" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="postImage">Slika (neobvezno)</label>
+                    <input type="file" id="postImage" accept="image/*" onchange="previewPostImage(event)">
+                    <div id="postImagePreview" style="margin-top: 10px; display: none;">
+                        <img id="postImagePreviewImg" src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 10px; margin-top: 10px;">
+                        <button type="button" onclick="removePostImage()" style="margin-top: 5px; padding: 5px 15px; background: #fee; color: #c33; border: none; border-radius: 5px; cursor: pointer; font-size: 12px;">Odstrani sliko</button>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeAddPostModal()">Prekliči</button>
+                    <button type="submit" class="btn-primary">Objavi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div id="addEventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Nov dogodek</h2>
+                <button class="modal-close" onclick="closeAddEventModal()">&times;</button>
+            </div>
+            <form class="modal-form" onsubmit="submitEvent(event)">
+                <div class="form-group">
+                    <label for="eventTitle">Naslov dogodka</label>
+                    <input type="text" id="eventTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">Opis</label>
+                    <textarea id="eventDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="eventDate">Datum</label>
+                    <input type="date" id="eventDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventTime">Ura</label>
+                    <input type="time" id="eventTime" value="18:00" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventType">Vrsta dogodka</label>
+                    <select id="eventType" onchange="toggleEventLocationField()" required style="
+                        padding: 12px 16px;
+                        border: 2px solid var(--almost-white);
+                        border-radius: 10px;
+                        font-size: 16px;
+                        font-family: 'Montserrat', sans-serif;
+                        transition: border-color 0.3s ease;
+                        width: 100%;
+                        box-sizing: border-box;
+                        background: var(--white);
+                        cursor: pointer;
+                    ">
+                        <option value="">Izberite vrsto dogodka</option>
+                        <option value="real-life">Dogodek v živo</option>
+                        <option value="webinar">Webinar</option>
+                        <option value="zoom">Zoom klic</option>
+                    </select>
+                </div>
+                <div class="form-group" id="eventLocationGroup" style="display: none;">
+                    <label id="eventLocationLabel">Lokacija</label>
+                    <input type="text" id="eventLocation" placeholder="Vnesite lokacijo ali povezavo">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeAddEventModal()">Prekliči</button>
+                    <button type="submit" class="btn-primary">Dodaj dogodek</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- All Events Modal -->
+    <div id="allEventsModal" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 class="modal-title">Vsi dogodki</h2>
+                <button class="modal-close" onclick="closeAllEventsModal()">&times;</button>
+            </div>
+            <div id="allEventsList">
+                <!-- Events will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add E-Book Modal -->
+    <div id="addEbookModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="addEbookModalTitle">Nova E-Knjiga</h2>
+                <button class="modal-close" onclick="closeAddEbookModal()">&times;</button>
+            </div>
+            <form class="modal-form" onsubmit="submitEbook(event)">
+                <input type="hidden" id="ebookEditId" value="">
+                <div class="form-group">
+                    <label for="ebookTitle">Naslov knjige</label>
+                    <input type="text" id="ebookTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="ebookDescription">Opis</label>
+                    <textarea id="ebookDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ebookFile">PDF datoteka</label>
+                    <input type="file" id="ebookFile" accept=".pdf" onchange="previewEbookFile(event)">
+                    <div id="ebookFilePreview" style="margin-top: 10px; display: none;">
+                        <p style="color: var(--text-dark); font-size: 14px;" id="ebookFileName"></p>
+                        <button type="button" onclick="removeEbookFile()" style="margin-top: 5px; padding: 5px 15px; background: #fee; color: #c33; border: none; border-radius: 5px; cursor: pointer; font-size: 12px;">Odstrani datoteko</button>
+                    </div>
+                    <p id="ebookCurrentFile" style="margin-top: 10px; font-size: 14px; color: var(--text-light); display: none;"></p>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeAddEbookModal()">Prekliči</button>
+                    <button type="submit" class="btn-primary" id="ebookSubmitBtn">Dodaj E-Knjigo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- E-Book Details Modal -->
+    <div id="ebookDetailsModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="ebookDetailsTitle"></h2>
+                <button class="modal-close" onclick="closeEbookDetailsModal()">&times;</button>
+            </div>
+            <div style="padding: 20px;">
+                <div id="ebookDetailsDescription" style="margin-bottom: 30px; line-height: 1.8; color: var(--text-dark); white-space: pre-wrap;"></div>
+                <div style="text-align: center; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <a id="ebookDownloadBtn" href="#" download="" style="
+                        background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+                        color: var(--white);
+                        padding: 15px 40px;
+                        border: none;
+                        border-radius: 25px;
+                        font-size: 16px;
+                        font-weight: 600;
+                        text-decoration: none;
+                        display: inline-block;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
+                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(100, 56, 67, 0.3)'">📥 Prenesi PDF</a>
+                    <div id="ebookAdminActions" style="display: none;">
+                        <button onclick="editEbook()" style="
+                            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+                            color: var(--white);
+                            padding: 15px 40px;
+                            border: none;
+                            border-radius: 25px;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(76, 175, 80, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(76, 175, 80, 0.3)'">✏️ Uredi</button>
+                        <button onclick="deleteEbook()" style="
+                            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+                            color: var(--white);
+                            padding: 15px 40px;
+                            border: none;
+                            border-radius: 25px;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(244, 67, 54, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(244, 67, 54, 0.3)'">🗑️ Izbriši</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/community.js"></script>
+</body>
+</html>
