@@ -26,10 +26,12 @@ try {
     } else {
         const serviceAccount = JSON.parse(serviceAccountRaw);
         console.log('Parsed service account keys:', Object.keys(serviceAccount));
-        console.log('Service account projectId:', serviceAccount.projectId);
+        // Firebase service account uses snake_case: project_id, not camelCase projectId
+        const projectId = serviceAccount.project_id || serviceAccount.projectId;
+        console.log('Service account project_id:', projectId);
         
-        if (!serviceAccount.projectId) {
-            console.error('❌ Service account JSON is missing projectId field');
+        if (!projectId) {
+            console.error('❌ Service account JSON is missing project_id field');
             console.error('Service account structure:', JSON.stringify(serviceAccount, null, 2));
         } else {
             // Check if Firebase app is already initialized
@@ -191,29 +193,42 @@ module.exports = async function handler(req, res) {
                         const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
                         if (serviceAccountRaw) {
                             const serviceAccount = JSON.parse(serviceAccountRaw);
-                            if (serviceAccount.projectId) {
+                            // Firebase service account uses snake_case: project_id
+                            const projectId = serviceAccount.project_id || serviceAccount.projectId;
+                            if (projectId) {
                                 firebaseApp = admin.initializeApp({
                                     credential: admin.credential.cert(serviceAccount)
                                 });
                                 console.log('✅ Firebase initialized in handler (fallback)');
+                            } else {
+                                console.error('❌ Service account missing project_id in fallback initialization');
                             }
                         }
                     } catch (initError) {
                         console.error('Failed to initialize Firebase in handler:', initError);
+                        console.error('Init error message:', initError.message);
+                        console.error('Init error stack:', initError.stack);
                     }
                 }
             }
             
             if (firebaseApp) {
+                console.log('✅ Firebase app is ready, proceeding with user creation');
                 const auth = admin.auth();
+                console.log('✅ Firebase Auth initialized');
                 
                 // Check if user already exists
                 let user;
+                console.log(`🔍 Checking if user exists with email: ${customerEmail}`);
                 try {
                     user = await auth.getUserByEmail(customerEmail);
-                    console.log('User already exists:', user.uid);
+                    console.log('✅ User already exists in Firebase Auth');
+                    console.log('   User ID:', user.uid);
+                    console.log('   Email:', user.email);
+                    console.log('   Email verified:', user.emailVerified);
                 } catch (error) {
                     if (error.code === 'auth/user-not-found') {
+                        console.log('ℹ️ User not found, creating new Firebase Auth user...');
                         // User doesn't exist, create new one
                         // Generate a random password temporarily
                         const tempPassword = Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12) + 'A1!';
@@ -224,71 +239,102 @@ module.exports = async function handler(req, res) {
                             emailVerified: false,
                             disabled: false
                         });
-                        console.log('Created new Firebase user:', user.uid);
+                        console.log('✅ Created new Firebase Auth user successfully');
+                        console.log('   User ID:', user.uid);
+                        console.log('   Email:', user.email);
                     } else {
+                        console.error('❌ Error checking/getting user:', error.code);
                         throw error;
                     }
                 }
 
                 // 1.5. Create user document in Firestore
+                console.log('📝 Creating/updating Firestore user document...');
                 try {
                     const db = admin.firestore();
+                    console.log('✅ Firestore initialized');
                     const userDocRef = db.collection('users').doc(user.uid);
+                    console.log(`   Document path: users/${user.uid}`);
                     const userDoc = await userDocRef.get();
                     
                     if (!userDoc.exists) {
+                        console.log('   Document does not exist, creating new document...');
                         // Create new user document
-                        await userDocRef.set({
+                        const userData = {
                             email: customerEmail,
                             name: customerName || customerEmail.split('@')[0],
                             role: 'member', // Default role for new members
                             createdAt: admin.firestore.FieldValue.serverTimestamp(),
                             subscriptionStatus: 'active',
                             subscriptionType: session.metadata?.subscription_type || session.metadata?.plan || 'unknown'
-                        });
-                        console.log('Created Firestore user document for:', user.uid);
+                        };
+                        console.log('   User data to save:', JSON.stringify(userData, null, 2));
+                        await userDocRef.set(userData);
+                        console.log('✅ Created Firestore user document successfully');
+                        console.log('   User ID:', user.uid);
+                        console.log('   Email:', customerEmail);
+                        console.log('   Name:', customerName || customerEmail.split('@')[0]);
+                        console.log('   Role: member');
+                        console.log('   Subscription status: active');
                     } else {
+                        console.log('   Document exists, updating subscription info...');
                         // Update existing user document
-                        await userDocRef.update({
+                        const updateData = {
                             subscriptionStatus: 'active',
                             subscriptionType: session.metadata?.subscription_type || session.metadata?.plan || 'unknown',
                             updatedAt: admin.firestore.FieldValue.serverTimestamp()
-                        });
-                        console.log('Updated Firestore user document for:', user.uid);
+                        };
+                        console.log('   Update data:', JSON.stringify(updateData, null, 2));
+                        await userDocRef.update(updateData);
+                        console.log('✅ Updated Firestore user document successfully');
+                        console.log('   User ID:', user.uid);
                     }
                 } catch (firestoreError) {
-                    console.error('Error creating/updating Firestore user document:', firestoreError);
+                    console.error('❌ Error creating/updating Firestore user document:', firestoreError);
+                    console.error('   Error code:', firestoreError.code);
+                    console.error('   Error message:', firestoreError.message);
                     // Don't fail the webhook if Firestore fails
                 }
 
                 // 2. Send password reset email via Firebase (so user can set their password)
+                console.log('📧 Sending password reset email via Firebase...');
                 try {
+                    const resetUrl = `${req.headers.origin || 'https://jazzenska.si'}/login.html?mode=resetPassword`;
                     const actionCodeSettings = {
-                        url: `${req.headers.origin || 'https://jazzenska.si'}/login.html?mode=resetPassword`,
+                        url: resetUrl,
                         handleCodeInApp: false,
                     };
+                    console.log('   Reset URL:', resetUrl);
+                    console.log('   Email recipient:', customerEmail);
                     
                     // Firebase will send the password reset email directly
                     await auth.sendPasswordResetEmail(customerEmail, actionCodeSettings);
-                    console.log('✅ Password reset email sent via Firebase to:', customerEmail);
+                    console.log('✅ Password reset email sent successfully via Firebase');
+                    console.log('   Sent to:', customerEmail);
+                    console.log('   Reset link will redirect to:', resetUrl);
 
                     // 3. Add contact to GetResponse campaign (for marketing purposes)
+                    console.log('📬 Adding contact to GetResponse campaign for marketing...');
                     try {
-                        console.log('Adding contact to GetResponse campaign for marketing');
-                        console.log('Email:', customerEmail);
-                        console.log('Name:', customerName);
+                        console.log('   Email:', customerEmail);
+                        console.log('   Name:', customerName);
                         const emailResult = await sendPasswordResetEmail(customerEmail, null, customerName);
-                        console.log('GetResponse result:', JSON.stringify(emailResult, null, 2));
-                        console.log('Contact added to GetResponse campaign for:', customerEmail);
+                        console.log('✅ Contact added to GetResponse campaign successfully');
+                        console.log('   Result:', JSON.stringify(emailResult, null, 2));
                     } catch (emailError) {
-                        console.error('Error adding contact to GetResponse:', emailError);
-                        console.error('Error stack:', emailError.stack);
+                        console.error('❌ Error adding contact to GetResponse:', emailError);
+                        console.error('   Error message:', emailError.message);
+                        console.error('   Error stack:', emailError.stack);
                         // Don't fail the webhook if GetResponse fails
                     }
                 } catch (emailError) {
-                    console.error('Error sending password reset email via Firebase:', emailError);
+                    console.error('❌ Error sending password reset email via Firebase:', emailError);
+                    console.error('   Error code:', emailError.code);
+                    console.error('   Error message:', emailError.message);
                     // Don't fail the webhook if email sending fails
                 }
+                
+                console.log('✅ All Firebase operations completed successfully for:', customerEmail);
             } else {
                 console.error('❌ Firebase not initialized - cannot create user');
                 console.error('FIREBASE_SERVICE_ACCOUNT exists:', !!process.env.FIREBASE_SERVICE_ACCOUNT);
