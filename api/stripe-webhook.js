@@ -299,7 +299,9 @@ module.exports = async function handler(req, res) {
                 // 2. Send password reset email via Firebase (so user can set their password)
                 console.log('📧 Generating password reset link via Firebase Admin SDK...');
                 try {
-                    const resetUrl = `${req.headers.origin || 'https://jazzenska.si'}/login.html?mode=resetPassword`;
+                    // Use authorized domain for continueUrl
+                    // Domain 'jaz-zenska.vercel.app' is added to Firebase authorized domains
+                    const resetUrl = 'https://jaz-zenska.vercel.app/login.html?mode=resetPassword';
                     const actionCodeSettings = {
                         url: resetUrl,
                         handleCodeInApp: false,

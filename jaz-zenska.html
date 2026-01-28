@@ -198,6 +198,24 @@
             font-style: italic;
         }
         
+        .about-projects-button {
+            display: inline-block;
+            padding: 14px 32px;
+            background: var(--dark-violet);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .about-projects-button:hover {
+            background: var(--mid-violet);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 56, 67, 0.3);
+        }
+        
         .jaz-zenska-button {
             display: inline-flex;
             align-items: center;
@@ -307,7 +325,7 @@
         <div class="top-bar-content">
             <a href="o-meni.html">O meni</a>
             <a href="media.html">Mediji</a>
-            <a href="https://www.skool.com/settings?t=profile" target="_blank" rel="noopener noreferrer">Moj račun</a>
+            <a href="login.html">Moj račun</a>
         </div>
     </div>
 
@@ -347,7 +365,7 @@
             <div class="mobile-top-links">
                 <a href="o-meni.html">O meni</a>
                 <a href="media.html">Mediji</a>
-                <a href="https://www.skool.com/settings?t=profile" target="_blank" rel="noopener noreferrer">Moj račun</a>
+                <a href="login.html">Moj račun</a>
             </div>
             <nav class="mobile-nav">
                 <ul>
@@ -401,24 +419,8 @@
             
             <p>Poglej kaj ti nudimo in kaj vse lahko pridobiš, če se nam pridružiš sedaj!</p>
             
-            <div class="jaz-zenska-cta">
-                <div class="jaz-zenska-cta-content">
-                    <div class="jaz-zenska-cta-badge">✨ Brezplačna priložnost ✨</div>
-                    <h2>Še nisi 100% pripravljena?</h2>
-                    <p class="jaz-zenska-cta-subtitle">Ponujamo ti brezplačen posvet, da skupaj najdemo pravo pot zate. Odkrij, kako lahko skupnost JAZ ŽENSKA pomaga ravno tebi.</p>
-                    <div class="jaz-zenska-cta-features">
-                        <div class="cta-feature">✓ Popolnoma brezplačno</div>
-                        <div class="cta-feature">✓ Brez obveznosti</div>
-                        <div class="cta-feature">✓ Osebni pristop</div>
-                    </div>
-                    <a href="index.html#stik-z-nami" class="jaz-zenska-button">
-                        <span>Rezerviraj brezplačen posvet</span>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
-                    <p class="jaz-zenska-cta-guarantee">💬 Prilagodimo se tvojim potrebam in ciljem</p>
-                </div>
+            <div style="text-align: center; margin: 40px 0;">
+                <a href="checkout.html" class="about-projects-button">Pridruži se</a>
             </div>
         </div>
     </section>
