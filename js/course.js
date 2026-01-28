@@ -69,27 +69,102 @@ function loadCourse() {
 }
 
 // Get watched episodes for a course
-function getWatchedEpisodes(courseId) {
+async function getWatchedEpisodes(courseId) {
+    const user = getCurrentUser();
+    if (!user || !user.userId) {
+        // Fallback to localStorage
+        const watched = JSON.parse(localStorage.getItem('watchedEpisodes') || '{}');
+        return watched[courseId] || [];
+    }
+    
+    try {
+        // Try to get from Firestore
+        if (typeof db !== 'undefined') {
+            const progressDoc = await db.collection('users').doc(user.userId)
+                .collection('courseProgress').doc(courseId).get();
+            
+            if (progressDoc.exists) {
+                const data = progressDoc.data();
+                const watchedEpisodes = data.watchedEpisodes || [];
+                
+                // Cache in localStorage
+                const watched = JSON.parse(localStorage.getItem('watchedEpisodes') || '{}');
+                watched[courseId] = watchedEpisodes;
+                localStorage.setItem('watchedEpisodes', JSON.stringify(watched));
+                
+                return watchedEpisodes;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading watched episodes from Firestore:', error);
+    }
+    
+    // Fallback to localStorage
     const watched = JSON.parse(localStorage.getItem('watchedEpisodes') || '{}');
     return watched[courseId] || [];
 }
 
 // Mark episode as watched/unwatched
-function toggleEpisodeWatched(courseId, episodeId, isWatched) {
-    const watched = JSON.parse(localStorage.getItem('watchedEpisodes') || '{}');
-    if (!watched[courseId]) {
-        watched[courseId] = [];
+async function toggleEpisodeWatched(courseId, episodeId, isWatched) {
+    const user = getCurrentUser();
+    if (!user || !user.userId) {
+        // Fallback to localStorage only
+        const watched = JSON.parse(localStorage.getItem('watchedEpisodes') || '{}');
+        if (!watched[courseId]) {
+            watched[courseId] = [];
+        }
+        
+        if (isWatched) {
+            if (!watched[courseId].includes(episodeId)) {
+                watched[courseId].push(episodeId);
+            }
+        } else {
+            watched[courseId] = watched[courseId].filter(id => id !== episodeId);
+        }
+        
+        localStorage.setItem('watchedEpisodes', JSON.stringify(watched));
+        updateCourseProgress(courseId);
+        return;
     }
+    
+    // Get current watched episodes
+    const currentWatched = await getWatchedEpisodes(courseId);
+    let newWatched = [...currentWatched];
     
     if (isWatched) {
-        if (!watched[courseId].includes(episodeId)) {
-            watched[courseId].push(episodeId);
+        if (!newWatched.includes(episodeId)) {
+            newWatched.push(episodeId);
         }
     } else {
-        watched[courseId] = watched[courseId].filter(id => id !== episodeId);
+        newWatched = newWatched.filter(id => id !== episodeId);
     }
     
+    // Update localStorage cache
+    const watched = JSON.parse(localStorage.getItem('watchedEpisodes') || '{}');
+    watched[courseId] = newWatched;
     localStorage.setItem('watchedEpisodes', JSON.stringify(watched));
+    
+    // Save to Firestore
+    try {
+        if (typeof db !== 'undefined') {
+            const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+            const course = courses.find(c => c.id === courseId);
+            const totalEpisodes = course?.episodes?.length || 0;
+            const progress = totalEpisodes > 0 ? Math.round((newWatched.length / totalEpisodes) * 100) : 0;
+            
+            await db.collection('users').doc(user.userId)
+                .collection('courseProgress').doc(courseId).set({
+                    courseId: courseId,
+                    watchedEpisodes: newWatched,
+                    progress: progress,
+                    completed: progress === 100,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+        }
+    } catch (error) {
+        console.error('Error saving course progress to Firestore:', error);
+    }
+    
     updateCourseProgress(courseId);
     
     // Update checkbox if it exists
@@ -110,12 +185,12 @@ function toggleEpisodeWatched(courseId, episodeId, isWatched) {
 }
 
 // Calculate and update course progress
-function updateCourseProgress(courseId) {
+async function updateCourseProgress(courseId) {
     const courses = JSON.parse(localStorage.getItem('courses') || '[]');
     const course = courses.find(c => c.id === courseId);
     if (!course || !course.episodes) return;
     
-    const watched = getWatchedEpisodes(courseId);
+    const watched = await getWatchedEpisodes(courseId);
     const totalEpisodes = course.episodes.length;
     const watchedCount = watched.length;
     const progress = totalEpisodes > 0 ? Math.round((watchedCount / totalEpisodes) * 100) : 0;
@@ -139,10 +214,10 @@ function updateCourseProgress(courseId) {
 }
 
 // Load episodes list
-function loadEpisodes(course) {
+async function loadEpisodes(course) {
     const episodesList = document.getElementById('episodesList');
     const courseId = course.id;
-    const watched = getWatchedEpisodes(courseId);
+    const watched = await getWatchedEpisodes(courseId);
     
     if (!course.episodes || course.episodes.length === 0) {
         episodesList.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 20px;">Ni epizod.</p>';
@@ -163,7 +238,7 @@ function loadEpisodes(course) {
     }).join('');
     
     // Update progress
-    updateCourseProgress(courseId);
+    await updateCourseProgress(courseId);
 }
 
 // Get current course
@@ -208,8 +283,12 @@ function loadEpisodeContent(episodeId, course = null, element = null) {
     const isLastEpisode = episodeIndex === course.episodes.length - 1;
     const nextEpisode = !isLastEpisode ? course.episodes[episodeIndex + 1] : null;
     
-    // Check if current episode is watched
-    const watched = getWatchedEpisodes(course.id);
+    // Check if current episode is watched (async, but we'll handle it)
+    getWatchedEpisodes(course.id).then(watched => {
+        const isWatched = watched.includes(episodeId);
+        // Update button state if needed
+    });
+    const watched = await getWatchedEpisodes(course.id);
     const isWatched = watched.includes(episodeId);
     
     // Load content
@@ -234,9 +313,9 @@ function loadEpisodeContent(episodeId, course = null, element = null) {
     `;
 }
 
-function markAsWatchedAndNext(courseId, currentEpisodeId, nextEpisodeId) {
+async function markAsWatchedAndNext(courseId, currentEpisodeId, nextEpisodeId) {
     // Mark current episode as watched
-    toggleEpisodeWatched(courseId, currentEpisodeId, true);
+    await toggleEpisodeWatched(courseId, currentEpisodeId, true);
     
     // Update checkbox in episodes list
     const currentCheckbox = document.querySelector(`input[onclick*="${currentEpisodeId}"]`);
@@ -253,7 +332,7 @@ function markAsWatchedAndNext(courseId, currentEpisodeId, nextEpisodeId) {
     // Reload episodes list to update styling
     const course = getCurrentCourse();
     if (course) {
-        loadEpisodes(course);
+        await loadEpisodes(course);
         
         // Load next episode
         setTimeout(() => {
@@ -265,9 +344,9 @@ function markAsWatchedAndNext(courseId, currentEpisodeId, nextEpisodeId) {
     }
 }
 
-function finishCourse(courseId, episodeId) {
+async function finishCourse(courseId, episodeId) {
     // Mark last episode as watched
-    toggleEpisodeWatched(courseId, episodeId, true);
+    await toggleEpisodeWatched(courseId, episodeId, true);
     
     // Update checkbox in episodes list
     const currentCheckbox = document.querySelector(`input[onclick*="${episodeId}"]`);
@@ -284,7 +363,7 @@ function finishCourse(courseId, episodeId) {
     // Reload episodes list to update styling
     const course = getCurrentCourse();
     if (course) {
-        loadEpisodes(course);
+        await loadEpisodes(course);
     }
     
     // Show congratulations popup

@@ -195,7 +195,7 @@ function switchSection(section) {
 }
 
 // ===== COMMUNITY SECTION =====
-function loadCommunity() {
+async function loadCommunity() {
     const user = getCurrentUser();
     const posts = JSON.parse(localStorage.getItem('posts') || '[]');
     const content = document.getElementById('communityContent');
@@ -242,10 +242,23 @@ function loadCommunity() {
     if (posts.length === 0) {
         html += '<p style="color: var(--text-light); text-align: center; padding: 40px;">Trenutno ni objav.</p>';
     } else {
+        // Load user likes from Firestore
+        let userLikes = [];
+        try {
+            if (typeof db !== 'undefined' && user.userId) {
+                const likesSnapshot = await db.collection('users').doc(user.userId)
+                    .collection('likes').get();
+                userLikes = likesSnapshot.docs.map(doc => doc.id);
+            }
+        } catch (error) {
+            console.error('Error loading user likes:', error);
+        }
+        
         posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(post => {
             const likes = post.likes || [];
             const comments = post.comments || [];
-            const isLiked = likes.includes(user.userId);
+            // Check if user liked from Firestore data, fallback to localStorage
+            const isLiked = userLikes.includes(post.id) || likes.includes(user.userId);
             const likeCount = likes.length;
             const commentCount = comments.length;
             const title = post.title || 'Brez naslova';
@@ -393,9 +406,11 @@ function togglePostExpand(postId) {
     }
 }
 
-function toggleLike(postId) {
+async function toggleLike(postId) {
     event.stopPropagation();
     const user = getCurrentUser();
+    if (!user || !user.userId) return;
+    
     const posts = JSON.parse(localStorage.getItem('posts') || '[]');
     const post = posts.find(p => p.id === postId);
     
@@ -404,13 +419,44 @@ function toggleLike(postId) {
     if (!post.likes) post.likes = [];
     
     const index = post.likes.indexOf(user.userId);
-    if (index > -1) {
+    const isLiked = index > -1;
+    
+    if (isLiked) {
         post.likes.splice(index, 1);
     } else {
         post.likes.push(user.userId);
     }
     
     localStorage.setItem('posts', JSON.stringify(posts));
+    
+    // Save to Firestore
+    try {
+        if (typeof db !== 'undefined') {
+            const userLikesRef = db.collection('users').doc(user.userId)
+                .collection('likes').doc(postId);
+            
+            if (isLiked) {
+                // Unlike - remove from Firestore
+                await userLikesRef.delete();
+            } else {
+                // Like - add to Firestore
+                await userLikesRef.set({
+                    postId: postId,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+            
+            // Update post likes count in Firestore
+            await db.collection('posts').doc(postId).set({
+                likes: post.likes,
+                likesCount: post.likes.length,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        }
+    } catch (error) {
+        console.error('Error saving like to Firestore:', error);
+    }
+    
     loadCommunity();
 }
 
@@ -425,12 +471,40 @@ function showComments(postId) {
     }
 }
 
-function loadComments(postId) {
+async function loadComments(postId) {
     const posts = JSON.parse(localStorage.getItem('posts') || '[]');
     const post = posts.find(p => p.id === postId);
     if (!post) return;
     
-    const comments = post.comments || [];
+    let comments = post.comments || [];
+    
+    // Try to load from Firestore
+    try {
+        if (typeof db !== 'undefined') {
+            const commentsSnapshot = await db.collection('posts').doc(postId)
+                .collection('comments').orderBy('createdAt', 'asc').get();
+            
+            if (!commentsSnapshot.empty) {
+                comments = commentsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        author: data.author,
+                        authorId: data.authorId,
+                        content: data.content,
+                        createdAt: data.createdAt?.toDate?.()?.toISOString() || data.createdAt
+                    };
+                });
+                
+                // Update localStorage cache
+                post.comments = comments;
+                localStorage.setItem('posts', JSON.stringify(posts));
+            }
+        }
+    } catch (error) {
+        console.error('Error loading comments from Firestore:', error);
+    }
+    
     const commentsList = document.getElementById(`comments-list-${postId}`);
     
     if (comments.length === 0) {
@@ -446,12 +520,14 @@ function loadComments(postId) {
     }
 }
 
-function addComment(postId) {
+async function addComment(postId) {
     const input = document.getElementById(`comment-input-${postId}`);
     const content = input.value.trim();
     if (!content) return;
     
     const user = getCurrentUser();
+    if (!user || !user.userId) return;
+    
     const posts = JSON.parse(localStorage.getItem('posts') || '[]');
     const post = posts.find(p => p.id === postId);
     
@@ -459,17 +535,40 @@ function addComment(postId) {
     
     if (!post.comments) post.comments = [];
     
-    post.comments.push({
+    const comment = {
         id: Date.now().toString(),
         author: user.name || user.email,
         authorId: user.userId,
         content: content,
         createdAt: new Date().toISOString()
-    });
+    };
     
+    post.comments.push(comment);
     localStorage.setItem('posts', JSON.stringify(posts));
     input.value = '';
-    loadComments(postId);
+    
+    // Save to Firestore
+    try {
+        if (typeof db !== 'undefined') {
+            await db.collection('posts').doc(postId)
+                .collection('comments').add({
+                    author: comment.author,
+                    authorId: comment.authorId,
+                    content: comment.content,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            
+            // Update comment count in post
+            await db.collection('posts').doc(postId).set({
+                commentsCount: post.comments.length,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        }
+    } catch (error) {
+        console.error('Error saving comment to Firestore:', error);
+    }
+    
+    await loadComments(postId);
 }
 
 // ===== CLASSROOM SECTION =====
