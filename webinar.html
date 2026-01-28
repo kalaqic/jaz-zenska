@@ -183,6 +183,15 @@
             position: relative;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             animation: modalSlideIn 0.3s ease-out;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .webinar-modal-content.fade-out {
+            opacity: 0;
+        }
+        
+        .webinar-modal-overlay.fade-out {
+            opacity: 0;
         }
         
         @keyframes modalSlideIn {
@@ -194,6 +203,45 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+        
+        .webinar-thank-you {
+            text-align: center;
+            display: none;
+        }
+        
+        .webinar-thank-you.active {
+            display: block;
+        }
+        
+        .webinar-thank-you-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 40px;
+            color: var(--white);
+        }
+        
+        .webinar-thank-you-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--dark-violet);
+            margin-bottom: 15px;
+        }
+        
+        .webinar-thank-you-message {
+            font-size: 18px;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        
+        .webinar-modal-form.hidden {
+            display: none;
         }
         
         .webinar-modal-close {
@@ -737,6 +785,12 @@
                 </button>
                 <div class="webinar-modal-message" id="webinarMessage"></div>
             </form>
+            
+            <div class="webinar-thank-you" id="webinarThankYou">
+                <div class="webinar-thank-you-icon">✓</div>
+                <h2 class="webinar-thank-you-title">Hvala!</h2>
+                <p class="webinar-thank-you-message">Vaša prijava je bila uspešna, hvala!</p>
+            </div>
         </div>
     </div>
 
@@ -750,6 +804,17 @@
         const webinarEmailInput = document.getElementById('webinarEmail');
         const webinarSubmitBtn = document.getElementById('webinarSubmitBtn');
         const webinarMessage = document.getElementById('webinarMessage');
+        const webinarThankYou = document.getElementById('webinarThankYou');
+
+        // Capitalize first letter of name field
+        if (webinarNameInput) {
+            webinarNameInput.addEventListener('input', function(e) {
+                const value = e.target.value;
+                if (value.length > 0) {
+                    e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+                }
+            });
+        }
 
         // Open modal when clicking webinar signup buttons
         function openWebinarModal() {
@@ -759,11 +824,16 @@
 
         // Close modal
         function closeWebinarModal() {
-            webinarModal.classList.remove('active');
+            webinarModal.classList.remove('active', 'fade-out');
+            webinarModal.querySelector('.webinar-modal-content').classList.remove('fade-out');
             document.body.style.overflow = '';
             webinarMessage.classList.remove('success', 'error');
             webinarMessage.style.display = 'none';
             webinarSignupForm.reset();
+            webinarSignupForm.classList.remove('hidden');
+            webinarThankYou.classList.remove('active');
+            webinarNameInput.disabled = false;
+            webinarEmailInput.disabled = false;
         }
 
         // Close button
@@ -819,13 +889,17 @@
                     const data = await response.json();
 
                     if (response.ok || response.status === 409) {
-                        showWebinarMessage('Vaša prijava je bila uspešna, hvala!', 'success');
-                        webinarNameInput.disabled = true;
-                        webinarEmailInput.disabled = true;
+                        // Hide form and show thank you message
+                        webinarSignupForm.classList.add('hidden');
+                        webinarThankYou.classList.add('active');
                         
-                        // Close modal after 2 seconds
+                        // Fade out modal after 2 seconds
                         setTimeout(() => {
-                            closeWebinarModal();
+                            webinarModal.classList.add('fade-out');
+                            webinarModal.querySelector('.webinar-modal-content').classList.add('fade-out');
+                            setTimeout(() => {
+                                closeWebinarModal();
+                            }, 500);
                         }, 2000);
                     } else {
                         showWebinarMessage(data.message || 'Napaka pri prijavi. Prosimo, poskusite znova.', 'error');
