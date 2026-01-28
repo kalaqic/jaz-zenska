@@ -25,7 +25,159 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&family=Great+Vibes&family=Allura&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
-    
+    <style>
+        /* Webinar Signup Modal */
+        .webinar-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .webinar-modal-overlay.active {
+            display: flex;
+        }
+        
+        .webinar-modal-content {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .webinar-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            font-size: 32px;
+            color: var(--text-light);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .webinar-modal-close:hover {
+            background: var(--almost-white);
+            color: var(--dark-violet);
+        }
+        
+        .webinar-modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--dark-violet);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .webinar-modal-description {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .webinar-modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .webinar-modal-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid var(--almost-white);
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .webinar-modal-input:focus {
+            outline: none;
+            border-color: var(--mid-violet);
+            box-shadow: 0 0 0 3px rgba(153, 98, 122, 0.1);
+        }
+        
+        .webinar-modal-submit {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .webinar-modal-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5);
+        }
+        
+        .webinar-modal-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .webinar-modal-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .webinar-modal-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .webinar-modal-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <!-- Top Bar -->
@@ -111,7 +263,7 @@
     <section id="jaz-zenska" class="jaz-zenska-section">
         <div class="jaz-zenska-container">
             <div class="jaz-zenska-main-title">
-                <img src="images/Jaz Zenska-LOGO-Gold.svg" alt="Jaz Ženska Logo" class="jaz-zenska-logo">
+                <img src="images/Jaz Zenska-LOGO-Gold.webp" alt="Jaz Ženska Logo" class="jaz-zenska-logo">
             </div>
             
             <!-- Skupnost Jaz Ženska -->
@@ -281,7 +433,7 @@
     <!-- Current Event Section -->
     <section class="current-event">
         <div class="current-event-container">
-            <span class="event-label">Aktualen dogodek</span>
+            <span class="event-label">Aktualeni dogodki</span>
             <div class="current-event-content">
                 <h2 class="event-title">Jaz Ženska – Moja moč je v meni</h2>
                 <p class="event-description">Si utrujena in veš, da si zaslužiš več? Če si se prepoznala, te vabim na brezplačni webinar <strong>Jaz Ženska – Moja moč je v meni</strong>, ki bo potekal v živo v četrtek, 5. februarja ob 11 uri. Če se ne boš mogla udeležiti v živo, boš prejela posnetek.</p>
@@ -295,8 +447,8 @@
                     <span class="date-text">5. februarja | 11:00</span>
                 </div>
                 <div class="event-actions">
-                    <a href="#stik-z-nami" class="event-button-primary" id="webinar-register-button">Prijavi se na webinar</a>
-                    <a href="#" class="event-button-secondary" id="event-details-button">Več o webinarju</a>
+                    <a href="#" class="event-button-primary" id="webinar-register-button">Prijavi se na webinar</a>
+                    <a href="webinar.html" class="event-button-secondary">Več o webinarju</a>
                 </div>
             </div>
         </div>
@@ -337,7 +489,7 @@
                     </div>
 
                 <div class="event-modal-actions">
-                    <a href="#stik-z-nami" class="event-button-primary" id="webinar-register-modal-button">Prijavi se na webinar</a>
+                    <a href="#" class="event-button-primary" id="webinar-register-modal-button">Prijavi se na webinar</a>
                 </div>
             </div>
         </div>
@@ -777,6 +929,154 @@
         </div>
     </div>
 
+    <!-- Webinar Signup Modal -->
+    <div class="webinar-modal-overlay" id="webinarModal">
+        <div class="webinar-modal-content">
+            <button class="webinar-modal-close" id="webinarModalClose" aria-label="Zapri">&times;</button>
+            <h2 class="webinar-modal-title">Prijavi se na brezplačen webinar</h2>
+            <p class="webinar-modal-description">Vnesite vaš email naslov in se prijavite na brezplačni webinar <strong>Moja moč je v meni</strong>.</p>
+            <form class="webinar-modal-form" id="webinarSignupForm">
+                <input 
+                    type="text" 
+                    class="webinar-modal-input" 
+                    id="webinarName" 
+                    placeholder="Vaše ime" 
+                    required
+                >
+                <input 
+                    type="email" 
+                    class="webinar-modal-input" 
+                    id="webinarEmail" 
+                    placeholder="Vaš email naslov" 
+                    required
+                >
+                <button type="submit" class="webinar-modal-submit" id="webinarSubmitBtn">
+                    Prijavi se na brezplačen webinar
+                </button>
+                <div class="webinar-modal-message" id="webinarMessage"></div>
+            </form>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
+    <script>
+        // Webinar Signup Modal
+        const webinarModal = document.getElementById('webinarModal');
+        const webinarModalClose = document.getElementById('webinarModalClose');
+        const webinarSignupForm = document.getElementById('webinarSignupForm');
+        const webinarNameInput = document.getElementById('webinarName');
+        const webinarEmailInput = document.getElementById('webinarEmail');
+        const webinarSubmitBtn = document.getElementById('webinarSubmitBtn');
+        const webinarMessage = document.getElementById('webinarMessage');
+
+        // Open modal when clicking webinar signup buttons
+        function openWebinarModal() {
+            webinarModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        function closeWebinarModal() {
+            webinarModal.classList.remove('active');
+            document.body.style.overflow = '';
+            webinarMessage.classList.remove('success', 'error');
+            webinarMessage.style.display = 'none';
+            webinarSignupForm.reset();
+        }
+
+        // Close button
+        if (webinarModalClose) {
+            webinarModalClose.addEventListener('click', closeWebinarModal);
+        }
+
+        // Close on overlay click
+        if (webinarModal) {
+            webinarModal.addEventListener('click', function(e) {
+                if (e.target === webinarModal) {
+                    closeWebinarModal();
+                }
+            });
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && webinarModal && webinarModal.classList.contains('active')) {
+                closeWebinarModal();
+            }
+        });
+
+        // Handle form submission
+        if (webinarSignupForm) {
+            webinarSignupForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const name = webinarNameInput.value.trim();
+                const email = webinarEmailInput.value.trim();
+                
+                if (!name) {
+                    showWebinarMessage('Prosimo, vnesite vaše ime.', 'error');
+                    return;
+                }
+                
+                if (!email) {
+                    showWebinarMessage('Prosimo, vnesite email naslov.', 'error');
+                    return;
+                }
+
+                // Disable submit button
+                webinarSubmitBtn.disabled = true;
+                webinarSubmitBtn.textContent = 'Prijavljanje...';
+
+                try {
+                    const response = await fetch('/api/webinar-signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: email, name: name })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok || response.status === 409) {
+                        showWebinarMessage('Uspešno ste se prijavili na webinar! Hvala.', 'success');
+                        webinarNameInput.disabled = true;
+                        webinarEmailInput.disabled = true;
+                        
+                        // Close modal after 2 seconds
+                        setTimeout(() => {
+                            closeWebinarModal();
+                        }, 2000);
+                    } else {
+                        showWebinarMessage(data.message || 'Napaka pri prijavi. Prosimo, poskusite znova.', 'error');
+                        webinarSubmitBtn.disabled = false;
+                        webinarSubmitBtn.textContent = 'Prijavi se na brezplačen webinar';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showWebinarMessage('Napaka pri povezavi. Prosimo, poskusite znova.', 'error');
+                    webinarSubmitBtn.disabled = false;
+                    webinarSubmitBtn.textContent = 'Prijavi se na brezplačen webinar';
+                }
+            });
+        }
+
+        function showWebinarMessage(message, type) {
+            webinarMessage.textContent = message;
+            webinarMessage.className = 'webinar-modal-message ' + type;
+            webinarMessage.style.display = 'block';
+        }
+
+        // Update webinar signup buttons to open modal
+        document.addEventListener('DOMContentLoaded', function() {
+            const webinarButtons = document.querySelectorAll('#webinar-register-button, #webinar-register-modal-button');
+            webinarButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openWebinarModal();
+                });
+            });
+        });
+    </script>
 </body>
 </html>

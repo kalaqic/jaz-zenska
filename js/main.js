@@ -428,13 +428,20 @@ function initBurgerMenu() {
         burgerMenu.classList.remove('active');
         mobileMenuOverlay.classList.remove('active');
         document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
     }
     
     // Toggle menu
     burgerMenu.addEventListener('click', function() {
         burgerMenu.classList.toggle('active');
         mobileMenuOverlay.classList.toggle('active');
-        document.body.style.overflow = mobileMenuOverlay.classList.contains('active') ? 'hidden' : '';
+        if (mobileMenuOverlay.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+        }
     });
     
     // Close menu with X button
@@ -525,6 +532,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Prevent scroll bounce
     preventScrollBounce();
     
+    // Ensure scrolling is enabled on page load
+    document.body.style.overflow = '';
+    document.body.style.overflowY = 'auto';
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.overflowY = 'auto';
+    
     // Initialize programs animation
     initProgramsAnimation();
     
@@ -612,13 +625,15 @@ function initEventModal() {
     eventDetailsButton.addEventListener('click', function(e) {
         e.preventDefault();
         modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        // Don't prevent body scrolling - let the modal handle its own scroll
     });
     
     // Close modal functions
     function closeModal() {
         modal.classList.remove('active');
+        // Ensure body can scroll after closing
         document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
     }
     
     if (closeButton) {
