@@ -412,66 +412,6 @@ function preventScrollBounce() {
 
 
 // Welcome Popup Handler
-function initWelcomePopup() {
-    const welcomePopup = document.getElementById('welcomePopup');
-    const welcomePopupClose = document.getElementById('welcomePopupClose');
-    const welcomePopupButton = document.getElementById('welcomePopupButton');
-    const body = document.body;
-    
-    if (!welcomePopup) return;
-    
-    // Show popup after a short delay
-    setTimeout(function() {
-        welcomePopup.classList.add('active');
-        // Only prevent body scroll on desktop, not mobile
-        if (window.innerWidth > 768) {
-            body.style.overflow = 'hidden';
-            document.documentElement.style.overflow = 'hidden';
-        }
-    }, 500);
-    
-    // Close popup function
-    function closePopup() {
-        welcomePopup.classList.remove('active');
-        // Restore scrolling - clear both body and html overflow
-        document.body.style.overflow = '';
-        document.body.style.overflowY = '';
-        document.documentElement.style.overflow = '';
-        document.documentElement.style.overflowY = '';
-        body.style.overflow = '';
-        body.style.overflowY = '';
-    }
-    
-    // Close button
-    if (welcomePopupClose) {
-        welcomePopupClose.addEventListener('click', closePopup);
-    }
-    
-    // Close popup when button is clicked
-    if (welcomePopupButton) {
-        welcomePopupButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            closePopup();
-        });
-    }
-    
-    // Close on overlay click
-    welcomePopup.addEventListener('click', function(e) {
-        if (e.target === welcomePopup) {
-            closePopup();
-        }
-    });
-    
-    // Close on Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && welcomePopup.classList.contains('active')) {
-            closePopup();
-        }
-    });
-}
-
-// Initialize welcome popup immediately
-initWelcomePopup();
 
 // Initialize animations on page load
 // ===== BURGER MENU TOGGLE =====

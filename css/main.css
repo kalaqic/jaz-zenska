@@ -154,29 +154,19 @@ header {
     position: relative;
 }
 
-.header-content a[aria-label="logo"],
-.header-content > a:first-child {
-    position: absolute;
-    left: 60px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 0;
-    display: block;
-    pointer-events: none;
-    cursor: default;
+.header-logo {
+    display: flex;
+    align-items: center;
+    z-index: 10;
+    margin-right: auto;
+    margin-left: -80px;
 }
 
-.header-content a[aria-label="logo"] img,
-.header-content > a:first-child img {
-    display: block;
-    width: 160px;
-    height: auto;
-    position: relative;
-    opacity: 0.3;
-    filter: brightness(0) invert(1);
-    -webkit-filter: brightness(0) invert(1);
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
+.header-logo img {
+    height: 100px;
+    width: auto;
+    object-fit: contain;
+    margin-right: 120px;
 }
 
 .logo {
@@ -193,6 +183,11 @@ nav ul {
     gap: 30px;
     color: var(--white);
     text-decoration-color: white;
+}
+
+.desktop-nav {
+    margin-left: 80px;
+    flex: 1;
 }
 
 /* ===== BURGER MENU ===== */
