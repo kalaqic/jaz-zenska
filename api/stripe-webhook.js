@@ -17,16 +17,38 @@ if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET) {
 // Initialize Firebase Admin
 let firebaseApp;
 try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+    const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
+    console.log('FIREBASE_SERVICE_ACCOUNT exists:', !!serviceAccountRaw);
+    console.log('FIREBASE_SERVICE_ACCOUNT length:', serviceAccountRaw ? serviceAccountRaw.length : 0);
     
-    if (!firebaseApp && serviceAccount.projectId) {
-        firebaseApp = admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-        console.log('Firebase Admin initialized successfully');
+    if (!serviceAccountRaw) {
+        console.error('❌ FIREBASE_SERVICE_ACCOUNT environment variable is not set!');
+    } else {
+        const serviceAccount = JSON.parse(serviceAccountRaw);
+        console.log('Parsed service account keys:', Object.keys(serviceAccount));
+        console.log('Service account projectId:', serviceAccount.projectId);
+        
+        if (!serviceAccount.projectId) {
+            console.error('❌ Service account JSON is missing projectId field');
+            console.error('Service account structure:', JSON.stringify(serviceAccount, null, 2));
+        } else {
+            // Check if Firebase app is already initialized
+            try {
+                firebaseApp = admin.app();
+                console.log('Firebase app already initialized');
+            } catch (e) {
+                // App doesn't exist, initialize it
+                firebaseApp = admin.initializeApp({
+                    credential: admin.credential.cert(serviceAccount)
+                });
+                console.log('✅ Firebase Admin initialized successfully');
+            }
+        }
     }
 } catch (error) {
-    console.error('Firebase initialization error:', error);
+    console.error('❌ Firebase initialization error:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
 }
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
@@ -155,6 +177,33 @@ module.exports = async function handler(req, res) {
         try {
             // 1. Create Firebase user (passwordless initially)
             console.log('Firebase app initialized:', !!firebaseApp);
+            console.log('Firebase app type:', typeof firebaseApp);
+            
+            // Try to get Firebase app if not already set
+            if (!firebaseApp) {
+                try {
+                    firebaseApp = admin.app();
+                    console.log('Retrieved existing Firebase app');
+                } catch (e) {
+                    console.error('Cannot retrieve Firebase app:', e.message);
+                    // Try to initialize Firebase again as fallback
+                    try {
+                        const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
+                        if (serviceAccountRaw) {
+                            const serviceAccount = JSON.parse(serviceAccountRaw);
+                            if (serviceAccount.projectId) {
+                                firebaseApp = admin.initializeApp({
+                                    credential: admin.credential.cert(serviceAccount)
+                                });
+                                console.log('✅ Firebase initialized in handler (fallback)');
+                            }
+                        }
+                    } catch (initError) {
+                        console.error('Failed to initialize Firebase in handler:', initError);
+                    }
+                }
+            }
+            
             if (firebaseApp) {
                 const auth = admin.auth();
                 

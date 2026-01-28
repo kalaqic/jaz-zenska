@@ -1,6 +1,17 @@
 // Community Platform JavaScript
 // Structured for easy Firebase migration later
 
+// Helper function to ensure URL is absolute (opens in new tab correctly)
+function ensureAbsoluteUrl(url) {
+    if (!url) return '#';
+    // If URL already starts with http:// or https://, return as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+    }
+    // Otherwise, prepend https://
+    return 'https://' + url;
+}
+
 // Initialize data structures in localStorage
 function initDataStructures() {
     // Initialize posts if they don't exist
@@ -1092,7 +1103,7 @@ function showDayEvents(dateStr) {
                             <span>🕐 ${event.time}</span>
                             ${event.type === 'real-life' ? `<span>📍 ${event.location}</span>` : ''}
                             ${event.type === 'webinar' || event.type === 'zoom' ? `
-                                <a href="${event.location}" target="_blank" style="
+                                <a href="${ensureAbsoluteUrl(event.location)}" target="_blank" rel="noopener noreferrer" style="
                                     background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
                                     color: var(--white);
                                     padding: 8px 20px;
@@ -1298,7 +1309,7 @@ function showAllEventsModal() {
                                 <span>📅 ${eventDate.toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                                 <span>🕐 ${event.time}</span>
                                 ${event.type === 'real-life' ? `<span>📍 ${event.location}</span>` : ''}
-                                ${event.type === 'webinar' || event.type === 'zoom' ? `<span>🔗 <a href="${event.location}" target="_blank" style="color: var(--mid-violet); text-decoration: none;">Povezava</a></span>` : ''}
+                                ${event.type === 'webinar' || event.type === 'zoom' ? `<span>🔗 <a href="${ensureAbsoluteUrl(event.location)}" target="_blank" rel="noopener noreferrer" style="color: var(--mid-violet); text-decoration: none;">Povezava</a></span>` : ''}
                             </div>
                         </div>
                     </div>
