@@ -297,7 +297,7 @@ module.exports = async function handler(req, res) {
                 }
 
                 // 2. Send password reset email via Firebase (so user can set their password)
-                console.log('📧 Sending password reset email via Firebase...');
+                console.log('📧 Generating password reset link via Firebase Admin SDK...');
                 try {
                     const resetUrl = `${req.headers.origin || 'https://jazzenska.si'}/login.html?mode=resetPassword`;
                     const actionCodeSettings = {
@@ -307,11 +307,47 @@ module.exports = async function handler(req, res) {
                     console.log('   Reset URL:', resetUrl);
                     console.log('   Email recipient:', customerEmail);
                     
-                    // Firebase will send the password reset email directly
-                    await auth.sendPasswordResetEmail(customerEmail, actionCodeSettings);
-                    console.log('✅ Password reset email sent successfully via Firebase');
+                    // Admin SDK uses generatePasswordResetLink - this generates the link
+                    // Then we use Firebase REST API to actually send the email
+                    const resetLink = await auth.generatePasswordResetLink(customerEmail, actionCodeSettings);
+                    console.log('✅ Password reset link generated successfully');
+                    console.log('   Reset link preview:', resetLink.substring(0, 80) + '...');
+                    
+                    // Send password reset email via Firebase REST API
+                    console.log('📧 Sending password reset email via Firebase REST API...');
+                    const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
+                    if (!FIREBASE_API_KEY) {
+                        console.error('❌ FIREBASE_API_KEY not set, cannot send password reset email');
+                        throw new Error('FIREBASE_API_KEY not configured');
+                    }
+                    
+                    console.log('   Calling Firebase Identity Toolkit API...');
+                    const sendPasswordResetResponse = await fetch(
+                        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${FIREBASE_API_KEY}`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                requestType: 'PASSWORD_RESET',
+                                email: customerEmail,
+                                continueUrl: resetUrl,
+                            }),
+                        }
+                    );
+                    
+                    const responseData = await sendPasswordResetResponse.json();
+                    
+                    if (!sendPasswordResetResponse.ok) {
+                        console.error('❌ Firebase REST API error response:', JSON.stringify(responseData, null, 2));
+                        throw new Error(`Firebase REST API error: ${JSON.stringify(responseData)}`);
+                    }
+                    
+                    console.log('✅ Password reset email sent successfully via Firebase REST API');
                     console.log('   Sent to:', customerEmail);
                     console.log('   Reset link will redirect to:', resetUrl);
+                    console.log('   API response:', JSON.stringify(responseData, null, 2));
 
                     // 3. Add contact to GetResponse campaign (for marketing purposes)
                     console.log('📬 Adding contact to GetResponse campaign for marketing...');
