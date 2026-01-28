@@ -78,10 +78,15 @@ function initDataStructures() {
     }
 }
 
-// Get current user
+// Get current user from localStorage (populated by Firebase Auth)
 function getCurrentUser() {
     const userStr = localStorage.getItem('currentUser');
     if (!userStr) {
+        // Check if Firebase Auth is available
+        if (typeof auth !== 'undefined' && auth.currentUser) {
+            // Try to get from Firebase
+            return null; // Will trigger redirect in initDashboard
+        }
         window.location.href = 'login.html';
         return null;
     }
@@ -94,12 +99,44 @@ function isAdmin() {
     return user && user.role === 'admin';
 }
 
+// Logout function using Firebase
+async function handleLogout() {
+    try {
+        // Sign out from Firebase
+        if (typeof auth !== 'undefined' && auth.currentUser) {
+            await auth.signOut();
+        }
+        // Clear localStorage
+        localStorage.removeItem('currentUser');
+        // Redirect to login
+        window.location.href = 'login.html';
+    } catch (error) {
+        console.error('Error logging out:', error);
+        // Clear localStorage anyway and redirect
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+    }
+}
+
 // Initialize dashboard
 function initDashboard() {
+    // Double-check authentication before proceeding
+    if (typeof auth !== 'undefined' && auth && auth.currentUser === null) {
+        // Check localStorage as fallback
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) {
+            window.location.href = 'login.html';
+            return;
+        }
+    }
+    
     initDataStructures();
     
     const user = getCurrentUser();
-    if (!user) return;
+    if (!user) {
+        window.location.href = 'login.html';
+        return;
+    }
     
     // Display user info
     document.getElementById('userName').textContent = user.name || user.email;
@@ -1247,10 +1284,23 @@ function deleteEvent(eventId) {
 }
 
 // ===== PROFILE SECTION =====
-function loadProfile() {
+async function loadProfile() {
     const user = getCurrentUser();
-    const users = JSON.parse(localStorage.getItem('users') || '{}');
-    const userData = users[user.email] || user;
+    if (!user) return;
+    
+    let userData = user;
+    
+    // Try to get fresh data from Firestore if available
+    if (typeof db !== 'undefined' && user.userId) {
+        try {
+            const userDoc = await db.collection('users').doc(user.userId).get();
+            if (userDoc.exists) {
+                userData = { ...user, ...userDoc.data() };
+            }
+        } catch (error) {
+            console.error('Error loading user from Firestore:', error);
+        }
+    }
     
     const content = document.getElementById('profileContent');
     
@@ -1277,12 +1327,13 @@ function loadProfile() {
                     border-radius: 10px;
                     font-size: 16px;
                     font-family: 'Montserrat', sans-serif;
-                ">
+                " readonly>
+                <p style="font-size: 12px; color: var(--text-light); margin-top: 5px;">Email naslova ni mogoče spremeniti.</p>
             </div>
             
             <div style="margin-bottom: 25px;">
-                <label style="display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px;">Novo geslo (pustite prazno, če ne želite spremeniti)</label>
-                <input type="password" id="profilePassword" placeholder="Novo geslo" style="
+                <label style="display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px;">Novo geslo</label>
+                <input type="password" id="profilePassword" placeholder="Pustite prazno, če ne želite spremeniti gesla" style="
                     width: 100%;
                     padding: 12px 16px;
                     border: 2px solid var(--almost-white);
@@ -1307,45 +1358,59 @@ function loadProfile() {
     `;
 }
 
-function saveProfile() {
+async function saveProfile() {
     const user = getCurrentUser();
-    const users = JSON.parse(localStorage.getItem('users') || '{}');
-    const userData = users[user.email] || {};
+    if (!user) return;
     
     const name = document.getElementById('profileName').value.trim();
-    const email = document.getElementById('profileEmail').value.trim();
     const password = document.getElementById('profilePassword').value;
     
-    // Update user data
-    userData.name = name;
-    userData.email = email;
-    if (password) {
-        userData.password = password;
+    if (!name) {
+        alert('Prosimo, izpolnite vsa obvezna polja.');
+        return;
     }
     
-    users[user.email] = userData;
-    localStorage.setItem('users', JSON.stringify(users));
-    
-    // Update current user session
-    const currentUser = {
-        ...user,
-        name: name,
-        email: email
-    };
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    
-    // Update display
-    document.getElementById('userName').textContent = name || email;
-    
-    alert('Profil je bil posodobljen!');
-    loadProfile();
+    try {
+        // Update Firestore if available
+        if (typeof db !== 'undefined' && user.userId) {
+            await db.collection('users').doc(user.userId).update({
+                name: name,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        
+        // Update password if provided
+        if (password && typeof auth !== 'undefined' && auth.currentUser) {
+            await auth.currentUser.updatePassword(password);
+        }
+        
+        // Update localStorage
+        const currentUser = {
+            ...user,
+            name: name
+        };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        
+        // Update display
+        document.getElementById('userName').textContent = name || user.email;
+        
+        alert('Profil je bil posodobljen!');
+        loadProfile();
+    } catch (error) {
+        console.error('Error saving profile:', error);
+        let errorMessage = 'Napaka pri shranjevanju profila.';
+        
+        if (error.code === 'auth/weak-password') {
+            errorMessage = 'Geslo mora biti vsaj 6 znakov dolgo.';
+        } else if (error.code === 'auth/requires-recent-login') {
+            errorMessage = 'Za spremembo gesla se morate znova prijaviti.';
+        }
+        
+        alert(errorMessage);
+    }
 }
 
-// Logout
-function handleLogout() {
-    localStorage.removeItem('currentUser');
-    window.location.href = 'login.html';
-}
+// handleLogout is already defined above with Firebase integration
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {

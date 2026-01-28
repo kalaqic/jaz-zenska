@@ -1130,6 +1130,139 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        // Load Firebase configuration from API
+        let firebaseConfig;
+        let auth;
+        let db;
+
+        let authChecked = false;
+
+        async function initFirebase() {
+            try {
+                const response = await fetch('/api/firebase-config');
+                if (!response.ok) {
+                    throw new Error('Failed to load Firebase configuration');
+                }
+                firebaseConfig = await response.json();
+                
+                // Initialize Firebase
+                firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                
+                // Check auth state - this is the main protection
+                auth.onAuthStateChanged(async (user) => {
+                    authChecked = true;
+                    
+                    if (!user) {
+                        // User not logged in, redirect to login immediately
+                        localStorage.removeItem('currentUser');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    // User is logged in, ensure user data is in localStorage
+                    try {
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        if (userDoc.exists) {
+                            const userData = userDoc.data();
+                            localStorage.setItem('currentUser', JSON.stringify({
+                                userId: user.uid,
+                                email: userData.email,
+                                name: userData.name,
+                                role: userData.role || 'member'
+                            }));
+                        } else {
+                            // User exists in Auth but not in Firestore - create basic profile
+                            const userData = {
+                                email: user.email,
+                                name: user.displayName || user.email.split('@')[0],
+                                role: 'member',
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            };
+                            await db.collection('users').doc(user.uid).set(userData);
+                            localStorage.setItem('currentUser', JSON.stringify({
+                                userId: user.uid,
+                                email: userData.email,
+                                name: userData.name,
+                                role: userData.role
+                            }));
+                        }
+                    } catch (error) {
+                        console.error('Error loading user data:', error);
+                        // Even if Firestore fails, allow access if Firebase Auth succeeded
+                        localStorage.setItem('currentUser', JSON.stringify({
+                            userId: user.uid,
+                            email: user.email,
+                            name: user.displayName || user.email.split('@')[0],
+                            role: 'member'
+                        }));
+                    }
+                });
+                
+                // Set a timeout to check if auth state was checked
+                // If Firebase takes too long, check localStorage as temporary fallback
+                setTimeout(() => {
+                    if (!authChecked) {
+                        const currentUser = localStorage.getItem('currentUser');
+                        if (!currentUser) {
+                            window.location.href = 'login.html';
+                        }
+                    }
+                }, 3000);
+            } catch (error) {
+                console.error('Error initializing Firebase:', error);
+                // If Firebase completely fails, check localStorage as last resort
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    window.location.href = 'login.html';
+                } else {
+                    // Show warning that Firebase is not available
+                    console.warn('Firebase initialization failed, using localStorage fallback');
+                }
+            }
+        }
+
+        // Prevent page access until auth is checked
+        // Hide content initially
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardContent = document.querySelector('.dashboard-container');
+            if (dashboardContent) {
+                dashboardContent.style.display = 'none';
+            }
+            
+            // Initialize Firebase
+            initFirebase().then(() => {
+                // Wait for auth state to be checked
+                const checkAuth = setInterval(() => {
+                    if (authChecked && auth && auth.currentUser) {
+                        clearInterval(checkAuth);
+                        // Show content once authenticated
+                        if (dashboardContent) {
+                            dashboardContent.style.display = 'block';
+                        }
+                    } else if (authChecked && (!auth || !auth.currentUser)) {
+                        clearInterval(checkAuth);
+                        // Already redirected, but just in case
+                        window.location.href = 'login.html';
+                    }
+                }, 100);
+                
+                // Timeout after 5 seconds
+                setTimeout(() => {
+                    clearInterval(checkAuth);
+                    if (!authChecked) {
+                        window.location.href = 'login.html';
+                    }
+                }, 5000);
+            });
+        });
+    </script>
     <script src="js/community.js"></script>
 </body>
 </html>

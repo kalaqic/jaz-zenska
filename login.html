@@ -135,8 +135,8 @@
         <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
             <div class="error-message" id="errorMessage"></div>
             <div class="form-group">
-                <label for="email">Email naslov ali uporabniško ime</label>
-                <input type="text" id="email" name="email" required autocomplete="username" placeholder="admin ali member">
+                <label for="email">Email naslov</label>
+                <input type="email" id="email" name="email" required autocomplete="username" placeholder="vnesite@email.com">
             </div>
             <div class="form-group">
                 <label for="password">Geslo</label>
@@ -152,10 +152,12 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script>
         // Load Firebase configuration from API
         let firebaseConfig;
         let auth;
+        let db;
 
         async function initFirebase() {
             try {
@@ -168,6 +170,7 @@
                 // Initialize Firebase
                 firebase.initializeApp(firebaseConfig);
                 auth = firebase.auth();
+                db = firebase.firestore();
             } catch (error) {
                 console.error('Error initializing Firebase:', error);
                 alert('Napaka pri inicializaciji Firebase. Prosimo, osvežite stran.');
@@ -176,38 +179,16 @@
 
         // Initialize Firebase when page loads
         initFirebase();
-    </script>
-
-    <script>
-        // Initialize test accounts in localStorage if they don't exist
-        function initTestAccounts() {
-            if (!localStorage.getItem('users')) {
-                const testUsers = {
-                    'admin': {
-                        email: 'admin',
-                        password: 'admin',
-                        name: 'Admin',
-                        role: 'admin',
-                        createdAt: new Date().toISOString()
-                    },
-                    'member': {
-                        email: 'member',
-                        password: 'member',
-                        name: 'Member',
-                        role: 'member',
-                        createdAt: new Date().toISOString()
-                    }
-                };
-                localStorage.setItem('users', JSON.stringify(testUsers));
-            }
-        }
-        
-        initTestAccounts();
 
         async function handleLogin(event) {
             event.preventDefault();
             
-            const email = document.getElementById('email').value;
+            // Wait for Firebase to initialize
+            if (!auth) {
+                await initFirebase();
+            }
+            
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('errorMessage');
             const loginButton = document.getElementById('loginButton');
@@ -219,26 +200,69 @@
             loginButton.textContent = 'Prijavljanje...';
             
             try {
-                // Check test accounts first
-                const users = JSON.parse(localStorage.getItem('users') || '{}');
-                const user = users[email];
+                // Sign in with Firebase Auth
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const firebaseUser = userCredential.user;
                 
-                if (user && user.password === password) {
-                    // Store current user session
-                    localStorage.setItem('currentUser', JSON.stringify({
-                        email: user.email,
-                        name: user.name,
-                        role: user.role,
-                        userId: email
-                    }));
+                // Get user data from Firestore
+                const userDoc = await db.collection('users').doc(firebaseUser.uid).get();
+                
+                if (!userDoc.exists) {
+                    // If user doesn't exist in Firestore, create basic profile
+                    const userData = {
+                        email: firebaseUser.email,
+                        name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+                        role: 'member', // Default role
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastSignIn: firebase.firestore.FieldValue.serverTimestamp()
+                    };
                     
-                    // Redirect to dashboard
-                    window.location.href = 'dashboard.html';
+                    await db.collection('users').doc(firebaseUser.uid).set(userData);
+                    
+                    // Store in localStorage for quick access
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        userId: firebaseUser.uid,
+                        email: userData.email,
+                        name: userData.name,
+                        role: userData.role
+                    }));
                 } else {
-                    throw new Error('Napačno geslo ali email naslov.');
+                    // Update last sign in
+                    await db.collection('users').doc(firebaseUser.uid).update({
+                        lastSignIn: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    const userData = userDoc.data();
+                    // Store in localStorage for quick access
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        userId: firebaseUser.uid,
+                        email: userData.email,
+                        name: userData.name,
+                        role: userData.role || 'member'
+                    }));
                 }
+                
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
             } catch (error) {
-                errorMessage.textContent = error.message || 'Napaka pri prijavi';
+                let errorMessageText = 'Napaka pri prijavi';
+                
+                // Translate Firebase errors to Slovenian
+                if (error.code === 'auth/user-not-found') {
+                    errorMessageText = 'Uporabnik s tem email naslovom ne obstaja.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessageText = 'Napačno geslo.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessageText = 'Neveljaven email naslov.';
+                } else if (error.code === 'auth/user-disabled') {
+                    errorMessageText = 'Ta račun je onemogočen.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessageText = 'Preveč neuspešnih poskusov. Prosimo, poskusite pozneje.';
+                } else if (error.message) {
+                    errorMessageText = error.message;
+                }
+                
+                errorMessage.textContent = errorMessageText;
                 errorMessage.classList.add('show');
                 loginButton.disabled = false;
                 loginButton.textContent = 'Prijavi se';
