@@ -8,7 +8,10 @@ const CAMPAIGN_ID = 'fQYMW'; // Campaign ID for purchase emails
 
 /**
  * Add contact to GetResponse campaign after purchase
+ * Note: Password reset email is sent directly by Firebase Auth
+ * This function only adds the contact to GetResponse for marketing purposes
  * @param {string} email - Customer email from purchase
+ * @param {string} resetLink - Not used anymore (kept for backward compatibility)
  * @param {string} name - Customer name from purchase
  */
 async function sendPasswordResetEmail(email, resetLink, name = '') {

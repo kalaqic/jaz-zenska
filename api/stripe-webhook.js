@@ -181,22 +181,54 @@ module.exports = async function handler(req, res) {
                     }
                 }
 
-                // 2. Generate password reset link (so user can set their password)
+                // 1.5. Create user document in Firestore
+                try {
+                    const db = admin.firestore();
+                    const userDocRef = db.collection('users').doc(user.uid);
+                    const userDoc = await userDocRef.get();
+                    
+                    if (!userDoc.exists) {
+                        // Create new user document
+                        await userDocRef.set({
+                            email: customerEmail,
+                            name: customerName || customerEmail.split('@')[0],
+                            role: 'member', // Default role for new members
+                            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                            subscriptionStatus: 'active',
+                            subscriptionType: session.metadata?.subscription_type || session.metadata?.plan || 'unknown'
+                        });
+                        console.log('Created Firestore user document for:', user.uid);
+                    } else {
+                        // Update existing user document
+                        await userDocRef.update({
+                            subscriptionStatus: 'active',
+                            subscriptionType: session.metadata?.subscription_type || session.metadata?.plan || 'unknown',
+                            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                        });
+                        console.log('Updated Firestore user document for:', user.uid);
+                    }
+                } catch (firestoreError) {
+                    console.error('Error creating/updating Firestore user document:', firestoreError);
+                    // Don't fail the webhook if Firestore fails
+                }
+
+                // 2. Send password reset email via Firebase (so user can set their password)
                 try {
                     const actionCodeSettings = {
                         url: `${req.headers.origin || 'https://jazzenska.si'}/login.html?mode=resetPassword`,
                         handleCodeInApp: false,
                     };
                     
-                    const link = await auth.generatePasswordResetLink(customerEmail, actionCodeSettings);
-                    console.log('Password reset link generated:', link);
+                    // Firebase will send the password reset email directly
+                    await auth.sendPasswordResetEmail(customerEmail, actionCodeSettings);
+                    console.log('✅ Password reset email sent via Firebase to:', customerEmail);
 
-                    // 3. Add contact to GetResponse campaign (email will be sent via GetResponse automation)
+                    // 3. Add contact to GetResponse campaign (for marketing purposes)
                     try {
-                        console.log('Adding contact to GetResponse after purchase');
+                        console.log('Adding contact to GetResponse campaign for marketing');
                         console.log('Email:', customerEmail);
                         console.log('Name:', customerName);
-                        const emailResult = await sendPasswordResetEmail(customerEmail, link, customerName);
+                        const emailResult = await sendPasswordResetEmail(customerEmail, null, customerName);
                         console.log('GetResponse result:', JSON.stringify(emailResult, null, 2));
                         console.log('Contact added to GetResponse campaign for:', customerEmail);
                     } catch (emailError) {
@@ -204,9 +236,9 @@ module.exports = async function handler(req, res) {
                         console.error('Error stack:', emailError.stack);
                         // Don't fail the webhook if GetResponse fails
                     }
-                } catch (linkError) {
-                    console.error('Error generating password reset link:', linkError);
-                    // Don't fail the webhook if link generation fails
+                } catch (emailError) {
+                    console.error('Error sending password reset email via Firebase:', emailError);
+                    // Don't fail the webhook if email sending fails
                 }
             } else {
                 console.error('❌ Firebase not initialized - cannot create user');
