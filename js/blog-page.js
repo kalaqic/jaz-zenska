@@ -52,10 +52,10 @@ const blogContent = {
         `
     },
     2: {
-        category: "Samoodkrivanje",
+        category: "Srečno Jaz Zenska",
         date: "15 januarja, 2025",
         title: "25 Stopnic do sreče",
-        image: "linear-gradient(135deg, #f8d7da, #f5c6cb)",
+        image: "images/srecaknjigabanner.png",
         content: `
             <p><strong>Srečno, veliko sreče, srečno pot...!</strong></p>
             
