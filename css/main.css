@@ -1572,6 +1572,61 @@ nav a:hover::after {
 }
 
 /* ===== CURRENT EVENT SECTION ===== */
+.current-event-image-section {
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    padding: 40px 20px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--main-white);
+}
+
+.current-event-image-section::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 400px;
+    height: 400px;
+    background-image: url('../images/background-decorations.webp');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.7;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.current-event-image-link {
+    display: block;
+    width: 100%;
+    max-width: 900px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: none;
+    position: relative;
+    z-index: 1;
+}
+
+.current-event-image-link:hover {
+    opacity: 1;
+}
+
+.current-event-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    transition: none;
+    border: 3px solid var(--mid-violet);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
 .current-event {
     background: linear-gradient(135deg, var(--almost-white) 0%, var(--main-white) 100%);
     padding: 60px 0 60px 0;

@@ -54,7 +54,7 @@ const blogContent = {
     2: {
         category: "Samoodkrivanje",
         date: "15 januarja, 2025",
-        title: "Srečno na poti Jaz Ženska!",
+        title: "25 Stopnic do sreče",
         image: "linear-gradient(135deg, #f8d7da, #f5c6cb)",
         content: `
             <p><strong>Srečno, veliko sreče, srečno pot...!</strong></p>
