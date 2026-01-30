@@ -6,7 +6,8 @@ const fetch = require('node-fetch');
 // Get API key from environment variable (set in Vercel)
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
-const CAMPAIGN_ID = 'froXf';
+const CAMPAIGN_ID = 'froXf'; // Newsletter campaign
+const ALL_CONTACTS_CAMPAIGN_ID = 'fro3k'; // All contacts list
 
 // Validate API key is set
 if (!GETRESPONSE_API_KEY) {
@@ -153,6 +154,37 @@ module.exports = async function handler(req, res) {
 
         // Success (200, 201, 202)
         console.log('Contact created successfully');
+        
+        // Also add to all contacts list (fro3k)
+        console.log('📬 Adding contact to all contacts list (fro3k)...');
+        try {
+            const allContactsData = {
+                email: email,
+                name: name,
+                campaign: {
+                    campaignId: ALL_CONTACTS_CAMPAIGN_ID
+                }
+            };
+            
+            const allContactsResponse = await fetch(GETRESPONSE_API_URL, {
+                method: 'POST',
+                headers: {
+                    'X-Auth-Token': `api-key ${GETRESPONSE_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(allContactsData)
+            });
+            
+            if (allContactsResponse.status === 409 || allContactsResponse.ok) {
+                console.log('✅ Contact added to all contacts list (or already exists)');
+            } else {
+                console.warn('⚠️ Failed to add to all contacts list, but newsletter signup succeeded');
+            }
+        } catch (allContactsError) {
+            console.warn('⚠️ Error adding to all contacts list (non-critical):', allContactsError.message);
+            // Don't fail the request if this fails
+        }
+        
         return res.status(200).json({ 
             success: true, 
             message: 'Successfully subscribed to newsletter',

@@ -76,11 +76,53 @@
         }
         
         .about-highlight {
-            background: linear-gradient(135deg, var(--almost-white) 0%, var(--pinky) 100%);
-            padding: 30px;
-            border-radius: 20px;
-            margin: 30px 0;
+            background: rgba(248, 240, 245, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 18px;
+            margin: 35px 0;
             border-left: 5px solid var(--mid-violet);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .about-highlight::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .about-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .about-highlight p {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 0;
         }
         
         .about-list {
@@ -106,20 +148,67 @@
         
         .about-projects-button {
             display: inline-block;
-            padding: 14px 32px;
-            background: var(--dark-violet);
-            color: var(--white);
-            text-decoration: none;
+            background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+            color: white;
+            padding: 22px 60px;
             border-radius: 50px;
-            font-weight: 600;
-            font-size: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            text-align: center;
+            margin: 30px auto;
             transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4),
+                        0 4px 15px rgba(100, 56, 67, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .about-projects-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .about-projects-button:hover::before {
+            left: 100%;
         }
         
         .about-projects-button:hover {
-            background: var(--mid-violet);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(100, 56, 67, 0.3);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5),
+                        0 6px 20px rgba(100, 56, 67, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .about-projects-button:active {
+            transform: translateY(-2px) scale(1.01);
+        }
+        
+        .about-page-image {
+            width: 100%;
+            max-width: 100%;
+            margin: 30px 0 40px 0;
+            display: block;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .about-page-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            display: block;
         }
         
         @media (max-width: 768px) {
@@ -164,7 +253,7 @@
                     <li><a href="index.html#aktualno">Aktualno</a></li>
                     <li><a href="blog.html">Blog</a></li>
                     <li><a href="index.html#affirmations">Meditacije</a></li>
-                    <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
+                    <li><a href="stik-z-nami.html">Stik z nami</a></li>
                 </ul>
             </nav>
             <a href="index.html#newsletter" class="header-consultation-btn desktop-social">PRIJAVI SE NA E-NOVICE</a>
@@ -196,7 +285,7 @@
                     <li><a href="index.html#aktualno">Aktualno</a></li>
                     <li><a href="blog.html">Blog</a></li>
                     <li><a href="index.html#affirmations">Meditacije</a></li>
-                    <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
+                    <li><a href="stik-z-nami.html">Stik z nami</a></li>
                 </ul>
             </nav>
             <div class="mobile-social-icons">
@@ -217,6 +306,10 @@
             <p>Rodila sem se 21. avgusta 1961 leta v Novem mestu.</p>
             
             <p>Že od malega sem bila željna znanja in vedno sem iskala nove poti, znanja izzive in izkušnje. Z veliko strasti sem se posvečala gimnastiki in baletu. Končala sem vzgojiteljsko šolo, med študijem pedagogike pa me je ljubezen odpeljala na Korčulo, kjer sem živela in si ustvarila družino. Leta 2002 sem se z družino vrnila v Slovenijo.</p>
+            
+            <div class="about-page-image">
+                <img src="images/v centru svoje moci.webp" alt="Marjanca Trščinar Antić">
+            </div>
             
             <div class="about-highlight">
                 <p>Izkušnje med vojno, v kateri je bil moj mož ranjen, sama pa sem ostala brez dela z dvema majhnima otrokoma, kreditom in nedokončano hišo so me naučile, da je življenje darilo, ki ga je potrebno odkrivati, ceniti in graditi, še posebno takrat, ko se pojavijo izzivi.</p>

@@ -15,50 +15,123 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/blog-page.css">
     <style>
-        .jaz-zenska-page-section {
-            padding: 40px 0 60px 0;
-            background: var(--main-white);
+        /* Jaz Ženska Page Sections */
+        .jaz-zenska-section {
             position: relative;
+            padding: 80px 20px;
             overflow: hidden;
-            width: 100%;
-            box-sizing: border-box;
-            z-index: 10;
-            margin-top: 0;
-            margin-bottom: 0;
         }
         
-        .jaz-zenska-page-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px;
+        /* Section 1 - Main Content */
+        .jaz-zenska-main-section {
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            position: relative;
+        }
+        
+        .jaz-zenska-main-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -100px;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .jaz-zenska-main-section .jaz-zenska-container {
             position: relative;
             z-index: 1;
         }
         
-        .jaz-zenska-page-section h1 {
+        /* Section 3 - Highlight */
+        .jaz-zenska-highlight-section {
+            background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+            position: relative;
+        }
+        
+        .jaz-zenska-highlight-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -100px;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .jaz-zenska-highlight-section .jaz-zenska-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .jaz-zenska-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .jaz-zenska-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .jaz-zenska-header h1 {
             font-family: 'Playfair Display', serif;
             font-size: 48px;
             color: var(--dark-violet);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        .section-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--dark-violet);
+            margin-top: 40px;
+            margin-bottom: 25px;
             text-align: center;
         }
         
-        .jaz-zenska-page-section h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            color: var(--dark-violet);
-            margin-top: 40px;
-            margin-bottom: 20px;
+        .section-content h2:first-child {
+            margin-top: 0;
         }
         
-        .jaz-zenska-page-section p {
-            font-size: 18px;
+        .section-content p {
+            font-size: 17px;
             line-height: 1.9;
-            color: var(--text-dark);
-            margin-bottom: 25px;
+            color: #4a4a4a;
+            margin-bottom: 22px;
         }
         
-        .jaz-zenska-page-section .intro {
+        .section-content p:last-of-type {
+            margin-bottom: 0;
+        }
+        
+        .content-image {
+            margin-top: 0;
+        }
+        
+        .section-content .intro {
             font-size: 22px;
             line-height: 1.9;
             color: var(--dark-violet);
@@ -67,12 +140,54 @@
             text-align: center;
         }
         
-        .jaz-zenska-highlight {
-            background: linear-gradient(135deg, var(--almost-white) 0%, var(--pinky) 100%);
-            padding: 30px;
-            border-radius: 20px;
-            margin: 30px 0;
+        .highlight-box {
+            background: rgba(248, 240, 245, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 18px;
+            margin: 35px 0;
             border-left: 5px solid var(--mid-violet);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .highlight-box::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .highlight-box p {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 10px;
         }
         
         .jaz-zenska-cta {
@@ -198,22 +313,91 @@
             font-style: italic;
         }
         
-        .about-projects-button {
+        .cta-button {
             display: inline-block;
-            padding: 14px 32px;
-            background: var(--dark-violet);
-            color: var(--white);
-            text-decoration: none;
+            background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+            color: white;
+            padding: 22px 60px;
             border-radius: 50px;
-            font-weight: 600;
-            font-size: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            text-align: center;
+            margin: 30px auto;
             transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4);
         }
         
-        .about-projects-button:hover {
-            background: var(--mid-violet);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(100, 56, 67, 0.3);
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5);
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        /* Image Placeholders */
+        .content-image {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto 45px auto;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+        
+        .content-image-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #f0e8ed 0%, #f5f0f2 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 18px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .jaz-zenska-section {
+                padding: 60px 15px;
+            }
+            
+            .jaz-zenska-header h1 {
+                font-size: 36px;
+            }
+            
+            .section-content h2 {
+                font-size: 28px;
+            }
+            
+            .section-content p,
+            .section-content .intro {
+                font-size: 16px;
+            }
+            
+            .jaz-zenska-container {
+                padding: 0 15px;
+            }
+            
+            .cta-button {
+                padding: 18px 40px;
+                font-size: 18px;
+            }
         }
         
         .jaz-zenska-button {
@@ -264,71 +448,9 @@
         .jaz-zenska-button:hover svg {
             transform: translateX(8px);
         }
-        
-        @media (max-width: 768px) {
-            .jaz-zenska-page-section h1 {
-                font-size: 36px;
-            }
-            
-            .jaz-zenska-page-section h2 {
-                font-size: 28px;
-            }
-            
-            .jaz-zenska-page-section p,
-            .jaz-zenska-page-section .intro {
-                font-size: 16px;
-            }
-            
-            .jaz-zenska-page-container {
-                padding: 0 15px;
-            }
-            
-            .jaz-zenska-cta-content {
-                padding: 40px 25px;
-            }
-            
-            .jaz-zenska-cta h2 {
-                font-size: 28px;
-            }
-            
-            .jaz-zenska-cta-subtitle {
-                font-size: 18px;
-                margin-bottom: 25px;
-            }
-            
-            .jaz-zenska-cta-features {
-                gap: 15px;
-                margin-bottom: 30px;
-            }
-            
-            .cta-feature {
-                font-size: 14px;
-                padding: 10px 18px;
-            }
-            
-            .jaz-zenska-button {
-                padding: 18px 35px;
-                font-size: 16px;
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .jaz-zenska-cta-guarantee {
-                font-size: 14px;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <div class="top-bar-content">
-            <a href="o-meni.html">O meni</a>
-            <a href="media.html">Mediji</a>
-            <a href="login.html">Moj račun</a>
-        </div>
-    </div>
-
     <!-- Header -->
     <header>
         <div class="header-content">
@@ -341,7 +463,7 @@
                     <li><a href="index.html#aktualno">Aktualno</a></li>
                     <li><a href="blog.html">Blog</a></li>
                     <li><a href="index.html#affirmations">Meditacije</a></li>
-                    <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
+                    <li><a href="stik-z-nami.html">Stik z nami</a></li>
                 </ul>
             </nav>
             <a href="index.html#newsletter" class="header-consultation-btn desktop-social">PRIJAVI SE NA E-NOVICE</a>
@@ -362,18 +484,13 @@
             </svg>
         </button>
         <div class="mobile-menu-content">
-            <div class="mobile-top-links">
-                <a href="o-meni.html">O meni</a>
-                <a href="media.html">Mediji</a>
-                <a href="login.html">Moj račun</a>
-            </div>
             <nav class="mobile-nav">
                 <ul>
                     <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
                     <li><a href="index.html#aktualno">Aktualno</a></li>
                     <li><a href="blog.html">Blog</a></li>
                     <li><a href="index.html#affirmations">Meditacije</a></li>
-                    <li><a href="index.html#stik-z-nami">Stik z nami</a></li>
+                    <li><a href="stik-z-nami.html">Stik z nami</a></li>
                 </ul>
             </nav>
             <div class="mobile-social-icons">
@@ -384,86 +501,62 @@
         </div>
     </div>
 
-    <!-- Jaz Ženska Page Content -->
-    <section class="jaz-zenska-page-section">
-        <div class="jaz-zenska-page-container">
-            <h1>Jaz Ženska</h1>
-            
-            <p class="intro">Draga Ženska!</p>
-            
-            <p>Si obstala, čutiš stres, preobremenjenost, pomanjkanje elana in življenjske energije, te je strah prihodnosti in staranja, misliš, da je že prepozno, ne najdeš poti naprej...?</p>
-            
-            <div class="jaz-zenska-highlight">
-                <p><strong>Če si na katero od teh stvari odgovorila pritrdilno, potem je skupnost JAZ ŽENSKA prav zate.</strong></p>
-            </div>
-            
-            <p>Začni svojo novo pot sedaj, uresniči svoje skrite želje in prebudi svoj potencial. Postani najboljša verzija sebe in postani Jaz Ženska, svoja, unikatna, neponovljiva, edinstvena, blesteča in čudovita v tem kar si, kar nosiš v sebi, kar si lahko podariš in kar lahko dosežeš, ko si dovoliš pogledati vase in se prepustiti sebi v vsej svoji enkratnosti in neponovljivosti. Rasti in se primerjaj samo s sabo, sledi svoje cilje, poišči svojo pot, mi pa ti bomo pomagali, te podpirali in ti stali ob strani.</p>
-            
-            <p><strong>V skupnosti JAZ ŽENSKA nikoli ne boš sama, osamljena ali neslišana.</strong></p>
-            
-            <p>V Skupnosti Jaz Ženska te bomo podpirali, ti prisluhnili in pomagali brez obveznosti in pritiska, da delaš kar koli, kar ni v skladu s tvojimi željami, vrednotami in cilji.</p>
-            
-            <h2>Prisrčno vabljena</h2>
-            
-            <p>Prisrčno vabljena, da se nam pridružiš na najučinkovitejši, najkompleksnejši in vsestranski platformi za ženske, ki jo ustvarjamo in gradimo za podporo, pomoč, nasvete, učenje in rast na vseh življenjskih področjih.</p>
-            
-            <p>Skupnost JAZ ŽENSKA je namenjena vsem ženskam, ki si želimo spremembo, ki čutimo, da si zaslužimo več, ki slutimo in iščemo, ki smo pripravljene nekaj narediti zase in za svet v katerem živimo.</p>
-            
-            <p>Jaz Ženska je prostor, kjer boš našla zgodbe in nasvete najuspešnejših žensk, nova znanja, vaje, ideje, podporo, razumevanje, spodbudo, pomoč, smernice in kompas, kako narediti spremembo in postati najboljša verzije sebe.</p>
-            
-            <p>Jaz Ženska je stičišče izkušenj in znanja za osebnostno rast in preoblikovanje telesa, uma, duha in duše tako, da bomo lahko sprostile svoje potenciale in si gradile življenje kakršno si želimo in zaslužimo.</p>
-            
-            <div class="jaz-zenska-highlight">
-                <p><strong>Čestitam ti, ker si nas našla sedaj, na začetku naše poti, ko se naša skupnost ustvarja in oblikuje in prav sedaj imaš enkratno priložnost, da se nam pridružiš pod izredno ugodnimi pogoji in s številnimi bonusi, ki so na voljo le ob vpisi v skupnost v prvem mesecu našega delovanja.</strong></p>
-            </div>
-            
-            <p>Poglej kaj ti nudimo in kaj vse lahko pridobiš, če se nam pridružiš sedaj!</p>
-            
-            <div style="text-align: center; margin: 40px 0;">
-                <a href="checkout.html" class="about-projects-button">Pridruži se</a>
+    <!-- Section 1: Main Content -->
+    <section class="jaz-zenska-section jaz-zenska-main-section">
+        <div class="jaz-zenska-container">
+            <div class="section-content">
+                <div class="jaz-zenska-header">
+                    <h1>Jaz Ženska</h1>
+                </div>
+                
+                <p>Si obstala, čutiš stres, preobremenjenost, pomanjkanje elana in življenjske energije, te je strah prihodnosti in staranja, misliš, da je že prepozno, ne najdeš poti naprej...?</p>
+                
+                <div class="highlight-box">
+                    <p><strong>Če si na katero od teh stvari odgovorila pritrdilno, potem je skupnost JAZ ŽENSKA prav zate.</strong></p>
+                </div>
+                
+                <p>Začni svojo novo pot sedaj, uresniči svoje skrite želje in prebudi svoj potencial. Postani najboljša verzija sebe in postani Jaz Ženska, svoja, unikatna, neponovljiva, edinstvena, blesteča in čudovita v tem kar si, kar nosiš v sebi, kar si lahko podariš in kar lahko dosežeš, ko si dovoliš pogledati vase in se prepustiti sebi v vsej svoji enkratnosti in neponovljivosti. Rasti in se primerjaj samo s sabo, sledi svoje cilje, poišči svojo pot, mi pa ti bomo pomagali, te podpirali in ti stali ob strani.</p>
+                
+                <p><strong>V skupnosti JAZ ŽENSKA nikoli ne boš sama, osamljena ali neslišana.</strong></p>
+                
+                <p>V Skupnosti Jaz Ženska te bomo podpirali, ti prisluhnili in pomagali brez obveznosti in pritiska, da delaš kar koli, kar ni v skladu s tvojimi željami, vrednotami in cilji.</p>
+                
+                <h2>Prisrčno vabljena</h2>
+                
+                <p>Prisrčno vabljena, da se nam pridružiš na najučinkovitejši, najkompleksnejši in vsestranski platformi za ženske, ki jo ustvarjamo in gradimo za podporo, pomoč, nasvete, učenje in rast na vseh življenjskih področjih.</p>
+                
+                <p>Skupnost JAZ ŽENSKA je namenjena vsem ženskam, ki si želimo spremembo, ki čutimo, da si zaslužimo več, ki slutimo in iščemo, ki smo pripravljene nekaj narediti zase in za svet v katerem živimo.</p>
+                
+                <p>Jaz Ženska je prostor, kjer boš našla zgodbe in nasvete najuspešnejših žensk, nova znanja, vaje, ideje, podporo, razumevanje, spodbudo, pomoč, smernice in kompas, kako narediti spremembo in postati najboljša verzije sebe.</p>
+                
+                <p style="margin-bottom: 0;">Jaz Ženska je stičišče izkušenj in znanja za osebnostno rast in preoblikovanje telesa, uma, duha in duše tako, da bomo lahko sprostile svoje potenciale in si gradile življenje kakršno si želimo in zaslužimo.</p>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-logo-text">
-            <img src="images/logo/logo_text.webp" alt="Jaz Ženska Logo">
-        </div>
-        
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>KONTAKT</h3>
-                <p><a href="mailto:info@jazzenska.si">info@jazzenska.si</a></p>
-                <p>Novo mesto, Slovenija</p>
-            </div>
-            
-            <div class="footer-section">
-                <h3>NAVIGACIJA</h3>
-                <ul>
-                    <li><a href="o-meni.html">O meni</a></li>
-                    <li><a href="jaz-zenska.html">Naša zgodba</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="index.html#affirmations">Meditacije</a></li>
-                    <li><a href="pravilnik-o-zasebnosti.html">Pravilnik o zasebnosti</a></li>
-                    <li><a href="splosni-pogoji.html">Splošni pogoji</a></li>
-                </ul>
+    <!-- Section 3: Highlight -->
+    <section class="jaz-zenska-section jaz-zenska-highlight-section" style="padding-top: 0;">
+        <div class="jaz-zenska-container">
+            <div class="section-content">
+                <!-- Image Placeholder -->
+                <div class="content-image">
+                    <div class="content-image-placeholder">
+                        Photo placeholder
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <p><strong>Čestitam ti, ker si nas našla sedaj, na začetku naše poti, ko se naša skupnost ustvarja in oblikuje in prav sedaj imaš enkratno priložnost, da se nam pridružiš pod izredno ugodnimi pogoji in s številnimi bonusi, ki so na voljo le ob vpisi v skupnost v prvem mesecu našega delovanja.</strong></p>
+                </div>
+                
+                <p>Poglej kaj ti nudimo in kaj vse lahko pridobiš, če se nam pridružiš sedaj!</p>
+                
+                <div class="cta-section">
+                    <a href="join.html" class="cta-button">Pridruži se</a>
+                </div>
             </div>
         </div>
-        
-        <div class="footer-heart-text">Ustvarjeno z ❤ za vse ženske</div>
-        
-        <div class="footer-bottom">
-            <p>Jaz Ženska © 2025. Vse pravice pridržane.</p>
-            <p><a href="pravilnik-o-zasebnosti.html" style="color: inherit; text-decoration: underline; opacity: 0.8;">Piškotki in politika zasebnosti</a></p>
-            
-            <div class="footer-social">
-                <a href="#"><img src="images/svg/facebook.svg" alt="Facebook"></a>
-                <a href="#"><img src="images/svg/instagram.svg" alt="Instagram"></a>
-                <a href="#"><img src="images/svg/youtube.svg" alt="YouTube"></a>
-            </div>
-        </div>
-    </footer>
+    </section>
 
     <!-- Cookie Banner -->
     <div class="cookie-banner" id="cookieBanner">
@@ -539,6 +632,42 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo-text">
+            <a href="index.html" class="footer-logo-link" id="footer-logo-link">
+                <img src="images/logo/logo_text.webp" alt="Jaz Ženska Logo">
+            </a>
+        </div>
+        
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>KONTAKT</h3>
+                <p><a href="mailto:info@jazzenska.si">info@jazzenska.si</a></p>
+                <p>Novo mesto, Slovenija</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>NAVIGACIJA</h3>
+                <ul>
+                    <li><a href="o-meni.html">O meni</a></li>
+                    <li><a href="jaz-zenska.html">Naša zgodba</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
+                    <li><a href="pravilnik-o-zasebnosti.html">Pravilnik o zasebnosti</a></li>
+                    <li><a href="splosni-pogoji.html">Splošni pogoji</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-heart-text">Ustvarjeno z ❤ za vse ženske</div>
+        
+        <div class="footer-bottom">
+            <p>Jaz Ženska © 2025. Vse pravice pridržane.</p>
+            <p><a href="pravilnik-o-zasebnosti.html" style="color: inherit; text-decoration: underline; opacity: 0.8;">Piškotki in politika zasebnosti</a></p>
+        </div>
+    </footer>
 
     <script src="js/main.js"></script>
 </body>

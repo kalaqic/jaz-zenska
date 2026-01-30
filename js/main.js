@@ -381,6 +381,38 @@ function setTestimonialsSpacing() {
 
 // Prevent scroll bounce/overscroll at the bottom
 function preventScrollBounce() {
+    // Prevent scroll bounce on all elements
+    document.documentElement.style.overscrollBehaviorY = 'none';
+    document.body.style.overscrollBehaviorY = 'none';
+    
+    // Prevent bounce on touch devices
+    let lastTouchY = 0;
+    let isScrolling = false;
+    
+    document.addEventListener('touchstart', function(e) {
+        lastTouchY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', function(e) {
+        const currentY = e.touches[0].clientY;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = document.documentElement.clientHeight;
+        
+        // Prevent overscroll at the top
+        if (scrollTop <= 0 && currentY > lastTouchY) {
+            e.preventDefault();
+        }
+        
+        // Prevent overscroll at the bottom
+        if (scrollTop + clientHeight >= scrollHeight - 1 && currentY < lastTouchY) {
+            e.preventDefault();
+        }
+        
+        lastTouchY = currentY;
+    }, { passive: false });
+    
+    // Original function
     let ticking = false;
     
     window.addEventListener('scroll', function() {
@@ -557,6 +589,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize footer logo scroll to top
     initFooterLogoScroll();
+    
+    // Initialize testimonials carousel
+    initTestimonialsCarousel();
     
     // Initialize floating social media button
     initFloatingSocial();
@@ -1183,3 +1218,113 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 400); // Wait for animation to complete
     }
 });
+
+// Testimonials Carousel and Modal
+function initTestimonialsCarousel() {
+    const testimonials = [
+        {
+            id: 1,
+            preview: 'Draga Marjanca,<br><br>Že dolgo, dolgo te poznam kot IZJEMNO ŽENSKO odprtega srca in uma, skrbna, sočutna in odgovorna ter zavzeta in vztrajna pri spoznavanju in pridobivanju novih znanj in veščin in predaji le teh naprej vsem nam...',
+            full: 'Draga Marjanca,<br><br>Že dolgo, dolgo te poznam kot IZJEMNO ŽENSKO odprtega srca in uma, skrbna, sočutna in odgovorna ter zavzeta in vztrajna pri spoznavanju in pridobivanju novih znanj in veščin in predaji le teh naprej vsem nam.<br><br>Si neizmerni vir tople, sočutne, pozitivne energije, ki jo nesebično širiš naokrog.<br><br>Si motivator in aktivni vodja raznih veščin, ki prinašajo notranji mir, povezanost in odpirajo ljubeča srca.<br><br>Izjemno obvladuješ lekcije samopomoči, reikija, in aktivacije notranje moči.<br><br>Hvaležna sem ti za vse kar si delila z nami in nam je bilo v pomoč na naši poti pridobivanja notranje moči.<br><br><br>Rada te imam in vedno znova občudujem,',
+            author: 'Nada Ajdišek'
+        },
+        {
+            id: 2,
+            preview: 'Prelisičimo možgane in naredimo spremembo je bil naslov in vsebina predavanja. Gospo Marjanco poznamo kot izjemno turistično vodičko, a je v njej tudi veliko drugih potencialov...',
+            full: 'Prelisičimo možgane in naredimo spremembo je bil naslov in vsebina predavanja. Gospo Marjanco poznamo kot izjemno turistično vodičko, a je v njej tudi veliko drugih potencialov.<br><br>V prostor kjer smo poslušali predavanje je prinesla odlično, pozitivno energijo in nasmeh na obraz vseh prisotnih. Spoznali smo načine in orodja za osebno rast in lažje sprejemanje in izvajanje sprememb, ki si jih želimo. Pridobili smo nasvete kako komunicirati in se odzivati v težkih pogojih, ko se pojavijo konflikti in kako biti uspešni tudi takrat, ko imamo občutek, da ne vidimo poti naprej. Meditacija, dihanje, aktivnosti, počitek, čuječnost in ne nazadnje hvaležnost so ene izmed tehnik kako narediti spremembo v nas samih. Namesto da smo kopija preteklosti, postanimo zemljevid prihodnosti, nam med drugim pove Marjanca Trščinar Antić.<br><br>Kadar je druženje ali predavanje prijetno, čas vedno prehitro mine. Tako je bilo tudi ta večer.<br><br>Gospe Marjanci Trščinar Antić se zahvaljujemo za izjemen večer presežkov.',
+            author: 'Cirila Vidmar<br>DU Dolenjske Toplice'
+        },
+        {
+            id: 3,
+            preview: 'Marjanca je oseba, ki človeku v stiski stoji ob strani. Vliva pogum in optimizem, ter s svojo prisotnostjo pokaže, da ji je mar za človeka...',
+            full: 'Marjanca je oseba, ki človeku v stiski stoji ob strani. Vliva pogum in optimizem, ter s svojo prisotnostjo pokaže, da ji je mar za človeka. In to je največ kar potrebuješ, ko se znajdeš v stiski sam. Hvala ti Marjanca.',
+            author: 'Tanja'
+        }
+    ];
+    
+    let currentIndex = 0;
+    const cards = document.querySelectorAll('.testimonial-card');
+    const prevBtn = document.querySelector('.testimonial-nav-prev');
+    const nextBtn = document.querySelector('.testimonial-nav-next');
+    const readMoreBtns = document.querySelectorAll('.testimonial-read-more');
+    const modal = document.getElementById('testimonial-modal');
+    const modalOverlay = document.querySelector('.testimonial-modal-overlay');
+    const modalClose = document.querySelector('.testimonial-modal-close');
+    const modalText = document.querySelector('.testimonial-modal-text');
+    const modalAuthor = document.querySelector('.testimonial-modal-author');
+    
+    if (!cards.length) return;
+    
+    // Show first card
+    if (cards[0]) {
+        cards[0].classList.add('active');
+    }
+    
+    function showTestimonial(index) {
+        cards.forEach((card, i) => {
+            if (i === index) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+        currentIndex = index;
+    }
+    
+    function nextTestimonial() {
+        const nextIndex = (currentIndex + 1) % cards.length;
+        showTestimonial(nextIndex);
+    }
+    
+    function prevTestimonial() {
+        const prevIndex = (currentIndex - 1 + cards.length) % cards.length;
+        showTestimonial(prevIndex);
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', nextTestimonial);
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', prevTestimonial);
+    }
+    
+    // Open modal with full testimonial
+    readMoreBtns.forEach((btn, index) => {
+        btn.addEventListener('click', function() {
+            const card = this.closest('.testimonial-card');
+            const testimonialId = parseInt(card.getAttribute('data-testimonial-id'));
+            const testimonial = testimonials.find(t => t.id === testimonialId);
+            
+            if (testimonial && modal) {
+                modalText.innerHTML = testimonial.full;
+                modalAuthor.innerHTML = `<span class="author-name">${testimonial.author}</span>`;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+    
+    // Close modal
+    function closeModal() {
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+    
+    if (modalClose) {
+        modalClose.addEventListener('click', closeModal);
+    }
+    
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', closeModal);
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+}

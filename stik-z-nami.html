@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Splošni pogoji - Jaz Ženska</title>
-    <meta name="description" content="Splošni pogoji za spletno mesto Jaz Ženska">
+    <title>Stik z nami - Jaz Ženska</title>
+    <meta name="description" content="Kontaktirajte nas - Jaz Ženska">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/blog-page.css">
     <style>
-        .legal-page-section {
+        .contact-page-section {
             padding: 40px 0 60px 0;
             background: var(--main-white);
             position: relative;
@@ -27,7 +27,7 @@
             margin-bottom: 0;
         }
         
-        .legal-page-container {
+        .contact-page-container {
             max-width: 900px;
             margin: 0 auto;
             padding: 0 20px;
@@ -35,7 +35,7 @@
             z-index: 1;
         }
         
-        .legal-page-section h1 {
+        .contact-page-section h1 {
             font-family: 'Playfair Display', serif;
             font-size: 48px;
             color: var(--dark-violet);
@@ -43,7 +43,7 @@
             text-align: center;
         }
         
-        .legal-page-section h2 {
+        .contact-page-section h2 {
             font-family: 'Playfair Display', serif;
             font-size: 32px;
             color: var(--dark-violet);
@@ -51,59 +51,113 @@
             margin-bottom: 20px;
         }
         
-        .legal-page-section h3 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 20px;
-            color: var(--mid-violet);
-            margin-top: 30px;
+        .contact-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .contact-info-card {
+            background: linear-gradient(135deg, var(--almost-white) 0%, var(--pinky) 100%);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            border-left: 5px solid var(--mid-violet);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .contact-info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(100, 56, 67, 0.2);
+        }
+        
+        .contact-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .contact-info-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--dark-violet);
             margin-bottom: 15px;
-            font-weight: 600;
         }
         
-        .legal-page-section p {
-            font-size: 16px;
-            line-height: 1.8;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-        }
-        
-        .legal-page-section ul, .legal-page-section ol {
-            margin-left: 30px;
-            margin-bottom: 20px;
-        }
-        
-        .legal-page-section li {
-            font-size: 16px;
-            line-height: 1.8;
+        .contact-info-card p {
+            font-size: 18px;
             color: var(--text-dark);
             margin-bottom: 10px;
         }
         
-        .legal-page-section strong {
-            color: var(--dark-violet);
+        .contact-info-card a {
+            color: var(--mid-violet);
+            text-decoration: none;
             font-weight: 600;
+            transition: color 0.3s ease;
         }
         
-        .legal-date {
+        .contact-info-card a:hover {
+            color: var(--dark-violet);
+            text-decoration: underline;
+        }
+        
+        .social-media-section {
+            margin-top: 50px;
             text-align: center;
-            color: var(--text-light);
-            font-style: italic;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid var(--almost-white);
+        }
+        
+        .social-media-section h2 {
+            margin-bottom: 30px;
+        }
+        
+        .social-media-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .social-media-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: var(--dark-violet);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .social-media-link:hover {
+            background: var(--mid-violet);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 56, 67, 0.3);
+        }
+        
+        .social-media-link img {
+            width: 24px;
+            height: 24px;
         }
         
         @media (max-width: 768px) {
-            .legal-page-section h1 {
+            .contact-page-section h1 {
                 font-size: 36px;
             }
             
-            .legal-page-section h2 {
+            .contact-page-section h2 {
                 font-size: 28px;
             }
             
-            .legal-page-section h3 {
-                font-size: 18px;
+            .contact-info-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .contact-page-container {
+                padding: 0 15px;
             }
         }
     </style>
@@ -166,48 +220,53 @@
                 </ul>
             </nav>
             <div class="mobile-social-icons">
-                <a href="#" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
+                <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
                 <a href="#" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
                 <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
             </div>
         </div>
     </div>
 
-    <!-- Legal Page Content -->
-    <section class="legal-page-section">
-        <div class="legal-page-container">
-            <h1>Splošni pogoji</h1>
+    <!-- Contact Page Content -->
+    <section class="contact-page-section">
+        <div class="contact-page-container">
+            <h1>Stik z nami</h1>
             
-            <h2>1. Dostavni pogoji</h2>
-            <p>V spletni trgovini lahko zaenkrat naročite le digitalne produkte, ki jih prejmete na vaš e-mail, ki ste ga napisali v obrazec za naročilo. Po prejetem plačilu vam pošljem dostop do strani, kjer dostopate do svojih produktov. Dostopi vam ostanejo v trajni lasti.</p>
-
-            <h2>2. Garancija na zadovoljstvo</h2>
-            <p>Za vse moje digitalne produkte in praktične delavnice velja 100% garancija na zadovoljstvo. Če moji produkti in delavnica ne izpolni vaših pričakovanj, lahko 1 mesec po plačilu oz. izvedbi delavnice zahtevate plačilo nazaj. Vse kar morate narediti je, da pišete na junona.marjanca@gmail.com in daste prošnjo za vrnitev denarja.</p>
-
-            <h2>3. Plačilni pogoji</h2>
-            <p>V spletni trgovini lahko plačate po predračunu ali preko PayPala. Žal je Checkout page v angleščini, tako da, če bo težava, mi lahko pišete na junona.marjanca@gmail.com.</p>
-
-            <h2>4. Podatki o prodajalcu</h2>
-            <p><strong>Jaz Ženska</strong><br>
-            Marjanca Trščinar Antić<br>
-            Maistrova ulica 3<br>
-            8000 Novo mesto<br>
-            Slovenija</p>
-
-            <p><strong>Kontakt:</strong><br>
-            E-pošta: junona.marjanca@gmail.com<br>
-            Telefon: 031 350400</p>
-
-            <p><strong>Davčni podatki:</strong><br>
-            Davčna številka SI: 31835724<br>
-            Matična številka: 2022397000<br>
-            Zavezanec za DDV: Da (SI31835724)</p>
-
-            <p><strong>Bančni podatki:</strong><br>
-            IBAN: SI56 6100 0000 2817 227</p>
-
-            <div class="legal-date">
-                <p>Novo mesto, 14.1.2026</p>
+            <p style="text-align: center; font-size: 20px; color: var(--text-dark); margin-bottom: 40px;">
+                Z veseljem vas slišimo in odgovorimo na vaša vprašanja. Kontaktirajte nas na kateri koli način, ki vam ustreza.
+            </p>
+            
+            <div class="contact-info-grid">
+                <div class="contact-info-card">
+                    <div class="contact-icon">📧</div>
+                    <h3>Email</h3>
+                    <p><a href="mailto:info@jazzenska.si">info@jazzenska.si</a></p>
+                </div>
+                
+                <div class="contact-info-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>Telefon</h3>
+                    <p><a href="tel:+38631350400">031 350400</a></p>
+                </div>
+            </div>
+            
+            <div class="social-media-section">
+                <h2>Sledite nam</h2>
+                <p style="margin-bottom: 30px; color: var(--text-dark);">Povežite se z nami na družbenih omrežjih</p>
+                <div class="social-media-links">
+                    <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer" class="social-media-link">
+                        <img src="images/svg/facebook.svg" alt="Facebook">
+                        <span>Facebook</span>
+                    </a>
+                    <a href="#" class="social-media-link">
+                        <img src="images/svg/instagram.svg" alt="Instagram">
+                        <span>Instagram</span>
+                    </a>
+                    <a href="#" class="social-media-link">
+                        <img src="images/svg/youtube.svg" alt="YouTube">
+                        <span>YouTube</span>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -221,16 +280,15 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>KONTAKT</h3>
-                <p><a href="mailto:junona.marjanca@gmail.com">junona.marjanca@gmail.com</a></p>
-                <p><a href="tel:+38631350400">031 350400</a></p>
-                <p>Maistrova ulica 3, Novo mesto, 8000 Novo mesto</p>
+                <p><a href="mailto:info@jazzenska.si">info@jazzenska.si</a></p>
+                <p>Novo mesto, Slovenija</p>
             </div>
             
             <div class="footer-section">
                 <h3>NAVIGACIJA</h3>
                 <ul>
-                    <li><a href="index.html#about">O nas</a></li>
-                    <li><a href="index.html#jaz-zenska">Naša zgodba</a></li>
+                    <li><a href="o-meni.html">O meni</a></li>
+                    <li><a href="jaz-zenska.html">Naša zgodba</a></li>
                     <li><a href="blog.html">Blog</a></li>
                     <li><a href="index.html#affirmations">Meditacije</a></li>
                     <li><a href="pravilnik-o-zasebnosti.html">Pravilnik o zasebnosti</a></li>
@@ -243,10 +301,10 @@
         
         <div class="footer-bottom">
             <p>Jaz Ženska © 2025. Vse pravice pridržane.</p>
-            <p>Piškotki in politika zasebnosti</p>
+            <p><a href="pravilnik-o-zasebnosti.html" style="color: inherit; text-decoration: underline; opacity: 0.8;">Piškotki in politika zasebnosti</a></p>
             
             <div class="footer-social">
-                <a href="#"><img src="images/svg/facebook.svg" alt="Facebook"></a>
+                <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer"><img src="images/svg/facebook.svg" alt="Facebook"></a>
                 <a href="#"><img src="images/svg/instagram.svg" alt="Instagram"></a>
                 <a href="#"><img src="images/svg/youtube.svg" alt="YouTube"></a>
             </div>
