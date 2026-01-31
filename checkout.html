@@ -596,7 +596,34 @@
 
                 if (!response.ok) {
                     console.error('API error response:', data);
-                    throw new Error(data.error || data.message || `Napaka pri ustvarjanju seje za plačilo (${response.status})`);
+                    const errorMsg = data.error || data.message || `Napaka pri ustvarjanju seje za plačilo (${response.status})`;
+                    
+                    // Check if error is SEPA-related
+                    const errorMessageLower = errorMsg.toLowerCase();
+                    if (errorMessageLower.includes('sepa') || 
+                        errorMessageLower.includes('payment method') ||
+                        errorMessageLower.includes('payment_method')) {
+                        // Show SEPA unavailable message immediately
+                        productInfo.style.display = 'none';
+                        checkoutLoading.style.display = 'none';
+                        checkoutButton.disabled = false;
+                        document.getElementById('checkoutContent').innerHTML = `
+                            <div class="product-info">
+                                <div class="checkout-error" style="background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%); color: #856404; border: 2px solid #ffc107; text-align: center; padding: 40px;">
+                                    <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 20px; color: #856404;">Plačila so začasno ustavljena</h3>
+                                    <p style="font-size: 18px; line-height: 1.8; margin-bottom: 15px; color: #856404;">
+                                        Plačila so začasno ustavljena zaradi dodajanja novih načinov plačila.
+                                    </p>
+                                    <p style="font-size: 16px; line-height: 1.6; margin-top: 20px; color: #856404;">
+                                        Prosimo, poskusite znova čez nekaj trenutkov ali kontaktirajte podporo.
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                        return; // Exit early, don't throw error
+                    }
+                    
+                    throw new Error(errorMsg);
                 }
 
                 // Redirect to Stripe Checkout
@@ -616,17 +643,41 @@
                 checkoutLoading.style.display = 'none';
                 checkoutButton.disabled = false;
                 
+                // Check if error is related to SEPA not being available
                 const errorMessage = error.message || 'Neznana napaka';
-                document.getElementById('checkoutContent').innerHTML = `
-                    <div class="product-info">
-                        <div class="checkout-error">
-                            <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 15px;">Napaka pri pripravi plačila</h3>
-                            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 10px;">${errorMessage}</p>
-                            <p style="font-size: 14px; color: #666; margin-top: 20px;">Prosimo, poskusite znova ali kontaktirajte podporo.</p>
-                            <button class="checkout-button" onclick="window.location.reload()" style="margin-top: 30px;">Poskusi znova</button>
+                const errorMessageLower = errorMessage.toLowerCase();
+                const isSEPAError = errorMessageLower.includes('sepa') || 
+                                   errorMessageLower.includes('payment method') ||
+                                   errorMessageLower.includes('payment_method');
+                
+                if (isSEPAError) {
+                    // Show SEPA unavailable message
+                    document.getElementById('checkoutContent').innerHTML = `
+                        <div class="product-info">
+                            <div class="checkout-error" style="background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%); color: #856404; border: 2px solid #ffc107; text-align: center; padding: 40px;">
+                                <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 20px; color: #856404;">Plačila so začasno ustavljena</h3>
+                                <p style="font-size: 18px; line-height: 1.8; margin-bottom: 15px; color: #856404;">
+                                    Plačila so začasno ustavljena zaradi dodajanja novih načinov plačila.
+                                </p>
+                                <p style="font-size: 16px; line-height: 1.6; margin-top: 20px; color: #856404;">
+                                    Prosimo, poskusite znova čez nekaj trenutkov ali kontaktirajte podporo.
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else {
+                    // Show regular error message
+                    document.getElementById('checkoutContent').innerHTML = `
+                        <div class="product-info">
+                            <div class="checkout-error">
+                                <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 15px;">Napaka pri pripravi plačila</h3>
+                                <p style="font-size: 16px; line-height: 1.6; margin-bottom: 10px;">${errorMessage}</p>
+                                <p style="font-size: 14px; color: #666; margin-top: 20px;">Prosimo, poskusite znova ali kontaktirajte podporo.</p>
+                                <button class="checkout-button" onclick="window.location.reload()" style="margin-top: 30px;">Poskusi znova</button>
+                            </div>
+                        </div>
+                    `;
+                }
             }
         }
 
