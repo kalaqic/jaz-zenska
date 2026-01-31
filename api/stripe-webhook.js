@@ -268,6 +268,17 @@ module.exports = async function handler(req, res) {
                             subscriptionStatus: 'active',
                             subscriptionType: session.metadata?.subscription_type || session.metadata?.plan || 'unknown'
                         };
+                        
+                        // Add business information if this is a business purchase
+                        if (session.metadata?.is_business === 'true') {
+                            userData.isBusiness = true;
+                            userData.companyName = session.metadata?.company_name || '';
+                            userData.vatNumber = session.metadata?.vat_number || '';
+                            console.log('   Business customer:', {
+                                companyName: userData.companyName,
+                                vatNumber: userData.vatNumber
+                            });
+                        }
                         console.log('   User data to save:', JSON.stringify(userData, null, 2));
                         await userDocRef.set(userData);
                         console.log('✅ Created Firestore user document successfully');
@@ -284,6 +295,13 @@ module.exports = async function handler(req, res) {
                             subscriptionType: session.metadata?.subscription_type || session.metadata?.plan || 'unknown',
                             updatedAt: admin.firestore.FieldValue.serverTimestamp()
                         };
+                        
+                        // Update business information if this is a business purchase
+                        if (session.metadata?.is_business === 'true') {
+                            updateData.isBusiness = true;
+                            updateData.companyName = session.metadata?.company_name || '';
+                            updateData.vatNumber = session.metadata?.vat_number || '';
+                        }
                         console.log('   Update data:', JSON.stringify(updateData, null, 2));
                         await userDocRef.update(updateData);
                         console.log('✅ Updated Firestore user document successfully');

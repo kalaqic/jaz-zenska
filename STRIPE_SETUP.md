@@ -43,11 +43,17 @@ Add these environment variables in your Vercel project settings:
 ## Testing
 
 1. Use Stripe test mode for testing
-2. Use test cards from: https://stripe.com/docs/testing
-3. After a successful payment, check:
+2. **Test Cards**: Use test cards from: https://stripe.com/docs/testing
+   - Success: `4242 4242 4242 4242`
+   - Decline: `4000 0000 0000 0002`
+3. **Test SEPA Direct Debit**: Use test IBANs from: https://stripe.com/docs/testing#sepa-direct-debit
+   - Test IBAN: `DE89370400440532013000` (always succeeds)
+   - Test IBAN: `DE89370400440532013001` (always fails)
+4. After a successful payment, check:
    - Firebase Authentication console for the new user
    - Checkout success page should redirect correctly
    - User should receive password reset email (if email service is configured)
+   - For SEPA: Payment will show as "pending" until it clears (1-2 business days in test mode)
 
 ## Email Sending via GetResponse
 
@@ -71,6 +77,34 @@ Password reset emails are handled through GetResponse automation:
 - Check Vercel logs after each successful payment
 
 **Note:** GetResponse doesn't have direct transactional email API, so automation is required for automatic email sending.
+
+## Payment Methods
+
+The checkout accepts the following payment methods:
+
+1. **Credit/Debit Cards** (Visa, Mastercard, etc.)
+   - Instant payment
+   - Works for both individual and business customers
+
+2. **SEPA Direct Debit** (Bank Account)
+   - Direct bank transfer from customer's bank account
+   - Available for customers in SEPA countries (EU, UK, etc.)
+   - Takes 1-2 business days to process
+   - Requires customer's IBAN and bank account details
+   - Customer must authorize the direct debit mandate
+   - **Important**: You must complete SEPA setup in Stripe Dashboard:
+     - Go to Stripe Dashboard → Settings → Payment methods
+     - Enable SEPA Direct Debit
+     - Complete the SEPA setup process (business verification required)
+     - Add your business bank account for receiving SEPA payments
+
+### Business Customers
+
+- Business customers can purchase subscriptions
+- Invoices are automatically generated for business purchases
+- Billing address collection is required (for invoices and SEPA)
+- Customers can enter company information during checkout
+- Invoices include all necessary details for accounting
 
 ## Subscription Plans
 
