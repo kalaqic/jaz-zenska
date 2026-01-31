@@ -100,8 +100,7 @@ module.exports = async function handler(req, res) {
             mode: 'subscription',
             locale: 'sl', // Slovenian language
             
-            // Enable business customer information collection
-            customer_creation: 'always',
+            // Note: customer_creation is not needed in subscription mode - Stripe creates customers automatically
             
             // Generate invoices (useful for business customers)
             invoice_creation: {
