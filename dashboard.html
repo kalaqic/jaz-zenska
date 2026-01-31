@@ -893,7 +893,6 @@
         <nav class="dashboard-nav">
             <a href="#" class="nav-item active" data-section="community">Skupnost</a>
             <a href="#" class="nav-item" data-section="classroom">Učilnica</a>
-            <a href="#" class="nav-item" data-section="ebooks">E-Knjige</a>
             <a href="#" class="nav-item" data-section="calendar">Koledar</a>
             <a href="#" class="nav-item" data-section="profile">Moj profil</a>
         </nav>
@@ -920,14 +919,6 @@
                 <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Koledar</h2>
                 <div id="calendarContent">
                     <!-- Events will be loaded here -->
-                </div>
-            </div>
-            
-            <!-- E-Books Section -->
-            <div id="ebooks" class="content-section">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">E-Knjige</h2>
-                <div id="ebooksContent">
-                    <!-- E-books will be loaded here -->
                 </div>
             </div>
             
@@ -1038,94 +1029,6 @@
             </div>
             <div id="allEventsList">
                 <!-- Events will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Add E-Book Modal -->
-    <div id="addEbookModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="addEbookModalTitle">Nova E-Knjiga</h2>
-                <button class="modal-close" onclick="closeAddEbookModal()">&times;</button>
-            </div>
-            <form class="modal-form" onsubmit="submitEbook(event)">
-                <input type="hidden" id="ebookEditId" value="">
-                <div class="form-group">
-                    <label for="ebookTitle">Naslov knjige</label>
-                    <input type="text" id="ebookTitle" required>
-                </div>
-                <div class="form-group">
-                    <label for="ebookDescription">Opis</label>
-                    <textarea id="ebookDescription" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="ebookFile">PDF datoteka</label>
-                    <input type="file" id="ebookFile" accept=".pdf" onchange="previewEbookFile(event)">
-                    <div id="ebookFilePreview" style="margin-top: 10px; display: none;">
-                        <p style="color: var(--text-dark); font-size: 14px;" id="ebookFileName"></p>
-                        <button type="button" onclick="removeEbookFile()" style="margin-top: 5px; padding: 5px 15px; background: #fee; color: #c33; border: none; border-radius: 5px; cursor: pointer; font-size: 12px;">Odstrani datoteko</button>
-                    </div>
-                    <p id="ebookCurrentFile" style="margin-top: 10px; font-size: 14px; color: var(--text-light); display: none;"></p>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeAddEbookModal()">Prekliči</button>
-                    <button type="submit" class="btn-primary" id="ebookSubmitBtn">Dodaj E-Knjigo</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- E-Book Details Modal -->
-    <div id="ebookDetailsModal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h2 class="modal-title" id="ebookDetailsTitle"></h2>
-                <button class="modal-close" onclick="closeEbookDetailsModal()">&times;</button>
-            </div>
-            <div style="padding: 20px;">
-                <div id="ebookDetailsDescription" style="margin-bottom: 30px; line-height: 1.8; color: var(--text-dark); white-space: pre-wrap;"></div>
-                <div style="text-align: center; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                    <a id="ebookDownloadBtn" href="#" download="" style="
-                        background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-                        color: var(--white);
-                        padding: 15px 40px;
-                        border: none;
-                        border-radius: 25px;
-                        font-size: 16px;
-                        font-weight: 600;
-                        text-decoration: none;
-                        display: inline-block;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
-                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(100, 56, 67, 0.3)'">📥 Prenesi PDF</a>
-                    <div id="ebookAdminActions" style="display: none;">
-                        <button onclick="editEbook()" style="
-                            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-                            color: var(--white);
-                            padding: 15px 40px;
-                            border: none;
-                            border-radius: 25px;
-                            font-size: 16px;
-                            font-weight: 600;
-                            cursor: pointer;
-                            transition: all 0.3s ease;
-                            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(76, 175, 80, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(76, 175, 80, 0.3)'">✏️ Uredi</button>
-                        <button onclick="deleteEbook()" style="
-                            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
-                            color: var(--white);
-                            padding: 15px 40px;
-                            border: none;
-                            border-radius: 25px;
-                            font-size: 16px;
-                            font-weight: 600;
-                            cursor: pointer;
-                            transition: all 0.3s ease;
-                            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
-                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(244, 67, 54, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(244, 67, 54, 0.3)'">🗑️ Izbriši</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

@@ -581,7 +581,9 @@
                 <!-- Calendar/Scheduling Interface -->
                 <div class="scheduling-interface" id="scheduling-interface">
                     <div class="scheduling-content">
-                        <h3>Izberite datum in uro</h3>
+                        <h3>Prijavi se na brezplačen posvet</h3>
+                        <div class="scheduling-layout">
+                            <div class="scheduling-left">
                         <div class="calendar-container">
                             <div class="calendar-header">
                                 <button class="calendar-nav-btn" id="prev-month">‹</button>
@@ -595,6 +597,8 @@
                             <div class="time-slots-grid" id="time-slots-grid"></div>
                         </div>
                         <div class="selected-info" id="selected-info"></div>
+                            </div>
+                            <div class="scheduling-right">
                         <div class="form-inputs-container">
                             <div class="email-input-container">
                                 <label for="user-first-name">Vaše ime:</label>
@@ -609,13 +613,15 @@
                                 <input type="tel" id="user-phone" class="user-input" placeholder="+386 XX XXX XXX" required>
                             </div>
                         </div>
-                        <div class="privacy-checkbox-container">
-                            <label class="privacy-checkbox-label">
-                                <input type="checkbox" id="consultation-privacy-checkbox" required>
-                                <span>Strinjam se, da se podatki, ki jih posredujem, uporabljajo za vzpostavitev stika z mano in za marketinške namene.</span>
-                            </label>
+                                <div class="privacy-checkbox-container">
+                                    <label class="privacy-checkbox-label">
+                                        <input type="checkbox" id="consultation-privacy-checkbox" required>
+                                        <span>Strinjam se, da se podatki, ki jih posredujem, uporabljajo za vzpostavitev stika z mano in za marketinške namene.</span>
+                                    </label>
+                                </div>
+                                <button class="schedule-call-btn" id="schedule-call-btn" disabled>Prijavi se</button>
+                            </div>
                         </div>
-                        <button class="schedule-call-btn" id="schedule-call-btn" disabled>Prijavi se</button>
                     </div>
                 </div>
                 
@@ -648,7 +654,7 @@
                         <p class="testimonial-text-preview">Draga Marjanca,<br><br>Že dolgo, dolgo te poznam kot IZJEMNO ŽENSKO odprtega srca in uma, skrbna, sočutna in odgovorna ter zavzeta in vztrajna pri spoznavanju in pridobivanju novih znanj in veščin in predaji le teh naprej vsem nam...</p>
                         <button class="testimonial-read-more">Preberi več</button>
                     <div class="testimonial-author">
-                        <span class="author-name">Nada Ajdišek</span>
+                        <span class="author-name">Nada</span>
                     </div>
                 </div>
                 
@@ -657,7 +663,7 @@
                         <p class="testimonial-text-preview">Prelisičimo možgane in naredimo spremembo je bil naslov in vsebina predavanja. Gospo Marjanco poznamo kot izjemno turistično vodičko, a je v njej tudi veliko drugih potencialov...</p>
                         <button class="testimonial-read-more">Preberi več</button>
                     <div class="testimonial-author">
-                        <span class="author-name">Cirila Vidmar<br>DU Dolenjske Toplice</span>
+                        <span class="author-name">Cirila<br>DU Dolenjske Toplice</span>
                     </div>
                 </div>
                     

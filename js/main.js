@@ -555,6 +555,17 @@ document.addEventListener('DOMContentLoaded', function() {
         el.style.animationDelay = `${index * 0.1}s`;
     });
     
+    // Capitalize first letter of newsletter name field (same logic as webinar form)
+    const newsletterNameInput = document.getElementById('newsletter-name');
+    if (newsletterNameInput) {
+        newsletterNameInput.addEventListener('input', function(e) {
+            const value = e.target.value;
+            if (value.length > 0) {
+                e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+            }
+        });
+    }
+    
     // Set newsletter spacing to match footer height
     setNewsletterSpacing();
     window.addEventListener('resize', setNewsletterSpacing);
@@ -1226,13 +1237,13 @@ function initTestimonialsCarousel() {
             id: 1,
             preview: 'Draga Marjanca,<br><br>Že dolgo, dolgo te poznam kot IZJEMNO ŽENSKO odprtega srca in uma, skrbna, sočutna in odgovorna ter zavzeta in vztrajna pri spoznavanju in pridobivanju novih znanj in veščin in predaji le teh naprej vsem nam...',
             full: 'Draga Marjanca,<br><br>Že dolgo, dolgo te poznam kot IZJEMNO ŽENSKO odprtega srca in uma, skrbna, sočutna in odgovorna ter zavzeta in vztrajna pri spoznavanju in pridobivanju novih znanj in veščin in predaji le teh naprej vsem nam.<br><br>Si neizmerni vir tople, sočutne, pozitivne energije, ki jo nesebično širiš naokrog.<br><br>Si motivator in aktivni vodja raznih veščin, ki prinašajo notranji mir, povezanost in odpirajo ljubeča srca.<br><br>Izjemno obvladuješ lekcije samopomoči, reikija, in aktivacije notranje moči.<br><br>Hvaležna sem ti za vse kar si delila z nami in nam je bilo v pomoč na naši poti pridobivanja notranje moči.<br><br><br>Rada te imam in vedno znova občudujem,',
-            author: 'Nada Ajdišek'
+            author: 'Nada'
         },
         {
             id: 2,
             preview: 'Prelisičimo možgane in naredimo spremembo je bil naslov in vsebina predavanja. Gospo Marjanco poznamo kot izjemno turistično vodičko, a je v njej tudi veliko drugih potencialov...',
             full: 'Prelisičimo možgane in naredimo spremembo je bil naslov in vsebina predavanja. Gospo Marjanco poznamo kot izjemno turistično vodičko, a je v njej tudi veliko drugih potencialov.<br><br>V prostor kjer smo poslušali predavanje je prinesla odlično, pozitivno energijo in nasmeh na obraz vseh prisotnih. Spoznali smo načine in orodja za osebno rast in lažje sprejemanje in izvajanje sprememb, ki si jih želimo. Pridobili smo nasvete kako komunicirati in se odzivati v težkih pogojih, ko se pojavijo konflikti in kako biti uspešni tudi takrat, ko imamo občutek, da ne vidimo poti naprej. Meditacija, dihanje, aktivnosti, počitek, čuječnost in ne nazadnje hvaležnost so ene izmed tehnik kako narediti spremembo v nas samih. Namesto da smo kopija preteklosti, postanimo zemljevid prihodnosti, nam med drugim pove Marjanca Trščinar Antić.<br><br>Kadar je druženje ali predavanje prijetno, čas vedno prehitro mine. Tako je bilo tudi ta večer.<br><br>Gospe Marjanci Trščinar Antić se zahvaljujemo za izjemen večer presežkov.',
-            author: 'Cirila Vidmar<br>DU Dolenjske Toplice'
+            author: 'Cirila<br>DU Dolenjske Toplice'
         },
         {
             id: 3,

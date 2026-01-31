@@ -96,7 +96,13 @@ const blogContent = {
             
             <p>Tako kot s soncem, je tudi s srečo, pride in gre. Ozavestite srečne trenutke, uživajte v njih, bodite hvaležni zanje, delite jih z drugimi in se že vnaprej veselite novih. Bodite pozitivni in pričakujte dobro. Prevetrite svoje navade, prepričanja in vrednote, opustite nerealna pričakovanja in če želite ujeti srečo, razprite roke in srce, dajte brez pričakovanja, da se vam bo vrnilo, živite brez strahu in pogumno stopajte naprej z zaupanjem in vero v življenje, ki nam vedno ponudi in da tisto, kar je v določenem trenutka najboljše za nas. Če to ni čisto tako kot si želimo, se vprašajmo kaj v našem življenju bi bilo dobro spremeniti, kaj lahko naredimo drugače, česa se lahko naučimo in katero novo pot lahko izberemo? Ob vsem tem pa ne pozabite, da smo kreatorji svojega življenja in kovači svoje sreče. Kujte močno in vztrajno udarjajte po tnalu življenja, verjemite v srečo, imejte jo radi in bodite pripravljeni, da ji boste na široko odprli vrata, ko vas bo ponovno obiskala!</p>
             
-            <p>Čeprav sem dejala, da univerzalnega recepta za srečo ni, pa obstaja kar nekaj nasvetov in priporočil, ki nam lahko pomagajo na naši poti do sreče. Zbrala in strnila sem jih v e-knjigi: 25 stopnic do sreče, ki jo lahko dobite če kliknete na povezavo: DUGME</p>
+            <p>Čeprav sem dejala, da univerzalnega recepta za srečo ni, pa obstaja kar nekaj nasvetov in priporočil, ki nam lahko pomagajo na naši poti do sreče. Zbrala in strnila sem jih v e-knjigi: 25 stopnic do sreče, ki jo lahko dobite če kliknete na povezavo:</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="ebook-signup.html" class="ebook-button" style="display: inline-block; background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%); color: var(--white); border: none; padding: 18px 40px; border-radius: 50px; font-size: 18px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(200, 142, 167, 0.4); transition: all 0.3s ease; font-family: 'Montserrat', sans-serif; text-decoration: none;">
+                    Želim brezplačno e-knjigo
+                </a>
+            </div>
             
             <div class="blog-newsletter-cta">
                 <p class="blog-newsletter-text">Želite več navdihujočih vsebin, kot je ta?</p>

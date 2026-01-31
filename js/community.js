@@ -31,61 +31,14 @@ function initDataStructures() {
         localStorage.setItem('posts', JSON.stringify(samplePosts));
     }
     
-    // Initialize courses if they don't exist
+    // Initialize courses as empty array
     if (!localStorage.getItem('courses')) {
-        const sampleCourses = [
-            {
-                id: '1',
-                title: 'Moj jutranji obred in meditacija',
-                description: 'Začnite dan s pozitivno energijo in notranjo močjo.',
-                duration: '30 min',
-                category: 'Meditacija'
-            },
-            {
-                id: '2',
-                title: 'Vadba za lahkotnost, prožnost in vitalnost',
-                description: 'Vadbe, ki vas bodo osvežile in okrepile.',
-                duration: '45 min',
-                category: 'Vadba'
-            },
-            {
-                id: '3',
-                title: 'Meditativni ples za sproščanje',
-                description: 'Sprostite se skozi gibanje in ples.',
-                duration: '40 min',
-                category: 'Ples'
-            }
-        ];
-        localStorage.setItem('courses', JSON.stringify(sampleCourses));
+        localStorage.setItem('courses', JSON.stringify([]));
     }
     
-    // Initialize events if they don't exist
+    // Initialize events as empty array
     if (!localStorage.getItem('events')) {
-        const sampleEvents = [
-            {
-                id: '1',
-                title: 'Tedenski webinar',
-                description: 'Mesečni webinar z gostjami o različnih temah.',
-                date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-                time: '18:00',
-                location: 'Online'
-            }
-        ];
-        localStorage.setItem('events', JSON.stringify(sampleEvents));
-    }
-    
-    // Initialize e-books if they don't exist
-    if (!localStorage.getItem('ebooks')) {
-        const sampleEbooks = [
-            {
-                id: '1',
-                title: 'Vodnik po osebni rasti',
-                description: 'Poglobljen vodnik za osebno rast in razvoj.',
-                pdfUrl: '',
-                createdAt: new Date().toISOString()
-            }
-        ];
-        localStorage.setItem('ebooks', JSON.stringify(sampleEbooks));
+        localStorage.setItem('events', JSON.stringify([]));
     }
 }
 
@@ -192,9 +145,6 @@ function switchSection(section) {
             case 'classroom':
                 loadClassroom();
                 break;
-            case 'ebooks':
-                loadEbooks();
-                break;
             case 'calendar':
                 loadCalendar();
                 break;
@@ -212,6 +162,26 @@ async function loadCommunity() {
     const content = document.getElementById('communityContent');
     
     let html = '';
+    
+    // Disclaimer message
+    html += `
+        <div style="
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #ffc107;
+            text-align: center;
+        ">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark-violet); margin-bottom: 15px;">Vsebina se začne konec marca</h3>
+            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.7; margin-bottom: 10px;">
+                Z vsebino in vsem, kar je na voljo v skupnosti, bomo začeli konec marca. Takrat se bo tudi začela vaša naročnina, zato se ni treba skrbeti.
+            </p>
+            <p style="color: var(--text-light); font-size: 14px; margin-top: 15px;">
+                Hvala za vaše razumevanje in potrpežljivost!
+            </p>
+        </div>
+    `;
     
     // Add post button for admin
     if (isAdmin()) {
@@ -584,356 +554,54 @@ async function addComment(postId) {
 
 // ===== CLASSROOM SECTION =====
 function loadClassroom() {
-    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
     const content = document.getElementById('classroomContent');
     
-    if (courses.length === 0) {
-        content.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 40px;">Trenutno ni tečajev.</p>';
-    } else {
-        content.innerHTML = `<div class="courses-grid">${courses.map(course => {
-            // Calculate progress
-            const watched = JSON.parse(localStorage.getItem('watchedEpisodes') || '{}');
-            const courseWatched = watched[course.id] || [];
-            const totalEpisodes = course.episodes ? course.episodes.length : 0;
-            const progress = totalEpisodes > 0 ? Math.round((courseWatched.length / totalEpisodes) * 100) : 0;
-            const isCompleted = progress === 100 && totalEpisodes > 0;
-            
-            return `
-            <div class="course-card" onclick="openCourse('${course.id}')" style="position: relative;">
-                ${isCompleted ? '<div style="position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: var(--dark-violet); padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);">ZAKLJUČENO!</div>' : ''}
-                <div>
-                    <div class="course-title">${course.title}</div>
-                    <div class="course-info">
-                        <div>📚 ${course.category}</div>
-                        <div>⏱️ ${course.duration}</div>
-                        ${totalEpisodes > 0 ? `<div>📹 ${courseWatched.length}/${totalEpisodes} epizod</div>` : ''}
-                    </div>
-                </div>
-                <div style="font-size: 12px; opacity: 0.8; margin-top: 15px;">Kliknite za začetek</div>
-            </div>
-        `;
-        }).join('')}</div>`;
-    }
+    content.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+            padding: 40px 30px;
+            border-radius: 15px;
+            border: 2px solid #ffc107;
+            text-align: center;
+        ">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px;">Vsebina se začne konec marca</h3>
+            <p style="color: var(--text-dark); font-size: 18px; line-height: 1.8; margin-bottom: 15px;">
+                Z vsebino tečajev in vsega, kar je na voljo v učilnici, bomo začeli konec marca. Takrat se bo tudi začela vaša naročnina, zato se ni treba skrbeti.
+            </p>
+            <p style="color: var(--text-light); font-size: 16px; margin-top: 20px;">
+                Hvala za vaše razumevanje in potrpežljivost!
+            </p>
+        </div>
+    `;
 }
 
 function openCourse(courseId) {
     window.location.href = `course.html?id=${courseId}`;
 }
 
-// ===== E-BOOKS SECTION =====
-function loadEbooks() {
-    const ebooks = JSON.parse(localStorage.getItem('ebooks') || '[]');
-    const content = document.getElementById('ebooksContent');
-    
-    let html = '';
-    
-    // Add ebook button for admin
-    if (isAdmin()) {
-        html += `
-            <div style="margin-bottom: 30px;">
-                <button onclick="showAddEbookModal()" style="
-                    background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-                    color: var(--white);
-                    padding: 12px 30px;
-                    border: none;
-                    border-radius: 25px;
-                    font-size: 16px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
-                ">+ Dodaj novo E-Knjigo</button>
-            </div>
-        `;
-    }
-    
-    if (ebooks.length === 0) {
-        html += '<p style="color: var(--text-light); text-align: center; padding: 40px;">Trenutno ni E-Knjig.</p>';
-    } else {
-        html += `<div class="courses-grid">${ebooks.map(ebook => `
-            <div class="course-card" style="cursor: pointer;" onclick="showEbookDetails('${ebook.id}')">
-                <div>
-                    <div class="course-title">${ebook.title}</div>
-                    <div class="course-info">
-                        <div style="margin-bottom: 15px; line-height: 1.6;">${ebook.description || 'Brez opisa'}</div>
-                    </div>
-                </div>
-            </div>
-        `).join('')}</div>`;
-    }
-    
-    content.innerHTML = html;
-}
-
-let ebookFileData = null;
-let currentEbookId = null;
-
-function showAddEbookModal() {
-    document.getElementById('addEbookModalTitle').textContent = 'Nova E-Knjiga';
-    document.getElementById('ebookSubmitBtn').textContent = 'Dodaj E-Knjigo';
-    document.getElementById('ebookEditId').value = '';
-    document.getElementById('ebookTitle').value = '';
-    document.getElementById('ebookDescription').value = '';
-    document.getElementById('ebookFile').value = '';
-    document.getElementById('ebookFile').required = true;
-    document.getElementById('ebookFilePreview').style.display = 'none';
-    document.getElementById('ebookCurrentFile').style.display = 'none';
-    ebookFileData = null;
-    currentEbookId = null;
-    document.getElementById('addEbookModal').classList.add('show');
-}
-
-function closeAddEbookModal() {
-    document.getElementById('addEbookModal').classList.remove('show');
-    document.getElementById('ebookFile').value = '';
-    document.getElementById('ebookFilePreview').style.display = 'none';
-    document.getElementById('ebookCurrentFile').style.display = 'none';
-    ebookFileData = null;
-    currentEbookId = null;
-}
-
-function previewEbookFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    if (file.type !== 'application/pdf') {
-        alert('Prosimo, izberite PDF datoteko.');
-        event.target.value = '';
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        ebookFileData = e.target.result;
-        document.getElementById('ebookFileName').textContent = file.name;
-        document.getElementById('ebookFilePreview').style.display = 'block';
-    };
-    reader.readAsDataURL(file);
-}
-
-function removeEbookFile() {
-    document.getElementById('ebookFile').value = '';
-    document.getElementById('ebookFilePreview').style.display = 'none';
-    ebookFileData = null;
-}
-
-function submitEbook(event) {
-    event.preventDefault();
-    
-    const title = document.getElementById('ebookTitle').value.trim();
-    const description = document.getElementById('ebookDescription').value.trim();
-    const file = document.getElementById('ebookFile').files[0];
-    const editId = document.getElementById('ebookEditId').value;
-    
-    if (!title || !description) {
-        alert('Prosimo, izpolnite vsa obvezna polja.');
-        return;
-    }
-    
-    const ebooks = JSON.parse(localStorage.getItem('ebooks') || '[]');
-    
-    // If editing
-    if (editId) {
-        const ebookIndex = ebooks.findIndex(e => e.id === editId);
-        if (ebookIndex === -1) {
-            alert('E-Knjiga ni najdena.');
-            return;
-        }
-        
-        const updatedEbook = {
-            ...ebooks[ebookIndex],
-            title: title,
-            description: description
-        };
-        
-        // Update PDF if new file is provided
-        if (file) {
-            if (file.type !== 'application/pdf') {
-                alert('Prosimo, izberite PDF datoteko.');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                updatedEbook.pdfUrl = e.target.result;
-                updatedEbook.fileName = file.name;
-                ebooks[ebookIndex] = updatedEbook;
-                localStorage.setItem('ebooks', JSON.stringify(ebooks));
-                closeAddEbookModal();
-                loadEbooks();
-                closeEbookDetailsModal();
-            };
-            reader.readAsDataURL(file);
-        } else {
-            ebooks[ebookIndex] = updatedEbook;
-            localStorage.setItem('ebooks', JSON.stringify(ebooks));
-            closeAddEbookModal();
-            loadEbooks();
-            closeEbookDetailsModal();
-        }
-        return;
-    }
-    
-    // If adding new
-    if (!file) {
-        alert('Prosimo, izberite PDF datoteko.');
-        return;
-    }
-    
-    if (file.type !== 'application/pdf') {
-        alert('Prosimo, izberite PDF datoteko.');
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const newEbook = {
-            id: Date.now().toString(),
-            title: title,
-            description: description,
-            pdfUrl: e.target.result,
-            fileName: file.name,
-            createdAt: new Date().toISOString()
-        };
-        
-        ebooks.push(newEbook);
-        localStorage.setItem('ebooks', JSON.stringify(ebooks));
-        closeAddEbookModal();
-        loadEbooks();
-    };
-    reader.readAsDataURL(file);
-}
-
-function showEbookDetails(ebookId) {
-    const ebooks = JSON.parse(localStorage.getItem('ebooks') || '[]');
-    const ebook = ebooks.find(e => e.id === ebookId);
-    
-    if (!ebook) {
-        alert('E-Knjiga ni najdena.');
-        return;
-    }
-    
-    currentEbookId = ebookId;
-    
-    document.getElementById('ebookDetailsTitle').textContent = ebook.title;
-    const descriptionEl = document.getElementById('ebookDetailsDescription');
-    descriptionEl.textContent = ebook.description || 'Brez opisa';
-    descriptionEl.style.whiteSpace = 'pre-wrap';
-    
-    const downloadBtn = document.getElementById('ebookDownloadBtn');
-    if (ebook.pdfUrl) {
-        downloadBtn.href = ebook.pdfUrl;
-        downloadBtn.download = `${ebook.title}.pdf`;
-        downloadBtn.style.display = 'inline-block';
-    } else {
-        downloadBtn.style.display = 'none';
-    }
-    
-    // Show admin actions if admin
-    const adminActions = document.getElementById('ebookAdminActions');
-    if (isAdmin()) {
-        adminActions.style.display = 'block';
-    } else {
-        adminActions.style.display = 'none';
-    }
-    
-    document.getElementById('ebookDetailsModal').classList.add('show');
-}
-
-function editEbook() {
-    if (!currentEbookId) return;
-    
-    const ebooks = JSON.parse(localStorage.getItem('ebooks') || '[]');
-    const ebook = ebooks.find(e => e.id === currentEbookId);
-    
-    if (!ebook) {
-        alert('E-Knjiga ni najdena.');
-        return;
-    }
-    
-    // Close details modal
-    closeEbookDetailsModal();
-    
-    // Open edit modal
-    document.getElementById('addEbookModalTitle').textContent = 'Uredi E-Knjigo';
-    document.getElementById('ebookSubmitBtn').textContent = 'Shrani spremembe';
-    document.getElementById('ebookEditId').value = ebook.id;
-    document.getElementById('ebookTitle').value = ebook.title;
-    document.getElementById('ebookDescription').value = ebook.description || '';
-    document.getElementById('ebookFile').required = false;
-    document.getElementById('ebookFile').value = '';
-    document.getElementById('ebookFilePreview').style.display = 'none';
-    
-    if (ebook.fileName) {
-        document.getElementById('ebookCurrentFile').textContent = `Trenutna datoteka: ${ebook.fileName}`;
-        document.getElementById('ebookCurrentFile').style.display = 'block';
-    } else {
-        document.getElementById('ebookCurrentFile').style.display = 'none';
-    }
-    
-    ebookFileData = null;
-    document.getElementById('addEbookModal').classList.add('show');
-}
-
-function deleteEbook() {
-    if (!currentEbookId) return;
-    
-    if (!confirm('Ali ste prepričani, da želite izbrisati to E-Knjigo?')) {
-        return;
-    }
-    
-    const ebooks = JSON.parse(localStorage.getItem('ebooks') || '[]');
-    const filteredEbooks = ebooks.filter(e => e.id !== currentEbookId);
-    
-    localStorage.setItem('ebooks', JSON.stringify(filteredEbooks));
-    closeEbookDetailsModal();
-    loadEbooks();
-}
-
-function closeEbookDetailsModal() {
-    document.getElementById('ebookDetailsModal').classList.remove('show');
-}
-
 // ===== CALENDAR SECTION =====
 let currentCalendarDate = new Date();
 
 function loadCalendar() {
-    const user = getCurrentUser();
-    const events = JSON.parse(localStorage.getItem('events') || '[]');
     const content = document.getElementById('calendarContent');
     
-    let html = '<div class="calendar-wrapper">';
-    
-    // Add event button for admin
-    if (isAdmin()) {
-        html += `
-            <div style="margin-bottom: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
-                <button onclick="showAddEventModal()" style="
-                    background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-                    color: var(--white);
-                    padding: 12px 30px;
-                    border: none;
-                    border-radius: 25px;
-                    font-size: 16px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
-                ">+ Dodaj nov dogodek</button>
-                <button onclick="showAllEventsModal()" style="
-                    background: var(--white);
-                    color: var(--dark-violet);
-                    padding: 12px 30px;
-                    border: 2px solid var(--mid-violet);
-                    border-radius: 25px;
-                    font-size: 16px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                ">📅 Poglej vse dogodke</button>
-            </div>
-        `;
-    }
+    content.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+            padding: 40px 30px;
+            border-radius: 15px;
+            border: 2px solid #ffc107;
+            text-align: center;
+        ">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px;">Vsebina se začne konec marca</h3>
+            <p style="color: var(--text-dark); font-size: 18px; line-height: 1.8; margin-bottom: 15px;">
+                Z dogodki in vsem, kar je na voljo v koledarju, bomo začeli konec marca. Takrat se bo tudi začela vaša naročnina, zato se ni treba skrbeti.
+            </p>
+            <p style="color: var(--text-light); font-size: 16px; margin-top: 20px;">
+                Hvala za vaše razumevanje in potrpežljivost!
+            </p>
+        </div>
+    `;
     
     // Calendar header
     const monthNames = ['Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij', 'Avgust', 'September', 'Oktober', 'November', 'December'];
@@ -1152,15 +820,6 @@ document.addEventListener('click', function(e) {
         closeAllEventsModal();
     }
     
-    const ebookModal = document.getElementById('addEbookModal');
-    if (ebookModal && e.target === ebookModal) {
-        closeAddEbookModal();
-    }
-    
-    const ebookDetailsModal = document.getElementById('ebookDetailsModal');
-    if (ebookDetailsModal && e.target === ebookDetailsModal) {
-        closeEbookDetailsModal();
-    }
 });
 
 function showAddEventModal() {

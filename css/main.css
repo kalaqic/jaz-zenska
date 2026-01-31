@@ -1310,11 +1310,36 @@ nav a:hover::after {
 
 @media (max-width: 768px) {
     .hero-content-left {
-        padding: 40px 30px;
+        padding: 40px 20px;
     }
     
     .hero-content-left h1 {
-        font-size: 36px;
+        font-size: 32px;
+        text-align: left;
+        width: 100%;
+    }
+    
+    .hero-signature {
+        font-size: 48px;
+        position: relative !important;
+        right: auto !important;
+        left: 0 !important;
+        top: auto !important;
+        transform: none !important;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        display: block;
+    }
+    
+    .hero-wrapper .hero-signature,
+    .hero-content-left .hero-signature {
+        position: relative !important;
+        right: auto !important;
+        left: 0 !important;
+        top: auto !important;
+        transform: none !important;
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
     
     .hero-label {
@@ -3434,11 +3459,15 @@ nav a:hover::after {
     }
     
     .newsletter-form-wrapper {
-        margin-top: 60px;
-        padding-top: 60px;
-        margin-left: 0;
-        margin-right: 0;
-        width: 100%;
+        margin-top: 0;
+        padding-top: 80px;
+        padding-bottom: 80px;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+        width: 100vw;
+        padding-left: 20px;
+        padding-right: 20px;
+        box-sizing: border-box;
     }
     
     .newsletter-title {
@@ -3649,12 +3678,74 @@ nav a:hover::after {
 
 @media (max-width: 768px) {
     .testimonials-section {
-        padding: 100px 0;
+        padding: 60px 0 0 0;
     }
     
     .testimonials-section h2 {
-        font-size: 42px;
-        margin: 0 0 60px 0;
+        font-size: 36px;
+        margin-bottom: 40px;
+    }
+    
+    .testimonials-carousel {
+        gap: 10px;
+        margin-bottom: 60px;
+        padding: 0 10px;
+    }
+    
+    .testimonial-card-wrapper {
+        min-height: auto;
+        max-width: 100%;
+    }
+    
+    .testimonial-card {
+        padding: 30px 20px;
+        border-radius: 20px;
+    }
+    
+    .testimonial-quote {
+        font-size: 50px;
+        top: 10px;
+        left: 15px;
+        margin-bottom: -10px;
+    }
+    
+    .testimonial-text-preview {
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        max-width: 100%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .testimonial-card {
+        height: auto;
+        min-height: auto;
+    }
+    
+    .testimonial-read-more {
+        padding: 12px 24px;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .author-name {
+        font-size: 13px;
+    }
+    
+    .testimonial-nav-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .testimonial-nav-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .testimonials-section h2 {
+        font-size: 36px;
+        margin: 0 0 40px 0;
     }
     
     .testimonials-grid {
@@ -3663,17 +3754,21 @@ nav a:hover::after {
     }
     
     .testimonial-card {
-        padding: 40px 30px;
+        padding: 30px 20px;
+        height: auto;
+        min-height: auto;
     }
     
     .testimonial-text {
-        font-size: 20px;
+        font-size: 18px;
+        line-height: 1.6;
     }
     
     .testimonial-quote {
-        font-size: 100px;
-        top: 15px;
-        left: 25px;
+        font-size: 50px;
+        top: 10px;
+        left: 15px;
+        margin-bottom: -10px;
     }
 }
 
@@ -4749,11 +4844,11 @@ nav a:hover::after {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
-    max-width: 900px;
+    max-width: 950px;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.5s ease, visibility 0.5s ease;
-    z-index: 10;
+    z-index: 20000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4767,8 +4862,8 @@ nav a:hover::after {
 .scheduling-content {
     background: var(--white);
     border-radius: 30px;
-    padding: 40px 35px;
-    max-width: 700px;
+    padding: 30px;
+    max-width: 1000px;
     width: 100%;
     box-shadow: 0 20px 60px rgba(100, 56, 67, 0.2);
     text-align: center;
@@ -4776,14 +4871,32 @@ nav a:hover::after {
 
 .scheduling-content h3 {
     font-family: 'Playfair Display', serif;
-    font-size: 28px;
+    font-size: 24px;
     color: var(--dark-violet);
-    margin-bottom: 25px;
+    margin-bottom: 20px;
+}
+
+.scheduling-layout {
+    display: flex;
+    gap: 170px;
+    align-items: flex-start;
+}
+
+.scheduling-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.scheduling-right {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Calendar Styles */
 .calendar-container {
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
 .calendar-header {
@@ -4823,16 +4936,16 @@ nav a:hover::after {
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    margin-bottom: 20px;
+    gap: 4px;
+    margin-bottom: 15px;
 }
 
 .calendar-day-header {
     text-align: center;
     font-weight: 600;
     color: var(--dark-violet);
-    padding: 8px 4px;
-    font-size: 12px;
+    padding: 6px 2px;
+    font-size: 11px;
 }
 
 .calendar-day {
@@ -4840,10 +4953,10 @@ nav a:hover::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--dark-violet);
     background: var(--almost-white);
 }
@@ -4906,30 +5019,30 @@ nav a:hover::after {
 
 /* Time Slots */
 .time-slots-container {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .time-slots-container h4 {
     font-family: 'Playfair Display', serif;
-    font-size: 18px;
+    font-size: 16px;
     color: var(--dark-violet);
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .time-slots-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 6px;
 }
 
 .time-slot {
-    padding: 10px 16px;
+    padding: 8px 12px;
     background: var(--almost-white);
     border: 2px solid transparent;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--dark-violet);
     text-align: center;
 }
@@ -4951,11 +5064,11 @@ nav a:hover::after {
 }
 
 .selected-info {
-    margin-bottom: 20px;
-    padding: 15px;
+    margin-bottom: 15px;
+    padding: 12px;
     background: rgba(100, 56, 67, 0.05);
-    border-radius: 10px;
-    min-height: 50px;
+    border-radius: 8px;
+    min-height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4968,7 +5081,7 @@ nav a:hover::after {
 }
 
 .form-inputs-container {
-    margin-top: 20px;
+    margin-top: 0;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
@@ -5016,20 +5129,19 @@ nav a:hover::after {
 }
 
 .schedule-call-btn {
-    padding: 18px 45px;
+    padding: 16px 40px;
     background: var(--mid-violet);
     color: var(--white);
     border: none;
     border-radius: 8px;
     font-family: 'Inter', sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 8px 24px rgba(100, 56, 67, 0.2);
     width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
+    margin-top: auto;
     display: block;
 }
 
@@ -5042,6 +5154,10 @@ nav a:hover::after {
 .schedule-call-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.privacy-checkbox-container {
+    margin-bottom: 25px;
 }
 
 .privacy-checkbox-label {
@@ -5524,6 +5640,20 @@ nav a:hover::after {
     
     .header-content {
         padding: 0 15px;
+        flex-wrap: wrap;
+    }
+    
+    .header-logo {
+        margin-left: 0;
+        margin-right: auto;
+        flex-shrink: 0;
+    }
+    
+    .header-logo img {
+        height: 60px;
+        width: auto;
+        margin-right: 0;
+        max-width: 180px;
     }
     
     .header-consultation-btn {
@@ -5535,11 +5665,31 @@ nav a:hover::after {
     }
     
     /* Hero Section */
+    .hero-wrapper {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+    
+    .hero-content-left {
+        padding: 40px 20px;
+        min-height: auto;
+        width: 100%;
+    }
+    
+    .hero-content-left h1 {
+        font-size: 32px;
+        line-height: 1.2;
+        padding-right: 0;
+    }
+    
+    .hero-image-right {
+        height: 400px;
+        order: -1;
+    }
+    
     .hero {
         height: auto;
-        min-height: 500px;
-        padding: 60px 20px;
-        flex-direction: column;
+        min-height: auto;
     }
     
     .hero-content {
@@ -5793,17 +5943,59 @@ nav a:hover::after {
     }
     
     .scheduling-content {
-        padding: 40px 20px;
+        padding: 30px 20px;
         max-width: 100%;
     }
     
     .scheduling-content h3 {
-        font-size: 28px;
-        margin-bottom: 30px;
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+    
+    .scheduling-layout {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .scheduling-left,
+    .scheduling-right {
+        width: 100%;
+    }
+    
+    .calendar-container {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        padding: 0 5px;
+    }
+    
+    .calendar-grid {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        gap: 3px;
+        grid-template-columns: repeat(7, 1fr);
+    }
+    
+    .calendar-day-header {
+        font-size: 9px;
+        padding: 4px 1px;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .calendar-day {
+        font-size: 11px;
+        min-width: 0;
+        width: 100%;
+        aspect-ratio: 1;
+        max-width: 100%;
     }
     
     .calendar-header h4 {
-        font-size: 20px;
+        font-size: 16px;
     }
     
     .time-slots-grid {
@@ -5811,9 +6003,17 @@ nav a:hover::after {
     }
     
     .stik-z-nami-image {
-        min-height: 300px;
+        min-height: 150px;
+        height: 150px;
         border-radius: 25px;
         order: 1;
+    }
+    
+    .stik-z-nami-image img {
+        width: 200%;
+        height: 100%;
+        object-fit: cover;
+        object-position: left center;
     }
     
     .stik-z-nami-content {
@@ -5826,6 +6026,7 @@ nav a:hover::after {
         font-size: 28px;
         margin-bottom: 20px;
     }
+    
     
     .stik-z-nami-content p {
         font-size: 15px;
@@ -5870,9 +6071,23 @@ nav a:hover::after {
         min-height: auto;
     }
     
+    footer {
+        padding-top: 40px;
+        display: flex;
+        flex-direction: column;
+    }
+    
     .footer-logo-text {
-        margin-top: -120px;
-        margin-bottom: 40px;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-bottom: 0;
+        order: 2;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .footer-logo-text::after {
+        display: none;
     }
     
     .footer-content {
@@ -5881,6 +6096,11 @@ nav a:hover::after {
         text-align: center;
         padding: 0 20px;
         margin-bottom: 30px;
+        order: 3;
+    }
+    
+    .footer-section:first-of-type {
+        margin-top: 0;
     }
     
     .footer-section {

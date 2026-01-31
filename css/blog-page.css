@@ -454,3 +454,243 @@
     }
 }
 
+/* ===== EBOOK MODAL ===== */
+.ebook-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ebook-modal.active {
+    display: flex;
+}
+
+.ebook-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 10001;
+}
+
+.ebook-modal-content {
+    position: relative;
+    background: var(--white);
+    border-radius: 20px;
+    max-width: 500px;
+    width: 100%;
+    z-index: 10002;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s ease;
+}
+
+.ebook-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: var(--almost-white);
+    border: none;
+    border-radius: 50%;
+    font-size: 28px;
+    color: var(--dark-violet);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10003;
+    line-height: 1;
+}
+
+.ebook-modal-close:hover {
+    background: var(--pinky);
+    color: var(--white);
+    transform: rotate(90deg);
+}
+
+.ebook-modal-header {
+    padding: 40px 40px 20px;
+    text-align: center;
+    border-bottom: 2px solid var(--almost-white);
+}
+
+.ebook-modal-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--dark-violet);
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+.ebook-modal-header p {
+    font-size: 16px;
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.ebook-modal-body {
+    padding: 30px 40px 40px;
+}
+
+.ebook-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.ebook-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ebook-form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dark-violet);
+}
+
+.ebook-form-group input[type="text"],
+.ebook-form-group input[type="email"] {
+    padding: 14px 18px;
+    border: 2px solid var(--almost-white);
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.3s ease;
+    background: var(--white);
+    color: var(--text-dark);
+}
+
+.ebook-form-group input[type="text"]:focus,
+.ebook-form-group input[type="email"]:focus {
+    outline: none;
+    border-color: var(--pinky);
+    box-shadow: 0 0 0 3px rgba(200, 142, 167, 0.1);
+}
+
+.ebook-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-light);
+    cursor: pointer;
+    line-height: 1.5;
+}
+
+.ebook-checkbox-label input[type="checkbox"] {
+    margin-top: 3px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.ebook-checkbox-label a {
+    color: var(--mid-violet);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.ebook-checkbox-label a:hover {
+    color: var(--dark-violet);
+}
+
+.ebook-submit-button {
+    background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
+    color: var(--white);
+    border: none;
+    padding: 16px 32px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    box-shadow: 0 4px 15px rgba(200, 142, 167, 0.3);
+    margin-top: 10px;
+}
+
+.ebook-submit-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(200, 142, 167, 0.4);
+    background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+}
+
+.ebook-submit-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.ebook-success-message {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.ebook-success-message svg {
+    color: #10b981;
+    margin-bottom: 20px;
+}
+
+.ebook-success-message h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--dark-violet);
+    margin-bottom: 15px;
+}
+
+.ebook-success-message p {
+    font-size: 16px;
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+/* Ebook button in blog content */
+.ebook-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(200, 142, 167, 0.5);
+}
+
+/* Responsive Design for Ebook Modal */
+@media (max-width: 768px) {
+    .ebook-modal-content {
+        max-width: 100%;
+        border-radius: 15px;
+    }
+    
+    .ebook-modal-header {
+        padding: 30px 25px 15px;
+    }
+    
+    .ebook-modal-header h2 {
+        font-size: 26px;
+    }
+    
+    .ebook-modal-body {
+        padding: 25px;
+    }
+    
+    .ebook-modal-close {
+        top: 15px;
+        right: 15px;
+        width: 35px;
+        height: 35px;
+        font-size: 24px;
+    }
+}
+

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brezplačna e-knjiga - Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #f8f4f7 0%, #f0e8ed 50%, #fff6f9 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(200, 142, 167, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(153, 98, 122, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .ebook-container {
+            max-width: 500px;
+            width: 100%;
+            background: var(--white, #ffffff);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 50px 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .ebook-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .ebook-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--dark-violet, #643843);
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+        
+        .ebook-header p {
+            font-size: 16px;
+            color: var(--text-light, #666);
+            line-height: 1.6;
+        }
+        
+        .ebook-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .ebook-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .ebook-form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-violet, #643843);
+        }
+        
+        .ebook-form-group input[type="text"],
+        .ebook-form-group input[type="email"] {
+            padding: 14px 18px;
+            border: 2px solid var(--almost-white, #f5f5f5);
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+            background: var(--white, #ffffff);
+            color: var(--text-dark, #333);
+        }
+        
+        .ebook-form-group input[type="text"]:focus,
+        .ebook-form-group input[type="email"]:focus {
+            outline: none;
+            border-color: var(--pinky, #c88ea7);
+            box-shadow: 0 0 0 3px rgba(200, 142, 167, 0.1);
+        }
+        
+        .ebook-checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-light, #666);
+            cursor: pointer;
+            line-height: 1.5;
+        }
+        
+        .ebook-checkbox-label input[type="checkbox"] {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .ebook-checkbox-label a {
+            color: var(--mid-violet, #99627a);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        
+        .ebook-checkbox-label a:hover {
+            color: var(--dark-violet, #643843);
+        }
+        
+        .ebook-submit-button {
+            background: linear-gradient(135deg, var(--pinky, #c88ea7) 0%, var(--mid-violet, #99627a) 100%);
+            color: var(--white, #ffffff);
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 4px 15px rgba(200, 142, 167, 0.3);
+            margin-top: 10px;
+        }
+        
+        .ebook-submit-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(200, 142, 167, 0.4);
+            background: linear-gradient(135deg, var(--mid-violet, #99627a) 0%, var(--dark-violet, #643843) 100%);
+        }
+        
+        .ebook-submit-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .ebook-success-message {
+            text-align: center;
+            padding: 20px 0;
+            display: none;
+        }
+        
+        .ebook-success-message.active {
+            display: block;
+        }
+        
+        .ebook-success-message svg {
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+        
+        .ebook-success-message h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--dark-violet, #643843);
+            margin-bottom: 15px;
+        }
+        
+        .ebook-success-message p {
+            font-size: 16px;
+            color: var(--text-light, #666);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .back-button {
+            display: inline-block;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--pinky, #c88ea7) 0%, var(--mid-violet, #99627a) 100%);
+            color: var(--white, #ffffff);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(200, 142, 167, 0.2);
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(200, 142, 167, 0.3);
+            background: linear-gradient(135deg, var(--mid-violet, #99627a) 0%, var(--dark-violet, #643843) 100%);
+        }
+        
+        @media (max-width: 768px) {
+            .ebook-container {
+                padding: 40px 30px;
+            }
+            
+            .ebook-header h1 {
+                font-size: 28px;
+            }
+            
+            .ebook-header p {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ebook-container">
+        <div class="ebook-header">
+            <h1>Pridobite brezplačno e-knjigo</h1>
+            <p>Vnesite vaš email naslov in prejmite e-knjigo "25 stopnic do sreče"</p>
+        </div>
+        
+        <form id="ebook-form" class="ebook-form">
+            <div class="ebook-form-group">
+                <label for="ebook-name">Ime</label>
+                <input type="text" id="ebook-name" name="name" placeholder="Vaše ime" required>
+            </div>
+            <div class="ebook-form-group">
+                <label for="ebook-email">Email naslov</label>
+                <input type="email" id="ebook-email" name="email" placeholder="vas@email.com" required>
+            </div>
+            <div class="ebook-form-group">
+                <label class="ebook-checkbox-label">
+                    <input type="checkbox" id="ebook-privacy-checkbox" required>
+                    <span>Strinjam se s <a href="pravilnik-o-zasebnosti.html" target="_blank">politiko zasebnosti</a></span>
+                </label>
+            </div>
+            <button type="submit" class="ebook-submit-button" id="ebook-submit-btn">
+                <span class="ebook-submit-text">Pridobite e-knjigo</span>
+                <span class="ebook-submit-loading" style="display: none;">Pošiljanje...</span>
+            </button>
+        </form>
+        
+        <div id="ebook-success-message" class="ebook-success-message">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path d="M8 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h2>Hvala!</h2>
+            <p>Poslali vam bomo knjigo na vaš email v kratkem.</p>
+            <a href="index.html" class="back-button">Nazaj na domačo</a>
+        </div>
+    </div>
+    
+    <script>
+        const ebookForm = document.getElementById('ebook-form');
+        const successMessage = document.getElementById('ebook-success-message');
+        const ebookNameInput = document.getElementById('ebook-name');
+        
+        // Capitalize first letter of name field (same logic as webinar form)
+        if (ebookNameInput) {
+            ebookNameInput.addEventListener('input', function(e) {
+                const value = e.target.value;
+                if (value.length > 0) {
+                    e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+                }
+            });
+        }
+        
+        ebookForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const nameInput = document.getElementById('ebook-name');
+            const emailInput = document.getElementById('ebook-email');
+            const privacyCheckbox = document.getElementById('ebook-privacy-checkbox');
+            const submitBtn = document.getElementById('ebook-submit-btn');
+            const submitText = submitBtn.querySelector('.ebook-submit-text');
+            const submitLoading = submitBtn.querySelector('.ebook-submit-loading');
+            
+            // Get form values
+            let name = nameInput ? nameInput.value.trim() : '';
+            // Capitalize first letter of name
+            if (name) {
+                name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+            }
+            const email = emailInput ? emailInput.value.trim() : '';
+            
+            // Validate privacy checkbox
+            if (!privacyCheckbox || !privacyCheckbox.checked) {
+                alert('Prosimo, strinjajte se s politiko zasebnosti.');
+                if (privacyCheckbox) privacyCheckbox.focus();
+                return;
+            }
+            
+            // Validate email
+            if (!email || !email.includes('@')) {
+                alert('Prosimo, vnesite veljaven email naslov.');
+                if (emailInput) emailInput.focus();
+                return;
+            }
+            
+            // Validate name
+            if (!name) {
+                alert('Prosimo, vnesite vaše ime.');
+                if (nameInput) nameInput.focus();
+                return;
+            }
+            
+            // Disable submit button and show loading
+            submitBtn.disabled = true;
+            if (submitText) submitText.style.display = 'none';
+            if (submitLoading) submitLoading.style.display = 'inline';
+            
+            // Get API base URL
+            const API_BASE_URL = window.location.origin;
+            const API_URL = `${API_BASE_URL}/api/newsletter`;
+            
+            // Prepare data for backend
+            const requestData = {
+                email: email,
+                name: name
+            };
+            
+            try {
+                // Make API request to backend proxy
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // Success - show success message
+                    ebookForm.style.display = 'none';
+                    successMessage.classList.add('active');
+                } else {
+                    // Error handling
+                    if (result.error && result.error.includes('already')) {
+                        alert('Ta email naslov je že prijavljen. Hvala!');
+                        // Still show success message
+                        ebookForm.style.display = 'none';
+                        successMessage.classList.add('active');
+                    } else {
+                        alert(`Napaka: ${result.error || result.message || 'Prišlo je do napake. Prosimo, poskusite znova.'}`);
+                        // Re-enable submit button
+                        submitBtn.disabled = false;
+                        if (submitText) submitText.style.display = 'inline';
+                        if (submitLoading) submitLoading.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error submitting ebook form:', error);
+                alert('Prišlo je do napake pri pošiljanju. Prosimo, poskusite znova pozneje.');
+                
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                if (submitText) submitText.style.display = 'inline';
+                if (submitLoading) submitLoading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
