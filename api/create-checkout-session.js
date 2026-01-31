@@ -72,29 +72,10 @@ module.exports = async function handler(req, res) {
         const plan = body.plan || 'yearly'; // Default to yearly
         console.log('Selected plan:', plan);
         const isYearly = plan === 'yearly';
-        
-        // Get business information if provided
-        const isBusiness = body.isBusiness || false;
-        const businessData = body.business || null;
-        console.log('Is business purchase:', isBusiness);
-        console.log('Business data:', businessData);
 
         // Get the origin to construct success/cancel URLs
         const origin = req.headers.origin || req.headers.referer || 'http://localhost:3000';
         const baseUrl = origin.replace(/\/$/, ''); // Remove trailing slash
-
-        // Prepare metadata
-        const metadata = {
-            plan: plan,
-            subscription_type: isYearly ? 'yearly' : 'monthly',
-        };
-        
-        // Add business information to metadata if provided
-        if (isBusiness && businessData) {
-            metadata.is_business = 'true';
-            metadata.company_name = businessData.companyName || '';
-            metadata.vat_number = businessData.vatNumber || '';
-        }
 
         // Create Stripe Checkout Session with subscription
         const session = await stripe.checkout.sessions.create({
@@ -122,7 +103,7 @@ module.exports = async function handler(req, res) {
             // Enable business customer information collection
             customer_creation: 'always',
             
-            // Generate invoices (always enabled, especially useful for business customers)
+            // Generate invoices (useful for business customers)
             invoice_creation: {
                 enabled: true,
             },
@@ -139,15 +120,12 @@ module.exports = async function handler(req, res) {
             // Enable payment method saving for subscriptions (required for SEPA)
             payment_method_collection: 'always',
             
-            // Add business information to customer if provided
-            ...(isBusiness && businessData && {
-                customer_email: null, // Let Stripe collect email
-                // Business information will be added via metadata and can be updated in customer_update
-            }),
-            
             success_url: `${baseUrl}/checkout-success.html?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${baseUrl}/checkout.html?canceled=true`,
-            metadata: metadata,
+            metadata: {
+                plan: plan,
+                subscription_type: isYearly ? 'yearly' : 'monthly',
+            },
         });
 
         return res.status(200).json({ 

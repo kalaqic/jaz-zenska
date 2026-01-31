@@ -86,8 +86,8 @@ The checkout accepts the following payment methods:
    - Instant payment
    - Works for both individual and business customers
 
-2. **SEPA Direct Debit** (Bank Account)
-   - Direct bank transfer from customer's bank account
+2. **SEPA Direct Debit** (Automatic Bank Transfer)
+   - Automatic recurring bank transfer from customer's bank account
    - Available for customers in SEPA countries (EU, UK, etc.)
    - Takes 1-2 business days to process
    - Requires customer's IBAN and bank account details
