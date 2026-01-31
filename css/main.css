@@ -907,14 +907,20 @@ nav a:hover::after {
     font-weight: bold;
     margin-bottom: 40px;
     text-align: left;
-    max-width: 100%;
-    width: 100%;
+    max-width: none;
+    width: auto;
     white-space: normal;
-    word-spacing: normal;
-    letter-spacing: -0.5px;
-    text-transform: none !important;
-    box-sizing: border-box;
-    padding-right: 20px;
+    overflow: visible;
+}
+
+.hero-content-left h1 img {
+    
+    width: 190% !important;
+    height: auto !important;
+    min-height: 200px;
+    object-fit: contain;
+    display: block;
+    margin-left: -5%;
 }
 
 .hero-signature {
@@ -964,7 +970,9 @@ nav a:hover::after {
     border-radius: 4px;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
-    margin-top: 20px;
+    margin-top: -40px;
+    position: relative;
+    z-index: 10;
 }
 
 .hero-cta-btn:hover {
@@ -1317,6 +1325,12 @@ nav a:hover::after {
         font-size: 32px;
         text-align: left;
         width: 100%;
+    }
+    
+    .hero-content-left h1 img {
+        max-width: 110%;
+        width: 110%;
+        margin-left: -5%;
     }
     
     .hero-signature {
@@ -6066,28 +6080,38 @@ nav a:hover::after {
     
     /* Footer */
     footer {
-        padding: 160px 0 60px;
+        padding-top: 40px;
+        padding-bottom: 60px;
         position: relative;
         min-height: auto;
     }
     
-    footer {
-        padding-top: 40px;
-        display: flex;
-        flex-direction: column;
-    }
-    
     .footer-logo-text {
-        margin-top: 0;
-        margin-bottom: 0;
+        margin-top: 40px !important;
+        margin-bottom: 30px !important;
         padding-bottom: 0;
-        order: 2;
+        padding-top: 0;
         text-align: center;
-        margin-bottom: 30px;
+        display: block !important;
+        position: relative;
     }
     
     .footer-logo-text::after {
         display: none;
+    }
+    
+    .footer-logo-text img {
+        max-width: 180px;
+        height: auto;
+        display: block !important;
+        margin: 0 auto;
+        visibility: visible !important;
+        opacity: 0.95 !important;
+    }
+    
+    .footer-logo-link {
+        display: inline-block !important;
+        visibility: visible !important;
     }
     
     .footer-content {
@@ -6096,11 +6120,12 @@ nav a:hover::after {
         text-align: center;
         padding: 0 20px;
         margin-bottom: 30px;
-        order: 3;
+        margin-top: 0;
     }
     
     .footer-section:first-of-type {
         margin-top: 0;
+        padding-top: 0;
     }
     
     .footer-section {
@@ -6716,6 +6741,14 @@ footer {
     position: relative;
     padding-bottom: 0px;
     z-index: 2;
+}
+
+@media (max-width: 768px) {
+    .footer-logo-text {
+        margin-top: 40px !important;
+        margin-bottom: 30px !important;
+        padding-top: 0 !important;
+    }
 }
 
 .footer-logo-link {
