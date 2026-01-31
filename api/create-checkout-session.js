@@ -100,12 +100,9 @@ module.exports = async function handler(req, res) {
             mode: 'subscription',
             locale: 'sl', // Slovenian language
             
-            // Note: customer_creation is not needed in subscription mode - Stripe creates customers automatically
-            
-            // Generate invoices (useful for business customers)
-            invoice_creation: {
-                enabled: true,
-            },
+            // Note: In subscription mode, Stripe automatically:
+            // - Creates customers
+            // - Generates invoices (no need to enable invoice_creation)
             
             // Collect billing address (required for SEPA and business invoices)
             billing_address_collection: 'required',
