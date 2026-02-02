@@ -19,10 +19,10 @@ function initDataStructures() {
         const samplePosts = [
             {
                 id: '1',
-                title: 'Dobrodošle v skupnost Jaz Ženska!',
+                title: 'Dobrodošla v skupnosti!',
                 author: 'Marjanca',
                 authorId: 'admin',
-                content: 'Dobrodošle v skupnost Jaz Ženska! Skupaj bomo rastle in se podpirale na naši poti. Ta skupnost je prostor za varno okolje, kjer se lahko izražate, delite svoje izkušnje in se učite druga od druge. Skupaj bomo gradile močno skupnost žensk, ki podpirajo druga drugo na poti osebne rasti in spremembe.',
+                content: 'Dobrodošla v skupnosti Jaz Ženska! Skupaj bomo rastle in se podpirale na naši poti. Ta skupnost je prostor za varno okolje, kjer se lahko izražate, delite svoje izkušnje in se učite druga od druge. Skupaj bomo gradile močno skupnost žensk, ki podpirajo druga drugo na poti osebne rasti in spremembe.',
                 createdAt: new Date().toISOString(),
                 likes: [],
                 comments: []

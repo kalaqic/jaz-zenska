@@ -79,8 +79,8 @@ module.exports = async function handler(req, res) {
 
         // Create Stripe Checkout Session with subscription
         const session = await stripe.checkout.sessions.create({
-            // Payment methods: Card and Bank Transfer
-            payment_method_types: ['card', 'link'],
+            // Payment methods: Card, Link, and SEPA Direct Debit
+            payment_method_types: ['card', 'link', 'sepa_debit'],
             line_items: [
                 {
                     price_data: {
