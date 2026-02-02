@@ -681,19 +681,12 @@
             }
         }
 
-        // Check if canceled
+        // Check if canceled - just show the plan selection screen
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('canceled') === 'true') {
-            document.getElementById('productInfo').style.display = 'none';
-            document.getElementById('checkoutContent').innerHTML = `
-                <div class="product-info">
-                    <div class="checkout-error" style="background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%); color: #856404; border: 2px solid #ffc107; text-align: center;">
-                        <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 15px;">Plačilo preklicano</h3>
-                        <p style="font-size: 16px; line-height: 1.6; margin-bottom: 25px;">Vaše plačilo je bilo preklicano. Če želite nadaljevati z naročnino, kliknite spodaj.</p>
-                        <button class="checkout-button" onclick="window.location.href='checkout.html'">Nadaljuj z nakupom</button>
-                    </div>
-                </div>
-            `;
+            // Remove the canceled parameter from URL to clean it up
+            window.history.replaceState({}, document.title, window.location.pathname);
+            // The plan selection screen is already visible, no need to change anything
         }
     </script>
 </body>
