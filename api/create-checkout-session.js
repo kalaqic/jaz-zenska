@@ -117,9 +117,6 @@ module.exports = async function handler(req, res) {
             // Enable payment method saving for subscriptions (required for SEPA)
             payment_method_collection: 'always',
             
-            // Add logo to checkout page
-            images: [`${baseUrl}/images/Jaz Zenska Logo Horizontal.png`],
-            
             success_url: `${baseUrl}/checkout-success.html?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${baseUrl}/checkout.html?canceled=true`,
             metadata: {

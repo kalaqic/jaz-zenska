@@ -163,22 +163,27 @@ async function loadCommunity() {
     
     let html = '';
     
-    // Disclaimer message
+    // Welcome message
     html += `
         <div style="
-            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
-            padding: 25px 30px;
-            border-radius: 15px;
+            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
+            padding: 40px 35px;
+            border-radius: 20px;
             margin-bottom: 30px;
-            border: 2px solid #ffc107;
-            text-align: center;
+            border-left: 5px solid var(--mid-violet);
+            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
         ">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark-violet); margin-bottom: 15px;">Vsebina se začne konec marca</h3>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.7; margin-bottom: 10px;">
-                Z vsebino in vsem, kar je na voljo v skupnosti, bomo začeli konec marca. Takrat se bo tudi začela vaša naročnina, zato se ni treba skrbeti.
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px; text-align: center;">Dobrodošla draga Ženska!</h3>
+            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-bottom: 15px; text-align: center;">
+                Hvala ker si se nam pridružila. S skupnim delom bomo začele <strong>25. marca</strong>. Do takrat te vabim da si pogledaš zanimive vsebine na naši spletni strani in se nam pridružiš na FB, instagramu in youtubu.
             </p>
-            <p style="color: var(--text-light); font-size: 14px; margin-top: 15px;">
-                Hvala za vaše razumevanje in potrpežljivost!
+            <div style="background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(153, 98, 122, 0.2);">
+                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px;">
+                    <strong style="color: var(--dark-violet);">Tvoja članarina začne teči s 1. aprilom 2026</strong>, če pa si plačala letno članarino, le ta velja do 31. 12. 2027.
+                </p>
+            </div>
+            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-top: 20px; text-align: center;">
+                Veselim se sodelovanja s tabo. Če imaš že sedaj kakšna vprašanja ali izzive, mi lahko pišeš na <a href="mailto:Marjanca@jazzenska.com" style="color: var(--mid-violet); text-decoration: underline; font-weight: 600;">Marjanca@jazzenska.com</a>.
             </p>
         </div>
     `;
