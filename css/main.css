@@ -1618,10 +1618,42 @@ nav a:hover::after {
     margin: 0;
     padding: 40px 20px;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background: var(--main-white);
+}
+
+.current-event-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    padding-top: 40px;
+}
+
+.current-event-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    color: var(--dark-violet);
+    text-align: center;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.current-event-subtitle {
+    font-size: 16px;
+    color: var(--text-light);
+    text-align: center;
+    margin-bottom: 30px;
+    font-style: italic;
+    position: relative;
+    z-index: 1;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 500;
 }
 
 .current-event-image-section::before {
@@ -2325,6 +2357,21 @@ nav a:hover::after {
         margin-bottom: 20px;
     }
     
+    .current-event-container {
+        padding-top: 30px;
+    }
+    
+    .current-event-title {
+        font-size: 36px;
+        margin-bottom: 8px;
+    }
+    
+    .current-event-subtitle {
+        font-size: 14px;
+        margin-bottom: 25px;
+        letter-spacing: 1.5px;
+    }
+    
     .programs-description-desktop {
         display: none;
     }
@@ -2803,16 +2850,16 @@ nav a:hover::after {
 
 .guarantee-title {
     font-family: 'Playfair Display', serif;
-    font-size: 48px;
-    margin-bottom: 20px;
+    font-size: 36px;
+    margin-bottom: 15px;
     color: var(--white);
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .guarantee-text {
-    font-size: 20px;
+    font-size: 16px;
     line-height: 1.6;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     opacity: 0.95;
     max-width: 700px;
     margin-left: auto;
@@ -2830,14 +2877,14 @@ nav a:hover::after {
 .guarantee-detail-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: rgba(255, 255, 255, 0.15);
-    padding: 15px 25px;
+    padding: 12px 20px;
     border-radius: 50px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     font-weight: 600;
-    font-size: 16px;
+    font-size: 14px;
     transition: all 0.3s ease;
 }
 
@@ -2870,12 +2917,12 @@ nav a:hover::after {
     }
     
     .guarantee-title {
-        font-size: 36px;
+        font-size: 28px;
     }
     
     .guarantee-text {
-        font-size: 18px;
-        margin-bottom: 30px;
+        font-size: 14px;
+        margin-bottom: 25px;
     }
     
     .guarantee-details {

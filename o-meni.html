@@ -240,17 +240,25 @@
         }
         
         .learning-images-row img {
-            width: calc(20% - 12px);
-            max-width: 150px;
-            height: auto;
+            width: calc(25% - 12px);
+            max-width: 180px;
+            height: calc(25% - 12px);
+            max-height: 180px;
+            aspect-ratio: 1 / 1;
             border-radius: 8px;
             object-fit: cover;
+            object-position: top;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
         }
         
         .learning-images-row img:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .learning-image-zoom-wrapper:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
@@ -387,6 +395,8 @@
             .learning-images-row img {
                 width: calc(33.333% - 7px);
                 max-width: 120px;
+                height: calc(33.333% - 7px);
+                max-height: 120px;
             }
         }
         
@@ -394,6 +404,8 @@
             .learning-images-row img {
                 width: calc(50% - 5px);
                 max-width: 100px;
+                height: calc(50% - 5px);
+                max-height: 100px;
             }
         }
     </style>
@@ -491,7 +503,12 @@
                 <img src="images/learning path/20160618_170718-2 (2).jpg" alt="Learning">
                 <img src="images/learning path/38139478_1869536923068727_5126983125015986176_n.jpg" alt="Learning">
                 <img src="images/learning path/BigU2016-638.jpg" alt="Learning">
-                <img src="images/learning path/DSC_0284.JPG" alt="Learning">
+                <img src="images/learning path/dr aleksandar šinigoj.jpg" alt="Learning">
+                <img src="images/learning path/irena kahne.jpg" alt="Learning" style="object-position: center;">
+                <img src="images/learning path/mariana may.jpg" alt="Learning">
+                <div class="learning-image-zoom-wrapper" style="width: calc(25% - 12px); max-width: 180px; height: calc(25% - 12px); max-height: 180px; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                    <img src="images/learning path/snjezana ristic.jpg" alt="Learning" style="object-position: center; width: 100%; height: 100%; transform: scale(1.3); object-fit: cover; transition: transform 0.3s ease;">
+                </div>
             </div>
             
             <h2>Ustvarjanje in delo</h2>
@@ -563,7 +580,7 @@
         <div class="footer-heart-text">Ustvarjeno z ❤ za vse ženske</div>
         
         <div class="footer-bottom">
-            <p>Jaz Ženska © 2025. Vse pravice pridržane.</p>
+            <p>Jaz Ženska © 2026. Vse pravice pridržane.</p>
             <p><a href="pravilnik-o-zasebnosti.html" style="color: inherit; text-decoration: underline; opacity: 0.8;">Piškotki in politika zasebnosti</a></p>
             
             <div class="footer-social">
@@ -717,6 +734,20 @@
                 img.addEventListener('click', function() {
                     openLightbox(index);
                 });
+            });
+            
+            // Also handle clicks on wrapper divs
+            const wrapperDivs = document.querySelectorAll('.learning-image-zoom-wrapper');
+            wrapperDivs.forEach((wrapper, index) => {
+                const img = wrapper.querySelector('img');
+                if (img) {
+                    const imgIndex = Array.from(learningImages).indexOf(img);
+                    if (imgIndex !== -1) {
+                        wrapper.addEventListener('click', function() {
+                            openLightbox(imgIndex);
+                        });
+                    }
+                }
             });
             
             // Close button
