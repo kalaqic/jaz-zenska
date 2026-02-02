@@ -6,51 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Blog content data
 const blogContent = {
-    1: {
-        category: "Meditacije",
-        date: "5 decembra, 2024",
-        title: "Moč jutranjih ritualov",
-        image: "images/jutranji obred.jpg",
-        content: `
-            <p>Ali ste kdaj občutili, da živite življenje, ki ni popolnoma vaše? Da delate stvari, ki vas ne navdihujejo ali napolnjujejo? Za ženske je samoodkrivanje ključ do življenja, ki presega naše najboljše sanje.</p>
-            
-            <p><strong>Zakaj je samoodkrivanje pomembno?</strong><br>
-            Ko razumete, kaj vas resnično navdihuje in napolnjuje, začnete živeti življenje, ki je v skladu z vašo notranjo naravo. To ni samo o sreči - gre za življenje z namenom in izpolnjevanjem.</p>
-            
-            <p><strong>Kako odkriti, kaj vas navdihuje</strong><br>
-            <strong>1. Poslušajte svoja čustva</strong> - Kaj vas navdihuje? Kaj vas napolnjuje z energijo? Kaj vas počuti živahne in navdihnjene?</p>
-            
-            <p><strong>2. Opazujte svoje energijske vzorce</strong> - Kdaj se počutite najbolj energične? Kdaj se počutite najbolj navdihnjene? Kaj vas počuti živahne?</p>
-            
-            <p><strong>3. Vprašajte se, kaj bi naredile, če ne bi bilo omejitev</strong> - Če bi vedele, da ne morete spodleteti, kaj bi naredile? To je pogosto to, kar vas resnično navdihuje.</p>
-            
-            <p><strong>4. Eksperimentirajte</strong> - Poskusite nove stvari. Ne vedite, kaj vas navdihuje, dokler ne poskusite. Eksperimentirajte in odkrijte, kaj vas resnično navdihuje.</p>
-            
-            <p><strong>5. Zaupajte svoji intuiciji</strong> - Vaša intuicija vedno ve, kaj vas navdihuje. Naučite se jo slišati in ji zaupati.</p>
-            
-            <p><strong>Praktični primer: Kako začeti</strong><br>
-            Začnite z enostavnim vprašanjem vsak dan: "Kaj me je danes navdihnilo?" Zapišite si odgovor, tudi če se zdi majhen. Čez čas boste začeli videti vzorce - stvari, ki vas vedno navdihujejo, so pogosto povezane z vašo resnično naravo.</p>
-            
-            <p><strong>Preprečevanje pogostih napak</strong><br>
-            Ne zamenjujte navdihovanja s tem, kar družba pričakuje od vas. Morda vas družba spodbuja k določeni karieri, vendar če vas to ne navdihuje, ni to prava pot za vas. Vaša pot je unikatna in je pomembno, da jo spoštujete.</p>
-            
-            <p><strong>Kako vključiti navdihovanje v vsakdanje življenje</strong><br>
-            Ko odkrijete, kaj vas navdihuje, pomembno je, da to vključite v svoje vsakdanje življenje. To ne pomeni, da morate takoj spremeniti vse - začnite z majhnimi koraki. Če vas navdihuje umetnost, začnite z 15 minutami risanja vsak dan. Če vas navdihuje pomoč drugim, poiščite prostovoljstvo, ki se ujema z vašimi vrednotami.</p>
-            
-            <p><strong>Kako življenje postane več</strong><br>
-            Ko odkrijete, kaj vas resnično navdihuje in napolnjuje, se odprejo možnosti, ki jih prej niste videli. Začnete verovati, da je življenje lahko več - več radosti, več izpolnjevanja, več možnosti. To ni sanje - to je resničnost, ko živite življenje, ki vas navdihuje.</p>
-            
-            <p><strong>Zaključek</strong><br>
-            Odkritje, kaj vas resnično navdihuje, je potovanje, ne cilj. Potrebuje čas, potrpežljivost in pogum. Vendar ko začnete živeti življenje, ki vas navdihuje, boste opazili, kako se vaše življenje začne spreminjati na globlji ravni. Začnete se počutiti bolj izpolnjene, bolj navdihnjene in bolj povezane s seboj.</p>
-            
-            <p><em>"Največji dar, ki si ga lahko podarite, je življenje, ki vas navdihuje in napolnjuje. Odkrijte, kaj vas resnično navdihuje, in zaupajte svoji poti."</em></p>
-            
-            <div class="blog-newsletter-cta">
-                <p class="blog-newsletter-text">Želite več navdihujočih vsebin, kot je ta?</p>
-                <a href="index.html#newsletter" class="blog-newsletter-button">Prijavite se na našo e-novičko</a>
-            </div>
-        `
-    },
     2: {
         category: "Srečno Jaz Zenska",
         date: "15 januarja, 2025",
@@ -77,6 +32,10 @@ const blogContent = {
             <p><strong>"Pot sreče je kot Mlečna cesta na nebu: roj majhnih zvezd, ki jih posamič ne vidimo, vse skupaj pa dajejo svetlobo."</strong><br>
             (Francis Bacon)</p>
             
+            <div style="text-align: center; margin: 25px 0;">
+                <img src="images/blog sreca/jaz ženska 1.jpeg" alt="Jaz Ženska" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            
             <p>Vse naše življenje je pot stkana iz trenutkov in sreča naj ne bo končni cilj, temveč način potovanja, na katerem znamo prepoznati lepote, darove in priložnosti življenja v vseh dimenzijah, ki se nam ponujajo.</p>
             
             <p>Sreča je za vsakega od nas nekaj drugega in drugačna in srečo lahko občutimo samo v sebi in za sebe. Vsakega osrečujejo različne stvari in za vsakega od nas ima sreča drugačen pomen. Zato premislite kaj za vas pomeni sreča in kdaj se počutite srečni. Kaj je tisto kar vas osrečuje, predvsem pa pomislite, kako se lahko osrečite sami. Čakati na srečo in pričakovati od drugih, da nas bodo osrečili, je zagotovo recept za nesrečo. Če bomo dovolili, da bo naša sreča odvisna od drugih, potem skoraj zagotovo ne bomo nikoli zares srečni. Za srečo je pomembno, da gradimo dobro samopodobo, se imamo radi in se zavedamo dragocenosti življenja, ki ga živimo. Življenja, ki nam je bilo dano in ki nam nudi nešteto priložnosti za doživljanje dobrega, lepega in radostnega. Na žalost pa vse prevečkrat hitimo, strmimo za nečem daleč in visoko, hitimo skozi življenje v iskanju in čakanju nečesa v prihodnosti, ali se prepustimo, da nas življenje nosi kot reka, medtem ko smo se izgubili nekje v preteklosti in nam dnevi minevajo v obžalovanju, kesanju in obtoževanju. Namesto ljubezni nas vodi strah, namesto radosti čutimo skrbi, namesto nasmeha imamo zaskrbljen in mrk obraz. Vedno najdemo krivca za vse, kar se nam dogaja nekje izven nas, nizamo izgovore in za svoje neuspehe in pomanjkanje sreče krivimo druge. V strahu pred neuspehom, izgubo in bolečino se zapremo, okoli sebe zgradimo visok zid, zaklenemo vrata in ugasnemo luč.</p>
@@ -93,6 +52,10 @@ const blogContent = {
             
             <p><strong>"Kadar sledite svoji sreči...se vam bodo odprla vrata tam, koder ste mislili, da jih sploh ni; in koder tudi ni vrat za nikogar drugega."</strong><br>
             (Joseph Campbell)</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <img src="images/blog sreca/jaz ženska 2.jpeg" alt="Jaz Ženska" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
             
             <p>Tako kot s soncem, je tudi s srečo, pride in gre. Ozavestite srečne trenutke, uživajte v njih, bodite hvaležni zanje, delite jih z drugimi in se že vnaprej veselite novih. Bodite pozitivni in pričakujte dobro. Prevetrite svoje navade, prepričanja in vrednote, opustite nerealna pričakovanja in če želite ujeti srečo, razprite roke in srce, dajte brez pričakovanja, da se vam bo vrnilo, živite brez strahu in pogumno stopajte naprej z zaupanjem in vero v življenje, ki nam vedno ponudi in da tisto, kar je v določenem trenutka najboljše za nas. Če to ni čisto tako kot si želimo, se vprašajmo kaj v našem življenju bi bilo dobro spremeniti, kaj lahko naredimo drugače, česa se lahko naučimo in katero novo pot lahko izberemo? Ob vsem tem pa ne pozabite, da smo kreatorji svojega življenja in kovači svoje sreče. Kujte močno in vztrajno udarjajte po tnalu življenja, verjemite v srečo, imejte jo radi in bodite pripravljeni, da ji boste na široko odprli vrata, ko vas bo ponovno obiskala!</p>
             
