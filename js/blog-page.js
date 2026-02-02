@@ -69,7 +69,7 @@ const blogContent = {
             
             <div class="blog-newsletter-cta">
                 <p class="blog-newsletter-text">Želite več navdihujočih vsebin, kot je ta?</p>
-                <a href="index.html#newsletter" class="blog-newsletter-button">Prijavite se na našo e-novičko</a>
+                <a href="index.html#newsletter" class="blog-newsletter-button">Prijavite se na naše e-novice</a>
             </div>
         `
     }
