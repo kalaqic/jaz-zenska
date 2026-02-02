@@ -107,6 +107,11 @@ module.exports = async function handler(req, res) {
             // Collect billing address (required for SEPA and business invoices)
             billing_address_collection: 'required',
             
+            // Enable tax ID collection for business customers
+            tax_id_collection: {
+                enabled: true,
+            },
+            
             // Note: customer_update is not needed - Stripe automatically collects customer info in subscription mode
             
             // Enable payment method saving for subscriptions (required for SEPA)
