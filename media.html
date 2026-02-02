@@ -122,6 +122,34 @@
                         <button class="media-card-button" data-media="4">Preberi več</button>
                     </div>
                 </div>
+
+                <!-- Newspaper Article 1 - Nika 1 -->
+                <div class="media-card newspaper-card" data-media="5">
+                    <div class="newspaper-card-wrapper">
+                        <div class="newspaper-card-image">
+                            <img src="images/nika 1/Nika_4- (1)_page-0001.jpg" alt="Članek v Niki">
+                            <div class="newspaper-badge">📰 Članek</div>
+                        </div>
+                        <div class="media-card-content">
+                            <h3>Članek v Niki</h3>
+                            <button class="media-card-button" data-media="5">Preberi članek</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Newspaper Article 2 - Nika 2 -->
+                <div class="media-card newspaper-card" data-media="6">
+                    <div class="newspaper-card-wrapper">
+                        <div class="newspaper-card-image">
+                            <img src="images/nika 2/NIKA242-junakinja_page-0001.jpg" alt="Članek v Niki">
+                            <div class="newspaper-badge">📰 Članek</div>
+                        </div>
+                        <div class="media-card-content">
+                            <h3>Članek v Niki - Junakinja</h3>
+                            <button class="media-card-button" data-media="6">Preberi članek</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -138,6 +166,31 @@
                 <h2 id="modalTitle"></h2>
                 <div id="modalDescription" class="media-modal-description"></div>
                 <div id="modalLinks" class="media-modal-links"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Newspaper Viewer Modal -->
+    <div id="newspaperModal" class="newspaper-modal">
+        <div class="newspaper-modal-overlay"></div>
+        <div class="newspaper-modal-content">
+            <button class="newspaper-modal-close" aria-label="Zapri">&times;</button>
+            <div class="newspaper-zoom-controls">
+                <button class="newspaper-zoom-btn" id="newspaperZoomIn" aria-label="Povečaj">+</button>
+                <button class="newspaper-zoom-btn" id="newspaperZoomOut" aria-label="Pomanjšaj">−</button>
+                <button class="newspaper-zoom-btn" id="newspaperZoomReset" aria-label="Ponastavi">⟲</button>
+            </div>
+            <div class="newspaper-viewer">
+                <button class="newspaper-nav newspaper-nav-prev" id="newspaperPrev" aria-label="Prejšnja stran">‹</button>
+                <div class="newspaper-page-container">
+                    <div class="newspaper-page" id="newspaperPage">
+                        <img id="newspaperImage" src="" alt="Članek">
+                    </div>
+                </div>
+                <button class="newspaper-nav newspaper-nav-next" id="newspaperNext" aria-label="Naslednja stran">›</button>
+            </div>
+            <div class="newspaper-page-indicator">
+                <span id="currentPage">1</span> / <span id="totalPages">1</span>
             </div>
         </div>
     </div>

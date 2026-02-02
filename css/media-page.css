@@ -418,6 +418,304 @@
     }
 }
 
+/* Newspaper Card Styles */
+.newspaper-card {
+    position: relative;
+    overflow: visible;
+}
+
+.newspaper-card-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.newspaper-card-image {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    border-radius: 20px 20px 0 0;
+}
+
+.newspaper-card-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 4px
+        );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.newspaper-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: sepia(10%) contrast(1.1);
+    transition: transform 0.4s ease;
+}
+
+.newspaper-card:hover .newspaper-card-image img {
+    transform: scale(1.08);
+}
+
+.newspaper-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dark-violet);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+    border: 2px solid rgba(200, 142, 167, 0.2);
+}
+
+/* Newspaper Viewer Modal */
+.newspaper-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 10001;
+    overflow: hidden;
+}
+
+.newspaper-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.newspaper-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
+    z-index: 1;
+}
+
+.newspaper-modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+    height: 90vh;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.newspaper-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    font-size: 36px;
+    color: var(--dark-violet);
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.newspaper-modal-close:hover {
+    background: var(--pinky);
+    color: var(--white);
+    transform: rotate(90deg) scale(1.1);
+}
+
+.newspaper-viewer {
+    position: relative;
+    width: 100%;
+    height: calc(90vh - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.newspaper-page-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 2000px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.newspaper-page {
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: fit-content;
+    min-height: fit-content;
+    padding: 20px;
+}
+
+.newspaper-page.flipping {
+    animation: pageFlip 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.newspaper-page img {
+    max-width: 50%;
+    max-height: 50%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    background: var(--white);
+    padding: 10px;
+    transition: transform 0.3s ease;
+    margin: 0 auto;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.newspaper-page img.zoomed {
+    cursor: grab;
+}
+
+.newspaper-page img.zoomed:active {
+    cursor: grabbing;
+}
+
+.newspaper-nav {
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    font-size: 48px;
+    color: var(--dark-violet);
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 5;
+    flex-shrink: 0;
+}
+
+.newspaper-nav:hover {
+    background: var(--pinky);
+    color: var(--white);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(200, 142, 167, 0.4);
+}
+
+.newspaper-nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.newspaper-page-indicator {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark-violet);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.newspaper-zoom-controls {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.newspaper-zoom-btn {
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    font-size: 24px;
+    color: var(--dark-violet);
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.newspaper-zoom-btn:hover {
+    background: var(--pinky);
+    color: var(--white);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(200, 142, 167, 0.4);
+}
+
+.newspaper-zoom-btn:active {
+    transform: scale(0.95);
+}
+
+@keyframes pageFlip {
+    0% {
+        transform: rotateY(0deg) scale(1);
+    }
+    50% {
+        transform: rotateY(-90deg) scale(0.95);
+        opacity: 0.7;
+    }
+    100% {
+        transform: rotateY(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
 @media (max-width: 768px) {
     .media-hero-slider {
         height: 300px;
@@ -489,6 +787,34 @@
     
     .media-modal-description {
         font-size: 15px;
+    }
+    
+    .newspaper-viewer {
+        height: calc(90vh - 80px);
+        gap: 10px;
+    }
+    
+    .newspaper-nav {
+        width: 45px;
+        height: 45px;
+        font-size: 36px;
+    }
+    
+    .newspaper-page-indicator {
+        bottom: 10px;
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
+    .newspaper-zoom-controls {
+        top: 10px;
+        gap: 8px;
+    }
+    
+    .newspaper-zoom-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
     }
 }
 

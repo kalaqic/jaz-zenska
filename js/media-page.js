@@ -51,6 +51,23 @@ const mediaData = {
                 text: 'Obišči YouTube kanal'
             }
         ]
+    },
+    5: {
+        type: 'newspaper',
+        images: [
+            'images/nika 1/Nika_4- (1)_page-0001.jpg',
+            'images/nika 1/Nika_4- (1)_page-0002.jpg'
+        ],
+        title: 'Članek v Niki'
+    },
+    6: {
+        type: 'newspaper',
+        images: [
+            'images/nika 2/NIKA242-junakinja_page-0001.jpg',
+            'images/nika 2/NIKA242-junakinja_page-0002.jpg',
+            'images/nika 2/NIKA242-junakinja_page-0003.jpg'
+        ],
+        title: 'Članek v Niki - Junakinja'
     }
 };
 
@@ -58,6 +75,7 @@ const mediaData = {
 document.addEventListener('DOMContentLoaded', function() {
     initMediaCards();
     initMediaModal();
+    initNewspaperViewer();
 });
 
 function initMediaCards() {
@@ -115,10 +133,18 @@ function initMediaModal() {
 }
 
 function openMediaModal(mediaId) {
-    const modal = document.getElementById('mediaModal');
     const data = mediaData[mediaId];
     
-    if (!modal || !data) return;
+    if (!data) return;
+    
+    // Check if it's a newspaper article
+    if (data.type === 'newspaper') {
+        openNewspaperViewer(mediaId);
+        return;
+    }
+    
+    const modal = document.getElementById('mediaModal');
+    if (!modal) return;
     
     // Set modal content
     document.getElementById('modalImage').src = data.image;
@@ -155,6 +181,236 @@ function openMediaModal(mediaId) {
     // Show modal
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+}
+
+// Newspaper Viewer Functions
+let currentNewspaperData = null;
+let currentPageIndex = 0;
+let currentZoomLevel = 1;
+
+function openNewspaperViewer(mediaId) {
+    const data = mediaData[mediaId];
+    if (!data || !data.images || data.images.length === 0) return;
+    
+    const modal = document.getElementById('newspaperModal');
+    if (!modal) return;
+    
+    currentNewspaperData = data;
+    currentPageIndex = 0;
+    currentZoomLevel = 1;
+    
+    // Set first image
+    const newspaperImage = document.getElementById('newspaperImage');
+    const newspaperPage = document.getElementById('newspaperPage');
+    const pageContainer = document.querySelector('.newspaper-page-container');
+    newspaperImage.src = data.images[0];
+    newspaperImage.alt = data.title;
+    
+    // Reset zoom and scroll
+    newspaperImage.style.transform = 'scale(1)';
+    newspaperImage.classList.remove('zoomed');
+    if (pageContainer) {
+        pageContainer.scrollLeft = 0;
+        pageContainer.scrollTop = 0;
+        pageContainer.style.overflow = 'hidden';
+    }
+    
+    // Update page indicator
+    updatePageIndicator();
+    
+    // Update navigation buttons
+    updateNewspaperNavigation();
+    
+    // Show modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function updatePageIndicator() {
+    if (!currentNewspaperData) return;
+    
+    const currentPageEl = document.getElementById('currentPage');
+    const totalPagesEl = document.getElementById('totalPages');
+    
+    if (currentPageEl) currentPageEl.textContent = currentPageIndex + 1;
+    if (totalPagesEl) totalPagesEl.textContent = currentNewspaperData.images.length;
+}
+
+function updateNewspaperNavigation() {
+    if (!currentNewspaperData) return;
+    
+    const prevBtn = document.getElementById('newspaperPrev');
+    const nextBtn = document.getElementById('newspaperNext');
+    
+    if (prevBtn) {
+        prevBtn.disabled = currentPageIndex === 0;
+    }
+    
+    if (nextBtn) {
+        nextBtn.disabled = currentPageIndex === currentNewspaperData.images.length - 1;
+    }
+}
+
+function flipPage(direction) {
+    if (!currentNewspaperData) return;
+    
+    const newspaperPage = document.getElementById('newspaperPage');
+    const newspaperImage = document.getElementById('newspaperImage');
+    const pageContainer = document.querySelector('.newspaper-page-container');
+    
+    if (!newspaperPage || !newspaperImage) return;
+    
+    // Calculate new page index
+    let newIndex = currentPageIndex;
+    if (direction === 'next' && currentPageIndex < currentNewspaperData.images.length - 1) {
+        newIndex = currentPageIndex + 1;
+    } else if (direction === 'prev' && currentPageIndex > 0) {
+        newIndex = currentPageIndex - 1;
+    } else {
+        return; // Can't go further
+    }
+    
+    // Add flipping animation
+    newspaperPage.classList.add('flipping');
+    
+    // Change image after half of animation
+    setTimeout(() => {
+        currentPageIndex = newIndex;
+        newspaperImage.src = currentNewspaperData.images[currentPageIndex];
+        // Reset scroll position when changing pages
+        if (pageContainer) {
+            pageContainer.scrollLeft = 0;
+            pageContainer.scrollTop = 0;
+        }
+        updatePageIndicator();
+        updateNewspaperNavigation();
+    }, 400); // Half of 0.8s animation
+    
+    // Remove animation class after animation completes
+    setTimeout(() => {
+        newspaperPage.classList.remove('flipping');
+    }, 800);
+}
+
+function zoomNewspaper(direction) {
+    const newspaperImage = document.getElementById('newspaperImage');
+    const pageContainer = document.querySelector('.newspaper-page-container');
+    if (!newspaperImage || !pageContainer) return;
+    
+    const zoomStep = 0.25;
+    const minZoom = 0.5;
+    const maxZoom = 3;
+    
+    // Get current scroll position
+    const scrollLeft = pageContainer.scrollLeft;
+    const scrollTop = pageContainer.scrollTop;
+    const scrollCenterX = scrollLeft + pageContainer.clientWidth / 2;
+    const scrollCenterY = scrollTop + pageContainer.clientHeight / 2;
+    
+    if (direction === 'in') {
+        currentZoomLevel = Math.min(currentZoomLevel + zoomStep, maxZoom);
+    } else if (direction === 'out') {
+        currentZoomLevel = Math.max(currentZoomLevel - zoomStep, minZoom);
+    } else if (direction === 'reset') {
+        currentZoomLevel = 1;
+    }
+    
+    newspaperImage.style.transform = `scale(${currentZoomLevel})`;
+    
+    if (currentZoomLevel > 1) {
+        newspaperImage.classList.add('zoomed');
+        // Enable scrolling
+        pageContainer.style.overflow = 'auto';
+    } else {
+        newspaperImage.classList.remove('zoomed');
+        // Center the image when zoomed out
+        pageContainer.style.overflow = 'hidden';
+        setTimeout(() => {
+            pageContainer.scrollLeft = 0;
+            pageContainer.scrollTop = 0;
+        }, 100);
+    }
+    
+    // Maintain scroll position relative to center when zooming
+    if (direction === 'in' || direction === 'out') {
+        setTimeout(() => {
+            const newScrollLeft = scrollCenterX - pageContainer.clientWidth / 2;
+            const newScrollTop = scrollCenterY - pageContainer.clientHeight / 2;
+            pageContainer.scrollLeft = Math.max(0, newScrollLeft);
+            pageContainer.scrollTop = Math.max(0, newScrollTop);
+        }, 50);
+    }
+}
+
+function initNewspaperViewer() {
+    const modal = document.getElementById('newspaperModal');
+    const closeButton = document.querySelector('.newspaper-modal-close');
+    const overlay = document.querySelector('.newspaper-modal-overlay');
+    const prevBtn = document.getElementById('newspaperPrev');
+    const nextBtn = document.getElementById('newspaperNext');
+    const zoomInBtn = document.getElementById('newspaperZoomIn');
+    const zoomOutBtn = document.getElementById('newspaperZoomOut');
+    const zoomResetBtn = document.getElementById('newspaperZoomReset');
+    
+    if (!modal) return;
+    
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        currentNewspaperData = null;
+        currentPageIndex = 0;
+        currentZoomLevel = 1;
+    }
+    
+    if (closeButton) {
+        closeButton.addEventListener('click', closeModal);
+    }
+    
+    if (overlay) {
+        overlay.addEventListener('click', closeModal);
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => flipPage('prev'));
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => flipPage('next'));
+    }
+    
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', () => zoomNewspaper('in'));
+    }
+    
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', () => zoomNewspaper('out'));
+    }
+    
+    if (zoomResetBtn) {
+        zoomResetBtn.addEventListener('click', () => zoomNewspaper('reset'));
+    }
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (modal.classList.contains('active')) {
+            if (e.key === 'Escape') {
+                closeModal();
+            } else if (e.key === 'ArrowLeft') {
+                flipPage('prev');
+            } else if (e.key === 'ArrowRight') {
+                flipPage('next');
+            } else if (e.key === '+' || e.key === '=') {
+                e.preventDefault();
+                zoomNewspaper('in');
+            } else if (e.key === '-') {
+                e.preventDefault();
+                zoomNewspaper('out');
+            } else if (e.key === '0') {
+                e.preventDefault();
+                zoomNewspaper('reset');
+            }
+        }
+    });
 }
 
 // Initialize page
