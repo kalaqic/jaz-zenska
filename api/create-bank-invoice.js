@@ -93,11 +93,6 @@ module.exports = async function handler(req, res) {
             address: {
                 country: 'SI' // Slovenia
             },
-            invoice_settings: {
-                default_payment_method: 'bank_transfer', // No default, forces bank transfer for send_invoice
-                custom_fields: null,
-                footer: null
-            },
             metadata: {
                 firstName: firstName,
                 lastName: lastName,
@@ -109,6 +104,8 @@ module.exports = async function handler(req, res) {
         console.log('✅ Customer created:', customer.id);
 
         // Step 2: Create Invoice with bank transfer/SEPA only
+        // Using 'send_invoice' collection method automatically uses bank transfer
+        // The payment method shown in the invoice is controlled by your Stripe account settings
         const invoice = await stripe.invoices.create({
             customer: customer.id,
             collection_method: 'send_invoice',
@@ -123,20 +120,6 @@ module.exports = async function handler(req, res) {
         });
         
         console.log('✅ Invoice created:', invoice.id);
-        
-        // Step 2.5: Update invoice to set payment method to bank transfer only
-        // This matches what you can do manually in the Dashboard
-        try {
-            await stripe.invoices.update(invoice.id, {
-                payment_settings: {
-                    payment_method_types: ['customer_balance'] // This enables bank transfer only
-                }
-            });
-            console.log('✅ Invoice payment method set to bank transfer only');
-        } catch (updateError) {
-            console.warn('⚠️ Could not update invoice payment method:', updateError.message);
-            // Continue anyway - invoice is still created
-        }
 
         console.log('✅ Invoice created:', invoice.id);
 
