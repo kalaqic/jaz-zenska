@@ -93,17 +93,27 @@ module.exports = async function handler(req, res) {
             address: {
                 country: 'SI' // Slovenia
             },
+            invoice_settings: {
+                default_payment_method: null, // No default, forces bank transfer for send_invoice
+                custom_fields: null,
+                footer: null
+            },
             metadata: {
                 firstName: firstName,
                 lastName: lastName,
-                payment_method: 'bank_transfer'
+                payment_method: 'bank_transfer',
+                country: 'SI' // Slovenia for IBAN
             }
         });
 
         console.log('✅ Customer created:', customer.id);
 
         // Step 2: Create Invoice with bank transfer/SEPA only
-        // Using 'send_invoice' collection method automatically enables bank transfer
+        // Note: To restrict invoices to ONLY bank transfer (no card payments),
+        // you must configure this in Stripe Dashboard:
+        // Settings → Payment methods → Invoice payments → Disable card and other methods
+        // Keep only "Bank transfer" enabled for invoices
+        // The IBAN country will be determined by the customer's address (SI - Slovenia)
         const invoice = await stripe.invoices.create({
             customer: customer.id,
             collection_method: 'send_invoice',
@@ -112,7 +122,8 @@ module.exports = async function handler(req, res) {
             metadata: {
                 payment_method: 'bank_transfer',
                 firstName: firstName,
-                lastName: lastName
+                lastName: lastName,
+                country: 'SI' // Slovenia
             }
         });
 
