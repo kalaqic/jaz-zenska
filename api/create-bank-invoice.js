@@ -103,12 +103,12 @@ module.exports = async function handler(req, res) {
         console.log('✅ Customer created:', customer.id);
 
         // Step 2: Create Invoice with bank transfer/SEPA only
+        // Using 'send_invoice' collection method automatically enables bank transfer
         const invoice = await stripe.invoices.create({
             customer: customer.id,
             collection_method: 'send_invoice',
             days_until_due: 7,
             auto_advance: false, // Don't auto-advance, wait for payment
-            default_payment_method: null, // No default payment method, forces bank transfer
             metadata: {
                 payment_method: 'bank_transfer',
                 firstName: firstName,
@@ -200,9 +200,15 @@ module.exports = async function handler(req, res) {
 
     } catch (error) {
         console.error('Error creating bank invoice:', error);
+        console.error('Error type:', error.type);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
         return res.status(500).json({ 
             error: 'Failed to create invoice',
-            message: error.message
+            message: error.message,
+            type: error.type,
+            code: error.code
         });
     }
 }

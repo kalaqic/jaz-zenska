@@ -254,10 +254,23 @@
                     }),
                 });
                 
-                const data = await response.json();
+                let data;
+                try {
+                    const responseText = await response.text();
+                    if (responseText) {
+                        data = JSON.parse(responseText);
+                    } else {
+                        data = {};
+                    }
+                } catch (parseError) {
+                    console.error('Failed to parse response:', parseError);
+                    throw new Error('Napaka pri komunikaciji s strežnikom');
+                }
                 
                 if (!response.ok) {
-                    throw new Error(data.error || data.message || 'Napaka pri ustvarjanju računa');
+                    console.error('API Error:', data);
+                    const errorMsg = data.message || data.error || 'Napaka pri ustvarjanju računa';
+                    throw new Error(errorMsg);
                 }
                 
                 // Success
