@@ -9,7 +9,6 @@ const fetch = require('node-fetch');
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
 const CAMPAIGN_ID = 'frqWU'; // Consultation campaign
-const ALL_CONTACTS_CAMPAIGN_ID = 'fro3k'; // All contacts list
 const CUSTOM_FIELD_DATE_TIME_ID = 'noyCaD'; // call_datetime field - actual GetResponse customFieldId
 const CUSTOM_FIELD_PHONE_ID = 'no8Uze'; // phone field - actual GetResponse customFieldId
 const CUSTOM_FIELD_DAY_ID = 'noqq62'; // day field - actual GetResponse customFieldId
@@ -319,36 +318,6 @@ module.exports = async function handler(req, res) {
             console.log('Custom fields in response:', JSON.stringify(data.customFieldValues, null, 2));
         } else {
             console.warn('WARNING: Response does not include customFieldValues. Custom fields may not have been saved.');
-        }
-        
-        // Also add to all contacts list (fro3k)
-        console.log('📬 Adding contact to all contacts list (fro3k)...');
-        try {
-            const allContactsData = {
-                email: email,
-                name: contactName,
-                campaign: {
-                    campaignId: ALL_CONTACTS_CAMPAIGN_ID
-                }
-            };
-            
-            const allContactsResponse = await fetch(GETRESPONSE_API_URL, {
-                method: 'POST',
-                headers: {
-                    'X-Auth-Token': `api-key ${GETRESPONSE_API_KEY}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(allContactsData)
-            });
-            
-            if (allContactsResponse.status === 409 || allContactsResponse.ok) {
-                console.log('✅ Contact added to all contacts list (or already exists)');
-            } else {
-                console.warn('⚠️ Failed to add to all contacts list, but consultation signup succeeded');
-            }
-        } catch (allContactsError) {
-            console.warn('⚠️ Error adding to all contacts list (non-critical):', allContactsError.message);
-            // Don't fail the request if this fails
         }
         
         return res.status(200).json({ 

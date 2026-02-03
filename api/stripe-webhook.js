@@ -10,7 +10,6 @@ const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
 const IN_GROUP_CAMPAIGN_ID = 'fQYMW'; // In group campaign
 const NEWSLETTER_CAMPAIGN_ID = 'froXf'; // Newsletter campaign
-const ALL_CONTACTS_CAMPAIGN_ID = 'fro3k'; // All contacts list
 const PAYMENT_WAITING_CAMPAIGN_ID = 'f5nDe'; // Payment waiting list
 
 if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET) {
@@ -601,9 +600,6 @@ module.exports = async function handler(req, res) {
                         
                         // Add to Newsletter (froXf)
                         await addToGetResponseCampaign(email, `${firstName} ${lastName}`, NEWSLETTER_CAMPAIGN_ID);
-                        
-                        // Add to All contacts (fro3k)
-                        await addToGetResponseCampaign(email, `${firstName} ${lastName}`, ALL_CONTACTS_CAMPAIGN_ID);
                         
                         console.log('✅ Updated GetResponse lists');
                     } catch (getResponseError) {
