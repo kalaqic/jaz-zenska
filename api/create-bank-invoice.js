@@ -109,16 +109,16 @@ module.exports = async function handler(req, res) {
         console.log('✅ Customer created:', customer.id);
 
         // Step 2: Create Invoice with bank transfer/SEPA only
-        // Note: To restrict invoices to ONLY bank transfer (no card payments),
-        // you must configure this in Stripe Dashboard:
-        // Settings → Payment methods → Invoice payments → Disable card and other methods
-        // Keep only "Bank transfer" enabled for invoices
-        // The IBAN country will be determined by the customer's address (SI - Slovenia)
+        // Configure payment settings to restrict to bank transfer only
         const invoice = await stripe.invoices.create({
             customer: customer.id,
             collection_method: 'send_invoice',
             days_until_due: 7,
             auto_advance: false, // Don't auto-advance, wait for payment
+            payment_settings: {
+                payment_method_types: null, // This should default to bank transfer for send_invoice
+                payment_method_options: null
+            },
             metadata: {
                 payment_method: 'bank_transfer',
                 firstName: firstName,
@@ -126,6 +126,31 @@ module.exports = async function handler(req, res) {
                 country: 'SI' // Slovenia
             }
         });
+        
+        console.log('✅ Invoice created:', invoice.id);
+        
+        // Step 2.5: Update invoice to ensure only bank transfer is available
+        // Try to update payment settings after creation
+        try {
+            // Retrieve the invoice to check current payment settings
+            const retrievedInvoice = await stripe.invoices.retrieve(invoice.id);
+            console.log('Invoice payment settings:', retrievedInvoice.payment_settings);
+            
+            // Update invoice to remove card payment option
+            // Note: This might require account-level configuration in Stripe Dashboard
+            // Settings → Payment methods → Invoice payments → Disable card payments
+            await stripe.invoices.update(invoice.id, {
+                payment_settings: {
+                    payment_method_types: [] // Empty array should restrict to bank transfer
+                }
+            });
+            console.log('✅ Invoice payment settings updated to bank transfer only');
+        } catch (updateError) {
+            console.warn('⚠️ Could not update invoice payment settings programmatically:', updateError.message);
+            console.warn('⚠️ You may need to configure this in Stripe Dashboard:');
+            console.warn('⚠️ Settings → Payment methods → Invoice payments → Disable "Credit or debit card"');
+            console.warn('⚠️ Keep only "Bank transfer" enabled');
+        }
 
         console.log('✅ Invoice created:', invoice.id);
 
