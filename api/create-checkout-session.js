@@ -69,18 +69,20 @@ module.exports = async function handler(req, res) {
             body = {};
         }
 
-        const plan = body.plan || 'yearly'; // Default to yearly
-        console.log('Selected plan:', plan);
-        const isYearly = plan === 'yearly';
+        const paymentMethod = body.payment_method || 'card';
+        console.log('Selected payment method:', paymentMethod);
 
         // Get the origin to construct success/cancel URLs
         const origin = req.headers.origin || req.headers.referer || 'http://localhost:3000';
         const baseUrl = origin.replace(/\/$/, ''); // Remove trailing slash
 
-        // Create Stripe Checkout Session with subscription
+        // Calculate subscription end date: December 31, 2027
+        const subscriptionEndDate = Math.floor(new Date('2027-12-31T23:59:59Z').getTime() / 1000);
+
+        // Create Stripe Checkout Session with subscription for card payment
         const session = await stripe.checkout.sessions.create({
-            // Payment methods: Card, Link, and SEPA Direct Debit
-            payment_method_types: ['card', 'link', 'sepa_debit'],
+            // Only card payment for card workflow
+            payment_method_types: ['card'],
             line_items: [
                 {
                     price_data: {
@@ -89,9 +91,9 @@ module.exports = async function handler(req, res) {
                             name: 'Skupnost JAZ ŽENSKA',
                             description: 'Pridružite se naši skupnosti žensk, ki se zbirajo, delijo modrost in se podpirajo na skupni poti rasti.',
                         },
-                        unit_amount: isYearly ? 11900 : 1900, // €119.00 yearly or €19.00 monthly in cents
+                        unit_amount: 11900, // €119.00 in cents
                         recurring: {
-                            interval: isYearly ? 'year' : 'month',
+                            interval: 'year',
                         },
                     },
                     quantity: 1,
@@ -100,11 +102,7 @@ module.exports = async function handler(req, res) {
             mode: 'subscription',
             locale: 'sl', // Slovenian language
             
-            // Note: In subscription mode, Stripe automatically:
-            // - Creates customers
-            // - Generates invoices (no need to enable invoice_creation)
-            
-            // Collect billing address (required for SEPA and business invoices)
+            // Collect billing address (required for business invoices)
             billing_address_collection: 'required',
             
             // Enable tax ID collection for business customers
@@ -112,16 +110,22 @@ module.exports = async function handler(req, res) {
                 enabled: true,
             },
             
-            // Note: customer_update is not needed - Stripe automatically collects customer info in subscription mode
-            
-            // Enable payment method saving for subscriptions (required for SEPA)
+            // Enable payment method saving for subscriptions
             payment_method_collection: 'always',
             
+            // Set subscription to end on December 31, 2027
+            subscription_data: {
+                metadata: {
+                    end_date: '2027-12-31'
+                }
+            },
+            
             success_url: `${baseUrl}/checkout-success.html?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${baseUrl}/checkout.html?canceled=true`,
+            cancel_url: `${baseUrl}/checkout.html`,
             metadata: {
-                plan: plan,
-                subscription_type: isYearly ? 'yearly' : 'monthly',
+                payment_method: 'card',
+                subscription_type: 'yearly',
+                subscription_end: '2027-12-31'
             },
         });
 

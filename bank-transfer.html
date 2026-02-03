@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bančno nakazilo - Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f4f7 0%, #f0e8ed 50%, #fff6f9 100%);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .bank-transfer-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .bank-transfer-container {
+            max-width: 600px;
+            width: 100%;
+            background: var(--white);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 50px 40px;
+        }
+        
+        .bank-transfer-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .bank-transfer-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--dark-violet);
+            margin-bottom: 15px;
+        }
+        
+        .bank-transfer-header p {
+            font-size: 16px;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        
+        .bank-transfer-form {
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-violet);
+            margin-bottom: 8px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e8e0e4;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--mid-violet);
+            box-shadow: 0 0 0 3px rgba(153, 98, 122, 0.1);
+        }
+        
+        .submit-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(153, 98, 122, 0.3);
+        }
+        
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--mid-violet);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            display: none;
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .error-message.active {
+            display: block;
+        }
+        
+        .success-message {
+            display: none;
+            background: #efe;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .success-message.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="bank-transfer-wrapper">
+        <div class="bank-transfer-container">
+            <div class="bank-transfer-header">
+                <h1>🏦 Bančno nakazilo</h1>
+                <p>Vnesite vaše podatke in prejmete račun z navodili za plačilo</p>
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+            
+            <form class="bank-transfer-form" id="bankTransferForm" onsubmit="submitBankTransfer(event)">
+                <div class="form-group">
+                    <label for="email">Email naslov *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="firstName">Ime *</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lastName">Priimek *</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+                
+                <button type="submit" class="submit-button" id="submitButton">
+                    Pošlji mi račun
+                </button>
+            </form>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Pripravljanje računa...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Capitalize first letter of name fields
+        document.getElementById('firstName').addEventListener('input', function(e) {
+            const value = e.target.value;
+            if (value.length > 0) {
+                e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+            }
+        });
+        
+        document.getElementById('lastName').addEventListener('input', function(e) {
+            const value = e.target.value;
+            if (value.length > 0) {
+                e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+            }
+        });
+        
+        async function submitBankTransfer(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('bankTransferForm');
+            const loading = document.getElementById('loading');
+            const submitButton = document.getElementById('submitButton');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            const email = document.getElementById('email').value.trim();
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            
+            // Hide messages
+            errorMessage.classList.remove('active');
+            successMessage.classList.remove('active');
+            
+            // Show loading
+            form.style.display = 'none';
+            loading.classList.add('active');
+            submitButton.disabled = true;
+            
+            try {
+                const response = await fetch('/api/create-bank-invoice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        firstName: firstName,
+                        lastName: lastName
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || data.message || 'Napaka pri ustvarjanju računa');
+                }
+                
+                // Success
+                loading.classList.remove('active');
+                successMessage.textContent = 'Hvala! Račun in navodila za plačilo so bili poslani na vaš email naslov.';
+                successMessage.classList.add('active');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                loading.classList.remove('active');
+                form.style.display = 'block';
+                submitButton.disabled = false;
+                errorMessage.textContent = error.message || 'Napaka pri pošiljanju zahteve. Prosimo, poskusite znova.';
+                errorMessage.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

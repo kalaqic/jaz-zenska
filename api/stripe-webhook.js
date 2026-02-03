@@ -8,7 +8,10 @@ const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
-const CAMPAIGN_ID = 'froXf'; // Same campaign ID as newsletter
+const IN_GROUP_CAMPAIGN_ID = 'fQYMW'; // In group campaign
+const NEWSLETTER_CAMPAIGN_ID = 'froXf'; // Newsletter campaign
+const ALL_CONTACTS_CAMPAIGN_ID = 'fro3k'; // All contacts list
+const PAYMENT_WAITING_CAMPAIGN_ID = 'f5nDe'; // Payment waiting list
 
 if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET) {
     console.error('ERROR: Stripe environment variables are not set!');
@@ -54,6 +57,41 @@ try {
 }
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
+
+// Helper function to add contact to GetResponse campaign
+async function addToGetResponseCampaign(email, name, campaignId) {
+    if (!GETRESPONSE_API_KEY) {
+        return;
+    }
+    
+    try {
+        const contactData = {
+            email: email,
+            name: name || email,
+            campaign: {
+                campaignId: campaignId
+            }
+        };
+        
+        const response = await fetch(GETRESPONSE_API_URL, {
+            method: 'POST',
+            headers: {
+                'X-Auth-Token': `api-key ${GETRESPONSE_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(contactData)
+        });
+        
+        if (response.ok || response.status === 409) {
+            console.log(`✅ Added to GetResponse campaign ${campaignId} (or already exists)`);
+        } else {
+            const errorText = await response.text();
+            console.warn(`⚠️ Failed to add to campaign ${campaignId}:`, errorText);
+        }
+    } catch (error) {
+        console.warn(`⚠️ Error adding to campaign ${campaignId} (non-critical):`, error.message);
+    }
+}
 
 // Configure to receive raw body for webhook signature verification
 module.exports = async function handler(req, res) {
@@ -351,19 +389,51 @@ module.exports = async function handler(req, res) {
                     console.log('   Reset link will redirect to:', resetUrl);
                     console.log('   API response:', JSON.stringify(responseData, null, 2));
 
-                    // 3. Add contact to GetResponse campaign (for marketing purposes)
-                    console.log('📬 Adding contact to GetResponse campaign for marketing...');
+                    // 3. Add contact to GetResponse campaigns (for card payment workflow)
+                    console.log('📬 Adding contact to GetResponse campaigns...');
                     try {
                         console.log('   Email:', customerEmail);
                         console.log('   Name:', customerName);
-                        const emailResult = await sendPasswordResetEmail(customerEmail, null, customerName);
-                        console.log('✅ Contact added to GetResponse campaign successfully');
-                        console.log('   Result:', JSON.stringify(emailResult, null, 2));
+                        
+                        // Add to In group (fQYMW)
+                        await sendPasswordResetEmail(customerEmail, null, customerName);
+                        
+                        // Add to Newsletter (froXf)
+                        await addToGetResponseCampaign(customerEmail, customerName, NEWSLETTER_CAMPAIGN_ID);
+                        
+                        console.log('✅ Contact added to all GetResponse campaigns successfully');
                     } catch (emailError) {
                         console.error('❌ Error adding contact to GetResponse:', emailError);
                         console.error('   Error message:', emailError.message);
                         console.error('   Error stack:', emailError.stack);
                         // Don't fail the webhook if GetResponse fails
+                    }
+                    
+                    // 4. Ensure subscription is set until 2027 (cancel at end date to prevent renewals)
+                    try {
+                        const subscriptionId = session.subscription;
+                        if (subscriptionId) {
+                            // Wait a moment for subscription to be fully created
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                            
+                            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+                            const subscriptionEndDate = Math.floor(new Date('2027-12-31T23:59:59Z').getTime() / 1000);
+                            
+                            // Update subscription to cancel at 2027-12-31 (prevents renewals but keeps active until then)
+                            await stripe.subscriptions.update(subscriptionId, {
+                                cancel_at: subscriptionEndDate,
+                                metadata: {
+                                    ...(subscription.metadata || {}),
+                                    end_date: '2027-12-31',
+                                    payment_method: 'card'
+                                }
+                            });
+                            console.log('✅ Subscription set to cancel on 2027-12-31 (no renewals)');
+                        } else {
+                            console.warn('⚠️ No subscription ID in checkout session');
+                        }
+                    } catch (subscriptionError) {
+                        console.warn('⚠️ Error updating subscription end date (non-critical):', subscriptionError.message);
                     }
                 } catch (emailError) {
                     console.error('❌ Error sending password reset email via Firebase:', emailError);
@@ -380,6 +450,205 @@ module.exports = async function handler(req, res) {
         } catch (error) {
             console.error('Error processing checkout completion:', error);
             // Return 200 to prevent Stripe from retrying, but log the error
+            return res.status(200).json({ 
+                received: true, 
+                error: error.message 
+            });
+        }
+    }
+
+    // Handle invoice.paid event for bank transfer workflow
+    if (event.type === 'invoice.paid') {
+        const invoice = event.data.object;
+        console.log('✅ Invoice paid event received');
+        console.log('Invoice ID:', invoice.id);
+        console.log('Customer ID:', invoice.customer);
+        console.log('Payment status:', invoice.status);
+        
+        const customerId = invoice.customer;
+        
+        try {
+            // Step 1: Find user in waiting_payments by customer_id
+            if (!firebaseApp) {
+                try {
+                    firebaseApp = admin.app();
+                } catch (e) {
+                    const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
+                    if (serviceAccountRaw) {
+                        const serviceAccount = JSON.parse(serviceAccountRaw);
+                        const projectId = serviceAccount.project_id || serviceAccount.projectId;
+                        if (projectId) {
+                            firebaseApp = admin.initializeApp({
+                                credential: admin.credential.cert(serviceAccount)
+                            });
+                        }
+                    }
+                }
+            }
+            
+            if (firebaseApp) {
+                const db = admin.firestore();
+                const waitingPaymentRef = db.collection('waiting_payments').doc(customerId);
+                const waitingPaymentDoc = await waitingPaymentRef.get();
+                
+                if (!waitingPaymentDoc.exists) {
+                    console.log('⚠️ No waiting payment found for customer:', customerId);
+                    return res.status(200).json({ received: true, message: 'No waiting payment found' });
+                }
+                
+                const waitingPayment = waitingPaymentDoc.data();
+                console.log('✅ Found waiting payment:', waitingPayment);
+                
+                const { email, firstName, lastName } = waitingPayment;
+                
+                // Step 2: Update payment status to paid
+                await waitingPaymentRef.update({
+                    paymentStatus: 'paid',
+                    paidAt: admin.firestore.FieldValue.serverTimestamp()
+                });
+                console.log('✅ Payment status updated to paid');
+                
+                // Step 3: Create Firebase user
+                const auth = admin.auth();
+                let user;
+                try {
+                    user = await auth.getUserByEmail(email);
+                    console.log('✅ User already exists in Firebase Auth');
+                } catch (error) {
+                    if (error.code === 'auth/user-not-found') {
+                        const tempPassword = Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12) + 'A1!';
+                        user = await auth.createUser({
+                            email: email,
+                            password: tempPassword,
+                            emailVerified: false,
+                            disabled: false
+                        });
+                        console.log('✅ Created new Firebase Auth user');
+                    } else {
+                        throw error;
+                    }
+                }
+                
+                // Step 4: Move to users collection
+                const userDocRef = db.collection('users').doc(user.uid);
+                const userDoc = await userDocRef.get();
+                
+                if (!userDoc.exists) {
+                    await userDocRef.set({
+                        email: email,
+                        name: `${firstName} ${lastName}`,
+                        firstName: firstName,
+                        lastName: lastName,
+                        role: 'member',
+                        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                        subscriptionStatus: 'active',
+                        subscriptionType: 'yearly',
+                        paymentMethod: 'bank_transfer'
+                    });
+                    console.log('✅ Created Firestore user document');
+                } else {
+                    await userDocRef.update({
+                        subscriptionStatus: 'active',
+                        subscriptionType: 'yearly',
+                        paymentMethod: 'bank_transfer',
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                    });
+                    console.log('✅ Updated Firestore user document');
+                }
+                
+                // Step 5: Delete from waiting_payments
+                await waitingPaymentRef.delete();
+                console.log('✅ Deleted from waiting_payments');
+                
+                // Step 6: Send password reset email
+                try {
+                    const resetUrl = 'https://jaz-zenska.vercel.app/login.html?mode=resetPassword';
+                    const actionCodeSettings = {
+                        url: resetUrl,
+                        handleCodeInApp: false,
+                    };
+                    
+                    const resetLink = await auth.generatePasswordResetLink(email, actionCodeSettings);
+                    
+                    const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
+                    if (FIREBASE_API_KEY) {
+                        await fetch(
+                            `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${FIREBASE_API_KEY}`,
+                            {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    requestType: 'PASSWORD_RESET',
+                                    email: email,
+                                    continueUrl: resetUrl,
+                                }),
+                            }
+                        );
+                        console.log('✅ Password reset email sent');
+                    }
+                } catch (emailError) {
+                    console.error('❌ Error sending password reset email:', emailError.message);
+                }
+                
+                // Step 7: Remove from payment waiting list and add to three lists
+                if (GETRESPONSE_API_KEY) {
+                    try {
+                        // Remove from payment waiting list (f5nDe) - GetResponse doesn't have a direct remove API
+                        // The automation should handle this, but we'll add to the other lists
+                        
+                        // Add to In group (fQYMW)
+                        await addToGetResponseCampaign(email, `${firstName} ${lastName}`, IN_GROUP_CAMPAIGN_ID);
+                        
+                        // Add to Newsletter (froXf)
+                        await addToGetResponseCampaign(email, `${firstName} ${lastName}`, NEWSLETTER_CAMPAIGN_ID);
+                        
+                        // Add to All contacts (fro3k)
+                        await addToGetResponseCampaign(email, `${firstName} ${lastName}`, ALL_CONTACTS_CAMPAIGN_ID);
+                        
+                        console.log('✅ Updated GetResponse lists');
+                    } catch (getResponseError) {
+                        console.warn('⚠️ GetResponse error (non-critical):', getResponseError.message);
+                    }
+                }
+                
+                // Step 8: Create subscription until 2027
+                try {
+                    const subscriptionEndDate = Math.floor(new Date('2027-12-31T23:59:59Z').getTime() / 1000);
+                    
+                    await stripe.subscriptions.create({
+                        customer: customerId,
+                        items: [{
+                            price_data: {
+                                currency: 'eur',
+                                product_data: {
+                                    name: 'Skupnost JAZ ŽENSKA',
+                                    description: 'Pridružite se naši skupnosti žensk, ki se zbirajo, delijo modrost in se podpirajo na skupni poti rasti.',
+                                },
+                                unit_amount: 11900,
+                                recurring: {
+                                    interval: 'year',
+                                },
+                            },
+                            quantity: 1,
+                        }],
+                        cancel_at: subscriptionEndDate,
+                        metadata: {
+                            end_date: '2027-12-31',
+                            payment_method: 'bank_transfer'
+                        }
+                    });
+                    console.log('✅ Subscription created until 2027-12-31');
+                } catch (subscriptionError) {
+                    console.error('❌ Error creating subscription:', subscriptionError.message);
+                }
+                
+                console.log('✅ Bank transfer payment workflow completed for:', email);
+            } else {
+                console.error('❌ Firebase not initialized');
+            }
+        } catch (error) {
+            console.error('Error processing invoice payment:', error);
+            // Return 200 to prevent Stripe from retrying
             return res.status(200).json({ 
                 received: true, 
                 error: error.message 
@@ -404,6 +673,7 @@ module.exports = async function handler(req, res) {
 
     // Log if event type is not handled
     if (event.type !== 'checkout.session.completed' && 
+        event.type !== 'invoice.paid' &&
         event.type !== 'customer.subscription.created' && 
         event.type !== 'customer.subscription.updated' && 
         event.type !== 'customer.subscription.deleted') {

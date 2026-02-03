@@ -442,23 +442,27 @@
                         </div>
                     </div>
                     
-                    <div class="subscription-options">
-                        <div class="subscription-card" data-plan="monthly" onclick="selectPlan('monthly')">
-                            <div class="subscription-period">Mesečna naročnina</div>
-                            <div class="subscription-price">
-                                19,00 €<span class="subscription-price-unit">/mesec</span>
-                            </div>
-                            <div style="font-size: 15px; color: var(--text-light); margin-top: 10px; font-weight: 500;">
-                                228,00 € na leto
-                            </div>
+                    <div class="subscription-price-display" style="text-align: center; margin-bottom: 40px;">
+                        <div class="subscription-price" style="font-size: 48px; color: var(--dark-violet); font-weight: 700; margin-bottom: 10px;">
+                            119,00 €<span style="font-size: 24px; font-weight: 400; color: var(--text-light);">/leto</span>
                         </div>
-                        <div class="subscription-card recommended selected" data-plan="yearly" onclick="selectPlan('yearly')">
-                            <div class="subscription-period">Letna naročnina</div>
-                            <div class="subscription-price">
-                                119,00 €<span class="subscription-price-unit">/leto</span>
+                        <p style="font-size: 16px; color: var(--text-light);">Letna naročnina do 31. 12. 2027</p>
+                    </div>
+                    
+                    <div class="payment-method-options" style="margin-bottom: 40px;">
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark-violet); margin-bottom: 20px; text-align: center;">Izberite način plačila</h3>
+                        <div class="subscription-options">
+                            <div class="subscription-card" data-payment="card" onclick="selectPaymentMethod('card')">
+                                <div class="subscription-period">💳 Plačilo s kartico</div>
+                                <div style="font-size: 15px; color: var(--text-light); margin-top: 10px; font-weight: 400;">
+                                    Takojšnji dostop po plačilu
+                                </div>
                             </div>
-                            <div class="subscription-savings">
-                                Prihranite <span class="subscription-savings-amount">109,00 €</span> (48% popust)
+                            <div class="subscription-card recommended selected" data-payment="bank" onclick="selectPaymentMethod('bank')">
+                                <div class="subscription-period">🏦 Bančno nakazilo</div>
+                                <div style="font-size: 15px; color: var(--text-light); margin-top: 10px; font-weight: 400;">
+                                    Prejmete račun z navodili
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -494,7 +498,7 @@
                     </div>
                     
                     <button class="checkout-button" id="checkoutButton" onclick="initiateCheckout()">
-                        Pridruži se zdaj
+                        Nadaljuj
                     </button>
                     
                     <div class="security-badge">
@@ -536,44 +540,50 @@
                 `;
             }
             
-            let selectedPlan = 'yearly'; // Default to yearly
+            let selectedPaymentMethod = 'bank'; // Default to bank transfer
             
-            function selectPlan(plan) {
-                selectedPlan = plan;
+            function selectPaymentMethod(method) {
+                selectedPaymentMethod = method;
             
-            // Update UI
-            document.querySelectorAll('.subscription-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            document.querySelector(`[data-plan="${plan}"]`).classList.add('selected');
-        }
-        
-        async function initiateCheckout() {
-            // Check if running on file:// protocol
-            if (window.location.protocol === 'file:') {
-                alert('Ova stranica mora biti otvorena preko Vercel-a. Molimo koristite vašu Vercel URL adresu.');
-                return;
-            }
-            
-            const productInfo = document.getElementById('productInfo');
-            const checkoutLoading = document.getElementById('checkoutLoading');
-            const checkoutButton = document.getElementById('checkoutButton');
-            
-            // Hide product info and show loading
-            productInfo.style.display = 'none';
-            checkoutLoading.style.display = 'flex';
-            checkoutButton.disabled = true;
-            
-            try {
-                const response = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        plan: selectedPlan // Send selected plan to API
-                    }),
+                // Update UI
+                document.querySelectorAll('.subscription-card').forEach(card => {
+                    card.classList.remove('selected');
                 });
+                document.querySelector(`[data-payment="${method}"]`).classList.add('selected');
+            }
+        
+            async function initiateCheckout() {
+                // Check if running on file:// protocol
+                if (window.location.protocol === 'file:') {
+                    alert('Ova stranica mora biti otvorena preko Vercel-a. Molimo koristite vašu Vercel URL adresu.');
+                    return;
+                }
+                
+                // If bank transfer, redirect to bank transfer form
+                if (selectedPaymentMethod === 'bank') {
+                    window.location.href = 'bank-transfer.html';
+                    return;
+                }
+                
+                const productInfo = document.getElementById('productInfo');
+                const checkoutLoading = document.getElementById('checkoutLoading');
+                const checkoutButton = document.getElementById('checkoutButton');
+                
+                // Hide product info and show loading
+                productInfo.style.display = 'none';
+                checkoutLoading.style.display = 'flex';
+                checkoutButton.disabled = true;
+                
+                try {
+                    const response = await fetch('/api/create-checkout-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            payment_method: 'card' // Card payment
+                        }),
+                    });
 
                 console.log('Response status:', response.status);
                 console.log('Response headers:', Object.fromEntries(response.headers.entries()));
