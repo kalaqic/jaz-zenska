@@ -119,7 +119,7 @@ module.exports = async function handler(req, res) {
                         bank_transfer: {
                             type: 'eu_bank_transfer',
                             eu_bank_transfer: {
-                                country: 'SI'
+                                country: 'DE'
                             }
                         }
                     }
