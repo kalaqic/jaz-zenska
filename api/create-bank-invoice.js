@@ -110,14 +110,27 @@ module.exports = async function handler(req, res) {
             customer: customer.id,
             collection_method: 'send_invoice',
             days_until_due: 7,
-            auto_advance: false, // Don't auto-advance, wait for payment
+            auto_advance: false,
+        
+            payment_settings: {
+                payment_method_types: ['customer_balance'],
+                payment_method_options: {
+                    customer_balance: {
+                        bank_transfer: {
+                            type: 'eu_bank_transfer'
+                        }
+                    }
+                }
+            },
+        
             metadata: {
                 payment_method: 'bank_transfer',
                 firstName: firstName,
                 lastName: lastName,
-                country: 'SI' // Slovenia
+                country: 'SI'
             }
         });
+        
         
         console.log('✅ Invoice created:', invoice.id);
 
