@@ -158,8 +158,48 @@ function switchSection(section) {
 // ===== COMMUNITY SECTION =====
 async function loadCommunity() {
     const user = getCurrentUser();
-    const posts = JSON.parse(localStorage.getItem('posts') || '[]');
     const content = document.getElementById('communityContent');
+    
+    let posts = [];
+    
+    // Try to load from Firestore first
+    try {
+        if (typeof db !== 'undefined') {
+            const postsSnapshot = await db.collection('posts')
+                .orderBy('createdAt', 'desc')
+                .get();
+            
+            if (!postsSnapshot.empty) {
+                posts = postsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        title: data.title,
+                        author: data.author,
+                        authorId: data.authorId,
+                        content: data.content,
+                        image: data.image || null,
+                        likes: data.likes || [],
+                        likesCount: data.likesCount || (data.likes ? data.likes.length : 0),
+                        commentsCount: data.commentsCount || 0,
+                        createdAt: data.createdAt ? (data.createdAt.toDate ? data.createdAt.toDate().toISOString() : data.createdAt) : new Date().toISOString()
+                    };
+                });
+                
+                // Update localStorage cache
+                localStorage.setItem('posts', JSON.stringify(posts));
+                console.log('Loaded posts from Firestore');
+            }
+        }
+    } catch (error) {
+        console.error('Error loading posts from Firestore:', error);
+    }
+    
+    // Fallback to localStorage if Firestore failed or returned no posts
+    if (posts.length === 0) {
+        posts = JSON.parse(localStorage.getItem('posts') || '[]');
+        console.log('Loaded posts from localStorage');
+    }
     
     let html = '';
     
@@ -178,7 +218,7 @@ async function loadCommunity() {
                 Hvala ker si se nam pridružila. S skupnim delom bomo začele <strong>25. marca</strong>. Do takrat te vabim da si pogledaš zanimive vsebine na naši spletni strani in se nam pridružiš na FB, instagramu in youtubu.
             </p>
             <div style="background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(153, 98, 122, 0.2);">
-                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px;">
+                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px; text-align: center;">
                     <strong style="color: var(--dark-violet);">Tvoja članarina začne teči s 1. aprilom 2026</strong>, če pa si plačala letno članarino, le ta velja do 31. 12. 2027.
                 </p>
             </div>
@@ -341,11 +381,12 @@ function removePostImage() {
     postImageData = null;
 }
 
-function submitPost(event) {
+async function submitPost(event) {
     event.preventDefault();
     
     const title = document.getElementById('postTitle').value.trim();
     const content = document.getElementById('postContent').value.trim();
+    const postImageData = window.postImageData || null;
     
     if (!title || !content) {
         alert('Prosimo, izpolnite vsa obvezna polja.');
@@ -353,24 +394,68 @@ function submitPost(event) {
     }
     
     const user = getCurrentUser();
-    const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+    if (!user || !user.userId) {
+        alert('Morate biti prijavljeni za objavo.');
+        return;
+    }
     
+    // Create post object
     const newPost = {
-        id: Date.now().toString(),
         title: title,
         author: user.name || 'Marjanca',
         authorId: user.userId,
         content: content,
         image: postImageData || null,
-        createdAt: new Date().toISOString(),
         likes: [],
-        comments: []
+        likesCount: 0,
+        commentsCount: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     
-    posts.push(newPost);
-    localStorage.setItem('posts', JSON.stringify(posts));
-    closeAddPostModal();
-    loadCommunity();
+    try {
+        // Save to Firestore
+        if (typeof db !== 'undefined') {
+            const docRef = await db.collection('posts').add(newPost);
+            console.log('Post saved to Firestore with ID:', docRef.id);
+            
+            // Also update localStorage cache
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            posts.push({
+                ...newPost,
+                id: docRef.id,
+                createdAt: new Date().toISOString()
+            });
+            localStorage.setItem('posts', JSON.stringify(posts));
+        } else {
+            // Fallback to localStorage if Firestore not available
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            const postWithId = {
+                ...newPost,
+                id: Date.now().toString(),
+                createdAt: new Date().toISOString()
+            };
+            posts.push(postWithId);
+            localStorage.setItem('posts', JSON.stringify(posts));
+            console.warn('Firestore not available, saved to localStorage');
+        }
+        
+        // Clear form
+        document.getElementById('postTitle').value = '';
+        document.getElementById('postContent').value = '';
+        document.getElementById('postImage').value = '';
+        if (window.postImageData) {
+            window.postImageData = null;
+        }
+        if (document.getElementById('postImagePreview')) {
+            document.getElementById('postImagePreview').style.display = 'none';
+        }
+        
+        closeAddPostModal();
+        loadCommunity();
+    } catch (error) {
+        console.error('Error saving post:', error);
+        alert('Napaka pri shranjevanju objave. Prosimo, poskusite znova.');
+    }
 }
 
 function togglePostExpand(postId) {
@@ -558,26 +643,86 @@ async function addComment(postId) {
 }
 
 // ===== CLASSROOM SECTION =====
-function loadClassroom() {
+async function loadClassroom() {
     const content = document.getElementById('classroomContent');
     
-    content.innerHTML = `
+    let courses = [];
+    
+    // Try to load from Firestore first
+    try {
+        if (typeof db !== 'undefined') {
+            const coursesSnapshot = await db.collection('courses').get();
+            
+            if (!coursesSnapshot.empty) {
+                courses = coursesSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        title: data.title,
+                        description: data.description,
+                        episodes: data.episodes || [],
+                        progress: data.progress || 0,
+                        completed: data.completed || false,
+                        createdAt: data.createdAt ? (data.createdAt.toDate ? data.createdAt.toDate().toISOString() : data.createdAt) : new Date().toISOString()
+                    };
+                });
+                
+                // Update localStorage cache
+                localStorage.setItem('courses', JSON.stringify(courses));
+                console.log('Loaded courses from Firestore');
+            }
+        }
+    } catch (error) {
+        console.error('Error loading courses from Firestore:', error);
+    }
+    
+    // Fallback to localStorage if Firestore failed or returned no courses
+    if (courses.length === 0) {
+        courses = JSON.parse(localStorage.getItem('courses') || '[]');
+        console.log('Loaded courses from localStorage');
+    }
+    
+    let html = `
         <div style="
-            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
-            padding: 40px 30px;
-            border-radius: 15px;
-            border: 2px solid #ffc107;
-            text-align: center;
+            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
+            padding: 40px 35px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--mid-violet);
+            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
         ">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px;">Vsebina se začne konec marca</h3>
-            <p style="color: var(--text-dark); font-size: 18px; line-height: 1.8; margin-bottom: 15px;">
-                Z vsebino tečajev in vsega, kar je na voljo v učilnici, bomo začeli konec marca. Takrat se bo tudi začela vaša naročnina, zato se ni treba skrbeti.
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px; text-align: center;">Dobrodošla draga Ženska!</h3>
+            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-bottom: 15px; text-align: center;">
+                Hvala ker si se nam pridružila. S skupnim delom bomo začele <strong>25. marca</strong>. Do takrat te vabim da si pogledaš zanimive vsebine na naši spletni strani in se nam pridružiš na FB, instagramu in youtubu.
             </p>
-            <p style="color: var(--text-light); font-size: 16px; margin-top: 20px;">
-                Hvala za vaše razumevanje in potrpežljivost!
+            <div style="background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(153, 98, 122, 0.2);">
+                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px; text-align: center;">
+                    <strong style="color: var(--dark-violet);">Tvoja članarina začne teči s 1. aprilom 2026</strong>, če pa si plačala letno članarino, le ta velja do 31. 12. 2027.
+                </p>
+            </div>
+            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-top: 20px; text-align: center;">
+                Veselim se sodelovanja s tabo. Če imaš že sedaj kakšna vprašanja ali izzive, mi lahko pišeš na <a href="mailto:Marjanca@jazzenska.com" style="color: var(--mid-violet); text-decoration: underline; font-weight: 600;">Marjanca@jazzenska.com</a>.
             </p>
         </div>
     `;
+    
+    if (courses.length > 0) {
+        html += '<div class="courses-grid">';
+        courses.forEach(course => {
+            html += `
+                <div class="course-card" onclick="openCourse('${course.id}')">
+                    <div class="course-title">${course.title}</div>
+                    <div class="course-info">
+                        <span>${course.episodes?.length || 0} epizod</span>
+                        ${course.progress ? `<span>${course.progress}% dokončano</span>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    content.innerHTML = html;
 }
 
 function openCourse(courseId) {
@@ -587,23 +732,68 @@ function openCourse(courseId) {
 // ===== CALENDAR SECTION =====
 let currentCalendarDate = new Date();
 
-function loadCalendar() {
+async function loadCalendar() {
     const content = document.getElementById('calendarContent');
     
-    content.innerHTML = `
+    let events = [];
+    
+    // Try to load from Firestore first
+    try {
+        if (typeof db !== 'undefined') {
+            const eventsSnapshot = await db.collection('events')
+                .orderBy('date', 'asc')
+                .get();
+            
+            if (!eventsSnapshot.empty) {
+                events = eventsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        title: data.title,
+                        description: data.description,
+                        date: data.date ? (data.date.toDate ? data.date.toDate().toISOString() : data.date) : new Date().toISOString(),
+                        time: data.time,
+                        type: data.type,
+                        location: data.location,
+                        createdAt: data.createdAt ? (data.createdAt.toDate ? data.createdAt.toDate().toISOString() : data.createdAt) : new Date().toISOString()
+                    };
+                });
+                
+                // Update localStorage cache
+                localStorage.setItem('events', JSON.stringify(events));
+                console.log('Loaded events from Firestore');
+            }
+        }
+    } catch (error) {
+        console.error('Error loading events from Firestore:', error);
+    }
+    
+    // Fallback to localStorage if Firestore failed or returned no events
+    if (events.length === 0) {
+        events = JSON.parse(localStorage.getItem('events') || '[]');
+        console.log('Loaded events from localStorage');
+    }
+    
+    let html = `
         <div style="
-            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
-            padding: 40px 30px;
-            border-radius: 15px;
-            border: 2px solid #ffc107;
-            text-align: center;
+            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
+            padding: 40px 35px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--mid-violet);
+            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
         ">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px;">Vsebina se začne konec marca</h3>
-            <p style="color: var(--text-dark); font-size: 18px; line-height: 1.8; margin-bottom: 15px;">
-                Z dogodki in vsem, kar je na voljo v koledarju, bomo začeli konec marca. Takrat se bo tudi začela vaša naročnina, zato se ni treba skrbeti.
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px; text-align: center;">Dobrodošla draga Ženska!</h3>
+            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-bottom: 15px; text-align: center;">
+                Hvala ker si se nam pridružila. S skupnim delom bomo začele <strong>25. marca</strong>. Do takrat te vabim da si pogledaš zanimive vsebine na naši spletni strani in se nam pridružiš na FB, instagramu in youtubu.
             </p>
-            <p style="color: var(--text-light); font-size: 16px; margin-top: 20px;">
-                Hvala za vaše razumevanje in potrpežljivost!
+            <div style="background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(153, 98, 122, 0.2);">
+                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px; text-align: center;">
+                    <strong style="color: var(--dark-violet);">Tvoja članarina začne teči s 1. aprilom 2026</strong>, če pa si plačala letno članarino, le ta velja do 31. 12. 2027.
+                </p>
+            </div>
+            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-top: 20px; text-align: center;">
+                Veselim se sodelovanja s tabo. Če imaš že sedaj kakšna vprašanja ali izzive, mi lahko pišeš na <a href="mailto:Marjanca@jazzenska.com" style="color: var(--mid-violet); text-decoration: underline; font-weight: 600;">Marjanca@jazzenska.com</a>.
             </p>
         </div>
     `;
@@ -733,8 +923,40 @@ function changeCalendarMonth(direction) {
     loadCalendar();
 }
 
-function showDayEvents(dateStr) {
-    const events = JSON.parse(localStorage.getItem('events') || '[]');
+async function showDayEvents(dateStr) {
+    let events = [];
+    
+    // Try to load from Firestore first
+    try {
+        if (typeof db !== 'undefined') {
+            const eventsSnapshot = await db.collection('events')
+                .orderBy('date', 'asc')
+                .get();
+            
+            if (!eventsSnapshot.empty) {
+                events = eventsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        title: data.title,
+                        description: data.description,
+                        date: data.date ? (data.date.toDate ? data.date.toDate().toISOString() : data.date) : new Date().toISOString(),
+                        time: data.time,
+                        type: data.type,
+                        location: data.location
+                    };
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading events from Firestore:', error);
+    }
+    
+    // Fallback to localStorage
+    if (events.length === 0) {
+        events = JSON.parse(localStorage.getItem('events') || '[]');
+    }
+    
     const dayEvents = events.filter(e => {
         const eventDate = new Date(e.date).toISOString().split('T')[0];
         return eventDate === dateStr;
@@ -873,7 +1095,7 @@ function toggleEventLocationField() {
     }
 }
 
-function submitEvent(event) {
+async function submitEvent(event) {
     event.preventDefault();
     
     const title = document.getElementById('eventTitle').value.trim();
@@ -889,53 +1111,130 @@ function submitEvent(event) {
         return;
     }
     
-    if (eventType && !location) {
+    if ((eventType === 'real-life' || eventType === 'webinar' || eventType === 'zoom') && !location) {
         alert('Prosimo, vnesite lokacijo ali povezavo.');
         return;
     }
     
-    const events = JSON.parse(localStorage.getItem('events') || '[]');
+    const eventDate = new Date(date + 'T' + time);
     
-    if (editingId) {
-        // Update existing event
-        const eventIndex = events.findIndex(e => e.id === editingId);
-        if (eventIndex !== -1) {
-            events[eventIndex] = {
-                ...events[eventIndex],
+    try {
+        if (editingId) {
+            // Update existing event in Firestore
+            if (typeof db !== 'undefined') {
+                await db.collection('events').doc(editingId).update({
+                    title: title,
+                    description: description,
+                    date: firebase.firestore.Timestamp.fromDate(eventDate),
+                    time: time,
+                    type: eventType,
+                    location: location,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log('Event updated in Firestore:', editingId);
+            }
+            
+            // Also update localStorage cache
+            const events = JSON.parse(localStorage.getItem('events') || '[]');
+            const eventIndex = events.findIndex(e => e.id === editingId);
+            if (eventIndex !== -1) {
+                events[eventIndex] = {
+                    ...events[eventIndex],
+                    title: title,
+                    description: description,
+                    date: eventDate.toISOString(),
+                    time: time,
+                    type: eventType,
+                    location: location
+                };
+                localStorage.setItem('events', JSON.stringify(events));
+            }
+            
+            // Clear editing ID
+            document.getElementById('addEventModal').removeAttribute('data-editing-id');
+            document.querySelector('#addEventModal .modal-title').textContent = 'Nov dogodek';
+        } else {
+            // Add new event to Firestore
+            const newEvent = {
                 title: title,
                 description: description,
-                date: new Date(date + 'T' + time).toISOString(),
+                date: firebase.firestore.Timestamp.fromDate(eventDate),
                 time: time,
                 type: eventType,
-                location: location
+                location: location,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
+            
+            if (typeof db !== 'undefined') {
+                const docRef = await db.collection('events').add(newEvent);
+                console.log('Event saved to Firestore with ID:', docRef.id);
+                
+                // Also update localStorage cache
+                const events = JSON.parse(localStorage.getItem('events') || '[]');
+                events.push({
+                    ...newEvent,
+                    id: docRef.id,
+                    date: eventDate.toISOString(),
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('events', JSON.stringify(events));
+            } else {
+                // Fallback to localStorage if Firestore not available
+                const events = JSON.parse(localStorage.getItem('events') || '[]');
+                const eventWithId = {
+                    ...newEvent,
+                    id: Date.now().toString(),
+                    date: eventDate.toISOString(),
+                    createdAt: new Date().toISOString()
+                };
+                events.push(eventWithId);
+                localStorage.setItem('events', JSON.stringify(events));
+                console.warn('Firestore not available, saved to localStorage');
+            }
         }
-        // Clear editing ID
-        document.getElementById('addEventModal').removeAttribute('data-editing-id');
-        document.querySelector('#addEventModal .modal-title').textContent = 'Nov dogodek';
-    } else {
-        // Add new event
-        const newEvent = {
-            id: Date.now().toString(),
-            title: title,
-            description: description,
-            date: new Date(date + 'T' + time).toISOString(),
-            time: time,
-            type: eventType,
-            location: location,
-            createdAt: new Date().toISOString()
-        };
         
-        events.push(newEvent);
+        closeAddEventModal();
+        loadCalendar();
+    } catch (error) {
+        console.error('Error saving event:', error);
+        alert('Napaka pri shranjevanju dogodka. Prosimo, poskusite znova.');
     }
-    
-    localStorage.setItem('events', JSON.stringify(events));
-    closeAddEventModal();
-    loadCalendar();
 }
 
-function showAllEventsModal() {
-    const events = JSON.parse(localStorage.getItem('events') || '[]');
+async function showAllEventsModal() {
+    let events = [];
+    
+    // Try to load from Firestore first
+    try {
+        if (typeof db !== 'undefined') {
+            const eventsSnapshot = await db.collection('events')
+                .orderBy('date', 'asc')
+                .get();
+            
+            if (!eventsSnapshot.empty) {
+                events = eventsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        title: data.title,
+                        description: data.description,
+                        date: data.date ? (data.date.toDate ? data.date.toDate().toISOString() : data.date) : new Date().toISOString(),
+                        time: data.time,
+                        type: data.type,
+                        location: data.location
+                    };
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading events from Firestore:', error);
+    }
+    
+    // Fallback to localStorage
+    if (events.length === 0) {
+        events = JSON.parse(localStorage.getItem('events') || '[]');
+    }
+    
     const eventsList = document.getElementById('allEventsList');
     
     if (events.length === 0) {
@@ -1013,9 +1312,36 @@ function closeAllEventsModal() {
     document.getElementById('allEventsModal').classList.remove('show');
 }
 
-function editEvent(eventId) {
-    const events = JSON.parse(localStorage.getItem('events') || '[]');
-    const event = events.find(e => e.id === eventId);
+async function editEvent(eventId) {
+    let event = null;
+    
+    // Try to load from Firestore first
+    try {
+        if (typeof db !== 'undefined') {
+            const eventDoc = await db.collection('events').doc(eventId).get();
+            if (eventDoc.exists) {
+                const data = eventDoc.data();
+                event = {
+                    id: eventDoc.id,
+                    title: data.title,
+                    description: data.description,
+                    date: data.date ? (data.date.toDate ? data.date.toDate().toISOString() : data.date) : new Date().toISOString(),
+                    time: data.time,
+                    type: data.type,
+                    location: data.location
+                };
+            }
+        }
+    } catch (error) {
+        console.error('Error loading event from Firestore:', error);
+    }
+    
+    // Fallback to localStorage
+    if (!event) {
+        const events = JSON.parse(localStorage.getItem('events') || '[]');
+        event = events.find(e => e.id === eventId);
+    }
+    
     if (!event) return;
     
     // Close all events modal
@@ -1043,18 +1369,30 @@ function editEvent(eventId) {
     document.getElementById('addEventModal').classList.add('show');
 }
 
-function deleteEvent(eventId) {
+async function deleteEvent(eventId) {
     if (!confirm('Ali ste prepričani, da želite izbrisati ta dogodek?')) {
         return;
     }
     
-    const events = JSON.parse(localStorage.getItem('events') || '[]');
-    const filteredEvents = events.filter(e => e.id !== eventId);
-    localStorage.setItem('events', JSON.stringify(filteredEvents));
-    
-    // Reload calendar and close modal
-    loadCalendar();
-    closeAllEventsModal();
+    try {
+        // Delete from Firestore
+        if (typeof db !== 'undefined') {
+            await db.collection('events').doc(eventId).delete();
+            console.log('Event deleted from Firestore:', eventId);
+        }
+        
+        // Also update localStorage cache
+        const events = JSON.parse(localStorage.getItem('events') || '[]');
+        const filteredEvents = events.filter(e => e.id !== eventId);
+        localStorage.setItem('events', JSON.stringify(filteredEvents));
+        
+        // Reload calendar and close modal
+        loadCalendar();
+        closeAllEventsModal();
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        alert('Napaka pri brisanju dogodka. Prosimo, poskusite znova.');
+    }
 }
 
 // ===== PROFILE SECTION =====

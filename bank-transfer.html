@@ -275,7 +275,23 @@
                 
                 // Success
                 loading.classList.remove('active');
-                successMessage.textContent = 'Hvala! Račun in navodila za plačilo so bili poslani na vaš email naslov.';
+                successMessage.innerHTML = `
+                    <p style="margin-bottom: 20px;">Hvala! Račun in navodila za plačilo so bili poslani na vaš email naslov.</p>
+                    <a href="index.html" style="
+                        display: inline-block;
+                        padding: 14px 28px;
+                        background: linear-gradient(135deg, var(--pinky, #c88ea7) 0%, var(--mid-violet, #99627a) 100%);
+                        color: var(--white, #ffffff);
+                        text-decoration: none;
+                        border-radius: 50px;
+                        font-weight: 600;
+                        font-size: 16px;
+                        letter-spacing: 0.5px;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(200, 142, 167, 0.2);
+                        margin-top: 10px;
+                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(200, 142, 167, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(200, 142, 167, 0.2)'">Nazaj na domačo stran</a>
+                `;
                 successMessage.classList.add('active');
                 
             } catch (error) {

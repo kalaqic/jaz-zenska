@@ -36,17 +36,53 @@ function getCourseId() {
 }
 
 // Load course
-function loadCourse() {
-    initCourseData();
-    
+async function loadCourse() {
     const courseId = getCourseId();
     if (!courseId) {
         window.location.href = 'dashboard.html';
         return;
     }
     
-    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
-    const course = courses.find(c => c.id === courseId);
+    let course = null;
+    
+    // Try to load from Firestore first
+    try {
+        if (typeof db !== 'undefined') {
+            const courseDoc = await db.collection('courses').doc(courseId).get();
+            
+            if (courseDoc.exists) {
+                const data = courseDoc.data();
+                course = {
+                    id: courseDoc.id,
+                    title: data.title,
+                    description: data.description,
+                    episodes: data.episodes || [],
+                    progress: data.progress || 0,
+                    completed: data.completed || false
+                };
+                
+                // Update localStorage cache
+                const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+                const courseIndex = courses.findIndex(c => c.id === courseId);
+                if (courseIndex !== -1) {
+                    courses[courseIndex] = course;
+                } else {
+                    courses.push(course);
+                }
+                localStorage.setItem('courses', JSON.stringify(courses));
+                console.log('Loaded course from Firestore');
+            }
+        }
+    } catch (error) {
+        console.error('Error loading course from Firestore:', error);
+    }
+    
+    // Fallback to localStorage
+    if (!course) {
+        initCourseData();
+        const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+        course = courses.find(c => c.id === courseId);
+    }
     
     if (!course) {
         window.location.href = 'dashboard.html';
@@ -80,8 +116,7 @@ async function getWatchedEpisodes(courseId) {
     try {
         // Try to get from Firestore
         if (typeof db !== 'undefined') {
-            const progressDoc = await db.collection('users').doc(user.userId)
-                .collection('courseProgress').doc(courseId).get();
+            const progressDoc = await db.collection('userProgress').doc(`${user.userId}_${courseId}`).get();
             
             if (progressDoc.exists) {
                 const data = progressDoc.data();
@@ -152,14 +187,14 @@ async function toggleEpisodeWatched(courseId, episodeId, isWatched) {
             const totalEpisodes = course?.episodes?.length || 0;
             const progress = totalEpisodes > 0 ? Math.round((newWatched.length / totalEpisodes) * 100) : 0;
             
-            await db.collection('users').doc(user.userId)
-                .collection('courseProgress').doc(courseId).set({
-                    courseId: courseId,
-                    watchedEpisodes: newWatched,
-                    progress: progress,
-                    completed: progress === 100,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
+            await db.collection('userProgress').doc(`${user.userId}_${courseId}`).set({
+                userId: user.userId,
+                courseId: courseId,
+                watchedEpisodes: newWatched,
+                progress: progress,
+                completed: progress === 100,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
         }
     } catch (error) {
         console.error('Error saving course progress to Firestore:', error);
