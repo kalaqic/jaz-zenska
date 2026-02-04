@@ -117,7 +117,10 @@ module.exports = async function handler(req, res) {
                 payment_method_options: {
                     customer_balance: {
                         bank_transfer: {
-                            type: 'eu_bank_transfer'
+                            type: 'eu_bank_transfer',
+                            eu_bank_transfer: {
+                                country: 'SI'
+                            }
                         }
                     }
                 }
@@ -130,6 +133,7 @@ module.exports = async function handler(req, res) {
                 country: 'SI'
             }
         });
+        
         
         
         console.log('✅ Invoice created:', invoice.id);
