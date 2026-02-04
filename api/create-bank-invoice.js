@@ -97,7 +97,7 @@ module.exports = async function handler(req, res) {
                 firstName: firstName,
                 lastName: lastName,
                 payment_method: 'bank_transfer',
-                country: 'SI' // Slovenia for IBAN
+                country: 'SI'
             }
         });
 
@@ -116,6 +116,7 @@ module.exports = async function handler(req, res) {
                 payment_method_types: ['customer_balance'],
                 payment_method_options: {
                     customer_balance: {
+                        funding_type: 'bank_transfer',
                         bank_transfer: {
                             type: 'eu_bank_transfer',
                             eu_bank_transfer: {
@@ -133,6 +134,7 @@ module.exports = async function handler(req, res) {
                 country: 'SI'
             }
         });
+        
         
         
         
