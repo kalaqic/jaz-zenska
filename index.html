@@ -710,6 +710,8 @@
                 <p class="newsletter-description">Prijavite se na naše e-novičke in prejmite navdihujoče vsebine za osebno rast, žensko modrost in podporo na vaši poti. ❤️</p>
             
             <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+                    <!-- Honeypot field - hidden from users but bots will fill it -->
+                    <input type="text" name="are_you_a_bot" id="are_you_a_bot" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
                     <div class="newsletter-form-row">
                 <input type="text" id="newsletter-name" name="name" placeholder="Vaše ime" required>
                 <input type="email" id="newsletter-email" name="email" placeholder="Email" required>

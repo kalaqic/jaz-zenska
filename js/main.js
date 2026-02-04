@@ -138,6 +138,14 @@ function handleNewsletterSubmit(event) {
     const submitBtn = document.getElementById('newsletter-submit-btn');
     const form = event.target;
     
+    // Check honeypot field - if filled, it's a bot
+    const honeypotField = document.getElementById('are_you_a_bot');
+    if (honeypotField && honeypotField.value.trim() !== '') {
+        // Bot detected - silently reject
+        console.log('Bot detected via honeypot field');
+        return;
+    }
+    
     // Get form values
     let name = nameInput ? nameInput.value.trim() : '';
     // Capitalize first letter of name
@@ -180,7 +188,8 @@ function handleNewsletterSubmit(event) {
     // Prepare data for backend
     const requestData = {
         email: email,
-        name: name
+        name: name,
+        are_you_a_bot: honeypotField ? honeypotField.value.trim() : ''
     };
     
     // Make API request to backend proxy

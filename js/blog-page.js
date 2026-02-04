@@ -33,7 +33,7 @@ const blogContent = {
             (Francis Bacon)</p>
             
             <div style="text-align: center; margin: 25px 0;">
-                <img src="images/blog sreca/jaz ženska 1.jpeg" alt="Jaz Ženska" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                <img src="images/blog sreca/luck 1.jpg" alt="Jaz Ženska" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
             </div>
             
             <p>Vse naše življenje je pot stkana iz trenutkov in sreča naj ne bo končni cilj, temveč način potovanja, na katerem znamo prepoznati lepote, darove in priložnosti življenja v vseh dimenzijah, ki se nam ponujajo.</p>
@@ -54,7 +54,7 @@ const blogContent = {
             (Joseph Campbell)</p>
             
             <div style="text-align: center; margin: 25px 0;">
-                <img src="images/blog sreca/jaz ženska 2.jpeg" alt="Jaz Ženska" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                <img src="images/blog sreca/luck 2.jpg" alt="Jaz Ženska" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
             </div>
             
             <p>Tako kot s soncem, je tudi s srečo, pride in gre. Ozavestite srečne trenutke, uživajte v njih, bodite hvaležni zanje, delite jih z drugimi in se že vnaprej veselite novih. Bodite pozitivni in pričakujte dobro. Prevetrite svoje navade, prepričanja in vrednote, opustite nerealna pričakovanja in če želite ujeti srečo, razprite roke in srce, dajte brez pričakovanja, da se vam bo vrnilo, živite brez strahu in pogumno stopajte naprej z zaupanjem in vero v življenje, ki nam vedno ponudi in da tisto, kar je v določenem trenutka najboljše za nas. Če to ni čisto tako kot si želimo, se vprašajmo kaj v našem življenju bi bilo dobro spremeniti, kaj lahko naredimo drugače, česa se lahko naučimo in katero novo pot lahko izberemo? Ob vsem tem pa ne pozabite, da smo kreatorji svojega življenja in kovači svoje sreče. Kujte močno in vztrajno udarjajte po tnalu življenja, verjemite v srečo, imejte jo radi in bodite pripravljeni, da ji boste na široko odprli vrata, ko vas bo ponovno obiskala!</p>

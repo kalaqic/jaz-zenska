@@ -54,7 +54,17 @@ module.exports = async function handler(req, res) {
             }
         }
 
-        const { email, name } = body;
+        const { email, name, are_you_a_bot } = body;
+
+        // Honeypot check - if filled, it's a bot, silently reject
+        if (are_you_a_bot && are_you_a_bot.trim() !== '') {
+            console.log('Bot detected via honeypot field');
+            // Return success to bot (don't let them know they were caught)
+            return res.status(200).json({ 
+                success: true, 
+                message: 'Successfully subscribed to newsletter'
+            });
+        }
 
         // Validate input
         if (!email || !name) {
