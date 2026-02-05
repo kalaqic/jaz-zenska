@@ -276,7 +276,7 @@
             
             try {
                 await auth.sendPasswordResetEmail(email);
-                alert('Email z navodili za ponastavitev gesla je bil poslan na vaš naslov.');
+                alert('Email z navodili za ponastavitev gesla je bil poslan na vaš naslov.\n\nKer imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞');
             } catch (error) {
                 let errorMessage = 'Napaka pri pošiljanju emaila';
                 

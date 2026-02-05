@@ -215,7 +215,7 @@ function handleNewsletterSubmit(event) {
     })
     .then(data => {
         // Success
-        alert('Hvala za prijavo! Uspešno ste se prijavili na naše e-novičke. Prejeli boste potrditveno e-pošto.');
+        alert('Hvala za prijavo! Uspešno ste se prijavili na naše e-novičke. Prejeli boste potrditveno e-pošto.\n\nKer imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞');
         
         // Reset form
         if (form) form.reset();
