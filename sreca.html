@@ -879,12 +879,12 @@
                 webinarSubmitBtn.textContent = 'Prijavljanje...';
 
                 try {
-                    const response = await fetch('/api/sreca-signup', {
+                    const response = await fetch('/api/webinar-signup', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ email: email, name: name })
+                        body: JSON.stringify({ email: email, name: name, campaignId: 'f5M9D' })
                     });
 
                     const data = await response.json();

@@ -6,7 +6,8 @@ const fetch = require('node-fetch');
 // Get API key from environment variable (set in Vercel)
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
-const CAMPAIGN_ID = 'froIl'; // Webinar campaign ID
+const DEFAULT_CAMPAIGN_ID = 'froIl'; // Default webinar campaign ID
+const SRECA_CAMPAIGN_ID = 'f5M9D'; // Sreca webinar campaign ID
 
 // Validate API key is set
 if (!GETRESPONSE_API_KEY) {
@@ -54,7 +55,7 @@ module.exports = async function handler(req, res) {
             }
         }
 
-        const { email, name } = body;
+        const { email, name, campaignId } = body;
 
         // Validate input
         if (!email) {
@@ -63,18 +64,27 @@ module.exports = async function handler(req, res) {
             });
         }
 
+        // Determine campaign ID - use provided campaignId, or default to froIl
+        // If campaignId is 'f5M9D' (sreca), use that, otherwise use default
+        let selectedCampaignId = DEFAULT_CAMPAIGN_ID;
+        if (campaignId === 'f5M9D' || campaignId === SRECA_CAMPAIGN_ID) {
+            selectedCampaignId = SRECA_CAMPAIGN_ID;
+        } else if (campaignId) {
+            selectedCampaignId = campaignId; // Allow custom campaign IDs
+        }
+
         // Prepare contact data for GetResponse API v3
         const contactData = {
             email: email,
             name: name || email.split('@')[0], // Use provided name or email prefix as fallback
             campaign: {
-                campaignId: CAMPAIGN_ID
+                campaignId: selectedCampaignId
             }
         };
 
         console.log('=== Creating webinar signup ===');
         console.log('Email:', email);
-        console.log('Campaign ID:', CAMPAIGN_ID);
+        console.log('Campaign ID:', selectedCampaignId);
         console.log('Contact data:', JSON.stringify(contactData, null, 2));
 
         // Try to create contact directly - GetResponse will return 409 if it already exists
