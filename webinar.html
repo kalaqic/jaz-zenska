@@ -240,6 +240,27 @@
             line-height: 1.6;
         }
         
+        .webinar-thank-you-close {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 4px 15px rgba(100, 56, 67, 0.2);
+        }
+        
+        .webinar-thank-you-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.3);
+            background: linear-gradient(135deg, var(--dark-violet) 0%, var(--mid-violet) 100%);
+        }
+        
         .webinar-modal-form.hidden {
             display: none;
         }
@@ -792,6 +813,7 @@
                 <h2 class="webinar-thank-you-title">Hvala!</h2>
                 <p class="webinar-thank-you-message">Vaša prijava je bila uspešna, hvala!</p>
                 <p class="webinar-thank-you-message" style="margin-top: 15px; font-size: 14px; color: #666;">Ker imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞</p>
+                <button class="webinar-thank-you-close" onclick="closeWebinarModal()">Zapri</button>
             </div>
         </div>
     </div>
@@ -894,15 +916,6 @@
                         // Hide form and show thank you message
                         webinarSignupForm.classList.add('hidden');
                         webinarThankYou.classList.add('active');
-                        
-                        // Fade out modal after 2 seconds
-                        setTimeout(() => {
-                            webinarModal.classList.add('fade-out');
-                            webinarModal.querySelector('.webinar-modal-content').classList.add('fade-out');
-                            setTimeout(() => {
-                                closeWebinarModal();
-                            }, 500);
-                        }, 2000);
                     } else {
                         showWebinarMessage(data.message || 'Napaka pri prijavi. Prosimo, poskusite znova.', 'error');
                         webinarSubmitBtn.disabled = false;

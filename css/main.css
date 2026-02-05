@@ -1036,8 +1036,8 @@ nav a:hover::after {
     
     .hero-content-left h1 {
         font-size: 36px;
-    }
-    
+}
+
     .hero-label {
         font-size: 11px;
         margin-bottom: 20px;
@@ -1343,8 +1343,8 @@ nav a:hover::after {
         margin-top: 20px;
         margin-bottom: 20px;
         display: block;
-    }
-    
+}
+
     .hero-wrapper .hero-signature,
     .hero-content-left .hero-signature {
         position: relative !important;
