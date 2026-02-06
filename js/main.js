@@ -215,7 +215,11 @@ function handleNewsletterSubmit(event) {
     })
     .then(data => {
         // Success
-        alert('Hvala za prijavo! Uspešno ste se prijavili na naše e-novičke. Prejeli boste potrditveno e-pošto.\n\nKer imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞');
+        if (data && data.alreadyExists) {
+            alert('Ta email naslov je že prijavljen na naše e-novičke. Hvala!');
+        } else {
+            alert('Hvala za prijavo! Uspešno ste se prijavili na naše e-novičke. Prejeli boste potrditveno e-pošto.\n\nKer imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞');
+        }
         
         // Reset form
         if (form) form.reset();
@@ -393,67 +397,10 @@ function preventScrollBounce() {
     // Prevent scroll bounce on all elements
     document.documentElement.style.overscrollBehaviorY = 'none';
     document.body.style.overscrollBehaviorY = 'none';
-    
-    // Prevent bounce on touch devices
-    let lastTouchY = 0;
-    let isScrolling = false;
-    
-    document.addEventListener('touchstart', function(e) {
-        lastTouchY = e.touches[0].clientY;
-    }, { passive: true });
-    
-    document.addEventListener('touchmove', function(e) {
-        const currentY = e.touches[0].clientY;
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight;
-        const clientHeight = document.documentElement.clientHeight;
-        
-        // Prevent overscroll at the top
-        if (scrollTop <= 0 && currentY > lastTouchY) {
-            e.preventDefault();
-        }
-        
-        // Prevent overscroll at the bottom
-        if (scrollTop + clientHeight >= scrollHeight - 1 && currentY < lastTouchY) {
-            e.preventDefault();
-        }
-        
-        lastTouchY = currentY;
-    }, { passive: false });
-    
-    // Original function
-    let ticking = false;
-    
-    window.addEventListener('scroll', function() {
-        if (ticking) return;
-        
-        ticking = true;
-        requestAnimationFrame(function() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const windowHeight = window.innerHeight;
-            const documentHeight = Math.max(
-                document.body.scrollHeight,
-                document.body.offsetHeight,
-                document.documentElement.clientHeight,
-                document.documentElement.scrollHeight,
-                document.documentElement.offsetHeight
-            );
-            const maxScroll = documentHeight - windowHeight;
-            
-            // If scrolled past the maximum (with tiny tolerance), snap back
-            if (scrollTop > maxScroll + 1) {
-                window.scrollTo({
-                    top: maxScroll,
-                    behavior: 'auto'
-                });
-            }
-            
-            ticking = false;
-        });
-    }, { passive: true });
-    
-    // Use CSS overscroll-behavior for bounce prevention
-    // This is handled by CSS, no need for aggressive JavaScript
+    // IMPORTANT:
+    // We rely on CSS `overscroll-behavior` (see `css/main.css`) to prevent bounce.
+    // A previous implementation used a global `touchmove` preventDefault handler,
+    // which can break normal scrolling on some devices/browsers.
 }
 
 
@@ -724,14 +671,25 @@ function initSchedulingSystem() {
     
     if (!scheduleBtn || !wrapper) return;
     
+    // Consultation availability (hard-limited as requested)
+    // Only: 16.2.2026
+    const ONLY_AVAILABLE_DATE = new Date(2026, 1, 16); // months are 0-based (1 = February)
+    const ONLY_AVAILABLE_DATE_STR = ONLY_AVAILABLE_DATE.toDateString();
+    const AVAILABLE_TIME_SLOTS = ['09:00', '09:30', '10:00', '10:30', '11:00'];
+    
     let currentDate = new Date();
     let selectedDate = null;
     let selectedTime = null;
     
     // Initialize calendar
     function initCalendar() {
+        // Always show the month that contains the only available date and preselect it
+        currentDate = new Date(ONLY_AVAILABLE_DATE.getFullYear(), ONLY_AVAILABLE_DATE.getMonth(), 1);
+        selectedDate = new Date(ONLY_AVAILABLE_DATE);
+        selectedTime = null;
         renderCalendar();
         renderTimeSlots();
+        updateSelectedInfo();
     }
     
     // Render calendar
@@ -779,16 +737,8 @@ function initSchedulingSystem() {
             dayElement.textContent = day;
             
             const date = new Date(year, month, day);
-            const todayStr = today.toDateString();
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const tomorrowStr = tomorrow.toDateString();
             const dateStr = date.toDateString();
-            
-            const isPast = date < today && dateStr !== todayStr;
-            const isToday = dateStr === todayStr;
-            const isTomorrow = dateStr === tomorrowStr;
-            const isDisabled = isPast || isToday || isTomorrow;
+            const isDisabled = dateStr !== ONLY_AVAILABLE_DATE_STR;
             
             // Calculate column position (0-6, where 5 and 6 are the last two columns)
             const column = (firstDay + day - 1) % 7;
@@ -796,12 +746,8 @@ function initSchedulingSystem() {
                 dayElement.classList.add('weekend');
             }
             
-            if (isPast || isToday || isTomorrow) {
+            if (isDisabled) {
                 dayElement.classList.add('disabled');
-            }
-            
-            if (isToday) {
-                dayElement.classList.add('today');
             }
             
             if (selectedDate && dateStr === selectedDate.toDateString()) {
@@ -834,11 +780,7 @@ function initSchedulingSystem() {
             return;
         }
         
-        // Generate time slots - only available options from GetResponse custom field
-        // Available: 18:00, 19:00, 20:00, 21:00, 22:00
-        const timeSlots = ['18:00', '19:00', '20:00', '21:00', '22:00'];
-        
-        timeSlots.forEach(time => {
+        AVAILABLE_TIME_SLOTS.forEach(time => {
             const slot = document.createElement('div');
             slot.className = 'time-slot';
             slot.textContent = time;
@@ -915,17 +857,13 @@ function initSchedulingSystem() {
     const nextMonthBtn = document.getElementById('next-month');
     
     if (prevMonthBtn) {
-        prevMonthBtn.addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
-        });
+        // Disabled because only one date is available
+        prevMonthBtn.disabled = true;
     }
     
     if (nextMonthBtn) {
-        nextMonthBtn.addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar();
-        });
+        // Disabled because only one date is available
+        nextMonthBtn.disabled = true;
     }
     
     // Schedule button click

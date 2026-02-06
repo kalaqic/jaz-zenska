@@ -128,6 +128,31 @@ module.exports = async function handler(req, res) {
             });
         }
 
+        // Hard-limit availability (must match frontend)
+        // Only allow 16.2.2026 at: 09:00, 09:30, 10:00, 10:30, 11:00 (Slovenia CET = UTC+1)
+        const allowedDateTimesUtc = new Set([
+            '2026-02-16T08:00:00Z', // 09:00 CET
+            '2026-02-16T08:30:00Z', // 09:30 CET
+            '2026-02-16T09:00:00Z', // 10:00 CET
+            '2026-02-16T09:30:00Z', // 10:30 CET
+            '2026-02-16T10:00:00Z'  // 11:00 CET
+        ]);
+
+        if (!allowedDateTimesUtc.has(noyCaD)) {
+            console.error('Requested consultation time is not allowed:', noyCaD);
+            return res.status(400).json({
+                error: 'Izbrani termin ni več na voljo. Prosimo, izberite enega od razpoložljivih terminov.'
+            });
+        }
+
+        // Optional: also validate the day name (16.2.2026 is Monday)
+        if (day !== 'Ponedeljek') {
+            console.error('Invalid day for allowed date:', day, 'for noyCaD:', noyCaD);
+            return res.status(400).json({
+                error: 'Neveljaven datum/termin. Prosimo, poskusite znova.'
+            });
+        }
+
         // Ensure name is properly set (GetResponse requires name field)
         // Only use email as fallback if name is truly missing/empty
         const contactName = (name && name.trim()) ? name.trim() : email;

@@ -6910,6 +6910,19 @@ footer {
     margin-bottom: 5px;
 }
 
+.footer-bottom a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    opacity: 0.85;
+    transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.footer-bottom a:hover {
+    opacity: 1;
+    color: var(--pinky);
+}
+
 .footer-social {
     display: flex;
     justify-content: center;

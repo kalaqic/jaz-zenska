@@ -613,9 +613,7 @@
                             <div class="scheduling-left">
                         <div class="calendar-container">
                             <div class="calendar-header">
-                                <button class="calendar-nav-btn" id="prev-month">‹</button>
-                                <h4 id="calendar-month-year"></h4>
-                                <button class="calendar-nav-btn" id="next-month">›</button>
+                                <h4 id="calendar-month-year">februar 2026</h4>
                             </div>
                             <div class="calendar-grid" id="calendar-grid"></div>
                         </div>
@@ -785,6 +783,7 @@
         
         <div class="footer-bottom">
             <p>Jaz Ženska © 2026. Vse pravice pridržane.</p>
+            <p>Izdelava spletne strani: <a href="https://www.linkedin.com/in/kalabic-david" target="_blank" rel="noopener noreferrer">David Kalabić</a></p>
             <p><a href="pravilnik-o-zasebnosti.html" style="color: inherit; text-decoration: underline; opacity: 0.8;">Piškotki in politika zasebnosti</a></p>
             
             <div class="footer-social">
@@ -897,6 +896,7 @@
             <h2 class="webinar-modal-title">Prijavi se na brezplačen webinar</h2>
             <p class="webinar-modal-description">Vnesite vaš email naslov in se prijavite na brezplačni webinar <strong>Moja moč je v meni</strong>.</p>
             <form class="webinar-modal-form" id="webinarSignupForm">
+                <input type="text" name="are_you_a_bot" id="webinar_are_you_a_bot" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
                 <input 
                     type="text" 
                     class="webinar-modal-input" 
@@ -1018,7 +1018,11 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ email: email, name: name })
+                        body: JSON.stringify({
+                            email: email,
+                            name: name,
+                            are_you_a_bot: (document.getElementById('webinar_are_you_a_bot')?.value || '').trim()
+                        })
                     });
 
                     const data = await response.json();

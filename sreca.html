@@ -787,6 +787,7 @@
             <h2 class="webinar-modal-title">Prijavi se na brezplačen webinar</h2>
             <p class="webinar-modal-description">Vnesite vaš email naslov in se prijavite na brezplačni webinar <strong>25 stopnic do sreče</strong>.</p>
             <form class="webinar-modal-form" id="webinarSignupForm">
+                <input type="text" name="are_you_a_bot" id="webinar_are_you_a_bot" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
                 <input 
                     type="text" 
                     class="webinar-modal-input" 
@@ -906,7 +907,12 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ email: email, name: name, campaignId: 'f5M9D' })
+                        body: JSON.stringify({
+                            email: email,
+                            name: name,
+                            campaignId: 'f5M9D',
+                            are_you_a_bot: (document.getElementById('webinar_are_you_a_bot')?.value || '').trim()
+                        })
                     });
 
                     const data = await response.json();

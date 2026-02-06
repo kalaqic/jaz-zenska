@@ -57,7 +57,7 @@ module.exports = async function handler(req, res) {
         const { email, name, are_you_a_bot } = body;
 
         // Honeypot check - if filled, it's a bot, silently reject
-        if (are_you_a_bot && are_you_a_bot.trim() !== '') {
+        if (are_you_a_bot && String(are_you_a_bot).trim() !== '') {
             console.log('Bot detected via honeypot field');
             // Return success to bot (don't let them know they were caught)
             return res.status(200).json({ 
@@ -73,17 +73,20 @@ module.exports = async function handler(req, res) {
             });
         }
 
+        const normalizedEmail = String(email).trim().toLowerCase();
+        const normalizedName = String(name).trim();
+
         // Prepare contact data for GetResponse API v3
         const contactData = {
-            email: email,
-            name: name,
+            email: normalizedEmail,
+            name: normalizedName,
             campaign: {
                 campaignId: CAMPAIGN_ID
             }
         };
 
         console.log('=== Creating new contact ===');
-        console.log('Email:', email);
+        console.log('Email:', normalizedEmail);
         console.log('Campaign ID:', CAMPAIGN_ID);
         console.log('Contact data:', JSON.stringify(contactData, null, 2));
 
@@ -132,10 +135,11 @@ module.exports = async function handler(req, res) {
             console.log('Full error data:', JSON.stringify(data, null, 2));
             
             if (isAlreadyAdded) {
-                return res.status(409).json({ 
-                    error: 'Contact already added',
-                    message: 'Contact already added',
-                    details: data
+                // Treat duplicates as success: "one person can only enter once"
+                return res.status(200).json({
+                    success: true,
+                    message: 'Already subscribed to newsletter',
+                    alreadyExists: true
                 });
             } else {
                 // 409 but NOT "already added" - this is a different problem

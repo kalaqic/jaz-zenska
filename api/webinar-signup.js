@@ -55,7 +55,17 @@ module.exports = async function handler(req, res) {
             }
         }
 
-        const { email, name, campaignId } = body;
+        const { email, name, campaignId, are_you_a_bot } = body;
+
+        // Honeypot check - if filled, it's a bot, silently reject
+        if (are_you_a_bot && String(are_you_a_bot).trim() !== '') {
+            console.log('Bot detected via honeypot field (webinar)');
+            // Return success to bot (don't let them know they were caught)
+            return res.status(200).json({
+                success: true,
+                message: 'Successfully signed up for webinar'
+            });
+        }
 
         // Validate input
         if (!email) {
@@ -63,6 +73,8 @@ module.exports = async function handler(req, res) {
                 error: 'Missing required field: email' 
             });
         }
+
+        const normalizedEmail = String(email).trim().toLowerCase();
 
         // Determine campaign ID - use provided campaignId, or default to froIl
         // If campaignId is 'f5M9D' (sreca), use that, otherwise use default
@@ -75,15 +87,15 @@ module.exports = async function handler(req, res) {
 
         // Prepare contact data for GetResponse API v3
         const contactData = {
-            email: email,
-            name: name || email.split('@')[0], // Use provided name or email prefix as fallback
+            email: normalizedEmail,
+            name: name || normalizedEmail.split('@')[0], // Use provided name or email prefix as fallback
             campaign: {
                 campaignId: selectedCampaignId
             }
         };
 
         console.log('=== Creating webinar signup ===');
-        console.log('Email:', email);
+        console.log('Email:', normalizedEmail);
         console.log('Campaign ID:', selectedCampaignId);
         console.log('Contact data:', JSON.stringify(contactData, null, 2));
 
