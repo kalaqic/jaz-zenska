@@ -318,11 +318,7 @@ function loadEpisodeContent(episodeId, course = null, element = null) {
     const isLastEpisode = episodeIndex === course.episodes.length - 1;
     const nextEpisode = !isLastEpisode ? course.episodes[episodeIndex + 1] : null;
     
-    // Check if current episode is watched (async, but we'll handle it)
-    getWatchedEpisodes(course.id).then(watched => {
-        const isWatched = watched.includes(episodeId);
-        // Update button state if needed
-    });
+    // Check if current episode is watched
     const watched = await getWatchedEpisodes(course.id);
     const isWatched = watched.includes(episodeId);
     

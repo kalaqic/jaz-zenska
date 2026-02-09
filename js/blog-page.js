@@ -1,7 +1,6 @@
 // Blog page functionality
 document.addEventListener('DOMContentLoaded', function() {
     initBlogModal();
-    // initPageTransitionLoader(); // Commented out if function doesn't exist
 });
 
 // Blog content data

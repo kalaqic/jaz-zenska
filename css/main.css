@@ -1,7 +1,22 @@
 /* Jaz Ženska - Master Stylesheet */
 /* All CSS consolidated into single file for maximum compatibility */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
+/* Local Variable Fonts */
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('../fonts/PlayfairDisplay.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
 
 :root {
     --dark-violet: #643843;
@@ -2152,7 +2167,7 @@ nav a:hover::after {
     background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
     background-image: 
         linear-gradient(135deg, rgba(100, 56, 67, 0.6) 0%, rgba(0, 0, 0, 0.7) 100%),
-        url('../images/jutranji obred.jpg');
+        url('../images/jutranji obred.webp');
     background-size: cover, cover;
     background-position: center, center;
     background-repeat: no-repeat, no-repeat;
