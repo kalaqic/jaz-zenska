@@ -1,6 +1,98 @@
 {
   "framework": null,
   "buildCommand": null,
+  "redirects": [
+    {
+      "source": "/account.html",
+      "destination": "/account",
+      "permanent": true
+    },
+    {
+      "source": "/bank-transfer.html",
+      "destination": "/bank-transfer",
+      "permanent": true
+    },
+    {
+      "source": "/blog.html",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/checkout-success.html",
+      "destination": "/checkout-success",
+      "permanent": true
+    },
+    {
+      "source": "/checkout.html",
+      "destination": "/checkout",
+      "permanent": true
+    },
+    {
+      "source": "/course.html",
+      "destination": "/course",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard.html",
+      "destination": "/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/ebook-signup.html",
+      "destination": "/ebook-signup",
+      "permanent": true
+    },
+    {
+      "source": "/jaz-zenska.html",
+      "destination": "/jaz-zenska",
+      "permanent": true
+    },
+    {
+      "source": "/join.html",
+      "destination": "/join",
+      "permanent": true
+    },
+    {
+      "source": "/login.html",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/media.html",
+      "destination": "/media",
+      "permanent": true
+    },
+    {
+      "source": "/o-meni.html",
+      "destination": "/o-meni",
+      "permanent": true
+    },
+    {
+      "source": "/pravilnik-o-zasebnosti.html",
+      "destination": "/pravilnik-o-zasebnosti",
+      "permanent": true
+    },
+    {
+      "source": "/splosni-pogoji.html",
+      "destination": "/splosni-pogoji",
+      "permanent": true
+    },
+    {
+      "source": "/sreca.html",
+      "destination": "/sreca",
+      "permanent": true
+    },
+    {
+      "source": "/stik-z-nami.html",
+      "destination": "/stik-z-nami",
+      "permanent": true
+    },
+    {
+      "source": "/webinar.html",
+      "destination": "/webinar",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/favicon.png",
@@ -9,6 +101,78 @@
     {
       "source": "/favicon.ico",
       "destination": "/images/logo/logo jaz zenska.webp"
+    },
+    {
+      "source": "/account",
+      "destination": "/account.html"
+    },
+    {
+      "source": "/bank-transfer",
+      "destination": "/bank-transfer.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/blog.html"
+    },
+    {
+      "source": "/checkout-success",
+      "destination": "/checkout-success.html"
+    },
+    {
+      "source": "/checkout",
+      "destination": "/checkout.html"
+    },
+    {
+      "source": "/course",
+      "destination": "/course.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/ebook-signup",
+      "destination": "/ebook-signup.html"
+    },
+    {
+      "source": "/jaz-zenska",
+      "destination": "/jaz-zenska.html"
+    },
+    {
+      "source": "/join",
+      "destination": "/join.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/media",
+      "destination": "/media.html"
+    },
+    {
+      "source": "/o-meni",
+      "destination": "/o-meni.html"
+    },
+    {
+      "source": "/pravilnik-o-zasebnosti",
+      "destination": "/pravilnik-o-zasebnosti.html"
+    },
+    {
+      "source": "/splosni-pogoji",
+      "destination": "/splosni-pogoji.html"
+    },
+    {
+      "source": "/sreca",
+      "destination": "/sreca.html"
+    },
+    {
+      "source": "/stik-z-nami",
+      "destination": "/stik-z-nami.html"
+    },
+    {
+      "source": "/webinar",
+      "destination": "/webinar.html"
     }
   ],
   "functions": {
