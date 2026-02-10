@@ -2,6 +2,7 @@
 // This file should be in /api/newsletter.js for Vercel deployment
 
 const fetch = require('node-fetch');
+const { detectBot } = require('./bot-filter');
 
 // Get API key from environment variable (set in Vercel)
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
@@ -54,11 +55,12 @@ module.exports = async function handler(req, res) {
             }
         }
 
-        const { email, name, are_you_a_bot } = body;
+        const { email, name, are_you_a_bot, form_start_time } = body;
 
-        // Honeypot check - if filled, it's a bot, silently reject
-        if (are_you_a_bot && String(are_you_a_bot).trim() !== '') {
-            console.log('Bot detected via honeypot field');
+        // Comprehensive bot detection
+        const botCheck = detectBot(req, body);
+        if (botCheck.isBot) {
+            console.log('Bot detected:', botCheck.reason, 'IP:', req.headers['x-forwarded-for'] || 'unknown');
             // Return success to bot (don't let them know they were caught)
             return res.status(200).json({ 
                 success: true, 

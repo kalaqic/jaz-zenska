@@ -240,7 +240,12 @@
             <p>Vnesite vaš email naslov in prejmite e-knjigo "25 stopnic do sreče"</p>
         </div>
         
-        <form id="ebook-form" class="ebook-form">
+        <form id="ebook-form" class="ebook-form" data-form-start-time="">
+            <!-- Honeypot fields - hidden from users but bots will fill them -->
+            <input type="text" name="are_you_a_bot" id="ebook_are_you_a_bot" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
+            <input type="text" name="website" id="ebook_website" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
+            <input type="text" name="company" id="ebook_company" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
+            <input type="hidden" name="form_start_time" id="ebook_form_start_time">
             <div class="ebook-form-group">
                 <label for="ebook-name">Ime</label>
                 <input type="text" id="ebook-name" name="name" placeholder="Vaše ime" required>
@@ -278,6 +283,25 @@
         const successMessage = document.getElementById('ebook-success-message');
         const ebookNameInput = document.getElementById('ebook-name');
         
+        // Initialize form start time tracking
+        if (ebookForm) {
+            const formStartTimeInput = document.getElementById('ebook_form_start_time');
+            if (formStartTimeInput) {
+                // Set initial form start time when form is first focused/interacted with
+                const setFormStartTime = () => {
+                    if (!formStartTimeInput.value) {
+                        formStartTimeInput.value = Date.now().toString();
+                    }
+                };
+                ebookForm.addEventListener('focusin', setFormStartTime, { once: true });
+                // Also set on first input interaction
+                const inputs = ebookForm.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.addEventListener('focus', setFormStartTime, { once: true });
+                });
+            }
+        }
+        
         // Capitalize first letter of name field (same logic as webinar form)
         if (ebookNameInput) {
             ebookNameInput.addEventListener('input', function(e) {
@@ -297,6 +321,23 @@
             const submitBtn = document.getElementById('ebook-submit-btn');
             const submitText = submitBtn.querySelector('.ebook-submit-text');
             const submitLoading = submitBtn.querySelector('.ebook-submit-loading');
+            
+            // Check honeypot fields - if filled, it's a bot
+            const honeypotField = document.getElementById('ebook_are_you_a_bot');
+            const websiteField = document.getElementById('ebook_website');
+            const companyField = document.getElementById('ebook_company');
+            
+            if ((honeypotField && honeypotField.value.trim() !== '') ||
+                (websiteField && websiteField.value.trim() !== '') ||
+                (companyField && companyField.value.trim() !== '')) {
+                // Bot detected - silently reject
+                console.log('Bot detected via honeypot field');
+                return;
+            }
+            
+            // Get form start time
+            const formStartTimeInput = document.getElementById('ebook_form_start_time');
+            const formStartTime = formStartTimeInput ? parseInt(formStartTimeInput.value) || Date.now() : Date.now();
             
             // Get form values
             let name = nameInput ? nameInput.value.trim() : '';
@@ -339,7 +380,11 @@
             // Prepare data for backend
             const requestData = {
                 email: email,
-                name: name
+                name: name,
+                are_you_a_bot: honeypotField ? honeypotField.value.trim() : '',
+                website: websiteField ? websiteField.value.trim() : '',
+                company: companyField ? companyField.value.trim() : '',
+                form_start_time: formStartTime
             };
             
             try {

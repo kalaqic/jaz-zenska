@@ -1,5 +1,6 @@
 // Vercel Serverless Function for Ebook Signup
 const fetch = require('node-fetch');
+const { detectBot } = require('./bot-filter');
 
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
@@ -50,7 +51,18 @@ module.exports = async function handler(req, res) {
             }
         }
 
-        const { email, name } = body;
+        const { email, name, are_you_a_bot, form_start_time } = body;
+
+        // Comprehensive bot detection
+        const botCheck = detectBot(req, body);
+        if (botCheck.isBot) {
+            console.log('Bot detected (ebook):', botCheck.reason, 'IP:', req.headers['x-forwarded-for'] || 'unknown');
+            // Return success to bot (don't let them know they were caught)
+            return res.status(200).json({ 
+                success: true, 
+                message: 'Successfully signed up for ebook'
+            });
+        }
 
         // Validate input
         if (!email || !name) {

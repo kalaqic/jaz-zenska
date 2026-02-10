@@ -783,8 +783,12 @@
             <button class="webinar-modal-close" id="webinarModalClose" aria-label="Zapri">&times;</button>
             <h2 class="webinar-modal-title">Prijavi se na brezplačen webinar</h2>
             <p class="webinar-modal-description">Vnesite vaš email naslov in se prijavite na brezplačni webinar <strong>25 stopnic do sreče</strong>.</p>
-            <form class="webinar-modal-form" id="webinarSignupForm">
+            <form class="webinar-modal-form" id="webinarSignupForm" data-form-start-time="">
+                <!-- Honeypot fields - hidden from users but bots will fill them -->
                 <input type="text" name="are_you_a_bot" id="webinar_are_you_a_bot" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
+                <input type="text" name="website" id="webinar_website" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
+                <input type="text" name="company" id="webinar_company" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
+                <input type="hidden" name="form_start_time" id="webinar_form_start_time">
                 <input 
                     type="text" 
                     class="webinar-modal-input" 
@@ -841,6 +845,11 @@
         function openWebinarModal() {
             webinarModal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            // Track form start time for bot detection
+            const formStartTimeInput = document.getElementById('webinar_form_start_time');
+            if (formStartTimeInput) {
+                formStartTimeInput.value = Date.now().toString();
+            }
         }
 
         // Close modal
@@ -908,7 +917,10 @@
                             email: email,
                             name: name,
                             campaignId: 'f5M9D',
-                            are_you_a_bot: (document.getElementById('webinar_are_you_a_bot')?.value || '').trim()
+                            are_you_a_bot: (document.getElementById('webinar_are_you_a_bot')?.value || '').trim(),
+                            website: (document.getElementById('webinar_website')?.value || '').trim(),
+                            company: (document.getElementById('webinar_company')?.value || '').trim(),
+                            form_start_time: parseInt(document.getElementById('webinar_form_start_time')?.value || Date.now())
                         })
                     });
 

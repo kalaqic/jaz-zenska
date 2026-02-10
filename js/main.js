@@ -138,13 +138,22 @@ function handleNewsletterSubmit(event) {
     const submitBtn = document.getElementById('newsletter-submit-btn');
     const form = event.target;
     
-    // Check honeypot field - if filled, it's a bot
+    // Check honeypot fields - if filled, it's a bot
     const honeypotField = document.getElementById('are_you_a_bot');
-    if (honeypotField && honeypotField.value.trim() !== '') {
+    const websiteField = document.getElementById('newsletter_website');
+    const companyField = document.getElementById('newsletter_company');
+    
+    if ((honeypotField && honeypotField.value.trim() !== '') ||
+        (websiteField && websiteField.value.trim() !== '') ||
+        (companyField && companyField.value.trim() !== '')) {
         // Bot detected - silently reject
         console.log('Bot detected via honeypot field');
         return;
     }
+    
+    // Get form start time
+    const formStartTimeInput = document.getElementById('newsletter_form_start_time');
+    const formStartTime = formStartTimeInput ? parseInt(formStartTimeInput.value) || Date.now() : Date.now();
     
     // Get form values
     let name = nameInput ? nameInput.value.trim() : '';
@@ -189,7 +198,10 @@ function handleNewsletterSubmit(event) {
     const requestData = {
         email: email,
         name: name,
-        are_you_a_bot: honeypotField ? honeypotField.value.trim() : ''
+        are_you_a_bot: honeypotField ? honeypotField.value.trim() : '',
+        website: websiteField ? websiteField.value.trim() : '',
+        company: companyField ? companyField.value.trim() : '',
+        form_start_time: formStartTime
     };
     
     // Make API request to backend proxy

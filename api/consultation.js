@@ -4,6 +4,7 @@
 // Use node-fetch v2 for better compatibility
 // Vercel supports node-fetch v2 in CommonJS format
 const fetch = require('node-fetch');
+const { detectBot } = require('./bot-filter');
 
 // Get API key from environment variable (set in Vercel)
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
@@ -94,7 +95,18 @@ module.exports = async function handler(req, res) {
         console.log('Body type:', typeof body);
         console.log('Req.body:', req.body);
 
-        const { email, name, phone, noyCaD, day } = body;
+        const { email, name, phone, noyCaD, day, are_you_a_bot, form_start_time } = body;
+
+        // Comprehensive bot detection
+        const botCheck = detectBot(req, body);
+        if (botCheck.isBot) {
+            console.log('Bot detected (consultation):', botCheck.reason, 'IP:', req.headers['x-forwarded-for'] || 'unknown');
+            // Return success to bot (don't let them know they were caught)
+            return res.status(200).json({ 
+                success: true, 
+                message: 'Successfully scheduled consultation'
+            });
+        }
 
         // Validate input
         if (!email || !noyCaD || !name || !phone || !day) {
