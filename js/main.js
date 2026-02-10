@@ -394,13 +394,13 @@ function setTestimonialsSpacing() {
 
 // Prevent scroll bounce/overscroll at the bottom
 function preventScrollBounce() {
-    // Prevent scroll bounce on all elements
-    document.documentElement.style.overscrollBehaviorY = 'none';
-    document.body.style.overscrollBehaviorY = 'none';
+    // Set overscroll-behavior to auto to allow normal scrolling
+    // CSS already handles this, but ensure JS doesn't override it
+    document.documentElement.style.overscrollBehaviorY = 'auto';
+    document.body.style.overscrollBehaviorY = 'auto';
     // IMPORTANT:
-    // We rely on CSS `overscroll-behavior` (see `css/main.css`) to prevent bounce.
-    // A previous implementation used a global `touchmove` preventDefault handler,
-    // which can break normal scrolling on some devices/browsers.
+    // We allow normal scrolling. The CSS `overscroll-behavior: auto` allows
+    // normal scrolling behavior while preventing unwanted bounce effects.
 }
 
 
@@ -536,11 +536,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // Prevent scroll bounce
     preventScrollBounce();
     
-    // Ensure scrolling is enabled on page load
-    document.body.style.overflow = '';
-    document.body.style.overflowY = 'auto';
-    document.documentElement.style.overflow = '';
-    document.documentElement.style.overflowY = 'auto';
+    // Ensure scrolling is enabled on page load - ALWAYS enable scrolling
+    // Only disable if a modal is actually open
+    const activeModals = document.querySelectorAll('.webinar-modal-overlay.active, .mobile-menu-overlay.active, .welcome-popup-overlay.active, .event-modal.active');
+    if (activeModals.length === 0) {
+        // No modals are open, ensure scrolling is enabled
+        document.body.style.overflow = '';
+        document.body.style.overflowY = 'scroll';
+        document.body.style.height = 'auto';
+        document.body.style.position = 'relative';
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.overflowY = 'scroll';
+        document.documentElement.style.height = 'auto';
+        document.documentElement.style.position = '';
+    }
+    
+    // Also ensure scrolling works after a short delay (in case something else interferes)
+    setTimeout(function() {
+        const stillActiveModals = document.querySelectorAll('.webinar-modal-overlay.active, .mobile-menu-overlay.active, .welcome-popup-overlay.active, .event-modal.active');
+        if (stillActiveModals.length === 0) {
+            document.body.style.overflowY = 'scroll';
+            document.documentElement.style.overflowY = 'scroll';
+        }
+    }, 100);
     
     // Initialize programs animation
     initProgramsAnimation();

@@ -60,29 +60,31 @@ body {
     color: var(--text-dark);
     background-color: var(--main-white);
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
     width: 100%;
     max-width: 100%;
     position: relative;
-    overscroll-behavior-y: none;
-    overscroll-behavior-x: none;
+    overscroll-behavior-y: auto;
+    overscroll-behavior-x: auto;
     padding-bottom: 0;
-    touch-action: pan-y pan-x;
+    touch-action: pan-y;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    height: auto;
+    min-height: 100%;
 }
 
 
 html {
     scroll-behavior: smooth;
     background-color: var(--main-white);
-    overscroll-behavior-y: none;
-    overscroll-behavior-x: none;
+    overscroll-behavior-y: auto;
+    overscroll-behavior-x: auto;
     overflow-x: hidden;
-    overflow-y: auto;
-    touch-action: pan-y pan-x;
+    overflow-y: scroll;
+    touch-action: pan-y;
     min-height: 100%;
-    height: 100%;
+    height: auto;
 }
 
 /* ===== CUSTOM SCROLLBAR ===== */
