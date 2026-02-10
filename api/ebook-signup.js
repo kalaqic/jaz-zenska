@@ -1,6 +1,6 @@
 // Vercel Serverless Function for Ebook Signup
 const fetch = require('node-fetch');
-const { detectBot } = require('./bot-filter');
+const { detectBot } = require('../lib/bot-filter');
 
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';

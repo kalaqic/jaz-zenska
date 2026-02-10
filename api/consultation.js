@@ -4,7 +4,7 @@
 // Use node-fetch v2 for better compatibility
 // Vercel supports node-fetch v2 in CommonJS format
 const fetch = require('node-fetch');
-const { detectBot } = require('./bot-filter');
+const { detectBot } = require('../lib/bot-filter');
 
 // Get API key from environment variable (set in Vercel)
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
