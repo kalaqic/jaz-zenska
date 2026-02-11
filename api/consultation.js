@@ -273,16 +273,32 @@ module.exports = async function handler(req, res) {
         const contactName = (name && name.trim()) ? name.trim() : email;
         
         // Normalize phone number for GetResponse
-        // Remove "+" prefix and any spaces, keep only digits
+        // GetResponse requires phone numbers with "+" prefix
         let normalizedPhone = phone.trim();
-        // Remove "+" if present
-        if (normalizedPhone.startsWith('+')) {
-            normalizedPhone = normalizedPhone.substring(1);
+        
+        // Remove all spaces, dashes, and parentheses
+        normalizedPhone = normalizedPhone.replace(/[\s\-\(\)]/g, '');
+        
+        // Ensure it starts with "+" for international format
+        if (!normalizedPhone.startsWith('+')) {
+            // If it starts with country code (e.g., 386 for Slovenia), add "+"
+            // Otherwise, assume it's a local number and add "+386" for Slovenia
+            if (normalizedPhone.startsWith('386')) {
+                normalizedPhone = '+' + normalizedPhone;
+            } else if (normalizedPhone.startsWith('0')) {
+                // Local format starting with 0, replace with +386
+                normalizedPhone = '+386' + normalizedPhone.substring(1);
+            } else {
+                // Assume it's already international format without +, add it
+                normalizedPhone = '+' + normalizedPhone;
+            }
         }
-        // Remove all spaces and dashes
-        normalizedPhone = normalizedPhone.replace(/[\s\-]/g, '');
-        // Keep only digits (in case there are other characters)
-        normalizedPhone = normalizedPhone.replace(/\D/g, '');
+        
+        // Final validation: should start with + and contain only digits after +
+        if (!normalizedPhone.match(/^\+\d+$/)) {
+            // If still invalid, try to clean it up
+            normalizedPhone = '+' + normalizedPhone.replace(/\D/g, '');
+        }
         
         // Prepare complete contact data - send everything at once
         // GetResponse API v3 format for creating contacts with custom fields
