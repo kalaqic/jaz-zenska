@@ -738,10 +738,8 @@ function initSchedulingSystem() {
                 }
                 availableSlots[date][time] = isAvailable;
                 
-                // Only add date if it has at least one available slot
-                if (isAvailable) {
-                    availableDates.add(date);
-                }
+                // Add date if it has any slots (available or unavailable)
+                availableDates.add(date);
             });
             
             availableDates = Array.from(availableDates).sort();
@@ -922,31 +920,37 @@ function initSchedulingSystem() {
         const day = selectedDate.getDate();
         const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         
-        // Get available times for this date
+        // Get all times for this date (both available and unavailable)
         const timesForDate = availableSlots[dateKey] || {};
-        const sortedTimes = Object.keys(timesForDate)
-            .filter(time => timesForDate[time] === true)
-            .sort();
+        const allTimes = Object.keys(timesForDate).sort();
         
-        if (sortedTimes.length === 0) {
+        if (allTimes.length === 0) {
             timeSlotsGrid.innerHTML = '<p style="grid-column: 1/-1; color: var(--dark-violet);">Za ta datum ni razpoložljivih terminov</p>';
             return;
         }
         
-        sortedTimes.forEach(time => {
+        allTimes.forEach(time => {
             const slot = document.createElement('div');
             slot.className = 'time-slot';
             slot.textContent = time;
             
-            if (selectedTime === time) {
+            const isAvailable = timesForDate[time] === true;
+            
+            if (!isAvailable) {
+                slot.classList.add('disabled');
+            }
+            
+            if (selectedTime === time && isAvailable) {
                 slot.classList.add('selected');
             }
             
-            slot.addEventListener('click', () => {
-                selectedTime = time;
-                renderTimeSlots();
-                updateSelectedInfo();
-            });
+            if (isAvailable) {
+                slot.addEventListener('click', () => {
+                    selectedTime = time;
+                    renderTimeSlots();
+                    updateSelectedInfo();
+                });
+            }
             
             timeSlotsGrid.appendChild(slot);
         });
