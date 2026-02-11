@@ -183,13 +183,13 @@ module.exports = async function handler(req, res) {
         
         // Find the slot document first (outside transaction)
         const slotQuery = await db.collection('consultationSlots')
-            .where('date', '==', finalDateKey)
+            .where('date', '==', dateKey)
             .where('time', '==', timeKey)
             .limit(1)
             .get();
         
         if (slotQuery.empty) {
-            console.error('Slot not found:', finalDateKey, timeKey);
+            console.error('Slot not found:', dateKey, timeKey);
             return res.status(400).json({
                 error: 'Izbrani termin ni več na voljo. Prosimo, izberite enega od razpoložljivih terminov.'
             });
@@ -201,7 +201,7 @@ module.exports = async function handler(req, res) {
         // Get campaign ID from slot document
         const campaignId = slotData.campaignId;
         if (!campaignId) {
-            console.error('Slot missing campaignId:', finalDateKey, timeKey);
+            console.error('Slot missing campaignId:', dateKey, timeKey);
             return res.status(500).json({
                 error: 'Napaka pri konfiguraciji termina. Prosimo, kontaktirajte podporo.'
             });
@@ -227,7 +227,7 @@ module.exports = async function handler(req, res) {
                     available: false
                 });
             });
-            console.log('Slot booked successfully:', finalDateKey, timeKey, 'Campaign:', campaignId);
+            console.log('Slot booked successfully:', dateKey, timeKey, 'Campaign:', campaignId);
         } catch (transactionError) {
             console.error('Transaction error:', transactionError);
             if (transactionError.message === 'Slot does not exist') {
