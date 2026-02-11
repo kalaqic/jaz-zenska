@@ -12,7 +12,8 @@ Consultation slots are now stored in Firestore instead of being hardcoded. This 
 {
   date: "2026-02-16",        // Format: YYYY-MM-DD
   time: "09:00",             // Format: HH:MM (CET timezone)
-  available: true            // Boolean: true = available, false = booked
+  available: true,            // Boolean: true = available, false = booked
+  campaignId: "fZzdl"        // GetResponse campaign ID for this time slot
 }
 ```
 
@@ -35,7 +36,8 @@ Run the script `scripts/init-consultation-slots.js` (requires Firebase Admin SDK
 firebase firestore:set consultationSlots/2026-02-16_0900 {
   date: "2026-02-16",
   time: "09:00",
-  available: true
+  available: true,
+  campaignId: "fZzdl"
 }
 ```
 
@@ -45,6 +47,7 @@ To add new available dates/times, create new documents in the `consultationSlots
 - `date`: Date in YYYY-MM-DD format
 - `time`: Time in HH:MM format (CET timezone)
 - `available`: `true`
+- `campaignId`: GetResponse campaign ID for this time slot
 
 ## How It Works
 
@@ -70,6 +73,11 @@ To add new available dates/times, create new documents in the `consultationSlots
 ## Current Default Slots
 
 - **Date:** 2026-02-16
-- **Times:** 09:00, 09:30, 10:00, 10:30, 11:00 (all CET)
+- **Slots:**
+  - 09:00 → Campaign ID: `fZzdl`
+  - 09:30 → Campaign ID: `fZzsz`
+  - 10:00 → Campaign ID: `fZzEA`
+  - 10:30 → Campaign ID: `fZrVk`
+  - 11:00 → Campaign ID: `fZrnT`
 
-These should be initialized in Firestore before the system goes live.
+These should be initialized in Firestore before the system goes live. Each time slot has its own GetResponse campaign ID.

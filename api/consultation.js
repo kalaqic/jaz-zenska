@@ -30,10 +30,9 @@ try {
 // Get API key from environment variable (set in Vercel)
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
 const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
-const CAMPAIGN_ID = 'frqWU'; // Consultation campaign
-const CUSTOM_FIELD_DATE_TIME_ID = 'noyCaD'; // call_datetime field - actual GetResponse customFieldId
+// Campaign ID is now fetched from Firestore slot document (each time slot has its own campaign)
 const CUSTOM_FIELD_PHONE_ID = 'no8Uze'; // phone field - actual GetResponse customFieldId
-const CUSTOM_FIELD_DAY_ID = 'noqq62'; // day field - actual GetResponse customFieldId
+const CUSTOM_FIELD_HOUR_ID = 'noddbk'; // hour field - actual GetResponse customFieldId (HH:MM format)
 
 // Validate API key is set
 if (!GETRESPONSE_API_KEY) {
@@ -43,7 +42,7 @@ if (!GETRESPONSE_API_KEY) {
 // Debug: Log configuration (without exposing full API key)
 console.log('=== GetResponse API Configuration ===');
 console.log('API URL:', GETRESPONSE_API_URL);
-console.log('Campaign ID:', CAMPAIGN_ID);
+console.log('Campaign ID: (fetched from Firestore slot document)');
 console.log('API Key configured:', GETRESPONSE_API_KEY ? 'Yes' : 'No');
 console.log('Using fetch:', typeof fetch);
 
@@ -116,7 +115,7 @@ module.exports = async function handler(req, res) {
         console.log('Body type:', typeof body);
         console.log('Req.body:', req.body);
 
-        const { email, name, phone, noyCaD, day, are_you_a_bot, form_start_time } = body;
+        const { email, name, phone, hour, date, are_you_a_bot, form_start_time } = body;
 
         // Comprehensive bot detection
         const botCheck = detectBot(req, body);
@@ -130,63 +129,49 @@ module.exports = async function handler(req, res) {
         }
 
         // Validate input
-        if (!email || !noyCaD || !name || !phone || !day) {
+        if (!email || !name || !phone || !hour || !date) {
             console.error('Missing fields:', { 
                 email: !!email, 
                 name: !!name, 
                 phone: !!phone, 
-                noyCaD: !!noyCaD, 
-                day: !!day 
+                hour: !!hour,
+                date: !!date
             });
             return res.status(400).json({ 
-                error: 'Missing required fields: email, name, phone, noyCaD, day',
+                error: 'Missing required fields: email, name, phone, hour, date',
                 received: { 
                     email: !!email, 
                     name: !!name, 
                     phone: !!phone, 
-                    noyCaD: !!noyCaD, 
-                    day: !!day 
+                    hour: !!hour,
+                    date: !!date
                 },
                 body: body
             });
         }
 
-        // Validate date-time format (YYYY-MM-DDTHH:MM:SSZ)
-        const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
-        if (!dateTimeRegex.test(noyCaD)) {
-            console.error('Invalid date-time format:', noyCaD);
+        // Validate hour format (HH:MM)
+        const hourRegex = /^\d{2}:\d{2}$/;
+        if (!hourRegex.test(hour)) {
+            console.error('Invalid hour format:', hour);
             return res.status(400).json({ 
-                error: 'Invalid date-time format. Expected: YYYY-MM-DDTHH:MM:SSZ',
-                received: noyCaD
+                error: 'Invalid hour format. Expected: HH:MM',
+                received: hour
             });
         }
 
-        // Parse date and time from noyCaD (UTC format)
-        // Format: 2026-02-16T08:00:00Z (UTC) = 09:00 CET
-        const dateTimeMatch = noyCaD.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):\d{2}Z$/);
-        if (!dateTimeMatch) {
-            return res.status(400).json({
-                error: 'Invalid date-time format'
+        // Validate date format (YYYY-MM-DD)
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateRegex.test(date)) {
+            console.error('Invalid date format:', date);
+            return res.status(400).json({ 
+                error: 'Invalid date format. Expected: YYYY-MM-DD',
+                received: date
             });
         }
         
-        const dateKey = dateTimeMatch[1]; // YYYY-MM-DD
-        const utcHour = parseInt(dateTimeMatch[2]);
-        const utcMinute = dateTimeMatch[3];
-        
-        // Convert UTC to CET (UTC+1) for time slot lookup
-        // CET hour = UTC hour + 1
-        // Handle hour overflow (e.g., UTC 23:00 becomes CET 00:00 next day)
-        let cetHour = utcHour + 1;
-        let finalDateKey = dateKey;
-        if (cetHour >= 24) {
-            cetHour = cetHour - 24;
-            // If hour overflows, date should be next day (but this shouldn't happen for our slots)
-            const dateObj = new Date(dateKey + 'T00:00:00Z');
-            dateObj.setUTCDate(dateObj.getUTCDate() + 1);
-            finalDateKey = dateObj.toISOString().split('T')[0];
-        }
-        const timeKey = `${String(cetHour).padStart(2, '0')}:${utcMinute}`; // Format: "09:00"
+        const dateKey = date; // YYYY-MM-DD
+        const timeKey = hour; // HH:MM format (already in CET)
         
         // Check availability in Firestore
         if (!db) {
@@ -211,6 +196,16 @@ module.exports = async function handler(req, res) {
         }
         
         const slotDocRef = slotQuery.docs[0].ref;
+        const slotData = slotQuery.docs[0].data();
+        
+        // Get campaign ID from slot document
+        const campaignId = slotData.campaignId;
+        if (!campaignId) {
+            console.error('Slot missing campaignId:', finalDateKey, timeKey);
+            return res.status(500).json({
+                error: 'Napaka pri konfiguraciji termina. Prosimo, kontaktirajte podporo.'
+            });
+        }
         
         // Use a transaction to atomically check and book the slot
         // This prevents double-booking if two users try to book the same slot simultaneously
@@ -232,7 +227,7 @@ module.exports = async function handler(req, res) {
                     available: false
                 });
             });
-            console.log('Slot booked successfully:', finalDateKey, timeKey);
+            console.log('Slot booked successfully:', finalDateKey, timeKey, 'Campaign:', campaignId);
         } catch (transactionError) {
             console.error('Transaction error:', transactionError);
             if (transactionError.message === 'Slot does not exist') {
@@ -261,44 +256,38 @@ module.exports = async function handler(req, res) {
             email: email,
             name: contactName, // Use actual name, fallback to email only if name is missing
             campaign: {
-                campaignId: CAMPAIGN_ID
+                campaignId: campaignId // Use campaign ID from slot document
             },
             customFieldValues: [
-                {
-                    customFieldId: CUSTOM_FIELD_DATE_TIME_ID, // noyCaD - call_datetime field (date type)
-                    value: [noyCaD] // Format: YYYY-MM-DDTHH:MM:SSZ (UTC) - ISO 8601 format, must be array
-                },
                 {
                     customFieldId: CUSTOM_FIELD_PHONE_ID, // no8Uze - phone field (phone type)
                     value: [phone] // Phone number - must be array even for single values
                 },
                 {
-                    customFieldId: CUSTOM_FIELD_DAY_ID, // noqq62 - day field (text type)
-                    value: [day] // Day name (e.g., "Nedelja", "Ponedeljek") - must be array
+                    customFieldId: CUSTOM_FIELD_HOUR_ID, // noddbk - hour field (text type)
+                    value: [hour] // Hour in HH:MM format (e.g., "09:00") - must be array
                 }
             ]
             // tags: ['consultation'] // Removed - requires tag ID, not name
         };
         
         // Validate that custom field IDs are set
-        if (!CUSTOM_FIELD_DATE_TIME_ID || !CUSTOM_FIELD_PHONE_ID || !CUSTOM_FIELD_DAY_ID) {
+        if (!CUSTOM_FIELD_PHONE_ID || !CUSTOM_FIELD_HOUR_ID) {
             console.error('ERROR: Custom field IDs are not configured!');
-            console.error('Date-Time ID:', CUSTOM_FIELD_DATE_TIME_ID);
             console.error('Phone ID:', CUSTOM_FIELD_PHONE_ID);
-            console.error('Day ID:', CUSTOM_FIELD_DAY_ID);
+            console.error('Hour ID:', CUSTOM_FIELD_HOUR_ID);
         }
         
         console.log('=== Creating consultation contact ===');
         console.log('Raw input - Email:', email);
         console.log('Raw input - Name:', name);
         console.log('Raw input - Phone:', phone);
-        console.log('Raw input - Day:', day);
-        console.log('Raw input - noyCaD:', noyCaD);
-        console.log('Campaign ID:', CAMPAIGN_ID);
+        console.log('Raw input - Hour:', hour);
+        console.log('Raw input - Date:', date);
+        console.log('Campaign ID:', campaignId);
         console.log('Custom Field IDs:');
-        console.log('  - Date-Time (call_datetime):', CUSTOM_FIELD_DATE_TIME_ID, '(noyCaD)');
         console.log('  - Phone:', CUSTOM_FIELD_PHONE_ID, '(no8Uze)');
-        console.log('  - Day:', CUSTOM_FIELD_DAY_ID, '(noqq62)');
+        console.log('  - Hour:', CUSTOM_FIELD_HOUR_ID, '(noddbk)');
         console.log('Final contactData.name:', contactData.name);
         console.log('Custom field values:', JSON.stringify(contactData.customFieldValues, null, 2));
         console.log('Complete request data:', JSON.stringify(contactData, null, 2));
@@ -360,15 +349,14 @@ module.exports = async function handler(req, res) {
             console.warn('⚠ WARNING: Response does not include customFieldValues array');
             console.warn('This might mean custom fields were not saved. Check if custom field IDs are correct.');
             console.warn('Custom field IDs used:');
-            console.warn('  - Date-Time:', CUSTOM_FIELD_DATE_TIME_ID, '(noyCaD)');
             console.warn('  - Phone:', CUSTOM_FIELD_PHONE_ID);
-            console.warn('  - Day:', CUSTOM_FIELD_DAY_ID);
+            console.warn('  - Hour:', CUSTOM_FIELD_HOUR_ID);
         }
         
         // Check for any errors related to custom fields
         if (data.context && Array.isArray(data.context)) {
             const customFieldErrors = data.context.filter(ctx => 
-                ctx.field && (ctx.field.includes('customField') || ctx.field.includes('noyCaD') || ctx.field.includes('no8Uze') || ctx.field.includes('noqq62'))
+                ctx.field && (ctx.field.includes('customField') || ctx.field.includes('no8Uze') || ctx.field.includes('noddbk'))
             );
             if (customFieldErrors.length > 0) {
                 console.error('✗ Custom field errors found:', JSON.stringify(customFieldErrors, null, 2));

@@ -1114,50 +1114,14 @@ function initSchedulingSystem() {
             scheduleCallBtn.disabled = true;
             scheduleCallBtn.textContent = 'Pošiljanje...';
             
-            // Format date and time for GetResponse API (YYYY-MM-DDTHH:MM:SSZ in UTC)
-            // Note: Slovenia is CET (UTC+1), so we need to subtract 1 hour for UTC
+            // Format date as YYYY-MM-DD
             const year = selectedDate.getFullYear();
             const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
             const day = String(selectedDate.getDate()).padStart(2, '0');
+            const dateKey = `${year}-${month}-${day}`;
             
-            // Parse time slot (e.g., "09:00" -> hours: 9, minutes: 0)
-            const [hours, minutes] = selectedTime.split(':').map(Number);
-            
-            // Create a Date object in CET (local timezone - Slovenia)
-            const cetDateTime = new Date(year, selectedDate.getMonth(), day, hours, minutes, 0);
-            
-            // Convert CET to UTC (subtract 1 hour)
-            const utcDateTime = new Date(cetDateTime.getTime() - (60 * 60 * 1000));
-            
-            // Format as YYYY-MM-DDTHH:MM:SSZ
-            const utcYear = utcDateTime.getUTCFullYear();
-            const utcMonth = String(utcDateTime.getUTCMonth() + 1).padStart(2, '0');
-            const utcDay = String(utcDateTime.getUTCDate()).padStart(2, '0');
-            const utcHours = String(utcDateTime.getUTCHours()).padStart(2, '0');
-            const utcMinutes = String(utcDateTime.getUTCMinutes()).padStart(2, '0');
-            const utcSeconds = String(utcDateTime.getUTCSeconds()).padStart(2, '0');
-            
-            const noyCaD = `${utcYear}-${utcMonth}-${utcDay}T${utcHours}:${utcMinutes}:${utcSeconds}Z`;
-            
-            // Get day name in Slovenian
-            // Use the selected date's year, month, and day to create a fresh date object
-            // This ensures we get the correct day of the week without timezone issues
-            const selectedYear = selectedDate.getFullYear();
-            const selectedMonth = selectedDate.getMonth();
-            const selectedDay = selectedDate.getDate();
-            
-            // Create a date object at noon (12:00) to avoid any timezone edge cases
-            const dateForDayCalculation = new Date(selectedYear, selectedMonth, selectedDay, 12, 0, 0);
-            const dayNames = ['Nedeljo', 'Ponedeljek', 'Torek', 'Sredo', 'Četrtek', 'Petek', 'Soboto'];
-            const dayOfWeek = dateForDayCalculation.getDay();
-            const dayName = dayNames[dayOfWeek];
-            
-            // Debug: Log the date and day to verify
-            console.log('Selected date object:', selectedDate);
-            console.log('Date components - Year:', selectedYear, 'Month:', selectedMonth, 'Day:', selectedDay);
-            console.log('Date for day calculation:', dateForDayCalculation);
-            console.log('Day of week (0=Sunday, 1=Monday, etc.):', dayOfWeek);
-            console.log('Day name:', dayName);
+            // Hour is already in HH:MM format (selectedTime)
+            const hour = selectedTime; // e.g., "09:00"
             
             // Backend API endpoint (proxy to GetResponse)
             const API_URL = `${API_BASE_URL}/api/consultation`;
@@ -1168,8 +1132,8 @@ function initSchedulingSystem() {
                     email: userEmail,
                     name: userFirstName,
                     phone: userPhone,
-                    noyCaD: noyCaD, // Format: YYYY-MM-DDTHH:MM:SSZ (UTC)
-                    day: dayName // Day name in Slovenian
+                    hour: hour, // Format: HH:MM (e.g., "09:00")
+                    date: dateKey // Format: YYYY-MM-DD (e.g., "2026-02-16")
                 };
                 
                 const response = await fetch(API_URL, {

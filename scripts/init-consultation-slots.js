@@ -30,25 +30,32 @@ const db = admin.firestore();
 
 async function initConsultationSlots() {
     const date = '2026-02-16';
-    const times = ['09:00', '09:30', '10:00', '10:30', '11:00'];
+    const slots = [
+        { time: '09:00', campaignId: 'fZzdl' },
+        { time: '09:30', campaignId: 'fZzsz' },
+        { time: '10:00', campaignId: 'fZzEA' },
+        { time: '10:30', campaignId: 'fZrVk' },
+        { time: '11:00', campaignId: 'fZrnT' }
+    ];
     
     console.log('Initializing consultation slots...');
     console.log(`Date: ${date}`);
-    console.log(`Times: ${times.join(', ')}`);
+    console.log(`Slots: ${slots.map(s => `${s.time} (${s.campaignId})`).join(', ')}`);
     
     const batch = db.batch();
     
-    times.forEach(time => {
-        const slotId = `${date}_${time.replace(':', '')}`;
+    slots.forEach(slot => {
+        const slotId = `${date}_${slot.time.replace(':', '')}`;
         const slotRef = db.collection('consultationSlots').doc(slotId);
         
         batch.set(slotRef, {
             date: date,
-            time: time,
-            available: true
+            time: slot.time,
+            available: true,
+            campaignId: slot.campaignId
         });
         
-        console.log(`Created slot: ${slotId}`);
+        console.log(`Created slot: ${slotId} -> Campaign: ${slot.campaignId}`);
     });
     
     await batch.commit();
