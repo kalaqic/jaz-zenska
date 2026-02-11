@@ -272,6 +272,18 @@ module.exports = async function handler(req, res) {
         // Only use email as fallback if name is truly missing/empty
         const contactName = (name && name.trim()) ? name.trim() : email;
         
+        // Normalize phone number for GetResponse
+        // Remove "+" prefix and any spaces, keep only digits
+        let normalizedPhone = phone.trim();
+        // Remove "+" if present
+        if (normalizedPhone.startsWith('+')) {
+            normalizedPhone = normalizedPhone.substring(1);
+        }
+        // Remove all spaces and dashes
+        normalizedPhone = normalizedPhone.replace(/[\s\-]/g, '');
+        // Keep only digits (in case there are other characters)
+        normalizedPhone = normalizedPhone.replace(/\D/g, '');
+        
         // Prepare complete contact data - send everything at once
         // GetResponse API v3 format for creating contacts with custom fields
         // Custom fields must exist in GetResponse account with these exact IDs
@@ -284,7 +296,7 @@ module.exports = async function handler(req, res) {
             customFieldValues: [
                 {
                     customFieldId: CUSTOM_FIELD_PHONE_ID, // no8Uze - phone field (phone type)
-                    value: [phone] // Phone number - must be array even for single values
+                    value: [normalizedPhone] // Phone number normalized (digits only, no + prefix) - must be array
                 },
                 {
                     customFieldId: CUSTOM_FIELD_HOUR_ID, // noddbk - hour field (text type)
@@ -305,6 +317,7 @@ module.exports = async function handler(req, res) {
         console.log('Raw input - Email:', email);
         console.log('Raw input - Name:', name);
         console.log('Raw input - Phone:', phone);
+        console.log('Normalized phone:', normalizedPhone);
         console.log('Raw input - Hour:', hour);
         console.log('Raw input - Date:', date);
         console.log('Campaign ID:', campaignId);
