@@ -243,6 +243,163 @@
             border: 1px solid #f5c6cb;
             display: block;
         }
+        
+        /* Individual Coaching Section */
+        .coaching-section {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+        }
+        
+        .coaching-content-wrapper {
+            position: relative;
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 3px solid var(--mid-violet);
+        }
+        
+        .coaching-content-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 300px;
+            height: 300px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .coaching-content-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--pinky) 0%, transparent 70%);
+            opacity: 0.3;
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .coaching-text-container {
+            padding: 50px 50px 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .coaching-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 44px;
+            color: var(--dark-violet);
+            margin-bottom: 25px;
+            line-height: 1.3;
+            font-weight: 700;
+            text-align: center;
+        }
+        
+        .coaching-description {
+            margin-bottom: 35px;
+            text-align: center;
+        }
+        
+        .coaching-description p {
+            font-size: 17px;
+            line-height: 1.85;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .coaching-description p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .coaching-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding-top: 20px;
+            border-top: 2px solid var(--almost-white);
+        }
+        
+        .coaching-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 38px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        
+        .coaching-button-primary {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.3);
+            border: none;
+        }
+        
+        .coaching-button-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(100, 56, 67, 0.4);
+        }
+        
+        .coaching-button-secondary {
+            background: var(--white);
+            color: var(--dark-violet);
+            border: 2px solid var(--mid-violet);
+            box-shadow: 0 5px 15px rgba(100, 56, 67, 0.15);
+        }
+        
+        .coaching-button-secondary:hover {
+            background: var(--mid-violet);
+            color: var(--white);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.3);
+        }
+        
+        @media (max-width: 968px) {
+            .coaching-text-container {
+                padding: 35px 25px 30px;
+            }
+            
+            .coaching-title {
+                font-size: 32px;
+                margin-bottom: 20px;
+            }
+            
+            .coaching-description p {
+                font-size: 16px;
+            }
+            
+            .coaching-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .coaching-button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -435,6 +592,23 @@
             <a href="sreca.html" class="current-event-image-link" style="margin-top: 30px;">
                 <img src="images/aktualen dogodek 2.webp" alt="Aktualen dogodek" class="current-event-image">
             </a>
+            
+            <!-- Individual Coaching Section -->
+            <div class="coaching-section">
+                <div class="coaching-content-wrapper">
+                    <div class="coaching-text-container">
+                        <h3 class="coaching-title">Osebni- individualni coaching</h3>
+                        <div class="coaching-description">
+                            <p>Če imate problem izziv ali cilj in za rešitev ali doseganje le tega potrebujete pomoč, potem vas vabim na brezplačen in popolnoma neobvezujoč uvodni pogovor</p>
+                            <p>Spoznali se bova in ugotovili, ali vam lahko pomagam in na osnovi pogovora, vam bom pripravila načrt in program dela, ki bo prilagojen vam, vašim izzivom in vašim ciljem.</p>
+                        </div>
+                        <div class="coaching-buttons">
+                            <a href="o-meni.html" class="coaching-button coaching-button-secondary">Več o meni</a>
+                            <a href="#stik-z-nami" class="coaching-button coaching-button-primary" onclick="document.getElementById('schedule-btn')?.click(); return false;">Za brezplačen uvodni pogovor</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -931,6 +1105,35 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        // Initialize Firebase for consultation scheduling
+        let firebaseConfig;
+        let db;
+        
+        async function initFirebaseForScheduling() {
+            try {
+                const response = await fetch('/api/firebase-config');
+                if (!response.ok) {
+                    throw new Error('Failed to load Firebase configuration');
+                }
+                firebaseConfig = await response.json();
+                
+                // Initialize Firebase
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                db = firebase.firestore();
+            } catch (error) {
+                console.error('Error initializing Firebase:', error);
+            }
+        }
+        
+        // Initialize Firebase when page loads
+        initFirebaseForScheduling();
+    </script>
     <script src="js/main.js"></script>
     <script>
         // Webinar Signup Modal

@@ -4,7 +4,28 @@
 // Use node-fetch v2 for better compatibility
 // Vercel supports node-fetch v2 in CommonJS format
 const fetch = require('node-fetch');
+const admin = require('firebase-admin');
 const { detectBot } = require('../lib/bot-filter');
+
+// Initialize Firebase Admin
+let firebaseApp;
+let db;
+try {
+    const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (serviceAccountRaw) {
+        const serviceAccount = JSON.parse(serviceAccountRaw);
+        try {
+            firebaseApp = admin.app();
+        } catch (e) {
+            firebaseApp = admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount)
+            });
+        }
+        db = admin.firestore();
+    }
+} catch (error) {
+    console.error('Error initializing Firebase Admin:', error);
+}
 
 // Get API key from environment variable (set in Vercel)
 const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
@@ -140,28 +161,92 @@ module.exports = async function handler(req, res) {
             });
         }
 
-        // Hard-limit availability (must match frontend)
-        // Only allow 16.2.2026 at: 09:00, 09:30, 10:00, 10:30, 11:00 (Slovenia CET = UTC+1)
-        const allowedDateTimesUtc = new Set([
-            '2026-02-16T08:00:00Z', // 09:00 CET
-            '2026-02-16T08:30:00Z', // 09:30 CET
-            '2026-02-16T09:00:00Z', // 10:00 CET
-            '2026-02-16T09:30:00Z', // 10:30 CET
-            '2026-02-16T10:00:00Z'  // 11:00 CET
-        ]);
-
-        if (!allowedDateTimesUtc.has(noyCaD)) {
-            console.error('Requested consultation time is not allowed:', noyCaD);
+        // Parse date and time from noyCaD (UTC format)
+        // Format: 2026-02-16T08:00:00Z (UTC) = 09:00 CET
+        const dateTimeMatch = noyCaD.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):\d{2}Z$/);
+        if (!dateTimeMatch) {
+            return res.status(400).json({
+                error: 'Invalid date-time format'
+            });
+        }
+        
+        const dateKey = dateTimeMatch[1]; // YYYY-MM-DD
+        const utcHour = parseInt(dateTimeMatch[2]);
+        const utcMinute = dateTimeMatch[3];
+        
+        // Convert UTC to CET (UTC+1) for time slot lookup
+        // CET hour = UTC hour + 1
+        // Handle hour overflow (e.g., UTC 23:00 becomes CET 00:00 next day)
+        let cetHour = utcHour + 1;
+        let finalDateKey = dateKey;
+        if (cetHour >= 24) {
+            cetHour = cetHour - 24;
+            // If hour overflows, date should be next day (but this shouldn't happen for our slots)
+            const dateObj = new Date(dateKey + 'T00:00:00Z');
+            dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+            finalDateKey = dateObj.toISOString().split('T')[0];
+        }
+        const timeKey = `${String(cetHour).padStart(2, '0')}:${utcMinute}`; // Format: "09:00"
+        
+        // Check availability in Firestore
+        if (!db) {
+            console.error('Firebase Firestore not initialized');
+            return res.status(500).json({
+                error: 'Database not available'
+            });
+        }
+        
+        // Find the slot document first (outside transaction)
+        const slotQuery = await db.collection('consultationSlots')
+            .where('date', '==', finalDateKey)
+            .where('time', '==', timeKey)
+            .limit(1)
+            .get();
+        
+        if (slotQuery.empty) {
+            console.error('Slot not found:', finalDateKey, timeKey);
             return res.status(400).json({
                 error: 'Izbrani termin ni več na voljo. Prosimo, izberite enega od razpoložljivih terminov.'
             });
         }
-
-        // Optional: also validate the day name (16.2.2026 is Monday)
-        if (day !== 'Ponedeljek') {
-            console.error('Invalid day for allowed date:', day, 'for noyCaD:', noyCaD);
-            return res.status(400).json({
-                error: 'Neveljaven datum/termin. Prosimo, poskusite znova.'
+        
+        const slotDocRef = slotQuery.docs[0].ref;
+        
+        // Use a transaction to atomically check and book the slot
+        // This prevents double-booking if two users try to book the same slot simultaneously
+        try {
+            await db.runTransaction(async (transaction) => {
+                const freshSlot = await transaction.get(slotDocRef);
+                
+                if (!freshSlot.exists) {
+                    throw new Error('Slot does not exist');
+                }
+                
+                const freshData = freshSlot.data();
+                if (!freshData.available) {
+                    throw new Error('Slot already booked');
+                }
+                
+                // Mark as unavailable
+                transaction.update(slotDocRef, {
+                    available: false
+                });
+            });
+            console.log('Slot booked successfully:', finalDateKey, timeKey);
+        } catch (transactionError) {
+            console.error('Transaction error:', transactionError);
+            if (transactionError.message === 'Slot does not exist') {
+                return res.status(400).json({
+                    error: 'Izbrani termin ni več na voljo. Prosimo, izberite enega od razpoložljivih terminov.'
+                });
+            }
+            if (transactionError.message === 'Slot already booked') {
+                return res.status(400).json({
+                    error: 'Izbrani termin je že zaseden. Prosimo, izberite drug termin.'
+                });
+            }
+            return res.status(500).json({
+                error: 'Napaka pri rezervaciji termina. Prosimo, poskusite znova.'
             });
         }
 
@@ -356,6 +441,9 @@ module.exports = async function handler(req, res) {
         } else {
             console.warn('WARNING: Response does not include customFieldValues. Custom fields may not have been saved.');
         }
+        
+        // Slot is already marked as unavailable in the transaction above
+        // No need to update again here
         
         return res.status(200).json({ 
             success: true, 

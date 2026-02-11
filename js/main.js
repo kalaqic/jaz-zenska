@@ -701,25 +701,129 @@ function initSchedulingSystem() {
     
     if (!scheduleBtn || !wrapper) return;
     
-    // Consultation availability (hard-limited as requested)
-    // Only: 16.2.2026
-    const ONLY_AVAILABLE_DATE = new Date(2026, 1, 16); // months are 0-based (1 = February)
-    const ONLY_AVAILABLE_DATE_STR = ONLY_AVAILABLE_DATE.toDateString();
-    const AVAILABLE_TIME_SLOTS = ['09:00', '09:30', '10:00', '10:30', '11:00'];
+    // Available dates and times from Firestore
+    let availableSlots = {}; // Format: { "2026-02-16": { "09:00": true, "09:30": false, ... } }
+    let availableDates = []; // Array of available dates
     
     let currentDate = new Date();
     let selectedDate = null;
     let selectedTime = null;
     
+    // Fetch available consultation slots from Firestore
+    async function fetchAvailableSlots() {
+        try {
+            // Wait for Firebase to initialize
+            if (typeof firebase === 'undefined' || !firebase.firestore) {
+                console.log('Firebase not initialized yet, retrying...');
+                setTimeout(fetchAvailableSlots, 500);
+                return;
+            }
+            
+            const db = firebase.firestore();
+            
+            // Fetch all slots (both available and booked) to show accurate availability
+            const slotsSnapshot = await db.collection('consultationSlots').get();
+            
+            availableSlots = {};
+            availableDates = new Set();
+            
+            slotsSnapshot.forEach(doc => {
+                const data = doc.data();
+                const date = data.date; // Format: "2026-02-16"
+                const time = data.time; // Format: "09:00"
+                const isAvailable = data.available === true;
+                
+                if (!availableSlots[date]) {
+                    availableSlots[date] = {};
+                }
+                availableSlots[date][time] = isAvailable;
+                
+                // Only add date if it has at least one available slot
+                if (isAvailable) {
+                    availableDates.add(date);
+                }
+            });
+            
+            availableDates = Array.from(availableDates).sort();
+            
+            // If no slots found, initialize with default (for backward compatibility)
+            if (availableDates.length === 0) {
+                console.log('No slots found in Firestore, using default');
+                const defaultDate = '2026-02-16';
+                const defaultTimes = ['09:00', '09:30', '10:00', '10:30', '11:00'];
+                availableSlots[defaultDate] = {};
+                defaultTimes.forEach(time => {
+                    availableSlots[defaultDate][time] = true;
+                });
+                availableDates = [defaultDate];
+            }
+            
+            // Initialize calendar after fetching slots
+            if (availableDates.length > 0) {
+                const firstAvailableDate = new Date(availableDates[0] + 'T00:00:00');
+                if (!selectedDate || !availableDates.includes(
+                    `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
+                )) {
+                    currentDate = new Date(firstAvailableDate.getFullYear(), firstAvailableDate.getMonth(), 1);
+                    selectedDate = firstAvailableDate;
+                    selectedTime = null;
+                }
+            }
+            
+            renderCalendar();
+            updateMonthNavigation();
+            if (selectedDate) {
+                renderTimeSlots();
+            }
+            updateSelectedInfo();
+        } catch (error) {
+            console.error('Error fetching available slots:', error);
+            // Fallback to default if Firestore fails
+            const defaultDate = '2026-02-16';
+            const defaultTimes = ['09:00', '09:30', '10:00', '10:30', '11:00'];
+            availableSlots[defaultDate] = {};
+            defaultTimes.forEach(time => {
+                availableSlots[defaultDate][time] = true;
+            });
+            availableDates = [defaultDate];
+            
+            const firstDate = new Date(defaultDate + 'T00:00:00');
+            currentDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), 1);
+            selectedDate = firstDate;
+            renderCalendar();
+            updateMonthNavigation();
+            renderTimeSlots();
+            updateSelectedInfo();
+        }
+    }
+    
+    // Set up real-time listener for slot availability updates
+    function setupSlotListener() {
+        try {
+            if (typeof firebase === 'undefined' || !firebase.firestore) {
+                setTimeout(setupSlotListener, 500);
+                return;
+            }
+            
+            const db = firebase.firestore();
+            
+            // Listen for changes to consultation slots
+            db.collection('consultationSlots')
+                .onSnapshot((snapshot) => {
+                    // Refresh slots when changes occur
+                    fetchAvailableSlots();
+                }, (error) => {
+                    console.error('Error setting up slot listener:', error);
+                });
+        } catch (error) {
+            console.error('Error setting up real-time listener:', error);
+        }
+    }
+    
     // Initialize calendar
     function initCalendar() {
-        // Always show the month that contains the only available date and preselect it
-        currentDate = new Date(ONLY_AVAILABLE_DATE.getFullYear(), ONLY_AVAILABLE_DATE.getMonth(), 1);
-        selectedDate = new Date(ONLY_AVAILABLE_DATE);
-        selectedTime = null;
-        renderCalendar();
-        renderTimeSlots();
-        updateSelectedInfo();
+        fetchAvailableSlots();
+        setupSlotListener(); // Set up real-time updates
     }
     
     // Render calendar
@@ -768,7 +872,9 @@ function initSchedulingSystem() {
             
             const date = new Date(year, month, day);
             const dateStr = date.toDateString();
-            const isDisabled = dateStr !== ONLY_AVAILABLE_DATE_STR;
+            // Format date as YYYY-MM-DD for comparison
+            const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const isAvailable = availableDates.includes(dateKey);
             
             // Calculate column position (0-6, where 5 and 6 are the last two columns)
             const column = (firstDay + day - 1) % 7;
@@ -776,7 +882,7 @@ function initSchedulingSystem() {
                 dayElement.classList.add('weekend');
             }
             
-            if (isDisabled) {
+            if (!isAvailable) {
                 dayElement.classList.add('disabled');
             }
             
@@ -784,7 +890,7 @@ function initSchedulingSystem() {
                 dayElement.classList.add('selected');
             }
             
-            if (!isDisabled) {
+            if (isAvailable) {
                 dayElement.addEventListener('click', () => {
                     selectedDate = date;
                     selectedTime = null;
@@ -810,7 +916,24 @@ function initSchedulingSystem() {
             return;
         }
         
-        AVAILABLE_TIME_SLOTS.forEach(time => {
+        // Format selected date as YYYY-MM-DD
+        const year = selectedDate.getFullYear();
+        const month = selectedDate.getMonth();
+        const day = selectedDate.getDate();
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        
+        // Get available times for this date
+        const timesForDate = availableSlots[dateKey] || {};
+        const sortedTimes = Object.keys(timesForDate)
+            .filter(time => timesForDate[time] === true)
+            .sort();
+        
+        if (sortedTimes.length === 0) {
+            timeSlotsGrid.innerHTML = '<p style="grid-column: 1/-1; color: var(--dark-violet);">Za ta datum ni razpoložljivih terminov</p>';
+            return;
+        }
+        
+        sortedTimes.forEach(time => {
             const slot = document.createElement('div');
             slot.className = 'time-slot';
             slot.textContent = time;
@@ -882,18 +1005,50 @@ function initSchedulingSystem() {
         userPhoneInput.addEventListener('input', updateSelectedInfo);
     }
     
-    // Month navigation
+    // Month navigation - enable if we have dates in multiple months
     const prevMonthBtn = document.getElementById('prev-month');
     const nextMonthBtn = document.getElementById('next-month');
     
+    function updateMonthNavigation() {
+        if (!prevMonthBtn || !nextMonthBtn) return;
+        
+        // Find the earliest and latest available dates
+        if (availableDates.length === 0) {
+            prevMonthBtn.disabled = true;
+            nextMonthBtn.disabled = true;
+            return;
+        }
+        
+        const sortedDates = availableDates.map(d => new Date(d + 'T00:00:00')).sort((a, b) => a - b);
+        const earliestDate = sortedDates[0];
+        const latestDate = sortedDates[sortedDates.length - 1];
+        
+        const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const earliestMonthStart = new Date(earliestDate.getFullYear(), earliestDate.getMonth(), 1);
+        const latestMonthStart = new Date(latestDate.getFullYear(), latestDate.getMonth(), 1);
+        
+        prevMonthBtn.disabled = currentMonthStart.getTime() <= earliestMonthStart.getTime();
+        nextMonthBtn.disabled = currentMonthStart.getTime() >= latestMonthStart.getTime();
+    }
+    
     if (prevMonthBtn) {
-        // Disabled because only one date is available
-        prevMonthBtn.disabled = true;
+        prevMonthBtn.addEventListener('click', () => {
+            currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+            selectedDate = null;
+            selectedTime = null;
+            renderCalendar();
+            updateMonthNavigation();
+        });
     }
     
     if (nextMonthBtn) {
-        // Disabled because only one date is available
-        nextMonthBtn.disabled = true;
+        nextMonthBtn.addEventListener('click', () => {
+            currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+            selectedDate = null;
+            selectedTime = null;
+            renderCalendar();
+            updateMonthNavigation();
+        });
     }
     
     // Schedule button click
@@ -956,23 +1111,27 @@ function initSchedulingSystem() {
             scheduleCallBtn.textContent = 'Pošiljanje...';
             
             // Format date and time for GetResponse API (YYYY-MM-DDTHH:MM:SSZ in UTC)
+            // Note: Slovenia is CET (UTC+1), so we need to subtract 1 hour for UTC
             const year = selectedDate.getFullYear();
             const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
             const day = String(selectedDate.getDate()).padStart(2, '0');
             
-            // Parse time slot (e.g., "18:00" -> hours: 18, minutes: 00)
+            // Parse time slot (e.g., "09:00" -> hours: 9, minutes: 0)
             const [hours, minutes] = selectedTime.split(':').map(Number);
             
-            // Create a Date object in local timezone
-            const localDateTime = new Date(year, selectedDate.getMonth(), day, hours, minutes, 0);
+            // Create a Date object in CET (local timezone - Slovenia)
+            const cetDateTime = new Date(year, selectedDate.getMonth(), day, hours, minutes, 0);
             
-            // Convert to UTC and format as YYYY-MM-DDTHH:MM:SSZ
-            const utcYear = localDateTime.getUTCFullYear();
-            const utcMonth = String(localDateTime.getUTCMonth() + 1).padStart(2, '0');
-            const utcDay = String(localDateTime.getUTCDate()).padStart(2, '0');
-            const utcHours = String(localDateTime.getUTCHours()).padStart(2, '0');
-            const utcMinutes = String(localDateTime.getUTCMinutes()).padStart(2, '0');
-            const utcSeconds = String(localDateTime.getUTCSeconds()).padStart(2, '0');
+            // Convert CET to UTC (subtract 1 hour)
+            const utcDateTime = new Date(cetDateTime.getTime() - (60 * 60 * 1000));
+            
+            // Format as YYYY-MM-DDTHH:MM:SSZ
+            const utcYear = utcDateTime.getUTCFullYear();
+            const utcMonth = String(utcDateTime.getUTCMonth() + 1).padStart(2, '0');
+            const utcDay = String(utcDateTime.getUTCDate()).padStart(2, '0');
+            const utcHours = String(utcDateTime.getUTCHours()).padStart(2, '0');
+            const utcMinutes = String(utcDateTime.getUTCMinutes()).padStart(2, '0');
+            const utcSeconds = String(utcDateTime.getUTCSeconds()).padStart(2, '0');
             
             const noyCaD = `${utcYear}-${utcMonth}-${utcDay}T${utcHours}:${utcMinutes}:${utcSeconds}Z`;
             
@@ -1051,6 +1210,9 @@ function initSchedulingSystem() {
                 }
                 
                 console.log('Consultation scheduled successfully:', result);
+                
+                // Refresh available slots after successful booking
+                await fetchAvailableSlots();
                 
                 // Fade out scheduling interface
                 schedulingInterface.style.transition = 'opacity 0.5s ease';
