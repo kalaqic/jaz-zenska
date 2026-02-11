@@ -181,6 +181,19 @@ module.exports = async function handler(req, res) {
             });
         }
         
+        // Check if this email has already booked a consultation
+        const existingBookingQuery = await db.collection('bookedConsultations')
+            .where('email', '==', email.toLowerCase().trim())
+            .limit(1)
+            .get();
+        
+        if (!existingBookingQuery.empty) {
+            console.log('Email already has a consultation booking:', email);
+            return res.status(400).json({
+                error: 'Ta email naslov je že uporabljen za rezervacijo konzultacije. Prosimo, uporabite drug email naslov ali kontaktirajte podporo.'
+            });
+        }
+        
         // Find the slot document first (outside transaction)
         const slotQuery = await db.collection('consultationSlots')
             .where('date', '==', dateKey)
@@ -225,6 +238,16 @@ module.exports = async function handler(req, res) {
                 // Mark as unavailable
                 transaction.update(slotDocRef, {
                     available: false
+                });
+                
+                // Record the booking to prevent duplicate submissions (atomic with slot booking)
+                const bookingRef = db.collection('bookedConsultations').doc();
+                transaction.set(bookingRef, {
+                    email: email.toLowerCase().trim(),
+                    date: dateKey,
+                    time: timeKey,
+                    campaignId: campaignId,
+                    bookedAt: admin.firestore.FieldValue.serverTimestamp()
                 });
             });
             console.log('Slot booked successfully:', dateKey, timeKey, 'Campaign:', campaignId);
@@ -430,8 +453,8 @@ module.exports = async function handler(req, res) {
             console.warn('WARNING: Response does not include customFieldValues. Custom fields may not have been saved.');
         }
         
-        // Slot is already marked as unavailable in the transaction above
-        // No need to update again here
+        // Booking is already recorded in the transaction above (atomic with slot booking)
+        // This prevents duplicate submissions even if GetResponse fails
         
         return res.status(200).json({ 
             success: true, 
