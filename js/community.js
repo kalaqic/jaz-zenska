@@ -16,19 +16,7 @@ function ensureAbsoluteUrl(url) {
 function initDataStructures() {
     // Initialize posts if they don't exist
     if (!localStorage.getItem('posts')) {
-        const samplePosts = [
-            {
-                id: '1',
-                title: 'Dobrodošla v skupnosti!',
-                author: 'Marjanca',
-                authorId: 'admin',
-                content: 'Dobrodošla v skupnosti Jaz Ženska! Skupaj bomo rastle in se podpirale na naši poti. Ta skupnost je prostor za varno okolje, kjer se lahko izražate, delite svoje izkušnje in se učite druga od druge. Skupaj bomo gradile močno skupnost žensk, ki podpirajo druga drugo na poti osebne rasti in spremembe.',
-                createdAt: new Date().toISOString(),
-                likes: [],
-                comments: []
-            }
-        ];
-        localStorage.setItem('posts', JSON.stringify(samplePosts));
+        localStorage.setItem('posts', JSON.stringify([]));
     }
     
     // Initialize courses as empty array
@@ -201,32 +189,14 @@ async function loadCommunity() {
         console.log('Loaded posts from localStorage');
     }
     
-    let html = '';
+    // Filter out welcome posts
+    const welcomePostTitles = [
+        'Dobrodošla v skupnosti!',
+        'Dobrodošle v skupnost Jaz Ženska!'
+    ];
+    posts = posts.filter(post => !welcomePostTitles.includes(post.title));
     
-    // Welcome message
-    html += `
-        <div style="
-            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
-            padding: 40px 35px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            border-left: 5px solid var(--mid-violet);
-            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
-        ">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px; text-align: center;">Dobrodošla draga Ženska!</h3>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-bottom: 15px; text-align: center;">
-                Hvala ker si se nam pridružila. S skupnim delom bomo začele <strong>25. marca</strong>. Do takrat te vabim da si pogledaš zanimive vsebine na naši spletni strani in se nam pridružiš na FB, instagramu in youtubu.
-            </p>
-            <div style="background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(153, 98, 122, 0.2);">
-                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px; text-align: center;">
-                    <strong style="color: var(--dark-violet);">Tvoja članarina začne teči s 1. aprilom 2026</strong>, če pa si plačala letno članarino, le ta velja do 31. 12. 2027.
-                </p>
-            </div>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-top: 20px; text-align: center;">
-                Veselim se sodelovanja s tabo. Če imaš že sedaj kakšna vprašanja ali izzive, mi lahko pišeš na <a href="mailto:Marjanca@jazzenska.com" style="color: var(--mid-violet); text-decoration: underline; font-weight: 600;">Marjanca@jazzenska.com</a>.
-            </p>
-        </div>
-    `;
+    let html = '';
     
     // Add post button for admin
     if (isAdmin()) {
@@ -682,29 +652,16 @@ async function loadClassroom() {
         console.log('Loaded courses from localStorage');
     }
     
-    let html = `
-        <div style="
-            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
-            padding: 40px 35px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            border-left: 5px solid var(--mid-violet);
-            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
-        ">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px; text-align: center;">Dobrodošla draga Ženska!</h3>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-bottom: 15px; text-align: center;">
-                Hvala ker si se nam pridružila. S skupnim delom bomo začele <strong>25. marca</strong>. Do takrat te vabim da si pogledaš zanimive vsebine na naši spletni strani in se nam pridružiš na FB, instagramu in youtubu.
-            </p>
-            <div style="background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(153, 98, 122, 0.2);">
-                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px; text-align: center;">
-                    <strong style="color: var(--dark-violet);">Tvoja članarina začne teči s 1. aprilom 2026</strong>, če pa si plačala letno članarino, le ta velja do 31. 12. 2027.
-                </p>
-            </div>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-top: 20px; text-align: center;">
-                Veselim se sodelovanja s tabo. Če imaš že sedaj kakšna vprašanja ali izzive, mi lahko pišeš na <a href="mailto:Marjanca@jazzenska.com" style="color: var(--mid-violet); text-decoration: underline; font-weight: 600;">Marjanca@jazzenska.com</a>.
-            </p>
-        </div>
-    `;
+    // Filter out specific courses to delete
+    const coursesToDelete = [
+        'Moj jutranji obred in meditacija',
+        'Vadba za lahkotnost, prožnost in vitalnost',
+        'Meditativni ples za sproščanje'
+    ];
+    
+    courses = courses.filter(course => !coursesToDelete.includes(course.title));
+    
+    let html = '';
     
     if (courses.length > 0) {
         html += '<div class="courses-grid">';
@@ -774,32 +731,9 @@ async function loadCalendar() {
         console.log('Loaded events from localStorage');
     }
     
-    let html = `
-        <div style="
-            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
-            padding: 40px 35px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            border-left: 5px solid var(--mid-violet);
-            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
-        ">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px; text-align: center;">Dobrodošla draga Ženska!</h3>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-bottom: 15px; text-align: center;">
-                Hvala ker si se nam pridružila. S skupnim delom bomo začele <strong>25. marca</strong>. Do takrat te vabim da si pogledaš zanimive vsebine na naši spletni strani in se nam pridružiš na FB, instagramu in youtubu.
-            </p>
-            <div style="background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(153, 98, 122, 0.2);">
-                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px; text-align: center;">
-                    <strong style="color: var(--dark-violet);">Tvoja članarina začne teči s 1. aprilom 2026</strong>, če pa si plačala letno članarino, le ta velja do 31. 12. 2027.
-                </p>
-            </div>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-top: 20px; text-align: center;">
-                Veselim se sodelovanja s tabo. Če imaš že sedaj kakšna vprašanja ali izzive, mi lahko pišeš na <a href="mailto:Marjanca@jazzenska.com" style="color: var(--mid-violet); text-decoration: underline; font-weight: 600;">Marjanca@jazzenska.com</a>.
-            </p>
-        </div>
-    `;
-    
     // Calendar header
     const monthNames = ['Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij', 'Avgust', 'September', 'Oktober', 'November', 'December'];
+    let html = '';
     html += `
         <div class="calendar-header">
             <div class="calendar-nav-group">
