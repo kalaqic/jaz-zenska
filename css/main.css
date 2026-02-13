@@ -4616,12 +4616,12 @@ nav a:hover::after {
 }
 
 .jaz-zenska-logo {
-    max-width: 400px;
+    max-width: 200px;
     width: 100%;
     height: auto;
     display: block;
     margin: 0;
-    padding: 0;
+    padding: 30px;
 }
 
 .jaz-zenska-main-title::after {

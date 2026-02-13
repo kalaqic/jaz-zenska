@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pridruži se - Jaz Ženska</title>
+    <meta name="description" content="Pridružite se skupnosti JAZ ŽENSKA in odkrijte svojo notranjo moč">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    
+    <!-- Load CSS asynchronously to prevent render blocking -->
+    <link rel="preload" href="css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="css/blog-page.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/blog-page.css">
+    </noscript>
+    <!-- Fallback for browsers that don't support preload -->
+    <script>
+        !function(e){"use strict";var t=function(t,n,o){var i,r=e.document,a=r.createElement("link");if(n)i=n;else{var l=(r.body||r.getElementsByTagName("head")[0]).childNodes;i=l[l.length-1]}var d=r.styleSheets;a.rel="stylesheet",a.href=t,a.media="only x",function e(t){if(r.body)return t();setTimeout(function(){e(t)})}(function(){i.parentNode.insertBefore(a,n?i:i.nextSibling)});var f=function(e){if(a.addEventListener)return e();a.onload=e};return a.addEventListener&&a.addEventListener("load",f),a.onloadcssdefined=function(e){for(var t=r.styleSheets,n=0;n<t.length&&t[n].href!=a.href;)n++;n<t.length?e():setTimeout(function(){a.onloadcssdefined(e)})},a.onloadcssdefined(function(){a.media!==o&&(a.media=o)}),a};"undefined"!=typeof exports?exports.loadCSS=t:e.loadCSS=t}("undefined"!=typeof global?global:this);
+    </script>
+    <style>
+        /* Pridruži se Page Sections */
+        .jaz-zenska-section {
+            position: relative;
+            padding: 80px 20px;
+            overflow: hidden;
+        }
+        
+        /* Section 1 - Main Content */
+        .jaz-zenska-main-section {
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            position: relative;
+        }
+        
+        .jaz-zenska-main-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -100px;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .jaz-zenska-main-section .jaz-zenska-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Section 2 - Highlight */
+        .jaz-zenska-highlight-section {
+            background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+            position: relative;
+        }
+        
+        .jaz-zenska-highlight-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -100px;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .jaz-zenska-highlight-section .jaz-zenska-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .jaz-zenska-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .jaz-zenska-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .jaz-zenska-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: var(--dark-violet);
+            margin-bottom: 30px;
+        }
+        
+        .section-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: var(--dark-violet);
+            margin-top: 50px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .jaz-zenska-main-section .section-content h2:first-child {
+            margin-top: 20px;
+        }
+        
+        .jaz-zenska-highlight-section .section-content h2:first-child {
+            margin-top: 20px;
+        }
+        
+        .section-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--dark-violet);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            color: #666;
+            font-weight: 400;
+            font-style: italic;
+            margin-top: -15px;
+            margin-bottom: 30px;
+            text-align: center;
+            display: block;
+            width: 100%;
+        }
+        
+        .section-content p {
+            font-size: 17px;
+            line-height: 1.85;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .section-content p.subtitle {
+            text-align: center !important;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
+            padding: 30px 35px;
+            border-radius: 20px;
+            margin: 40px 0;
+            border-left: 5px solid var(--mid-violet);
+            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
+        }
+        
+        .highlight-box p {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        
+        .gift-list {
+            list-style: none;
+            padding: 0;
+            margin: 30px 0;
+        }
+        
+        .gift-item {
+            display: block;
+            margin-bottom: 25px;
+            padding: 30px 35px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.12);
+            text-align: center;
+            border-left: 5px solid var(--mid-violet);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .gift-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(100, 56, 67, 0.18);
+        }
+        
+        .gift-text {
+            text-align: center;
+        }
+        
+        .gift-text strong {
+            color: var(--dark-violet);
+            font-size: 18px;
+            display: block;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+            color: white;
+            padding: 22px 60px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            text-align: center;
+            margin: 30px auto;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5);
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .vip-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: var(--dark-violet);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        @media (max-width: 968px) {
+            .jaz-zenska-section {
+                padding: 60px 15px;
+            }
+            
+            .jaz-zenska-header h1 {
+                font-size: 36px;
+            }
+            
+            .section-content h2 {
+                font-size: 28px;
+            }
+            
+            .section-content h3 {
+                font-size: 24px;
+            }
+            
+            .cta-button {
+                padding: 18px 45px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <a href="o-meni.html">O meni</a>
+            <a href="media.html">Mediji</a>
+            <a href="login.html">Moj račun</a>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="/" class="header-logo">
+                <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska Logo" width="200" height="60">
+            </a>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="/#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="/#affirmations">Meditacije</a></li>
+                    <li><a href="stik-z-nami.html">Stik z nami</a></li>
+                </ul>
+            </nav>
+            <a href="/#newsletter" class="header-consultation-btn desktop-social">PRIJAVI SE NA E-NOVICE</a>
+            <button class="burger-menu" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay">
+        <button class="mobile-menu-close" aria-label="Close menu">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+        <div class="mobile-menu-content">
+            <nav class="mobile-nav">
+                <ul>
+                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="/#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="/#affirmations">Meditacije</a></li>
+                    <li><a href="stik-z-nami.html">Stik z nami</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-social-icons">
+                <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook" width="24" height="24"></a>
+                <a href="https://www.instagram.com/jaz.zenska/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram" width="24" height="24"></a>
+                <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube" width="24" height="24"></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 1: Main Content -->
+    <section class="jaz-zenska-section jaz-zenska-main-section">
+        <div class="jaz-zenska-container">
+            <div class="section-content">
+                <h2>5 daril skupnosti JAZ ŽENSKA</h2>
+                <p class="subtitle">(za vse, ki se nam boste pridružile do 31. marca 2026)</p>
+                <p>Prav sedaj je odlična priložnost, da se pridružiš skupnosti JAZ ŽENSKA, kajti v tem trenutku smo na začetku naše poti in lahko pridobiš dodatne ugodnosti. Za plačilo do 31. marca bo članarina veljala do 31. 12. 2027, ob tem boš prejela še:</p>
+                
+
+                
+                <ul class="gift-list">
+                    <li class="gift-item">
+                        <div class="gift-text">
+                            <strong>Nižja cena letne članarine, ki pa bo, kljub nižji ceni, velja vse do 31. 12. 2027.</strong>
+                        </div>
+                    </li>
+                    <li class="gift-item">
+                        <div class="gift-text">
+                            <strong>VIP karta, s katero boš imela brezplačen dostop do vseh spletnih delavnic in 50% popust na vseh dogodkih v živo.</strong>
+                        </div>
+                    </li>
+                    <li class="gift-item">
+                        <div class="gift-text">
+                            <strong>Brezplačna udeležba na prednovoletnem ekskluzivnem dogodku z izjemnimi predavatelji, gosti in pogostitvijo.</strong>
+                        </div>
+                    </li>
+                    <li class="gift-item">
+                        <div class="gift-text">
+                            <strong>Brezplačen pogovor z Marjanco na osnovi katerega boš prejela personalizirano vodeno meditacijo za sproščanje.</strong>
+                        </div>
+                    </li>
+                    <li class="gift-item">
+                        <div class="gift-text">
+                            <strong>Sodelovala boš v nagradni igri, kjer bo glavna nagrada križarjenje z Marjanco po najlepših jadranskih otokih na VIP ladji 5* in še številne druge nagrade.</strong>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="cta-section">
+                    <a href="checkout.html" class="cta-button">Gumb na plačilo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: 8 Gifts -->
+    <section class="jaz-zenska-section jaz-zenska-highlight-section" style="padding-top: 0;">
+        <div class="jaz-zenska-container">
+            <div class="section-content">
+                <h2>8 neprecenljivih daril</h2>
+                
+                <p>Kot članica skupnosti JAZ ŽENSKA boš prejele veliko znanj, orodij, vaj in vedenj, ki ti bodo v neizmerno pomoč na tvoji poti spremembe, ob tem pa boš sama sebi podarila 8 neprecenljivih daril:</p>
+                
+                <p><strong>Dala si boš dovoljenje, da brez slabega občutka postaviš sebe na prvo mesto.</strong> Spoznala boš, da skrb zase, za boljše počutje, zdravje, počitek, radost srečo in veselje ni samo tvoja pravica, temveč osnovna temeljna dolžnost, ki te obvezuje in zavezuje k nenehni skrbi in delovanju za ustvarjanje najboljše verzije sebe. Na ta način boš poskrbela tudi za svoje najbližje, prijatelje, sodelavce..., kajti ko smo zadovoljne srečne in zdrave, le takrat lahko osrečimo in razveselimo tudi ljudi okoli nas.</p>
+                
+                <p><strong>Pridobila boš veščine in orodja, s pomočjo katerih boš znala postavljati jasne meje in živeti v skladu s svojimi vrednotami.</strong> Naučila se boš prijazno in odločno reči ne, povedati resnico in opustiti prepričanja in navade, ki te ne podpirajo, ali ti celo škodijo.</p>
+                
+                <p><strong>Naučila se boš sprejemati takšna kot si z vsemi svojimi vrlinami in slabostmi</strong> in se boš opolnomočila kot kreatorka svojega življenja, ki se zaveda, da se v vsakem trenutku lahko odloči za spremembo in stopiš na pot osebne rasti in življenja v skladu s svojim življenjskim poslanstvom.</p>
+                
+                <p><strong>Postala boš del skupnosti, kjer se boš počutila sprejeto, varno, slišano...</strong> Kjer boš našla odgovore na svoja vprašanja in začutila, da v svojih izzivih in stiskah nisi sama. V skupnosti JAZ Ženska boš našle čvrsto oporo, razumevanje in zaupanje, brez obsojanja, etiketiranja in potrebe po »nastopanju«, saj se bomo učile sprejemanja, sočutja in medsebojnega spoštovanja.</p>
+                
+                <p><strong>Spremenila boš svoj odnos do sebe in drugih.</strong> Naučila se boš pogledati nase brez obsojanja, obtoževanja, obžalovanja in nesprejemanja. S poglobljenim, resnim in vztrajnim delom boš spremenila stara, omejujoča prepričanja, poiskala in odstranila negativne vzorce, navade in razvade. Naučila se boš poslušati sebe, poiskala boš svoj dušni namen in svoje poslanstvo, ter se naučila delovati v skladu s svojimi željami, vrednotami, talenti in zmožnostmi.</p>
+                
+                <p><strong>Stopila boš na pot hvaležnosti in zaupanja</strong> in postala kreatorka svojega življenja, manifestatorka svojih želja in kreativna ustvarjalka svojih ciljev.</p>
+                
+                <p><strong>Naučila se boš vztrajnosti, zaupanja in samospoštovanja</strong> in ozavestile svoje možnosti in priložnosti, ki ti jih življenje ponuja.</p>
+                
+                <p><strong>Spoznala boš, da je sreča pot in ne cilj</strong> in se naučila uživati in sprejemati življenje v vsej njegovi veličini, ki se nam predstavi šele takrat, ko smo pripravljene opustit togost, kontrolo, nezaupanje in strah, ter si dovoliti sprejemati radost in lepoto z vso hvaležnostjo, srčnostjo in ljubeznijo tudi takrat, ko nam je težko, ko nas boli ali ko ostanemo same.</p>
+                
+                <div class="cta-section">
+                    <a href="checkout.html" class="cta-button">Gumb na plačilo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo-text">
+            <a href="/" class="footer-logo-link" id="footer-logo-link">
+                <img src="images/logo/logo_text.webp" alt="Jaz Ženska Logo" width="150" height="60">
+            </a>
+        </div>
+        
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>KONTAKT</h3>
+                <p><a href="mailto:info@jazzenska.si">info@jazzenska.si</a></p>
+                <p>Novo mesto, Slovenija</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>NAVIGACIJA</h3>
+                <ul>
+                    <li><a href="o-meni.html">O meni</a></li>
+                    <li><a href="jaz-zenska.html">Naša zgodba</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="/#affirmations">Meditacije</a></li>
+                    <li><a href="pravilnik-o-zasebnosti.html">Pravilnik o zasebnosti</a></li>
+                    <li><a href="splosni-pogoji.html">Splošni pogoji</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-heart-text">Ustvarjeno z ❤ za vse ženske</div>
+        
+        <div class="footer-bottom">
+            <p>Jaz Ženska © 2026. Vse pravice pridržane.</p>
+            <p>Spletno stran izdelal in vzdržuje: <a href="https://www.linkedin.com/in/kalabic-david" target="_blank" rel="noopener noreferrer">David Kalabić</a></p>
+            <p><a href="pravilnik-o-zasebnosti.html" style="color: inherit; text-decoration: underline; opacity: 0.8;">Piškotki in politika zasebnosti</a></p>
+        </div>
+    </footer>
+
+    <!-- Cookie Banner -->
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-banner-content">
+            <div class="cookie-banner-text">
+                <h3>Uporabljamo piškotke</h3>
+                <p>Ta spletna stran uporablja piškotke za zagotavljanje pravilnega delovanja, analizo obiska in izboljšanje uporabniške izkušnje.</p>
+                <p class="cookie-banner-links">
+                    Več informacij najdeš v <a href="pravilnik-o-zasebnosti.html">Pravilniku o zasebnosti</a> in Politiki piškotkov.
+                </p>
+            </div>
+            <div class="cookie-banner-buttons">
+                <button class="cookie-btn cookie-btn-accept" id="cookieAccept">Sprejmi vse</button>
+                <button class="cookie-btn cookie-btn-settings" id="cookieSettings">Nastavitve</button>
+                <button class="cookie-btn cookie-btn-reject" id="cookieReject">Zavrni</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Settings Modal -->
+    <div class="cookie-settings-modal" id="cookieSettingsModal">
+        <div class="cookie-settings-overlay"></div>
+        <div class="cookie-settings-content">
+            <button class="cookie-settings-close" id="cookieSettingsClose" aria-label="Zapri">&times;</button>
+            <h2>Nastavitve piškotkov</h2>
+            <p>Izberite, katere piškotke želite sprejeti:</p>
+            <div class="cookie-settings-options">
+                <label>
+                    <input type="checkbox" id="cookieEssential" checked disabled>
+                    <span>Nujni piškotki (obvezni)</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="cookieAnalytics">
+                    <span>Analitični piškotki</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="cookieMarketing">
+                    <span>Marketinški piškotki</span>
+                </label>
+            </div>
+            <div class="cookie-settings-buttons">
+                <button class="cookie-btn cookie-btn-reject" id="cookieSettingsReject">Zavrni vse</button>
+                <button class="cookie-btn cookie-btn-accept" id="cookieSettingsSave">Shrani nastavitve</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
