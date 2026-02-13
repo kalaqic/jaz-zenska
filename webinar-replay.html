@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webinar - Moja moč je v meni | Jaz Ženska</title>
+    <meta name="description" content="Posnetek webinarja Moja moč je v meni. Na voljo do 20. 2. 2026.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .webinar-replay-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8f0f2 0%, #fff 100%);
+            padding: 40px 20px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        .webinar-replay-page::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -100px;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .webinar-replay-page::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -100px;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .webinar-replay-header,
+        .webinar-replay-container {
+            position: relative;
+            z-index: 1;
+        }
+        .webinar-replay-header {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            text-align: center;
+        }
+        .webinar-replay-header a {
+            display: inline-block;
+        }
+        .webinar-replay-header img {
+            max-width: 200px;
+            height: auto;
+        }
+        .webinar-replay-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .webinar-replay-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--dark-violet);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .webinar-replay-until {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .webinar-replay-video {
+            position: relative;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.15);
+        }
+        .webinar-replay-video-wrapper {
+            padding: 75% 0 0 0;
+            position: relative;
+        }
+        .webinar-replay-video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="webinar-replay-page">
+        <header class="webinar-replay-header">
+            <a href="index.html"><img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska" width="200" height="60"></a>
+        </header>
+        <div class="webinar-replay-container">
+            <h1 class="webinar-replay-title">Moja moč je v meni — Webinar</h1>
+            <p class="webinar-replay-until">Video je na voljo do 20. 2. 2026.</p>
+            <div class="webinar-replay-video">
+                <div class="webinar-replay-video-wrapper">
+                    <iframe src="https://player.vimeo.com/video/1164808779?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Moja moc je v meni Webinar"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://player.vimeo.com/api/player.js"></script>
+</body>
+</html>
