@@ -9,111 +9,166 @@
     <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
     <link rel="stylesheet" href="css/main.css">
     <style>
-        .webinar-replay-page {
+        .wr {
             min-height: 100vh;
-            background: linear-gradient(135deg, #f8f0f2 0%, #fff 100%);
-            padding: 40px 20px 60px;
             position: relative;
             overflow: hidden;
+            background: linear-gradient(160deg, #fff 0%, #faf8f9 35%, #f8f0f2 100%);
         }
-        .webinar-replay-page::before {
+        .wr::before {
             content: '';
             position: absolute;
             top: 50%;
-            right: -100px;
+            right: -80px;
             transform: translateY(-50%);
-            width: 500px;
-            height: 500px;
+            width: 480px;
+            height: 480px;
             background-image: url('images/background-decorations.webp');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            opacity: 0.7;
+            opacity: 0.5;
             z-index: 0;
             pointer-events: none;
         }
-        .webinar-replay-page::after {
+        .wr::after {
             content: '';
             position: absolute;
             top: 50%;
-            left: -100px;
+            left: -80px;
             transform: translateY(-50%);
-            width: 500px;
-            height: 500px;
+            width: 480px;
+            height: 480px;
             background-image: url('images/background-decorations.webp');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            opacity: 0.7;
+            opacity: 0.5;
             z-index: 0;
             pointer-events: none;
         }
-        .webinar-replay-header,
-        .webinar-replay-container {
+        .wr__inner {
             position: relative;
             z-index: 1;
-        }
-        .webinar-replay-header {
-            max-width: 900px;
-            margin: 0 auto 30px;
-            text-align: center;
-        }
-        .webinar-replay-header a {
-            display: inline-block;
-        }
-        .webinar-replay-header img {
-            max-width: 200px;
-            height: auto;
-        }
-        .webinar-replay-container {
-            max-width: 900px;
+            max-width: 880px;
             margin: 0 auto;
+            padding: 56px 24px 72px;
         }
-        .webinar-replay-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            color: var(--dark-violet);
+        .wr__logo {
+            display: inline-block;
+            margin-bottom: 56px;
+            padding: 12px 20px;
+        }
+        .wr__logo-wrap {
             text-align: center;
-            margin-bottom: 12px;
         }
-        .webinar-replay-until {
+        .wr__logo img {
+            max-width: 280px;
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .wr__header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .wr__title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 600;
+            color: var(--dark-violet);
+            line-height: 1.25;
+            margin: 0 0 14px 0;
+            letter-spacing: -0.02em;
+        }
+        .wr__badge {
+            display: inline-block;
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
-            color: var(--text-light);
-            text-align: center;
-            margin-bottom: 32px;
+            font-weight: 500;
+            color: var(--mid-violet);
+            background: rgba(153, 98, 122, 0.12);
+            padding: 8px 18px;
+            border-radius: 100px;
+            letter-spacing: 0.02em;
         }
-        .webinar-replay-video {
+        .wr__video-wrap {
             position: relative;
             width: 100%;
-            border-radius: 12px;
+            padding: 56.25% 0 0;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.15);
+            box-shadow: 0 24px 56px rgba(100, 56, 67, 0.12), 0 8px 24px rgba(100, 56, 67, 0.08);
         }
-        .webinar-replay-video-wrapper {
-            padding: 75% 0 0 0;
-            position: relative;
-        }
-        .webinar-replay-video-wrapper iframe {
+        .wr__video-wrap iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
         }
+        .wr__below {
+            margin-top: 48px;
+            text-align: center;
+        }
+        .wr__below p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 17px;
+            line-height: 1.9;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+        .wr__below p:last-of-type {
+            margin-bottom: 0;
+        }
+        .wr__below a:not(.cta-button) {
+            color: var(--mid-violet);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .wr__below a:not(.cta-button):hover {
+            text-decoration: underline;
+        }
+        .wr__cta-wrap {
+            margin: 28px 0 0;
+        }
+        .wr__contact {
+            margin-top: 56px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(100, 56, 67, 0.15);
+        }
+        .wr__contact p {
+            margin-bottom: 0;
+        }
+        @media (max-width: 640px) {
+            .wr__inner { padding: 40px 20px 56px; }
+            .wr__logo { margin-bottom: 40px; }
+            .wr__logo img { max-width: 180px; }
+            .wr__header { margin-bottom: 36px; }
+            .wr__title { font-size: 26px; }
+        }
     </style>
 </head>
 <body>
-    <div class="webinar-replay-page">
-        <header class="webinar-replay-header">
-            <a href="index.html"><img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska" width="200" height="60"></a>
-        </header>
-        <div class="webinar-replay-container">
-            <h1 class="webinar-replay-title">Moja moč je v meni — Webinar</h1>
-            <p class="webinar-replay-until">Video je na voljo do 20. 2. 2026.</p>
-            <div class="webinar-replay-video">
-                <div class="webinar-replay-video-wrapper">
-                    <iframe src="https://player.vimeo.com/video/1164808779?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Moja moc je v meni Webinar"></iframe>
+    <div class="wr">
+        <div class="wr__inner">
+            <div class="wr__logo-wrap">
+                <a href="index.html" class="wr__logo"><img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska" width="280" height="84"></a>
+            </div>
+            <header class="wr__header">
+                <h1 class="wr__title">Moja moč je v meni — Webinar</h1>
+                <span class="wr__badge">Video na voljo do 20. 2. 2026</span>
+            </header>
+            <div class="wr__video-wrap">
+                <iframe src="https://player.vimeo.com/video/1164808779?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Moja moc je v meni Webinar"></iframe>
+            </div>
+            <div class="wr__below">
+                <p>Posnetek si lahko ogledate kadarkoli do naslednjega petka, ko ga bomo umaknili in bo dostopen samo v naši skupnosti Jaz ženska. Če se nam želite pridružiti, več informacij si lahko pridobite s spodnjim gumbom.</p>
+                <div class="wr__cta-wrap">
+                    <a href="https://www.jazzenska.com/pridruzi-se" class="cta-button" target="_blank" rel="noopener noreferrer">PRIDRUŽI SE</a>
+                </div>
+                <div class="wr__contact">
+                    <p>Za dodatne informacije sem dosegljiva na e-naslovu: <a href="mailto:marjanca@jazzenska.com">marjanca@jazzenska.com</a>, ali na mob: <a href="tel:+38631350400">031 350 400</a></p>
                 </div>
             </div>
         </div>
