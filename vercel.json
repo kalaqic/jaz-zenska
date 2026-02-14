@@ -82,6 +82,10 @@
     {
       "source": "/checkout",
       "destination": "/checkout.html"
+    },
+    {
+      "source": "/webinar-replay",
+      "destination": "/webinar-replay.html"
     }
   ],
   "redirects": [
@@ -183,6 +187,11 @@
     {
       "source": "/checkout.html",
       "destination": "/checkout",
+      "permanent": true
+    },
+    {
+      "source": "/webinar-replay.html",
+      "destination": "/webinar-replay",
       "permanent": true
     }
   ]
