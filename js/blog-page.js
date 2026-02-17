@@ -71,6 +71,76 @@ const blogContent = {
                 <a href="index.html#newsletter" class="blog-newsletter-button">Prijavite se na naše e-novice</a>
             </div>
         `
+    },
+    3: {
+        category: "Aktualno",
+        date: "9 februarja, 2026",
+        title: "Danes se začenja leto ognjenega konja",
+        image: "images/blog ognjeni konj/konj 2.webp",
+        content: `
+            
+            
+            <p>Kaj to pomeni za nas. Ali je to čas za nove akcije, rast, pogum ali strah, napredek ali stagnacijo, akcijo ali mirovanje, vojno ali mir, zmago ali poraz...?</p>
+            
+            <p>»V vzhodni kulturi konj predstavlja akcijo, svobodo, hitrost in preboj,« pojasnjuje Susan Gu, praktikantka tradicionalne kitajske medicine v Londonu. »Odraža življenjsko fazo, v kateri se pogumno premikamo naprej brez strahu pred ovirami, s poudarkom na gibanju in ne na mirovanju.«</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <img src="images/blog ognjeni konj/konj.webp" alt="Ognjeni konj" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            
+            <p>Torej je leto ognjenega konja namenjeno uresničevanju naših ciljev, želja in zaobljub. Je čas za delovanje in akcijo. Energija ognjenega konja nam pomaga in nas spodbuja v gibanje, motivacijo in akcijo na osnovi jasno določenih ciljev. Potrebno je načrtno, premišljeno in dosledno delovanje, v skladu z našimi željami in cilji. Doslednost, postavljanje meja, prava mera počitka in skrbi za dobro počutje, čas zase in poglabljanje vase so osnova za dobro in uspešno delovanje. Zavedajmo se, da v letu konja ne moramo biti najhitrejši, pomembno je, da smo v gibanju s pravo mero upornosti, doslednosti, jasnosti, poguma in vztrajnosti. Dobro je, da poznamo svoje sposobnosti in da se ne izčrpamo, da ne porabimo vse zaloge energije, ker bi bilo okrevanje lahko prezahtevno in dolgotrajno. Pomembno je da delujemo, da ne obstanemo, da smo v gibanju, v ritmu in v povezavi sami s sabo, okoljem in energijo, ki nam jo prinaša leto ognjenega konja.</p>
+            
+            <p>Izredno pomembno je, da se zavedamo, da vihrava, hitra narava ognjenega konja lahko privede do izgorelosti, zato je nujno uravnotežiti potrebo po gibanju in predanost mirovanju in obnovi energije.</p>
+            
+            <p><strong>In kaj je tisto, kar se v letu ognjenega konja najbolj priporoča?</strong></p>
+            
+            <ul style="font-family: 'Montserrat', sans-serif; font-size: 17px; line-height: 1.9; color: var(--text-dark); margin: 20px 0; padding-left: 25px;">
+                <li>Jasnost in vztrajnost pri delovanju na vseh področjih.</li>
+                <li>Redna lahkotna vadba.</li>
+                <li>Gibanje, sprehodi v naravi.</li>
+                <li>Zavestno dihanje in dihalne vaje.</li>
+                <li>Meditacija.</li>
+                <li>Postavljanje jasnih meja.</li>
+                <li>Čas za počitek in regeneracijo.</li>
+                <li>Čas za druženje.</li>
+                <li>Akcija in delovanje v skladu s svojimi cilji, vizijami, poslanstvom in dušnim namenom.</li>
+            </ul>
+            
+            <p><strong>Na kaj moramo biti pozorni?</strong></p>
+            
+            <ul style="font-family: 'Montserrat', sans-serif; font-size: 17px; line-height: 1.9; color: var(--text-dark); margin: 20px 0; padding-left: 25px;">
+                <li>Da si ne zadamo preveč nalog.</li>
+                <li>Pazimo da si »časovnico« ne obremenimo da zadnje minute.</li>
+                <li>Poslušajmo svoje telo in intuicijo, pravočasno prepoznajmo znake utrujenosti in bolečine.</li>
+                <li>Naučimo se ločevati zaposlenost od produktivnosti.</li>
+                <li>Bodimo čuječi in pozorni na trenutek tukaj in sedaj, kajti življenje nam pošilja sporočila in znake, ki jih nebi smeli ignorirati.</li>
+            </ul>
+            
+            <p>V letu ognjenega konja moramo razumeti energijo in dinamiko. »Ogenj prinaša intenzivnost, nujnost in strast, kar se lahko zdi motivacijsko, a tudi zahtevno,« pravi Ada Ooi, klinična delavka integrativne kitajske medicine in nadaljuje: »Ta kombinacija pogosto ustvari hitrejši tempo življenja in močnejšo željo po dosežkih, zato je še posebej pomembno, da ostanemo uglašeni na telesne omejitve in energijske rezerve.«</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <img src="images/blog ognjeni konj/svoboda.webp" alt="Svoboda" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            
+            <p>Če povzamemo nam prvi Ognjeni Konj po 60 letih (koliko traja zodiakalni cikel), nosi številne priložnosti, strast, gibanje, uspeh in rast, po drugi strani pa je lahko to tudi nemirno, dinamično obdobje – z možnostjo konfliktov, izgorelosti, nepremišljenega delovanja, dvomov in strahov. Da bi izkoristili čim več priložnosti, ki nam jih nosi to leto, je pomembno da ozavestimo da leto Ognjenega Konja zahteva jasnost, usmerjeno in vztrajno delovanje, zavedanje sebe in svoje vrednosti, postavljanje meja, notranji mir in poglabljanje vase.</p>
+            
+            <p>Sprašujem se, ali je naključje, da ravno letos začenjam s programom Jaz ženska, čeprav ga načrtujem že par let. Vse bolj verjamem, da sem morala počakati leto ognjenega konja, ko se energije odprejo in kličejo k aktivnemu in zavestnemu delovanju. Delo v skupini bo usklajeno z energijo ognjenega konja, vodeno in skrbno načrtovano. Ob tem pa bo potekalo tako, da bo vsaka od nas lahko sodelovala v svojemu ritmu in sledila svojim željam in ciljem.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="jaz-zenska.html" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; padding: 22px 60px; border-radius: 50px; font-size: 20px; font-weight: 700; text-decoration: none; text-align: center; transition: all 0.3s ease; cursor: pointer; border: none; box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4); font-family: 'Montserrat', sans-serif;">
+                    Več o Jaz ženska
+                </a>
+            </div>
+            
+            <p style="text-align: center; font-style: italic; margin-top: 40px; font-size: 17px; color: var(--text-dark);">Želim ti veliko lepih priložnosti in te prav lepo pozdravljam!</p>
+            
+            <p style="text-align: center; font-weight: 600; margin-top: 10px; font-size: 17px; color: var(--dark-violet);">Marjanca Trščinar Antić</p>
+            
+            <div class="blog-newsletter-cta">
+                <p class="blog-newsletter-text">Želite več navdihujočih vsebin, kot je ta?</p>
+                <a href="index.html#newsletter" class="blog-newsletter-button">Prijavite se na naše e-novice</a>
+            </div>
+        `
     }
 };
 
