@@ -28,6 +28,21 @@ function initDataStructures() {
     if (!localStorage.getItem('events')) {
         localStorage.setItem('events', JSON.stringify([]));
     }
+    
+    // Initialize webinars with default webinar
+    if (!localStorage.getItem('webinars')) {
+        const defaultWebinars = [
+            {
+                id: '1',
+                title: 'Moja moč je v meni',
+                date: '12. februarja, 2026',
+                description: 'Brezplačni webinar o odkritju notranje moči in spremembi življenja.',
+                videoId: '1164808779',
+                videoUrl: 'https://player.vimeo.com/video/1164808779?badge=0&autopause=0&player_id=0&app_id=58479'
+            }
+        ];
+        localStorage.setItem('webinars', JSON.stringify(defaultWebinars));
+    }
 }
 
 // Get current user from localStorage (populated by Firebase Auth)
@@ -132,6 +147,9 @@ function switchSection(section) {
                 break;
             case 'classroom':
                 loadClassroom();
+                break;
+            case 'webinars':
+                loadWebinars();
                 break;
             case 'calendar':
                 loadCalendar();
@@ -732,6 +750,144 @@ async function loadClassroom() {
 function openCourse(courseId) {
     window.location.href = `course.html?id=${courseId}`;
 }
+
+// ===== WEBINARS SECTION =====
+async function loadWebinars() {
+    const content = document.getElementById('webinarsContent');
+    
+    // Initialize webinars if they don't exist
+    if (!localStorage.getItem('webinars')) {
+        const defaultWebinars = [
+            {
+                id: '1',
+                title: 'Moja moč je v meni',
+                date: '12. februarja, 2026',
+                description: 'Brezplačni webinar o odkritju notranje moči in spremembi življenja.',
+                videoId: '1164808779',
+                videoUrl: 'https://player.vimeo.com/video/1164808779?badge=0&autopause=0&player_id=0&app_id=58479'
+            }
+        ];
+        localStorage.setItem('webinars', JSON.stringify(defaultWebinars));
+    }
+    
+    let webinars = JSON.parse(localStorage.getItem('webinars') || '[]');
+    
+    // Try to load from Firestore if available
+    try {
+        if (typeof db !== 'undefined') {
+            const webinarsSnapshot = await db.collection('webinars').orderBy('date', 'desc').get();
+            
+            if (!webinarsSnapshot.empty) {
+                webinars = webinarsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        title: data.title,
+                        date: data.date,
+                        description: data.description,
+                        videoId: data.videoId,
+                        videoUrl: data.videoUrl
+                    };
+                });
+                
+                // Update localStorage cache
+                localStorage.setItem('webinars', JSON.stringify(webinars));
+            }
+        }
+    } catch (error) {
+        console.error('Error loading webinars from Firestore:', error);
+    }
+    
+    let html = '';
+    
+    if (webinars.length === 0) {
+        html = '<p style="color: var(--text-light); text-align: center; padding: 40px;">Trenutno ni na voljo nobenih webinarjev.</p>';
+    } else {
+        html = '<div class="webinars-grid">';
+        webinars.forEach(webinar => {
+            html += `
+                <div class="webinar-card" onclick="openWebinar('${webinar.id}')">
+                    <div class="webinar-title">${webinar.title}</div>
+                    <div class="webinar-date">${webinar.date || ''}</div>
+                    <div class="webinar-description">${webinar.description || ''}</div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    content.innerHTML = html;
+}
+
+function openWebinar(webinarId) {
+    const webinars = JSON.parse(localStorage.getItem('webinars') || '[]');
+    const webinar = webinars.find(w => w.id === webinarId);
+    
+    if (!webinar) {
+        console.error('Webinar not found:', webinarId);
+        return;
+    }
+    
+    const modal = document.getElementById('webinarModal');
+    const titleEl = document.getElementById('webinarModalTitle');
+    const videoContainer = document.getElementById('webinarVideoContainer');
+    
+    if (titleEl) titleEl.textContent = webinar.title;
+    
+    if (videoContainer) {
+        videoContainer.innerHTML = `
+            <iframe 
+                src="${webinar.videoUrl}" 
+                frameborder="0" 
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                title="${webinar.title}">
+            </iframe>
+        `;
+    }
+    
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeWebinarModal() {
+    const modal = document.getElementById('webinarModal');
+    const videoContainer = document.getElementById('webinarVideoContainer');
+    
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // Clear video to stop playback
+    if (videoContainer) {
+        videoContainer.innerHTML = '';
+    }
+}
+
+// Close modal on overlay click
+document.addEventListener('DOMContentLoaded', function() {
+    const webinarModal = document.getElementById('webinarModal');
+    if (webinarModal) {
+        webinarModal.addEventListener('click', function(e) {
+            if (e.target === webinarModal) {
+                closeWebinarModal();
+            }
+        });
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('webinarModal');
+            if (modal && modal.classList.contains('active')) {
+                closeWebinarModal();
+            }
+        }
+    });
+});
 
 // ===== CALENDAR SECTION =====
 let currentCalendarDate = new Date();

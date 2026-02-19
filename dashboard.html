@@ -888,6 +888,145 @@
             font-size: 16px;
         }
         
+        /* Webinar Cards */
+        .webinars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        
+        .webinar-card {
+            background: linear-gradient(135deg, var(--white) 0%, #fafafa 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(100, 56, 67, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .webinar-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .webinar-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--dark-violet);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .webinar-date {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .webinar-description {
+            color: var(--text-dark);
+            line-height: 1.7;
+            font-size: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Webinar Modal */
+        .webinar-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            overflow-y: auto;
+        }
+        
+        .webinar-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .webinar-modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            max-width: 1200px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .webinar-modal-header {
+            padding: 30px;
+            border-bottom: 1px solid rgba(100, 56, 67, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            z-index: 1;
+        }
+        
+        .webinar-modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--dark-violet);
+            margin: 0;
+        }
+        
+        .webinar-modal-close {
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .webinar-modal-close:hover {
+            background: var(--main-white);
+            color: var(--dark-violet);
+        }
+        
+        .webinar-modal-body {
+            padding: 30px;
+        }
+        
+        .webinar-video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        .webinar-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
         @media (max-width: 768px) {
             .dashboard-header {
                 flex-direction: column;
@@ -934,6 +1073,7 @@
         <nav class="dashboard-nav">
             <a href="#" class="nav-item active" data-section="community">Skupnost</a>
             <a href="#" class="nav-item" data-section="classroom">Učilnica</a>
+            <a href="#" class="nav-item" data-section="webinars">Webinari</a>
             <a href="#" class="nav-item" data-section="calendar">Koledar</a>
             <a href="#" class="nav-item" data-section="profile">Moj profil</a>
         </nav>
@@ -955,6 +1095,14 @@
                 </div>
             </div>
             
+            <!-- Webinars Section -->
+            <div id="webinars" class="content-section">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Webinari</h2>
+                <div id="webinarsContent">
+                    <!-- Webinars will be loaded here -->
+                </div>
+            </div>
+            
             <!-- Calendar Section -->
             <div id="calendar" class="content-section">
                 <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Koledar</h2>
@@ -968,6 +1116,21 @@
                 <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Moj profil</h2>
                 <div id="profileContent">
                     <!-- Profile form will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Webinar Modal -->
+    <div id="webinarModal" class="webinar-modal">
+        <div class="webinar-modal-content">
+            <div class="webinar-modal-header">
+                <h2 class="webinar-modal-title" id="webinarModalTitle">Webinar</h2>
+                <button class="webinar-modal-close" onclick="closeWebinarModal()">&times;</button>
+            </div>
+            <div class="webinar-modal-body">
+                <div class="webinar-video-container" id="webinarVideoContainer">
+                    <!-- Video iframe will be inserted here -->
                 </div>
             </div>
         </div>
@@ -1208,5 +1371,6 @@
         });
     </script>
     <script src="js/community.js"></script>
+    <script src="https://player.vimeo.com/api/player.js"></script>
 </body>
 </html>
