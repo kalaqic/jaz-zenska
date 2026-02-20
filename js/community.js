@@ -927,9 +927,24 @@ async function checkWelcomeStatus() {
 
 function showWelcomeModal() {
     const modal = document.getElementById('welcomeModal');
+    const user = getCurrentUser();
     if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        
+        // Hide dashboard content completely
+        const dashboardContainer = document.querySelector('.dashboard-container');
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'none';
+        }
+        
+        // Update welcome title with user's name
+        const welcomeTitle = document.getElementById('welcomeTitle');
+        if (welcomeTitle && user) {
+            const userName = user.name || user.email?.split('@')[0] || '';
+            welcomeTitle.textContent = `Dobrodošla v skupnost ${userName}!`;
+        }
+        
         // Reset to screen 1
         document.getElementById('welcomeScreen1').style.display = 'flex';
         document.getElementById('welcomeScreen2').style.display = 'none';
@@ -959,19 +974,27 @@ window.completeWelcome = async function() {
         currentUser.welcomed = true;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         
-        // Close modal
+        // Close modal and show dashboard
         const modal = document.getElementById('welcomeModal');
+        const dashboardContainer = document.querySelector('.dashboard-container');
         if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
+        }
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'block';
         }
     } catch (error) {
         console.error('Error updating welcome status:', error);
         // Still close modal even if update fails
         const modal = document.getElementById('welcomeModal');
+        const dashboardContainer = document.querySelector('.dashboard-container');
         if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
+        }
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'block';
         }
     }
 }
