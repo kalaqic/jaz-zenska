@@ -85,8 +85,17 @@ async function handleLogout() {
     }
 }
 
+// Track if dashboard is initialized to prevent duplicate initialization
+let dashboardInitialized = false;
+
 // Initialize dashboard
 function initDashboard() {
+    if (dashboardInitialized) {
+        console.log('Dashboard already initialized, skipping');
+        return;
+    }
+    dashboardInitialized = true;
+    window.dashboardInitialized = true;
     // Double-check authentication before proceeding
     if (typeof auth !== 'undefined' && auth && auth.currentUser === null) {
         // Check localStorage as fallback
@@ -111,9 +120,6 @@ function initDashboard() {
     roleEl.textContent = user.role === 'admin' ? 'Admin' : 'Članica';
     roleEl.className = `user-role ${user.role}`;
     
-    // Check if user needs to see welcome flow
-    checkWelcomeStatus();
-    
     // Navigation
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function(e) {
@@ -129,6 +135,35 @@ function initDashboard() {
     
     // Load initial section
     switchSection('community');
+    
+    // Check welcome status AFTER everything is initialized
+    // Wait for Firebase to be ready
+    waitForFirebaseAndCheckWelcome();
+}
+
+// Wait for Firebase to be ready before checking welcome status
+async function waitForFirebaseAndCheckWelcome() {
+    // Wait up to 3 seconds for Firebase to initialize
+    let attempts = 0;
+    const maxAttempts = 30; // 30 * 100ms = 3 seconds
+    
+    const checkInterval = setInterval(() => {
+        attempts++;
+        
+        // Check if Firebase is ready
+        if (typeof db !== 'undefined' && db) {
+            clearInterval(checkInterval);
+            checkWelcomeStatus();
+        } else if (attempts >= maxAttempts) {
+            clearInterval(checkInterval);
+            // Firebase not available, use localStorage fallback
+            const user = getCurrentUser();
+            if (user && !user.welcomed) {
+                console.log('Firebase not available, checking localStorage only');
+                checkWelcomeStatus();
+            }
+        }
+    }, 100);
 }
 
 // Switch between sections
@@ -893,21 +928,45 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ===== WELCOME FLOW =====
+// Track if welcome check has already been performed to prevent duplicate checks
+let welcomeCheckPerformed = false;
+
 async function checkWelcomeStatus() {
+    // Prevent duplicate checks
+    if (welcomeCheckPerformed) {
+        console.log('Welcome check already performed, skipping');
+        return;
+    }
+    
     const user = getCurrentUser();
-    if (!user || !user.userId) return;
+    if (!user || !user.userId) {
+        console.log('No user found, skipping welcome check');
+        return;
+    }
+    
+    welcomeCheckPerformed = true;
+    
+    // Quick check localStorage first (for performance)
+    const cachedWelcomed = user.welcomed === true;
+    if (cachedWelcomed) {
+        console.log('✅ User already welcomed (from cache), skipping modal');
+        return;
+    }
     
     let welcomed = false;
     
     // Try to get welcomed status from Firestore (source of truth)
     try {
-        if (typeof db !== 'undefined') {
+        if (typeof db !== 'undefined' && db) {
+            console.log('🔍 Checking welcome status in Firestore for user:', user.userId);
             const userDoc = await db.collection('users').doc(user.userId).get();
+            
             if (userDoc.exists) {
                 const userData = userDoc.data();
                 // Check if welcomed field exists and is true
-                // If field doesn't exist, default to false (show welcome)
+                // If field doesn't exist or is false, show welcome
                 welcomed = userData.welcomed === true;
+                console.log('📊 Firestore welcomed status:', welcomed);
                 
                 // Update localStorage cache with latest welcomed status
                 const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -915,21 +974,26 @@ async function checkWelcomeStatus() {
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
             } else {
                 // User document doesn't exist yet - show welcome
+                console.log('⚠️ User document not found in Firestore, showing welcome');
                 welcomed = false;
             }
         } else {
+            console.log('⚠️ Firestore not available, using localStorage');
             // Firestore not available - fallback to localStorage
             welcomed = user.welcomed === true;
         }
     } catch (error) {
-        console.error('Error checking welcome status:', error);
+        console.error('❌ Error checking welcome status:', error);
         // Fallback to localStorage if Firestore check fails
         welcomed = user.welcomed === true;
     }
     
     // Only show welcome modal if user hasn't been welcomed yet
     if (!welcomed) {
+        console.log('🎉 Showing welcome modal');
         showWelcomeModal();
+    } else {
+        console.log('✅ User already welcomed, not showing modal');
     }
 }
 
@@ -1800,7 +1864,16 @@ async function saveProfile() {
 
 // handleLogout is already defined above with Firebase integration
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    initDashboard();
-});
+// Initialize on page load (only if not already initialized by dashboard.html)
+// dashboard.html handles initialization after Firebase is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Only init if not already done by dashboard.html
+        if (!window.dashboardInitialized) {
+            initDashboard();
+        }
+    });
+} else {
+    // DOM already loaded, but check if dashboard.html will handle it
+    // dashboard.html handles initialization after Firebase is ready
+}

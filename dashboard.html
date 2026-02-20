@@ -1624,6 +1624,11 @@
                         if (dashboardContent) {
                             dashboardContent.style.display = 'block';
                         }
+                        // Initialize dashboard after Firebase is ready
+                        // Small delay to ensure everything is set up
+                        setTimeout(() => {
+                            initDashboard();
+                        }, 200);
                     } else if (authChecked && (!auth || !auth.currentUser)) {
                         clearInterval(checkAuth);
                         // Already redirected, but just in case
