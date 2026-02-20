@@ -938,6 +938,12 @@ function showWelcomeModal() {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         
+        // Hide loading spinner if still visible
+        const loadingSpinner = document.getElementById('dashboardLoading');
+        if (loadingSpinner) {
+            loadingSpinner.classList.add('hidden');
+        }
+        
         // Hide dashboard content completely
         const dashboardContainer = document.querySelector('.dashboard-container');
         if (dashboardContainer) {
