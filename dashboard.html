@@ -25,6 +25,7 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 30px 20px;
+            display: block !important; /* Ensure it's visible by default */
         }
         
         .dashboard-container-inner {
@@ -1221,8 +1222,14 @@
     <div id="dashboardLoading" class="dashboard-loading">
         <div class="loading-spinner"></div>
     </div>
+    
+    <script>
+        console.log('📜 Inline script before dashboard container');
+        console.log('📦 Dashboard container element:', document.querySelector('.dashboard-container'));
+        console.log('⏳ Loading spinner element:', document.getElementById('dashboardLoading'));
+    </script>
 
-    <div class="dashboard-container">
+    <div class="dashboard-container" style="display: block !important;">
         <div class="dashboard-header">
             <h1>Skupnost Jaz Ženska</h1>
             <div class="user-info">
@@ -1407,6 +1414,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script>
+        console.log('📜 Dashboard HTML script block loaded');
+        
         // Load Firebase configuration from API
         let firebaseConfig;
         let auth;
@@ -1415,6 +1424,7 @@
         let authChecked = false;
 
         async function initFirebase() {
+            console.log('🔥 initFirebase() called');
             try {
                 const response = await fetch('/api/firebase-config');
                 if (!response.ok) {
@@ -1502,6 +1512,7 @@
 
         // Prevent page access until auth is checked
         // Hide content initially
+        console.log('📜 DOMContentLoaded listener registered');
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📄 DOMContentLoaded fired');
             const dashboardContent = document.querySelector('.dashboard-container');

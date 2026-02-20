@@ -1,6 +1,8 @@
 // Community Platform JavaScript
 // Structured for easy Firebase migration later
 
+console.log('📜 community.js file loaded');
+
 // Helper function to ensure URL is absolute (opens in new tab correctly)
 function ensureAbsoluteUrl(url) {
     if (!url) return '#';
