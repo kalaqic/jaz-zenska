@@ -897,29 +897,36 @@ async function checkWelcomeStatus() {
     const user = getCurrentUser();
     if (!user || !user.userId) return;
     
+    // Check welcomed status - prioritize Firestore as source of truth
     let welcomed = false;
     
-    // Try to get welcomed status from Firestore
     try {
         if (typeof db !== 'undefined') {
             const userDoc = await db.collection('users').doc(user.userId).get();
             if (userDoc.exists) {
                 const userData = userDoc.data();
+                // Only consider welcomed if explicitly true
                 welcomed = userData.welcomed === true;
                 
-                // Update localStorage with latest welcomed status
+                // Update localStorage with latest welcomed status from Firestore
                 const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
                 currentUser.welcomed = welcomed;
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            } else {
+                // User doc doesn't exist, check localStorage as fallback
+                welcomed = user.welcomed === true;
             }
+        } else {
+            // Firestore not available, check localStorage
+            welcomed = user.welcomed === true;
         }
     } catch (error) {
         console.error('Error checking welcome status:', error);
-        // Fallback to localStorage
+        // If Firestore check fails, check localStorage
         welcomed = user.welcomed === true;
     }
     
-    // If not welcomed, show welcome modal
+    // Only show welcome modal if NOT welcomed (false or undefined)
     if (!welcomed) {
         showWelcomeModal();
     }

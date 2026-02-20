@@ -241,12 +241,14 @@
                     
                     const userData = userDoc.data();
                     // Store in localStorage for quick access
+                    // Only set welcomed to true if explicitly true, otherwise false
+                    const welcomed = userData.welcomed === true;
                     localStorage.setItem('currentUser', JSON.stringify({
                         userId: firebaseUser.uid,
                         email: userData.email,
                         name: userData.name,
                         role: userData.role || 'member',
-                        welcomed: userData.welcomed !== undefined ? userData.welcomed : false
+                        welcomed: welcomed
                     }));
                 }
                 
