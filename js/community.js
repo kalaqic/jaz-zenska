@@ -111,7 +111,18 @@ function initDashboard() {
     roleEl.textContent = user.role === 'admin' ? 'Admin' : 'Članica';
     roleEl.className = `user-role ${user.role}`;
     
-    // Check if user needs to see welcome flow
+    // Ensure dashboard is visible initially and welcome modal is hidden
+    const dashboardContainer = document.querySelector('.dashboard-container');
+    const welcomeModal = document.getElementById('welcomeModal');
+    if (dashboardContainer) {
+        dashboardContainer.style.display = 'block';
+    }
+    if (welcomeModal) {
+        welcomeModal.classList.remove('active');
+        welcomeModal.style.display = 'none';
+    }
+    
+    // Check if user needs to see welcome flow (async, will hide dashboard if needed)
     checkWelcomeStatus();
     
     // Navigation
@@ -928,7 +939,20 @@ async function checkWelcomeStatus() {
     
     // Only show welcome modal if NOT welcomed (false or undefined)
     if (!welcomed) {
+        console.log('User not welcomed, showing welcome modal');
         showWelcomeModal();
+    } else {
+        console.log('User already welcomed, skipping welcome modal');
+        // Ensure dashboard is visible
+        const dashboardContainer = document.querySelector('.dashboard-container');
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'block';
+        }
+        const welcomeModal = document.getElementById('welcomeModal');
+        if (welcomeModal) {
+            welcomeModal.classList.remove('active');
+            welcomeModal.style.display = 'none';
+        }
     }
 }
 
@@ -936,14 +960,16 @@ function showWelcomeModal() {
     const modal = document.getElementById('welcomeModal');
     const user = getCurrentUser();
     if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        
-        // Hide dashboard content completely
+        // Hide dashboard first
         const dashboardContainer = document.querySelector('.dashboard-container');
         if (dashboardContainer) {
             dashboardContainer.style.display = 'none';
         }
+        
+        // Show welcome modal
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
         
         // Update welcome title with user's name
         const welcomeTitle = document.getElementById('welcomeTitle');
@@ -953,8 +979,10 @@ function showWelcomeModal() {
         }
         
         // Reset to screen 1
-        document.getElementById('welcomeScreen1').style.display = 'flex';
-        document.getElementById('welcomeScreen2').style.display = 'none';
+        const screen1 = document.getElementById('welcomeScreen1');
+        const screen2 = document.getElementById('welcomeScreen2');
+        if (screen1) screen1.style.display = 'flex';
+        if (screen2) screen2.style.display = 'none';
     }
 }
 
@@ -986,6 +1014,7 @@ window.completeWelcome = async function() {
         const dashboardContainer = document.querySelector('.dashboard-container');
         if (modal) {
             modal.classList.remove('active');
+            modal.style.display = 'none';
             document.body.style.overflow = '';
         }
         if (dashboardContainer) {
@@ -998,6 +1027,7 @@ window.completeWelcome = async function() {
         const dashboardContainer = document.querySelector('.dashboard-container');
         if (modal) {
             modal.classList.remove('active');
+            modal.style.display = 'none';
             document.body.style.overflow = '';
         }
         if (dashboardContainer) {

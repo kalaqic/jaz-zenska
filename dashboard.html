@@ -1045,10 +1045,14 @@
         }
         
         .welcome-modal.active {
-            display: flex;
+            display: flex !important;
         }
         
         body:has(.welcome-modal.active) .dashboard-container {
+            display: none !important;
+        }
+        
+        .welcome-modal:not(.active) {
             display: none !important;
         }
         
@@ -1059,6 +1063,7 @@
             text-align: center;
             position: relative;
             pointer-events: all;
+            z-index: 20001;
         }
         
         .welcome-screen {
@@ -1066,6 +1071,7 @@
             flex-direction: column;
             align-items: center;
             gap: 30px;
+            width: 100%;
         }
         
         .welcome-logo {
@@ -1162,7 +1168,7 @@
 </head>
 <body>
     <!-- Welcome Modal -->
-    <div id="welcomeModal" class="welcome-modal">
+    <div id="welcomeModal" class="welcome-modal" style="display: none;">
         <div class="welcome-modal-content">
             <!-- Screen 1: Welcome Message -->
             <div id="welcomeScreen1" class="welcome-screen">
