@@ -930,16 +930,16 @@ function showWelcomeModal() {
     if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
-        // Reset to screen 1
-        document.getElementById('welcomeScreen1').style.display = 'flex';
-        document.getElementById('welcomeScreen2').style.display = 'none';
+        // Reset to screen 0 (welcome text)
+        document.getElementById('welcomeScreen0').style.display = 'flex';
+        document.getElementById('welcomeScreen1').style.display = 'none';
     }
 }
 
 // Make functions globally accessible
-window.showWelcomeScreen2 = function() {
-    document.getElementById('welcomeScreen1').style.display = 'none';
-    document.getElementById('welcomeScreen2').style.display = 'flex';
+window.showWelcomeScreen1 = function() {
+    document.getElementById('welcomeScreen0').style.display = 'none';
+    document.getElementById('welcomeScreen1').style.display = 'flex';
 };
 
 window.completeWelcome = async function() {

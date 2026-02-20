@@ -1049,17 +1049,50 @@
         
         .welcome-modal-content {
             pointer-events: all;
-        }
-        
-        .welcome-modal-content {
             background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
             border-radius: 25px;
-            max-width: 600px;
+            max-width: 900px;
             width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
             padding: 60px 50px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             text-align: center;
             position: relative;
+        }
+        
+        .welcome-modal-content::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -80px;
+            transform: translateY(-50%);
+            width: 400px;
+            height: 400px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .welcome-modal-content::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -80px;
+            transform: translateY(-50%);
+            width: 400px;
+            height: 400px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
         }
         
         .welcome-screen {
@@ -1067,6 +1100,8 @@
             flex-direction: column;
             align-items: center;
             gap: 30px;
+            position: relative;
+            z-index: 1;
         }
         
         .welcome-logo {
@@ -1074,7 +1109,7 @@
         }
         
         .welcome-logo img {
-            max-width: 250px;
+            max-width: 280px;
             height: auto;
         }
         
@@ -1085,6 +1120,34 @@
             margin: 0;
             font-weight: 700;
             line-height: 1.3;
+        }
+        
+        .welcome-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.8;
+            text-align: left;
+            max-width: 100%;
+            margin: 0;
+        }
+        
+        .welcome-text p {
+            margin-bottom: 15px;
+        }
+        
+        .welcome-text p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .welcome-text a {
+            color: var(--mid-violet);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .welcome-text a:hover {
+            text-decoration: underline;
         }
         
         .welcome-subtitle {
@@ -1108,7 +1171,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4);
             font-family: 'Montserrat', sans-serif;
-            margin-top: 10px;
+            margin-top: 20px;
         }
         
         .welcome-button:hover {
@@ -1116,33 +1179,22 @@
             box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5);
         }
         
-        .welcome-video-placeholder {
+        .welcome-video-container {
+            position: relative;
             width: 100%;
-            aspect-ratio: 16/9;
-            background: linear-gradient(135deg, #f8f0f2 0%, #e7cbcb 100%);
+            padding-bottom: 75%;
+            margin-bottom: 25px;
             border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            border: 2px dashed var(--mid-violet);
+            overflow: hidden;
+            background: #000;
         }
         
-        .video-placeholder-content {
-            text-align: center;
-            color: var(--dark-violet);
-        }
-        
-        .video-placeholder-content svg {
-            margin-bottom: 15px;
-            opacity: 0.6;
-        }
-        
-        .video-placeholder-content p {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 16px;
-            color: var(--text-dark);
-            margin: 0;
+        .welcome-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
         
         @media (max-width: 768px) {
@@ -1173,7 +1225,8 @@
             }
             
             .welcome-modal-content {
-                padding: 40px 30px;
+                padding: 40px 25px;
+                max-width: 95%;
             }
             
             .welcome-title {
@@ -1184,8 +1237,18 @@
                 font-size: 18px;
             }
             
+            .welcome-text {
+                font-size: 15px;
+            }
+            
             .welcome-logo img {
                 max-width: 200px;
+            }
+            
+            .welcome-modal-content::before,
+            .welcome-modal-content::after {
+                width: 250px;
+                height: 250px;
             }
         }
     </style>
@@ -1258,25 +1321,45 @@
     <!-- Welcome Modal -->
     <div id="welcomeModal" class="welcome-modal">
         <div class="welcome-modal-content">
-            <!-- Screen 1: Welcome Message -->
-            <div id="welcomeScreen1" class="welcome-screen">
+            <!-- Screen 0: Welcome Text -->
+            <div id="welcomeScreen0" class="welcome-screen">
                 <div class="welcome-logo">
-                    <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska" width="250" height="75">
+                    <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska" width="280" height="84">
                 </div>
-                <h1 class="welcome-title">Dobrodošla v skupino Jaz Ženska</h1>
-                <button class="welcome-button" onclick="showWelcomeScreen2()">Nadaljuj</button>
+                <div class="welcome-text">
+                    <p><strong>Spoštovana</strong></p>
+                    
+                    <p><strong>Dobrodošla v skupnosti Jaz ženska:</strong> Čestitam ti za tvojo odločitev, da se pridružiš skupnosti, kjer boš imela dostop do vsebin z različnih življenjskih področij. Vsak teden boš prejela urnik aktivnosti, vsi posnetki pa bodo v učilnici in boš do njih lahko dostopala 24 ur na dan, vse dokler boš v naši skupnosti.</p>
+                    
+                    <p>Do konca marca sprejemamo prijave, z aktivnim delom pa bomo začele 22. marca z dogodkom v živo, na katerega te bomo pravočasno povabili. Če se nam ne boš mogla pridružiti, se boš v dogajanje lahko vključila preko zooma, ali pa si pogledala posnetek, kadar ti bo čas dopuščal.</p>
+                    
+                    <p>Ker si se nam prijavila med prvimi, boš prejela tudi dodatne ugodnosti:</p>
+                    <p>Vabim te, da se prijaviš na brezplačen pogovor. Dostop do prostih terminov:</p>
+                    <p>Na osnovi pogovora boš prejela osebno meditacijo, ki jo bom posnela prav zate.</p>
+                    <p>Vip kartico boš prejela na dogodku 22. marca ali ti jo bomo poslali po pošti.</p>
+                    <p>Žrebanje nagrad bomo izvedli javno v FB skupini v sredo, 1. aprila, ob 12 uri.</p>
+                    <p>Ob koncu leta bomo imele prednovoletno druženje, za katerega boš pravočasno prejela brezplačno vstopnico.</p>
+                    
+                    <p>Res sem ti hvaležna, da si se priključila čisto na začetku naše poti, zato ti bo VIP kartica omogočala še dodatne ugodnosti, o katerih te bomo sproti obveščali.</p>
+                    
+                    <p>Sedaj pa te vabim, da si pogledaš uvodni video in izpolniš vprašalnik, ki ti bo pomagal pri uspešnem začetku dela na sebi. Vprašalnik je za tvojo informacijo, če pa boš imela kakšna vprašanja, pomisleke ali predloge, pa mi lahko pišeš na <a href="mailto:marjanca@jazzenska.com" style="color: var(--mid-violet); font-weight: 600;">marjanca@jazzenska.com</a>.</p>
+                    
+                    <p>Čeprav bomo z aktivnim, tedenskim delom začele konec marca, pa imaš že dostop do webinarja Moč je v meni.</p>
+                    <p>V četrtek, 5. marca te vabim, da se nam pridružiš na webinarju 25 stopnic do sreče. Vabilo in dostop boš prejela po e-pošti, posnetek pa bo dostopen tudi v učilnici.</p>
+                    
+                    <p>Še enkrat hvala, ker si se pridružila.</p>
+                    <p>Veselim se našega skupnega dela in druženja.</p>
+                    
+                    <p style="margin-top: 30px;"><strong>Prav lep pozdrav</strong><br>Marjanca Trščinar Antić</p>
+                </div>
+                <button class="welcome-button" onclick="showWelcomeScreen1()">Nadaljuj na uvodni video!</button>
             </div>
             
-            <!-- Screen 2: Video -->
-            <div id="welcomeScreen2" class="welcome-screen" style="display: none;">
+            <!-- Screen 1: Video -->
+            <div id="welcomeScreen1" class="welcome-screen" style="display: none;">
                 <h2 class="welcome-subtitle">Preden začnemo, te vabim, da si ogledaš ta dobrodošni video</h2>
-                <div class="welcome-video-placeholder">
-                    <div class="video-placeholder-content">
-                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor"/>
-                        </svg>
-                        <p>Video bo kmalu na voljo</p>
-                    </div>
+                <div class="welcome-video-container">
+                    <iframe src="https://player.vimeo.com/video/1166642105?h=cd5f697929&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Dobrodošla v skupnost!"></iframe>
                 </div>
                 <button class="welcome-button" onclick="completeWelcome()">Nadaljuj v skupnost!</button>
             </div>
