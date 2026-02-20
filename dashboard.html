@@ -1503,27 +1503,46 @@
         // Prevent page access until auth is checked
         // Hide content initially
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOMContentLoaded fired');
             const dashboardContent = document.querySelector('.dashboard-container');
             const loadingSpinner = document.getElementById('dashboardLoading');
+            console.log('📦 Dashboard container:', dashboardContent);
+            console.log('⏳ Loading spinner:', loadingSpinner);
             
             // Initialize Firebase
+            console.log('🔥 Initializing Firebase...');
             initFirebase().then(() => {
+                console.log('✅ Firebase initialized');
                 // Wait for auth state to be checked
+                let checkCount = 0;
                 const checkAuth = setInterval(() => {
+                    checkCount++;
+                    console.log(`🔄 Auth check #${checkCount}, authChecked:`, authChecked, 'auth.currentUser:', auth?.currentUser);
+                    
                     if (authChecked) {
                         clearInterval(checkAuth);
+                        console.log('✅ Auth check completed');
                         // Check if user is authenticated via Firebase or localStorage
                         const currentUser = localStorage.getItem('currentUser');
+                        console.log('👤 Current user from localStorage:', currentUser);
+                        console.log('🔥 Firebase auth.currentUser:', auth?.currentUser);
+                        
                         if ((auth && auth.currentUser) || currentUser) {
                             // User is authenticated, show content
+                            console.log('✅ User authenticated, showing dashboard');
                             if (dashboardContent) {
                                 dashboardContent.style.display = 'block';
+                                console.log('✅ Dashboard container displayed');
+                            } else {
+                                console.error('❌ Dashboard container not found!');
                             }
                             if (loadingSpinner) {
                                 loadingSpinner.classList.add('hidden');
+                                console.log('✅ Loading spinner hidden');
                             }
                         } else {
                             // No authentication found, redirect to login
+                            console.log('❌ No authentication found, redirecting to login');
                             window.location.href = 'login.html';
                         }
                     }
@@ -1531,26 +1550,34 @@
                 
                 // Timeout after 5 seconds - show dashboard if localStorage has user
                 setTimeout(() => {
+                    console.log('⏰ Auth check timeout reached');
                     clearInterval(checkAuth);
                     const currentUser = localStorage.getItem('currentUser');
+                    console.log('👤 Fallback check - currentUser:', currentUser);
                     if (currentUser && dashboardContent) {
                         dashboardContent.style.display = 'block';
+                        console.log('✅ Dashboard shown via timeout fallback');
                         if (loadingSpinner) {
                             loadingSpinner.classList.add('hidden');
                         }
                     } else if (!authChecked) {
+                        console.log('❌ No auth checked and no user, redirecting to login');
                         window.location.href = 'login.html';
                     }
                 }, 5000);
-            }).catch(() => {
+            }).catch((error) => {
+                console.error('❌ Firebase init error:', error);
                 // If Firebase init fails, try to show dashboard from localStorage
                 const currentUser = localStorage.getItem('currentUser');
+                console.log('👤 Fallback - currentUser:', currentUser);
                 if (currentUser && dashboardContent) {
                     dashboardContent.style.display = 'block';
+                    console.log('✅ Dashboard shown via error fallback');
                     if (loadingSpinner) {
                         loadingSpinner.classList.add('hidden');
                     }
                 } else {
+                    console.log('❌ No user found, redirecting to login');
                     window.location.href = 'login.html';
                 }
             });
