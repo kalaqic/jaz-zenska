@@ -1179,22 +1179,13 @@
             box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5);
         }
         
-        .welcome-video-container {
-            position: relative;
+        .welcome-video-wrapper {
             width: 100%;
-            padding-bottom: 75%;
             margin-bottom: 25px;
-            border-radius: 15px;
-            overflow: hidden;
-            background: #000;
         }
         
-        .welcome-video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .welcome-video-wrapper > div {
             width: 100%;
-            height: 100%;
         }
         
         @media (max-width: 768px) {
@@ -1358,8 +1349,8 @@
             <!-- Screen 1: Video -->
             <div id="welcomeScreen1" class="welcome-screen" style="display: none;">
                 <h2 class="welcome-subtitle">Preden začnemo, te vabim, da si ogledaš ta dobrodošni video</h2>
-                <div class="welcome-video-container">
-                    <iframe src="https://player.vimeo.com/video/1166642105?h=cd5f697929&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Dobrodošla v skupnost!"></iframe>
+                <div class="welcome-video-wrapper">
+                    <div style="padding:75% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/1166642105?h=cd5f697929&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Dobrodošla v skupnost!"></iframe></div>
                 </div>
                 <button class="welcome-button" onclick="completeWelcome()">Nadaljuj v skupnost!</button>
             </div>
