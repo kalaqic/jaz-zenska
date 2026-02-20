@@ -1508,13 +1508,6 @@
         // Hide content initially
         document.addEventListener('DOMContentLoaded', function() {
             const dashboardContent = document.querySelector('.dashboard-container');
-            const welcomeModal = document.getElementById('welcomeModal');
-            
-            // Ensure welcome modal is hidden initially
-            if (welcomeModal) {
-                welcomeModal.classList.remove('active');
-                welcomeModal.style.display = 'none';
-            }
             
             if (dashboardContent) {
                 dashboardContent.style.display = 'none';
@@ -1526,10 +1519,7 @@
                 const checkAuth = setInterval(() => {
                     if (authChecked && auth && auth.currentUser) {
                         clearInterval(checkAuth);
-                        // Show content once authenticated (checkWelcomeStatus will handle welcome modal)
-                        if (dashboardContent) {
-                            dashboardContent.style.display = 'block';
-                        }
+                        // Dashboard will be shown after welcome modal is completed
                     } else if (authChecked && (!auth || !auth.currentUser)) {
                         clearInterval(checkAuth);
                         // Already redirected, but just in case
