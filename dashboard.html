@@ -1159,6 +1159,34 @@
             line-height: 1.5;
         }
         
+        .welcome-video-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            color: var(--text-dark);
+            line-height: 1.8;
+            text-align: left;
+            max-width: 100%;
+            margin: 0 0 30px 0;
+        }
+        
+        .welcome-video-text p {
+            margin-bottom: 15px;
+        }
+        
+        .welcome-video-text p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .welcome-video-text a {
+            color: var(--mid-violet);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .welcome-video-text a:hover {
+            text-decoration: underline;
+        }
+        
         .welcome-button {
             background: linear-gradient(135deg, #99627A 0%, #643843 100%);
             color: white;
@@ -1230,6 +1258,10 @@
             
             .welcome-text {
                 font-size: 15px;
+            }
+            
+            .welcome-video-text {
+                font-size: 18px;
             }
             
             .welcome-logo img {
@@ -1332,8 +1364,7 @@
                     <p>Ob koncu leta bomo imele prednovoletno druženje, za katerega boš pravočasno prejela brezplačno vstopnico.</p>
                     
                     <p>Res sem ti hvaležna, da si se priključila čisto na začetku naše poti, zato ti bo VIP kartica omogočala še dodatne ugodnosti, o katerih te bomo sproti obveščali.</p>
-                    
-                    <p>Sedaj pa te vabim, da si pogledaš uvodni video in izpolniš vprašalnik, ki ti bo pomagal pri uspešnem začetku dela na sebi. Vprašalnik je za tvojo informacijo, če pa boš imela kakšna vprašanja, pomisleke ali predloge, pa mi lahko pišeš na <a href="mailto:marjanca@jazzenska.com" style="color: var(--mid-violet); font-weight: 600;">marjanca@jazzenska.com</a>.</p>
+                
                     
                     <p>Čeprav bomo z aktivnim, tedenskim delom začele konec marca, pa imaš že dostop do webinarja Moč je v meni.</p>
                     <p>V četrtek, 5. marca te vabim, da se nam pridružiš na webinarju 25 stopnic do sreče. Vabilo in dostop boš prejela po e-pošti, posnetek pa bo dostopen tudi v učilnici.</p>
@@ -1349,10 +1380,14 @@
             <!-- Screen 1: Video -->
             <div id="welcomeScreen1" class="welcome-screen" style="display: none;">
                 <h2 class="welcome-subtitle">Preden začnemo, te vabim, da si ogledaš ta dobrodošni video</h2>
+                <div class="welcome-video-text">
+                    <p>Sedaj pa te vabim, da si pogledaš uvodni video in izpolniš vprašalnik, ki ti bo pomagal pri uspešnem začetku dela na sebi.</p>
+                    <p>Vprašalnik je za tvojo informacijo, če pa boš imela kakšna vprašanja, pomisleke ali predloge, pa mi lahko pišeš na <a href="mailto:marjanca@jazzenska.com">marjanca@jazzenska.com</a>.</p>
+                </div>
                 <div class="welcome-video-wrapper">
                     <div style="padding:75% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/1166642105?h=cd5f697929&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Dobrodošla v skupnost!"></iframe></div>
                 </div>
-                <button class="welcome-button" onclick="completeWelcome()">Nadaljuj v skupnost!</button>
+                <button class="welcome-button" onclick="completeWelcome()">Nadaljuj na vprašalnik</button>
             </div>
         </div>
     </div>
