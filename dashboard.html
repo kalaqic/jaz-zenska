@@ -1036,7 +1036,7 @@
             width: 100vw;
             height: 100vh;
             background: linear-gradient(160deg, #fff 0%, #faf8f9 35%, #f8f0f2 100%);
-            z-index: 99999;
+            z-index: 20000;
             align-items: center;
             justify-content: center;
             padding: 40px 20px;
@@ -1045,25 +1045,11 @@
         }
         
         .welcome-modal.active {
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
+            display: flex;
         }
         
         body:has(.welcome-modal.active) .dashboard-container {
             display: none !important;
-            visibility: hidden !important;
-        }
-        
-        .welcome-modal:not(.active) {
-            display: none !important;
-            visibility: hidden !important;
-        }
-        
-        .welcome-modal.active .welcome-modal-content {
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
         }
         
         .welcome-modal-content {
@@ -1073,68 +1059,40 @@
             text-align: center;
             position: relative;
             pointer-events: all;
-            z-index: 100000;
-            background: transparent;
-            color: #643843 !important; /* Explicit dark color */
-            visibility: visible !important;
-            opacity: 1 !important;
-            display: block !important;
         }
         
         .welcome-screen {
-            display: flex !important;
+            display: flex;
             flex-direction: column;
             align-items: center;
             gap: 30px;
-            width: 100%;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-        
-        .welcome-modal.active .welcome-screen {
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-        
-        .welcome-screen-hidden {
-            display: none !important;
-            visibility: hidden !important;
         }
         
         .welcome-logo {
             margin-bottom: 10px;
-            visibility: visible;
         }
         
         .welcome-logo img {
             max-width: 250px;
             height: auto;
-            display: block;
         }
         
         .welcome-title {
             font-family: 'Playfair Display', serif;
             font-size: 36px;
-            color: #643843 !important; /* Explicit dark color */
+            color: var(--dark-violet);
             margin: 0;
             font-weight: 700;
             line-height: 1.3;
-            visibility: visible !important;
-            opacity: 1 !important;
-            display: block !important;
         }
         
         .welcome-subtitle {
             font-family: 'Montserrat', sans-serif;
             font-size: 22px;
-            color: #643843 !important; /* Explicit dark color */
+            color: var(--text-dark);
             margin: 40px 0 30px 0;
             font-weight: 600;
             line-height: 1.5;
-            visibility: visible !important;
-            opacity: 1 !important;
-            display: block !important;
         }
         
         .welcome-button {
@@ -1207,7 +1165,7 @@
     <div id="welcomeModal" class="welcome-modal">
         <div class="welcome-modal-content">
             <!-- Screen 1: Welcome Message -->
-            <div id="welcomeScreen1" class="welcome-screen" style="display: flex;">
+            <div id="welcomeScreen1" class="welcome-screen">
                 <div class="welcome-logo">
                     <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska" width="250" height="75">
                 </div>
@@ -1216,7 +1174,7 @@
             </div>
             
             <!-- Screen 2: Video -->
-            <div id="welcomeScreen2" class="welcome-screen welcome-screen-hidden" style="display: none;">
+            <div id="welcomeScreen2" class="welcome-screen" style="display: none;">
                 <h2 class="welcome-subtitle">Preden začnemo, te vabim, da si ogledaš ta dobrodošni video</h2>
                 <div style="padding:75% 0 0 0;position:relative;width:100%;margin-bottom:30px;">
                     <iframe src="https://player.vimeo.com/video/1166642105?h=cd5f697929&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;"</iframe>
@@ -1508,7 +1466,6 @@
         // Hide content initially
         document.addEventListener('DOMContentLoaded', function() {
             const dashboardContent = document.querySelector('.dashboard-container');
-            
             if (dashboardContent) {
                 dashboardContent.style.display = 'none';
             }
@@ -1519,7 +1476,10 @@
                 const checkAuth = setInterval(() => {
                     if (authChecked && auth && auth.currentUser) {
                         clearInterval(checkAuth);
-                        // Dashboard will be shown after welcome modal is completed
+                        // Show content once authenticated
+                        if (dashboardContent) {
+                            dashboardContent.style.display = 'block';
+                        }
                     } else if (authChecked && (!auth || !auth.currentUser)) {
                         clearInterval(checkAuth);
                         // Already redirected, but just in case

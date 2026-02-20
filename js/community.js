@@ -111,13 +111,7 @@ function initDashboard() {
     roleEl.textContent = user.role === 'admin' ? 'Admin' : 'Članica';
     roleEl.className = `user-role ${user.role}`;
     
-    // Hide dashboard initially (welcome modal will show)
-    const dashboardContainer = document.querySelector('.dashboard-container');
-    if (dashboardContainer) {
-        dashboardContainer.style.display = 'none';
-    }
-    
-    // Always show welcome modal when entering dashboard
+    // Check if user needs to see welcome flow
     checkWelcomeStatus();
     
     // Navigation
@@ -899,76 +893,109 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ===== WELCOME FLOW =====
-function checkWelcomeStatus() {
-    // Always show welcome modal when entering dashboard
-    setTimeout(() => showWelcomeModal(), 100);
+async function checkWelcomeStatus() {
+    const user = getCurrentUser();
+    if (!user || !user.userId) return;
+    
+    let welcomed = false;
+    
+    // Try to get welcomed status from Firestore
+    try {
+        if (typeof db !== 'undefined') {
+            const userDoc = await db.collection('users').doc(user.userId).get();
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+                welcomed = userData.welcomed === true;
+                
+                // Update localStorage with latest welcomed status
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                currentUser.welcomed = welcomed;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+        }
+    } catch (error) {
+        console.error('Error checking welcome status:', error);
+        // Fallback to localStorage
+        welcomed = user.welcomed === true;
+    }
+    
+    // If not welcomed, show welcome modal
+    if (!welcomed) {
+        showWelcomeModal();
+    }
 }
 
 function showWelcomeModal() {
     const modal = document.getElementById('welcomeModal');
     const user = getCurrentUser();
-    
-    if (!modal) {
-        console.error('Welcome modal not found!');
-        return;
-    }
-    
-    // Hide dashboard
-    const dashboardContainer = document.querySelector('.dashboard-container');
-    if (dashboardContainer) {
-        dashboardContainer.style.display = 'none';
-    }
-    
-    // Show welcome modal
-    modal.classList.add('active');
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    
-    // Update welcome title with user's name
-    const welcomeTitle = document.getElementById('welcomeTitle');
-    if (welcomeTitle && user) {
-        const userName = user.name || user.email?.split('@')[0] || '';
-        welcomeTitle.textContent = `Dobrodošla v skupnost ${userName}!`;
-    }
-    
-    // Reset to screen 1
-    const screen1 = document.getElementById('welcomeScreen1');
-    const screen2 = document.getElementById('welcomeScreen2');
-    if (screen1) {
-        screen1.style.display = 'flex';
-        screen1.classList.remove('welcome-screen-hidden');
-    }
-    if (screen2) {
-        screen2.style.display = 'none';
-        screen2.classList.add('welcome-screen-hidden');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Hide dashboard content completely
+        const dashboardContainer = document.querySelector('.dashboard-container');
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'none';
+        }
+        
+        // Update welcome title with user's name
+        const welcomeTitle = document.getElementById('welcomeTitle');
+        if (welcomeTitle && user) {
+            const userName = user.name || user.email?.split('@')[0] || '';
+            welcomeTitle.textContent = `Dobrodošla v skupnost ${userName}!`;
+        }
+        
+        // Reset to screen 1
+        document.getElementById('welcomeScreen1').style.display = 'flex';
+        document.getElementById('welcomeScreen2').style.display = 'none';
     }
 }
 
 // Make functions globally accessible
 window.showWelcomeScreen2 = function() {
-    const screen1 = document.getElementById('welcomeScreen1');
-    const screen2 = document.getElementById('welcomeScreen2');
-    if (screen1) {
-        screen1.style.display = 'none';
-        screen1.classList.add('welcome-screen-hidden');
-    }
-    if (screen2) {
-        screen2.style.display = 'flex';
-        screen2.classList.remove('welcome-screen-hidden');
-    }
+    document.getElementById('welcomeScreen1').style.display = 'none';
+    document.getElementById('welcomeScreen2').style.display = 'flex';
 };
 
-window.completeWelcome = function() {
-    // Close modal and show dashboard
-    const modal = document.getElementById('welcomeModal');
-    const dashboardContainer = document.querySelector('.dashboard-container');
-    if (modal) {
-        modal.classList.remove('active');
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-    }
-    if (dashboardContainer) {
-        dashboardContainer.style.display = 'block';
+window.completeWelcome = async function() {
+    const user = getCurrentUser();
+    if (!user || !user.userId) return;
+    
+    try {
+        // Update Firestore
+        if (typeof db !== 'undefined') {
+            await db.collection('users').doc(user.userId).update({
+                welcomed: true
+            });
+        }
+        
+        // Update localStorage
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        currentUser.welcomed = true;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        
+        // Close modal and show dashboard
+        const modal = document.getElementById('welcomeModal');
+        const dashboardContainer = document.querySelector('.dashboard-container');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error updating welcome status:', error);
+        // Still close modal even if update fails
+        const modal = document.getElementById('welcomeModal');
+        const dashboardContainer = document.querySelector('.dashboard-container');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'block';
+        }
     }
 }
 
