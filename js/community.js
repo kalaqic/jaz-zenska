@@ -1025,6 +1025,12 @@ function showWelcomeModal() {
         // Reset to screen 0 (welcome text)
         document.getElementById('welcomeScreen0').style.display = 'flex';
         document.getElementById('welcomeScreen1').style.display = 'none';
+        
+        // Scroll modal content to top
+        const modalContent = document.querySelector('.welcome-modal-content');
+        if (modalContent) {
+            modalContent.scrollTop = 0;
+        }
     }
 }
 
@@ -1032,6 +1038,12 @@ function showWelcomeModal() {
 window.showWelcomeScreen1 = function() {
     document.getElementById('welcomeScreen0').style.display = 'none';
     document.getElementById('welcomeScreen1').style.display = 'flex';
+    
+    // Scroll modal content to top when switching screens
+    const modalContent = document.querySelector('.welcome-modal-content');
+    if (modalContent) {
+        modalContent.scrollTop = 0;
+    }
 };
 
 window.completeWelcome = async function() {
