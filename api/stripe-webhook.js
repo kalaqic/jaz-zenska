@@ -301,6 +301,7 @@ module.exports = async function handler(req, res) {
                             email: customerEmail,
                             name: customerName || customerEmail.split('@')[0],
                             role: 'member', // Default role for new members
+                            welcomed: false, // New users need to see welcome flow
                             createdAt: admin.firestore.FieldValue.serverTimestamp(),
                             subscriptionStatus: 'active',
                             subscriptionType: session.metadata?.subscription_type || session.metadata?.plan || 'unknown'
@@ -539,6 +540,7 @@ module.exports = async function handler(req, res) {
                         firstName: firstName,
                         lastName: lastName,
                         role: 'member',
+                        welcomed: false, // New users need to see welcome flow
                         createdAt: admin.firestore.FieldValue.serverTimestamp(),
                         subscriptionStatus: 'active',
                         subscriptionType: 'yearly',

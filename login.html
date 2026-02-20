@@ -218,6 +218,7 @@
                         email: firebaseUser.email,
                         name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
                         role: 'member', // Default role
+                        welcomed: false, // New users need to see welcome flow
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         lastSignIn: firebase.firestore.FieldValue.serverTimestamp()
                     };
@@ -229,7 +230,8 @@
                         userId: firebaseUser.uid,
                         email: userData.email,
                         name: userData.name,
-                        role: userData.role
+                        role: userData.role,
+                        welcomed: false
                     }));
                 } else {
                     // Update last sign in
@@ -243,7 +245,8 @@
                         userId: firebaseUser.uid,
                         email: userData.email,
                         name: userData.name,
-                        role: userData.role || 'member'
+                        role: userData.role || 'member',
+                        welcomed: userData.welcomed !== undefined ? userData.welcomed : false
                     }));
                 }
                 

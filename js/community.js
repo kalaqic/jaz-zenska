@@ -111,6 +111,9 @@ function initDashboard() {
     roleEl.textContent = user.role === 'admin' ? 'Admin' : 'Članica';
     roleEl.className = `user-role ${user.role}`;
     
+    // Check if user needs to see welcome flow
+    checkWelcomeStatus();
+    
     // Navigation
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function(e) {
@@ -888,6 +891,90 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// ===== WELCOME FLOW =====
+async function checkWelcomeStatus() {
+    const user = getCurrentUser();
+    if (!user || !user.userId) return;
+    
+    let welcomed = false;
+    
+    // Try to get welcomed status from Firestore
+    try {
+        if (typeof db !== 'undefined') {
+            const userDoc = await db.collection('users').doc(user.userId).get();
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+                welcomed = userData.welcomed === true;
+                
+                // Update localStorage with latest welcomed status
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                currentUser.welcomed = welcomed;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+        }
+    } catch (error) {
+        console.error('Error checking welcome status:', error);
+        // Fallback to localStorage
+        welcomed = user.welcomed === true;
+    }
+    
+    // If not welcomed, show welcome modal
+    if (!welcomed) {
+        showWelcomeModal();
+    }
+}
+
+function showWelcomeModal() {
+    const modal = document.getElementById('welcomeModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        // Reset to screen 1
+        document.getElementById('welcomeScreen1').style.display = 'flex';
+        document.getElementById('welcomeScreen2').style.display = 'none';
+    }
+}
+
+// Make functions globally accessible
+window.showWelcomeScreen2 = function() {
+    document.getElementById('welcomeScreen1').style.display = 'none';
+    document.getElementById('welcomeScreen2').style.display = 'flex';
+};
+
+window.completeWelcome = async function() {
+    const user = getCurrentUser();
+    if (!user || !user.userId) return;
+    
+    try {
+        // Update Firestore
+        if (typeof db !== 'undefined') {
+            await db.collection('users').doc(user.userId).update({
+                welcomed: true
+            });
+        }
+        
+        // Update localStorage
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        currentUser.welcomed = true;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        
+        // Close modal
+        const modal = document.getElementById('welcomeModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    } catch (error) {
+        console.error('Error updating welcome status:', error);
+        // Still close modal even if update fails
+        const modal = document.getElementById('welcomeModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+}
 
 // ===== CALENDAR SECTION =====
 let currentCalendarDate = new Date();

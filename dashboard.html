@@ -1027,6 +1027,124 @@
             height: 100%;
         }
         
+        /* Welcome Modal */
+        .welcome-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 20000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            pointer-events: all;
+        }
+        
+        .welcome-modal.active {
+            display: flex;
+        }
+        
+        .welcome-modal-content {
+            pointer-events: all;
+        }
+        
+        .welcome-modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            border-radius: 25px;
+            max-width: 600px;
+            width: 100%;
+            padding: 60px 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            position: relative;
+        }
+        
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .welcome-logo {
+            margin-bottom: 10px;
+        }
+        
+        .welcome-logo img {
+            max-width: 250px;
+            height: auto;
+        }
+        
+        .welcome-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--dark-violet);
+            margin: 0;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        
+        .welcome-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+            color: var(--text-dark);
+            margin: 0 0 30px 0;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+        
+        .welcome-button {
+            background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4);
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 10px;
+        }
+        
+        .welcome-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5);
+        }
+        
+        .welcome-video-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #f8f0f2 0%, #e7cbcb 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 2px dashed var(--mid-violet);
+        }
+        
+        .video-placeholder-content {
+            text-align: center;
+            color: var(--dark-violet);
+        }
+        
+        .video-placeholder-content svg {
+            margin-bottom: 15px;
+            opacity: 0.6;
+        }
+        
+        .video-placeholder-content p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            color: var(--text-dark);
+            margin: 0;
+        }
+        
         @media (max-width: 768px) {
             .dashboard-header {
                 flex-direction: column;
@@ -1052,6 +1170,22 @@
             
             .course-episodes {
                 max-height: none;
+            }
+            
+            .welcome-modal-content {
+                padding: 40px 30px;
+            }
+            
+            .welcome-title {
+                font-size: 28px;
+            }
+            
+            .welcome-subtitle {
+                font-size: 18px;
+            }
+            
+            .welcome-logo img {
+                max-width: 200px;
             }
         }
     </style>
@@ -1117,6 +1251,34 @@
                 <div id="profileContent">
                     <!-- Profile form will be loaded here -->
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="welcome-modal">
+        <div class="welcome-modal-content">
+            <!-- Screen 1: Welcome Message -->
+            <div id="welcomeScreen1" class="welcome-screen">
+                <div class="welcome-logo">
+                    <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska" width="250" height="75">
+                </div>
+                <h1 class="welcome-title">Dobrodošla v skupino Jaz Ženska</h1>
+                <button class="welcome-button" onclick="showWelcomeScreen2()">Nadaljuj</button>
+            </div>
+            
+            <!-- Screen 2: Video -->
+            <div id="welcomeScreen2" class="welcome-screen" style="display: none;">
+                <h2 class="welcome-subtitle">Preden začnemo, te vabim, da si ogledaš ta dobrodošni video</h2>
+                <div class="welcome-video-placeholder">
+                    <div class="video-placeholder-content">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 5v14l11-7z" fill="currentColor"/>
+                        </svg>
+                        <p>Video bo kmalu na voljo</p>
+                    </div>
+                </div>
+                <button class="welcome-button" onclick="completeWelcome()">Nadaljuj v skupnost!</button>
             </div>
         </div>
     </div>
