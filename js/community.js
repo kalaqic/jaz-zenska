@@ -906,49 +906,54 @@ document.addEventListener('DOMContentLoaded', function() {
 // ===== WELCOME FLOW =====
 async function checkWelcomeStatus() {
     const user = getCurrentUser();
-    if (!user || !user.userId) return;
+    if (!user || !user.userId) {
+        console.log('No user found, skipping welcome check');
+        return;
+    }
     
-    // Check welcomed status - prioritize Firestore as source of truth
-    let welcomed = false;
+    console.log('Checking welcome status for user:', user.userId);
     
+    // First check localStorage (faster)
+    let welcomed = user.welcomed === true;
+    console.log('LocalStorage welcomed status:', welcomed);
+    
+    // Then verify with Firestore
     try {
         if (typeof db !== 'undefined') {
             const userDoc = await db.collection('users').doc(user.userId).get();
             if (userDoc.exists) {
                 const userData = userDoc.data();
-                // Only consider welcomed if explicitly true
                 welcomed = userData.welcomed === true;
+                console.log('Firestore welcomed status:', welcomed, 'userData:', userData);
                 
-                // Update localStorage with latest welcomed status from Firestore
+                // Update localStorage with Firestore value
                 const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
                 currentUser.welcomed = welcomed;
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
             } else {
-                // User doc doesn't exist, check localStorage as fallback
+                console.log('User doc does not exist in Firestore');
                 welcomed = user.welcomed === true;
             }
-        } else {
-            // Firestore not available, check localStorage
-            welcomed = user.welcomed === true;
         }
     } catch (error) {
         console.error('Error checking welcome status:', error);
-        // If Firestore check fails, check localStorage
         welcomed = user.welcomed === true;
     }
     
-    // Only show welcome modal if NOT welcomed (false or undefined)
-    if (!welcomed) {
-        console.log('User not welcomed, showing welcome modal');
-        showWelcomeModal();
+    console.log('Final welcomed status:', welcomed);
+    
+    // Show welcome modal only if NOT welcomed
+    if (welcomed !== true) {
+        console.log('Showing welcome modal');
+        setTimeout(() => showWelcomeModal(), 100); // Small delay to ensure DOM is ready
     } else {
-        console.log('User already welcomed, skipping welcome modal');
-        // Ensure dashboard is visible
+        console.log('User already welcomed, showing dashboard');
+        // Ensure dashboard is visible and modal is hidden
         const dashboardContainer = document.querySelector('.dashboard-container');
+        const welcomeModal = document.getElementById('welcomeModal');
         if (dashboardContainer) {
             dashboardContainer.style.display = 'block';
         }
-        const welcomeModal = document.getElementById('welcomeModal');
         if (welcomeModal) {
             welcomeModal.classList.remove('active');
             welcomeModal.style.display = 'none';
@@ -959,37 +964,61 @@ async function checkWelcomeStatus() {
 function showWelcomeModal() {
     const modal = document.getElementById('welcomeModal');
     const user = getCurrentUser();
-    if (modal) {
-        // Hide dashboard first
-        const dashboardContainer = document.querySelector('.dashboard-container');
-        if (dashboardContainer) {
-            dashboardContainer.style.display = 'none';
-        }
-        
-        // Show welcome modal
-        modal.style.display = 'flex';
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        
-        // Update welcome title with user's name
-        const welcomeTitle = document.getElementById('welcomeTitle');
-        if (welcomeTitle && user) {
-            const userName = user.name || user.email?.split('@')[0] || '';
-            welcomeTitle.textContent = `Dobrodošla v skupnost ${userName}!`;
-        }
-        
-        // Reset to screen 1
-        const screen1 = document.getElementById('welcomeScreen1');
-        const screen2 = document.getElementById('welcomeScreen2');
-        if (screen1) screen1.style.display = 'flex';
-        if (screen2) screen2.style.display = 'none';
+    console.log('showWelcomeModal called', modal, user);
+    
+    if (!modal) {
+        console.error('Welcome modal not found!');
+        return;
+    }
+    
+    // Hide dashboard first
+    const dashboardContainer = document.querySelector('.dashboard-container');
+    if (dashboardContainer) {
+        dashboardContainer.style.display = 'none';
+        console.log('Dashboard hidden');
+    }
+    
+    // Show welcome modal
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    console.log('Welcome modal shown');
+    
+    // Update welcome title with user's name
+    const welcomeTitle = document.getElementById('welcomeTitle');
+    if (welcomeTitle && user) {
+        const userName = user.name || user.email?.split('@')[0] || '';
+        welcomeTitle.textContent = `Dobrodošla v skupnost ${userName}!`;
+        console.log('Welcome title updated:', welcomeTitle.textContent);
+    }
+    
+    // Reset to screen 1
+    const screen1 = document.getElementById('welcomeScreen1');
+    const screen2 = document.getElementById('welcomeScreen2');
+    if (screen1) {
+        screen1.style.display = 'flex';
+        screen1.classList.remove('welcome-screen-hidden');
+        console.log('Screen 1 shown');
+    }
+    if (screen2) {
+        screen2.style.display = 'none';
+        screen2.classList.add('welcome-screen-hidden');
+        console.log('Screen 2 hidden');
     }
 }
 
 // Make functions globally accessible
 window.showWelcomeScreen2 = function() {
-    document.getElementById('welcomeScreen1').style.display = 'none';
-    document.getElementById('welcomeScreen2').style.display = 'flex';
+    const screen1 = document.getElementById('welcomeScreen1');
+    const screen2 = document.getElementById('welcomeScreen2');
+    if (screen1) {
+        screen1.style.display = 'none';
+        screen1.classList.add('welcome-screen-hidden');
+    }
+    if (screen2) {
+        screen2.style.display = 'flex';
+        screen2.classList.remove('welcome-screen-hidden');
+    }
 };
 
 window.completeWelcome = async function() {
