@@ -25,7 +25,6 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 30px 20px;
-            display: block !important; /* Ensure it's visible by default */
         }
         
         .dashboard-container-inner {
@@ -1028,35 +1027,39 @@
             height: 100%;
         }
         
-        /* Welcome Modal - Full Screen */
+        /* Welcome Modal */
         .welcome-modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(160deg, #fff 0%, #faf8f9 35%, #f8f0f2 100%);
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
             z-index: 20000;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
+            padding: 20px;
             pointer-events: all;
-            overflow-y: auto;
         }
         
         .welcome-modal.active {
             display: flex;
         }
         
+        .welcome-modal-content {
+            pointer-events: all;
+        }
         
         .welcome-modal-content {
-            max-width: 800px;
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            border-radius: 25px;
+            max-width: 600px;
             width: 100%;
             padding: 60px 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             text-align: center;
             position: relative;
-            pointer-events: all;
         }
         
         .welcome-screen {
@@ -1088,7 +1091,7 @@
             font-family: 'Montserrat', sans-serif;
             font-size: 22px;
             color: var(--text-dark);
-            margin: 40px 0 30px 0;
+            margin: 0 0 30px 0;
             font-weight: 600;
             line-height: 1.5;
         }
@@ -1111,6 +1114,35 @@
         .welcome-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5);
+        }
+        
+        .welcome-video-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #f8f0f2 0%, #e7cbcb 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 2px dashed var(--mid-violet);
+        }
+        
+        .video-placeholder-content {
+            text-align: center;
+            color: var(--dark-violet);
+        }
+        
+        .video-placeholder-content svg {
+            margin-bottom: 15px;
+            opacity: 0.6;
+        }
+        
+        .video-placeholder-content p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            color: var(--text-dark);
+            margin: 0;
         }
         
         @media (max-width: 768px) {
@@ -1156,80 +1188,10 @@
                 max-width: 200px;
             }
         }
-        
-        /* Loading Spinner */
-        .dashboard-loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(160deg, #fff 0%, #faf8f9 35%, #f8f0f2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        }
-        
-        .dashboard-loading.hidden {
-            display: none;
-        }
-        
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(100, 56, 67, 0.1);
-            border-top-color: var(--mid-violet);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
-    <!-- Welcome Modal -->
-    <div id="welcomeModal" class="welcome-modal">
-        <div class="welcome-modal-content">
-            <!-- Screen 1: Welcome Message -->
-            <div id="welcomeScreen1" class="welcome-screen">
-                <div class="welcome-logo">
-                    <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska" width="250" height="75">
-                </div>
-                <h1 class="welcome-title" id="welcomeTitle">Dobrodošla v skupnost!</h1>
-                <button class="welcome-button" onclick="showWelcomeScreen2()">Nadaljuj</button>
-            </div>
-            
-            <!-- Screen 2: Video -->
-            <div id="welcomeScreen2" class="welcome-screen" style="display: none;">
-                <h2 class="welcome-subtitle">Preden začnemo, te vabim, da si ogledaš ta dobrodošni video</h2>
-                <div style="padding:75% 0 0 0;position:relative;width:100%;margin-bottom:30px;">
-                    <iframe src="https://player.vimeo.com/video/1166642105?h=cd5f697929&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;"</iframe>
-                </div>
-                <button class="welcome-button" onclick="completeWelcome()">Nadaljuj v skupnost!</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="dashboardLoading" class="dashboard-loading">
-        <div class="loading-spinner"></div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="dashboardLoading" class="dashboard-loading">
-        <div class="loading-spinner"></div>
-    </div>
-    
-    <script>
-        console.log('📜 Inline script before dashboard container');
-        console.log('📦 Dashboard container element:', document.querySelector('.dashboard-container'));
-        console.log('⏳ Loading spinner element:', document.getElementById('dashboardLoading'));
-    </script>
-
-    <div class="dashboard-container" style="display: block !important;">
+    <div class="dashboard-container">
         <div class="dashboard-header">
             <h1>Skupnost Jaz Ženska</h1>
             <div class="user-info">
@@ -1289,6 +1251,34 @@
                 <div id="profileContent">
                     <!-- Profile form will be loaded here -->
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="welcome-modal">
+        <div class="welcome-modal-content">
+            <!-- Screen 1: Welcome Message -->
+            <div id="welcomeScreen1" class="welcome-screen">
+                <div class="welcome-logo">
+                    <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska" width="250" height="75">
+                </div>
+                <h1 class="welcome-title">Dobrodošla v skupino Jaz Ženska</h1>
+                <button class="welcome-button" onclick="showWelcomeScreen2()">Nadaljuj</button>
+            </div>
+            
+            <!-- Screen 2: Video -->
+            <div id="welcomeScreen2" class="welcome-screen" style="display: none;">
+                <h2 class="welcome-subtitle">Preden začnemo, te vabim, da si ogledaš ta dobrodošni video</h2>
+                <div class="welcome-video-placeholder">
+                    <div class="video-placeholder-content">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 5v14l11-7z" fill="currentColor"/>
+                        </svg>
+                        <p>Video bo kmalu na voljo</p>
+                    </div>
+                </div>
+                <button class="welcome-button" onclick="completeWelcome()">Nadaljuj v skupnost!</button>
             </div>
         </div>
     </div>
@@ -1414,8 +1404,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script>
-        console.log('📜 Dashboard HTML script block loaded');
-        
         // Load Firebase configuration from API
         let firebaseConfig;
         let auth;
@@ -1424,7 +1412,6 @@
         let authChecked = false;
 
         async function initFirebase() {
-            console.log('🔥 initFirebase() called');
             try {
                 const response = await fetch('/api/firebase-config');
                 if (!response.ok) {
@@ -1512,97 +1499,40 @@
 
         // Prevent page access until auth is checked
         // Hide content initially
-        console.log('📜 DOMContentLoaded listener registered');
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('📄 DOMContentLoaded fired');
             const dashboardContent = document.querySelector('.dashboard-container');
-            const loadingSpinner = document.getElementById('dashboardLoading');
-            console.log('📦 Dashboard container:', dashboardContent);
-            console.log('⏳ Loading spinner:', loadingSpinner);
+            if (dashboardContent) {
+                dashboardContent.style.display = 'none';
+            }
             
             // Initialize Firebase
-            console.log('🔥 Initializing Firebase...');
             initFirebase().then(() => {
-                console.log('✅ Firebase initialized');
                 // Wait for auth state to be checked
-                let checkCount = 0;
                 const checkAuth = setInterval(() => {
-                    checkCount++;
-                    console.log(`🔄 Auth check #${checkCount}, authChecked:`, authChecked, 'auth.currentUser:', auth?.currentUser);
-                    
-                    if (authChecked) {
+                    if (authChecked && auth && auth.currentUser) {
                         clearInterval(checkAuth);
-                        console.log('✅ Auth check completed');
-                        // Check if user is authenticated via Firebase or localStorage
-                        const currentUser = localStorage.getItem('currentUser');
-                        console.log('👤 Current user from localStorage:', currentUser);
-                        console.log('🔥 Firebase auth.currentUser:', auth?.currentUser);
-                        
-                        if ((auth && auth.currentUser) || currentUser) {
-                            // User is authenticated, show content
-                            console.log('✅ User authenticated, showing dashboard');
-                            if (dashboardContent) {
-                                dashboardContent.style.display = 'block';
-                                console.log('✅ Dashboard container displayed');
-                            } else {
-                                console.error('❌ Dashboard container not found!');
-                            }
-                            if (loadingSpinner) {
-                                loadingSpinner.classList.add('hidden');
-                                console.log('✅ Loading spinner hidden');
-                            }
-                        } else {
-                            // No authentication found, redirect to login
-                            console.log('❌ No authentication found, redirecting to login');
-                            window.location.href = 'login.html';
+                        // Show content once authenticated
+                        if (dashboardContent) {
+                            dashboardContent.style.display = 'block';
                         }
+                    } else if (authChecked && (!auth || !auth.currentUser)) {
+                        clearInterval(checkAuth);
+                        // Already redirected, but just in case
+                        window.location.href = 'login.html';
                     }
                 }, 100);
                 
-                // Timeout after 5 seconds - show dashboard if localStorage has user
+                // Timeout after 5 seconds
                 setTimeout(() => {
-                    console.log('⏰ Auth check timeout reached');
                     clearInterval(checkAuth);
-                    const currentUser = localStorage.getItem('currentUser');
-                    console.log('👤 Fallback check - currentUser:', currentUser);
-                    if (currentUser && dashboardContent) {
-                        dashboardContent.style.display = 'block';
-                        console.log('✅ Dashboard shown via timeout fallback');
-                        if (loadingSpinner) {
-                            loadingSpinner.classList.add('hidden');
-                        }
-                    } else if (!authChecked) {
-                        console.log('❌ No auth checked and no user, redirecting to login');
+                    if (!authChecked) {
                         window.location.href = 'login.html';
                     }
                 }, 5000);
-            }).catch((error) => {
-                console.error('❌ Firebase init error:', error);
-                // If Firebase init fails, try to show dashboard from localStorage
-                const currentUser = localStorage.getItem('currentUser');
-                console.log('👤 Fallback - currentUser:', currentUser);
-                if (currentUser && dashboardContent) {
-                    dashboardContent.style.display = 'block';
-                    console.log('✅ Dashboard shown via error fallback');
-                    if (loadingSpinner) {
-                        loadingSpinner.classList.add('hidden');
-                    }
-                } else {
-                    console.log('❌ No user found, redirecting to login');
-                    window.location.href = 'login.html';
-                }
             });
         });
     </script>
     <script src="js/community.js"></script>
     <script src="https://player.vimeo.com/api/player.js"></script>
-    <script>
-        // Load Vimeo player script for welcome video
-        if (!document.querySelector('script[src="https://player.vimeo.com/api/player.js"]')) {
-            const script = document.createElement('script');
-            script.src = 'https://player.vimeo.com/api/player.js';
-            document.body.appendChild(script);
-        }
-    </script>
 </body>
 </html>

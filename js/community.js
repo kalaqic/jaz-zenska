@@ -1,8 +1,6 @@
 // Community Platform JavaScript
 // Structured for easy Firebase migration later
 
-console.log('📜 community.js file loaded');
-
 // Helper function to ensure URL is absolute (opens in new tab correctly)
 function ensureAbsoluteUrl(url) {
     if (!url) return '#';
@@ -89,69 +87,31 @@ async function handleLogout() {
 
 // Initialize dashboard
 function initDashboard() {
-    console.log('🚀 initDashboard() called');
-    
     // Double-check authentication before proceeding
     if (typeof auth !== 'undefined' && auth && auth.currentUser === null) {
-        console.log('⚠️ Firebase auth.currentUser is null, checking localStorage...');
         // Check localStorage as fallback
         const currentUser = localStorage.getItem('currentUser');
         if (!currentUser) {
-            console.log('❌ No user in localStorage, redirecting to login');
             window.location.href = 'login.html';
             return;
         }
-        console.log('✅ Found user in localStorage:', currentUser);
     }
     
     initDataStructures();
-    console.log('✅ Data structures initialized');
     
     const user = getCurrentUser();
-    console.log('👤 Current user:', user);
     if (!user) {
-        console.log('❌ No user found, redirecting to login');
         window.location.href = 'login.html';
         return;
     }
     
     // Display user info
-    const userNameEl = document.getElementById('userName');
+    document.getElementById('userName').textContent = user.name || user.email;
     const roleEl = document.getElementById('userRole');
-    if (userNameEl) {
-        userNameEl.textContent = user.name || user.email;
-        console.log('✅ User name displayed:', user.name || user.email);
-    } else {
-        console.error('❌ userName element not found!');
-    }
-    if (roleEl) {
-        roleEl.textContent = user.role === 'admin' ? 'Admin' : 'Članica';
-        roleEl.className = `user-role ${user.role}`;
-        console.log('✅ User role displayed:', user.role);
-    } else {
-        console.error('❌ userRole element not found!');
-    }
-    
-    // Hide loading spinner
-    const loadingSpinner = document.getElementById('dashboardLoading');
-    if (loadingSpinner) {
-        loadingSpinner.classList.add('hidden');
-        console.log('✅ Loading spinner hidden');
-    } else {
-        console.error('❌ Loading spinner element not found!');
-    }
-    
-    // Ensure dashboard is visible
-    const dashboardContainer = document.querySelector('.dashboard-container');
-    if (dashboardContainer) {
-        dashboardContainer.style.display = 'block';
-        console.log('✅ Dashboard container set to display: block');
-    } else {
-        console.error('❌ Dashboard container not found!');
-    }
+    roleEl.textContent = user.role === 'admin' ? 'Admin' : 'Članica';
+    roleEl.className = `user-role ${user.role}`;
     
     // Check if user needs to see welcome flow
-    console.log('🔍 Checking welcome status...');
     checkWelcomeStatus();
     
     // Navigation
@@ -934,122 +894,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== WELCOME FLOW =====
 async function checkWelcomeStatus() {
-    console.log('🔍 checkWelcomeStatus() called');
     const user = getCurrentUser();
-    console.log('👤 User in checkWelcomeStatus:', user);
-    
-    if (!user || !user.userId) {
-        console.log('⚠️ No user or userId, ensuring dashboard is visible');
-        // Ensure dashboard is visible if no user
-        const dashboardContainer = document.querySelector('.dashboard-container');
-        if (dashboardContainer) {
-            dashboardContainer.style.display = 'block';
-            console.log('✅ Dashboard container set to display: block (no user case)');
-        }
-        return;
-    }
+    if (!user || !user.userId) return;
     
     let welcomed = false;
     
     // Try to get welcomed status from Firestore
     try {
         if (typeof db !== 'undefined') {
-            console.log('📡 Checking Firestore for welcomed status...');
             const userDoc = await db.collection('users').doc(user.userId).get();
             if (userDoc.exists) {
                 const userData = userDoc.data();
                 welcomed = userData.welcomed === true;
-                console.log('📊 Firestore welcomed status:', welcomed, 'userData:', userData);
                 
                 // Update localStorage with latest welcomed status
                 const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
                 currentUser.welcomed = welcomed;
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            } else {
-                console.log('⚠️ User doc does not exist in Firestore, treating as new user');
-                welcomed = false;
             }
-        } else {
-            console.log('⚠️ Firestore not available, checking localStorage');
-            welcomed = user.welcomed === true;
-            console.log('📊 LocalStorage welcomed status:', welcomed);
         }
     } catch (error) {
-        console.error('❌ Error checking welcome status:', error);
+        console.error('Error checking welcome status:', error);
         // Fallback to localStorage
         welcomed = user.welcomed === true;
-        console.log('📊 Fallback welcomed status:', welcomed);
     }
     
     // If not welcomed, show welcome modal
     if (!welcomed) {
-        console.log('👋 User not welcomed, showing welcome modal');
         showWelcomeModal();
-    } else {
-        console.log('✅ User already welcomed, ensuring dashboard is visible');
-        // Ensure dashboard is visible if user is already welcomed
-        const dashboardContainer = document.querySelector('.dashboard-container');
-        const welcomeModal = document.getElementById('welcomeModal');
-        if (dashboardContainer) {
-            dashboardContainer.style.display = 'block';
-            console.log('✅ Dashboard container set to display: block (welcomed case)');
-        }
-        if (welcomeModal) {
-            welcomeModal.classList.remove('active');
-            console.log('✅ Welcome modal removed active class');
-        }
     }
 }
 
 function showWelcomeModal() {
-    console.log('🎬 showWelcomeModal() called');
     const modal = document.getElementById('welcomeModal');
-    const user = getCurrentUser();
-    console.log('🎬 Modal element:', modal);
-    console.log('👤 User:', user);
-    
     if (modal) {
         modal.classList.add('active');
-        console.log('✅ Welcome modal activated');
         document.body.style.overflow = 'hidden';
-        
-        // Hide loading spinner if still visible
-        const loadingSpinner = document.getElementById('dashboardLoading');
-        if (loadingSpinner) {
-            loadingSpinner.classList.add('hidden');
-            console.log('✅ Loading spinner hidden');
-        }
-        
-        // Hide dashboard content completely
-        const dashboardContainer = document.querySelector('.dashboard-container');
-        if (dashboardContainer) {
-            dashboardContainer.style.display = 'none';
-            console.log('✅ Dashboard container hidden (welcome modal showing)');
-        } else {
-            console.error('❌ Dashboard container not found when trying to hide');
-        }
-        
-        // Update welcome title with user's name
-        const welcomeTitle = document.getElementById('welcomeTitle');
-        if (welcomeTitle && user) {
-            const userName = user.name || user.email?.split('@')[0] || '';
-            welcomeTitle.textContent = `Dobrodošla v skupnost ${userName}!`;
-            console.log('✅ Welcome title updated:', welcomeTitle.textContent);
-        }
-        
         // Reset to screen 1
-        const screen1 = document.getElementById('welcomeScreen1');
-        const screen2 = document.getElementById('welcomeScreen2');
-        if (screen1) {
-            screen1.style.display = 'flex';
-            console.log('✅ Welcome screen 1 shown');
-        }
-        if (screen2) {
-            screen2.style.display = 'none';
-            console.log('✅ Welcome screen 2 hidden');
-        }
-    } else {
-        console.error('❌ Welcome modal element not found!');
+        document.getElementById('welcomeScreen1').style.display = 'flex';
+        document.getElementById('welcomeScreen2').style.display = 'none';
     }
 }
 
@@ -1076,27 +959,19 @@ window.completeWelcome = async function() {
         currentUser.welcomed = true;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         
-        // Close modal and show dashboard
+        // Close modal
         const modal = document.getElementById('welcomeModal');
-        const dashboardContainer = document.querySelector('.dashboard-container');
         if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
-        }
-        if (dashboardContainer) {
-            dashboardContainer.style.display = 'block';
         }
     } catch (error) {
         console.error('Error updating welcome status:', error);
         // Still close modal even if update fails
         const modal = document.getElementById('welcomeModal');
-        const dashboardContainer = document.querySelector('.dashboard-container');
         if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
-        }
-        if (dashboardContainer) {
-            dashboardContainer.style.display = 'block';
         }
     }
 }
@@ -1899,7 +1774,5 @@ async function saveProfile() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 community.js DOMContentLoaded fired');
-    console.log('🚀 Calling initDashboard()...');
     initDashboard();
 });
