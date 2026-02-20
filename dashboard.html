@@ -1048,9 +1048,6 @@
             display: flex;
         }
         
-        body:has(.welcome-modal.active) .dashboard-container {
-            display: none !important;
-        }
         
         .welcome-modal-content {
             max-width: 800px;
@@ -1507,34 +1504,55 @@
         // Hide content initially
         document.addEventListener('DOMContentLoaded', function() {
             const dashboardContent = document.querySelector('.dashboard-container');
-            if (dashboardContent) {
-                dashboardContent.style.display = 'none';
-            }
+            const loadingSpinner = document.getElementById('dashboardLoading');
             
             // Initialize Firebase
             initFirebase().then(() => {
                 // Wait for auth state to be checked
                 const checkAuth = setInterval(() => {
-                    if (authChecked && auth && auth.currentUser) {
+                    if (authChecked) {
                         clearInterval(checkAuth);
-                        // Show content once authenticated
-                        if (dashboardContent) {
-                            dashboardContent.style.display = 'block';
+                        // Check if user is authenticated via Firebase or localStorage
+                        const currentUser = localStorage.getItem('currentUser');
+                        if ((auth && auth.currentUser) || currentUser) {
+                            // User is authenticated, show content
+                            if (dashboardContent) {
+                                dashboardContent.style.display = 'block';
+                            }
+                            if (loadingSpinner) {
+                                loadingSpinner.classList.add('hidden');
+                            }
+                        } else {
+                            // No authentication found, redirect to login
+                            window.location.href = 'login.html';
                         }
-                    } else if (authChecked && (!auth || !auth.currentUser)) {
-                        clearInterval(checkAuth);
-                        // Already redirected, but just in case
-                        window.location.href = 'login.html';
                     }
                 }, 100);
                 
-                // Timeout after 5 seconds
+                // Timeout after 5 seconds - show dashboard if localStorage has user
                 setTimeout(() => {
                     clearInterval(checkAuth);
-                    if (!authChecked) {
+                    const currentUser = localStorage.getItem('currentUser');
+                    if (currentUser && dashboardContent) {
+                        dashboardContent.style.display = 'block';
+                        if (loadingSpinner) {
+                            loadingSpinner.classList.add('hidden');
+                        }
+                    } else if (!authChecked) {
                         window.location.href = 'login.html';
                     }
                 }, 5000);
+            }).catch(() => {
+                // If Firebase init fails, try to show dashboard from localStorage
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser && dashboardContent) {
+                    dashboardContent.style.display = 'block';
+                    if (loadingSpinner) {
+                        loadingSpinner.classList.add('hidden');
+                    }
+                } else {
+                    window.location.href = 'login.html';
+                }
             });
         });
     </script>

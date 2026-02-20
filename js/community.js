@@ -117,6 +117,12 @@ function initDashboard() {
         loadingSpinner.classList.add('hidden');
     }
     
+    // Ensure dashboard is visible
+    const dashboardContainer = document.querySelector('.dashboard-container');
+    if (dashboardContainer) {
+        dashboardContainer.style.display = 'block';
+    }
+    
     // Check if user needs to see welcome flow
     checkWelcomeStatus();
     
@@ -901,7 +907,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // ===== WELCOME FLOW =====
 async function checkWelcomeStatus() {
     const user = getCurrentUser();
-    if (!user || !user.userId) return;
+    if (!user || !user.userId) {
+        // Ensure dashboard is visible if no user
+        const dashboardContainer = document.querySelector('.dashboard-container');
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'block';
+        }
+        return;
+    }
     
     let welcomed = false;
     
@@ -911,13 +924,21 @@ async function checkWelcomeStatus() {
             const userDoc = await db.collection('users').doc(user.userId).get();
             if (userDoc.exists) {
                 const userData = userDoc.data();
+                // Only show welcome if explicitly false or undefined (new users)
+                // If field doesn't exist, assume false (needs welcome)
                 welcomed = userData.welcomed === true;
                 
                 // Update localStorage with latest welcomed status
                 const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
                 currentUser.welcomed = welcomed;
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            } else {
+                // User doc doesn't exist - treat as new user
+                welcomed = false;
             }
+        } else {
+            // Firestore not available - check localStorage
+            welcomed = user.welcomed === true;
         }
     } catch (error) {
         console.error('Error checking welcome status:', error);
@@ -928,6 +949,16 @@ async function checkWelcomeStatus() {
     // If not welcomed, show welcome modal
     if (!welcomed) {
         showWelcomeModal();
+    } else {
+        // Ensure dashboard is visible if user is already welcomed
+        const dashboardContainer = document.querySelector('.dashboard-container');
+        const welcomeModal = document.getElementById('welcomeModal');
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'block';
+        }
+        if (welcomeModal) {
+            welcomeModal.classList.remove('active');
+        }
     }
 }
 
