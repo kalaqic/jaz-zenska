@@ -111,6 +111,12 @@ function initDashboard() {
     roleEl.textContent = user.role === 'admin' ? 'Admin' : 'Članica';
     roleEl.className = `user-role ${user.role}`;
     
+    // Hide loading spinner
+    const loadingSpinner = document.getElementById('dashboardLoading');
+    if (loadingSpinner) {
+        loadingSpinner.classList.add('hidden');
+    }
+    
     // Check if user needs to see welcome flow
     checkWelcomeStatus();
     
