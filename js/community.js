@@ -930,6 +930,26 @@ function showWelcomeModal() {
     if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        
+        // Get user's first name
+        const user = getCurrentUser();
+        let firstName = '';
+        if (user && user.name) {
+            // Extract first name (first word before space)
+            firstName = user.name.split(' ')[0];
+        } else if (user && user.firstName) {
+            firstName = user.firstName;
+        }
+        
+        // Update welcome text with first name
+        const welcomeTextEl = document.querySelector('#welcomeScreen0 .welcome-text');
+        if (welcomeTextEl && firstName) {
+            const firstParagraph = welcomeTextEl.querySelector('p:first-child');
+            if (firstParagraph) {
+                firstParagraph.innerHTML = `<strong>Spoštovana ${firstName}</strong>`;
+            }
+        }
+        
         // Reset to screen 0 (welcome text)
         document.getElementById('welcomeScreen0').style.display = 'flex';
         document.getElementById('welcomeScreen1').style.display = 'none';
