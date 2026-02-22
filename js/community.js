@@ -945,6 +945,14 @@ async function loadWebinars(container) {
                 description: 'Brezplačni webinar o odkritju notranje moči in spremembi življenja.',
                 videoId: '1164808779',
                 videoUrl: 'https://player.vimeo.com/video/1164808779?badge=0&autopause=0&player_id=0&app_id=58479'
+            },
+            {
+                id: '2',
+                title: '25 Stopnic do srece',
+                date: '5. marca 2026',
+                description: 'Webinar 25 stopnic do sreče.',
+                videoId: '',
+                videoUrl: ''
             }
         ];
         localStorage.setItem('webinars', JSON.stringify(defaultWebinars));
@@ -976,6 +984,11 @@ async function loadWebinars(container) {
         }
     } catch (error) {
         console.error('Error loading webinars from Firestore:', error);
+    }
+    
+    const stopnicWebinar = { id: '2', title: '25 Stopnic do srece', date: '5. marca 2026', description: 'Webinar 25 stopnic do sreče.', videoId: '', videoUrl: '' };
+    if (!webinars.some(w => w.title === '25 Stopnic do srece')) {
+        webinars.unshift(stopnicWebinar);
     }
     
     let html = '';
@@ -1271,31 +1284,6 @@ async function loadCalendar() {
         console.log('Loaded events from localStorage');
     }
     
-    // Welcome message with start date information
-    let html = `
-        <div style="
-            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
-            padding: 40px 35px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            border-left: 5px solid var(--mid-violet);
-            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
-        ">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px; text-align: center;">Dobrodošla draga Ženska!</h3>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-bottom: 15px; text-align: center;">
-                Hvala ker si se nam pridružila. S skupnim delom bomo začele <strong>25. marca</strong>. Do takrat te vabim da si pogledaš zanimive vsebine na naši spletni strani in se nam pridružiš na FB, instagramu in youtubu.
-            </p>
-            <div style="background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(153, 98, 122, 0.2);">
-                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px; text-align: center;">
-                    <strong style="color: var(--dark-violet);">Tvoja članarina začne teči s 1. aprilom 2026</strong>, če pa si plačala letno članarino, le ta velja do 31. 12. 2027.
-                </p>
-            </div>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-top: 20px; text-align: center;">
-                Veselim se sodelovanja s tabo. Če imaš že sedaj kakšna vprašanja ali izzive, mi lahko pišeš na <a href="mailto:Marjanca@jazzenska.com" style="color: var(--mid-violet); text-decoration: underline; font-weight: 600;">Marjanca@jazzenska.com</a>.
-            </p>
-        </div>
-    `;
-    
     // Calendar header
     const monthNames = ['Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij', 'Avgust', 'September', 'Oktober', 'November', 'December'];
     html += `
@@ -1344,13 +1332,19 @@ async function loadCalendar() {
         html += `<div class="calendar-day-header">${day}</div>`;
     });
     
-    // Calendar days
+    // Calendar days (use local date string to avoid timezone shifting the day)
+    function toLocalDateString(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+    }
     const currentDate = new Date(startDate);
     for (let i = 0; i < 42; i++) {
-        const dateStr = currentDate.toISOString().split('T')[0];
+        const dateStr = toLocalDateString(currentDate);
         const dayEvents = events.filter(e => {
-            const eventDate = new Date(e.date).toISOString().split('T')[0];
-            return eventDate === dateStr;
+            const ed = new Date(e.date);
+            return toLocalDateString(ed) === dateStr;
         });
         
         const isToday = currentDate.toDateString() === new Date().toDateString();
@@ -1455,25 +1449,33 @@ async function showDayEvents(dateStr) {
         events = JSON.parse(localStorage.getItem('events') || '[]');
     }
     
+    function toLocalDateString(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+    }
     const dayEvents = events.filter(e => {
-        const eventDate = new Date(e.date).toISOString().split('T')[0];
-        return eventDate === dateStr;
+        const ed = new Date(e.date);
+        return toLocalDateString(ed) === dateStr;
     });
     
     const modal = document.getElementById('eventModal');
     const modalContent = document.getElementById('eventModalContent');
     
+    const [y, mo, da] = dateStr.split('-').map(Number);
+    const modalDate = new Date(y, mo - 1, da);
     if (dayEvents.length === 0) {
         modalContent.innerHTML = `
             <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark-violet); margin-bottom: 20px;">
-                ${new Date(dateStr).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' })}
+                ${modalDate.toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' })}
             </h3>
             <p style="color: var(--text-light);">Na ta dan ni načrtovanih dogodkov.</p>
         `;
     } else {
         modalContent.innerHTML = `
             <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark-violet); margin-bottom: 20px;">
-                ${new Date(dateStr).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' })}
+                ${modalDate.toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' })}
             </h3>
             ${dayEvents.map(event => {
                 const eventDate = new Date(event.date);
