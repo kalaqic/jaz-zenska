@@ -241,7 +241,9 @@ S skupnim delom, učenjem, spoznavanjem, vajami, druženjem in medsebojno podpor
 
 Če se po vseh teh vprašanjih počutiš negotovo, utrujeno, izčrpano, mogoče celo prestrašeno in so se ti porodila dodatna vprašanja, mi lahko pišeš na e-mail: marjanca@jazzenska.com, in ti bom v najkrajšem roku odgovorila, sicer pa bomo skupaj iskale odgovore in rešitve počasi in vztrajno iz lekcije v lekcijo, hodile skupaj, pa vendar vsaka po svoji poti do spremeb in ciljev, ki smo si jih zadale.
 
-Bodi dobro, pozdrav in topel objem  Marjanca`;
+Bodi dobro, pozdrav in topel objem
+
+- Marjanca`;
 
 async function loadQuestionnaire(container) {
     const user = getCurrentUser();
@@ -280,7 +282,7 @@ async function loadQuestionnaire(container) {
         html += `
             <div class="questionnaire-item">
                 <label class="questionnaire-label">${escapeHtml(q)}</label>
-                <textarea class="questionnaire-answer" data-key="${key}" rows="2" placeholder="Odgovor (opcijsko)">${safeValue}</textarea>
+                <textarea class="questionnaire-answer" data-key="${key}" rows="2" placeholder="Odgovor">${safeValue}</textarea>
             </div>
         `;
     });
@@ -985,6 +987,7 @@ async function loadWebinars(container) {
         webinars.forEach(webinar => {
             html += `
                 <div class="webinar-card" onclick="openWebinar('${webinar.id}')">
+                    <img src="images/moja moc je v meni.webp" alt="${escapeHtml(webinar.title)}" class="webinar-card-image">
                     <div class="webinar-title">${webinar.title}</div>
                     <div class="webinar-date">${webinar.date || ''}</div>
                     <div class="webinar-description">${webinar.description || ''}</div>
@@ -1895,9 +1898,42 @@ async function loadProfile() {
     const user = getCurrentUser();
     if (!user) return;
     
-    let userData = user;
+    const content = document.getElementById('profileContent');
+    if (!content) return;
     
-    // Try to get fresh data from Firestore if available
+    content.innerHTML = `
+        <div class="profile-subnav">
+            <a href="#" class="profile-tab-active" data-tab="classroom">Učilnica</a>
+            <a href="#" data-tab="webinars">Webinari</a>
+            <a href="#" data-tab="questionnaire">Vprašalnik</a>
+            <a href="#" data-tab="profil">Nastavitve</a>
+        </div>
+        <div id="profileTabContent"></div>
+    `;
+    
+    const container = document.getElementById('profileTabContent');
+    content.querySelectorAll('.profile-subnav a').forEach(a => {
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            showProfileTab(this.getAttribute('data-tab'));
+        });
+    });
+    
+    const openTab = sessionStorage.getItem('openProfileTab');
+    if (openTab) {
+        sessionStorage.removeItem('openProfileTab');
+        showProfileTab(openTab);
+    } else {
+        loadClassroom(container);
+    }
+}
+
+async function renderProfileForm(container) {
+    if (!container) return;
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    let userData = user;
     if (typeof db !== 'undefined' && user.userId) {
         try {
             const userDoc = await db.collection('users').doc(user.userId).get();
@@ -1925,10 +1961,7 @@ async function loadProfile() {
         answersHtml += '</div>';
     }
     
-    const content = document.getElementById('profileContent');
-    if (!content) return;
-    
-    const profileFormHtml = `
+    const formHtml = `
         <form id="profileForm" style="max-width: 600px;">
             <div style="margin-bottom: 25px;">
                 <label style="display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px;">Ime</label>
@@ -1995,29 +2028,7 @@ async function loadProfile() {
             ">Shrani spremembe</button>
         </form>
     `;
-    
-    content.innerHTML = `
-        <div class="profile-subnav">
-            <a href="#" class="profile-tab-active" data-tab="profil">Profil</a>
-            <a href="#" data-tab="classroom">Učilnica</a>
-            <a href="#" data-tab="webinars">Webinari</a>
-            <a href="#" data-tab="questionnaire">Vprašalnik</a>
-        </div>
-        <div id="profileTabContent">${profileFormHtml}</div>
-    `;
-    
-    content.querySelectorAll('.profile-subnav a').forEach(a => {
-        a.addEventListener('click', function(e) {
-            e.preventDefault();
-            showProfileTab(this.getAttribute('data-tab'));
-        });
-    });
-    
-    const openTab = sessionStorage.getItem('openProfileTab');
-    if (openTab) {
-        sessionStorage.removeItem('openProfileTab');
-        showProfileTab(openTab);
-    }
+    container.innerHTML = formHtml;
 }
 
 window.showProfileTab = function(tab) {
@@ -2029,7 +2040,7 @@ window.showProfileTab = function(tab) {
     });
     
     if (tab === 'profil') {
-        loadProfile();
+        renderProfileForm(container);
         return;
     }
     if (tab === 'classroom') {
