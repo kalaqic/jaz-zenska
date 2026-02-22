@@ -1274,6 +1274,70 @@
                 height: 250px;
             }
         }
+        
+        /* Questionnaire */
+        .questionnaire-intro,
+        .questionnaire-outro {
+            max-width: 720px;
+            margin-bottom: 32px;
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-dark);
+        }
+        .questionnaire-intro p,
+        .questionnaire-outro {
+            margin-bottom: 16px;
+        }
+        .questionnaire-questions {
+            max-width: 720px;
+            margin-bottom: 32px;
+        }
+        .questionnaire-item {
+            margin-bottom: 28px;
+        }
+        .questionnaire-label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark-violet);
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .questionnaire-answer {
+            width: 100%;
+            min-height: 2.6em;
+            padding: 12px 16px;
+            border: 2px solid var(--almost-white);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Montserrat', sans-serif;
+            resize: none;
+            overflow-y: auto;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .questionnaire-answer:focus {
+            outline: none;
+            border-color: var(--mid-violet);
+            box-shadow: 0 0 0 3px rgba(153, 98, 122, 0.2);
+        }
+        .questionnaire-actions {
+            max-width: 720px;
+            margin-top: 24px;
+        }
+        .questionnaire-save-btn {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            padding: 14px 36px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .questionnaire-save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(100, 56, 67, 0.35);
+        }
     </style>
 </head>
 <body>
@@ -1295,6 +1359,7 @@
             <a href="#" class="nav-item" data-section="classroom">Učilnica</a>
             <a href="#" class="nav-item" data-section="webinars">Webinari</a>
             <a href="#" class="nav-item" data-section="calendar">Koledar</a>
+            <a href="#" class="nav-item" data-section="questionnaire">Vprašalnik</a>
             <a href="#" class="nav-item" data-section="profile">Moj profil</a>
         </nav>
         
@@ -1328,6 +1393,14 @@
                 <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Koledar</h2>
                 <div id="calendarContent">
                     <!-- Events will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Questionnaire Section -->
+            <div id="questionnaire" class="content-section">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Vprašalnik</h2>
+                <div id="questionnaireContent">
+                    <!-- Questionnaire will be loaded here -->
                 </div>
             </div>
             

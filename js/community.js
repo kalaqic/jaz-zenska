@@ -192,12 +192,157 @@ function switchSection(section) {
             case 'calendar':
                 loadCalendar();
                 break;
+            case 'questionnaire':
+                loadQuestionnaire();
+                break;
             case 'profile':
                 loadProfile();
                 break;
         }
     }
 }
+
+// ===== QUESTIONNAIRE SECTION =====
+const QUESTIONNAIRE_QUESTIONS = [
+    'Kdo sem jaz?',
+    'Katere vloge igram?',
+    'Katere maske nosim?',
+    'Kaj je tisto kar si res želim?',
+    'Kako močno si to želim?',
+    'Kaj mi to pomeni?',
+    'Kdo je najpomembnejša oseba v mojem življenju?',
+    'Koga si želim v mojem življenju?',
+    'Kdo me omejuje?',
+    'Kaj me omejuje?',
+    'Če bi lahko naredila kar koli,  kaj bi v tem trenutku spremenila?',
+    'Kaj bi morala narediti, da bi bila ponosna sama nase?',
+    'Kaj zame pomeni sreča?',
+    'Koga želim osrečit?',
+    'S čim ali kom, pogojujem svoje občutke sreče?',
+    'Kaj mi preprečuje, da bi bila srečna že sedaj?',
+    'Kaj je tisto, kar bi me res osrečilo?',
+    'Kaj sem pripravljena za to narediti?',
+    'Kaj me bogati?',
+    'Kaj mi daje občutek pomembnosti?',
+    'Kaj mi dviguje energijo?',
+    'Kakšno je moje zdravje in kako se počutim sedaj?',
+    'Kaj delam za svoje zdravje in boljše počutje?',
+    'Kaj bi še lahko naredila za svoje zdravje in boljše počutje?',
+    'Česa si želiš več v svojem življenju!',
+    'Česa si ne želiš več v svojem življenju.',
+    'Kaj me še skrbi?',
+    'Kaj so moji strahovi?',
+    'Kaj je moja največja želja?',
+    'Kaj bi naredila če bi imela neomejeno denarja, časa, moči...?',
+    'Kaj bi naredila, če bi imela samo še en mesec življenja?',
+    'Kaj mi stoji na poti, da tega ne naredim sedaj?'
+];
+
+const QUESTIONNAIRE_INTRO = `Vabim te, da vzameš papir in svinčnik. Poskrbi, da boš imela dovolj časa in da te ne bodo motili, nato pa si začni postavljati vprašanja in brez razmišljanja piši odgovore. Napiši vse, kar ti pride na misel, kar je v tebi in  kar se ti bo ponudilo kot odgovor.  Brez cenzure, brez presojanja ali je to možno ali ne, brez dvomov in obsojanj. Napiši vse tisto, kar bo privrelo na plan, iskreno odkrito in brez omejitev.`;
+
+const QUESTIONNAIRE_OUTRO = `Če si prišla do konca in na vsa vprašanja odgovorila iskreno, iz srca, brez razmišljanja in preračunavanja kaj je prav in kaj narobe, brez dvoma kaj lahko in česa ne moreš, potem si prišla do informacij, ki ti bodo pri tvojem delu zelo koristile.
+
+S skupnim delom, učenjem, spoznavanjem, vajami, druženjem in medsebojno podporo bomo skozi leto korak po korak hodile skupaj, pa vendar vsaka po svoji poti, do svojih ciljev. Pomagala ti bom da boš:
+
+- Ozavestila svojo moč in se naučila sprejemati znamenja in darila, pa tudi bolečino, slabe  trenutke in neprijetne situacije kot učitelje na tvoji poti, ki te dobronamerno budijo, usmerjajo in opozarjajo.
+- Prepoznala kaj v svojem življenju lahko spremeniš, nadgradiš, izboljšaš...
+- Sprejela zavedanje da zmoreš, da si zaslužiš in da si vredna, da nisi sama in da je prav ta trenutek tukaj in sedaj pravi, da narediš prvi korak na svoji novi poti.
+
+Če se po vseh teh vprašanjih počutiš negotovo, utrujeno, izčrpano, mogoče celo prestrašeno in so se ti porodila dodatna vprašanja, mi lahko pišeš na e-mail: marjanca@jazzenska.com, in ti bom v najkrajšem roku odgovorila, sicer pa bomo skupaj iskale odgovore in rešitve počasi in vztrajno iz lekcije v lekcijo, hodile skupaj, pa vendar vsaka po svoji poti do spremeb in ciljev, ki smo si jih zadale.
+
+Bodi dobro, pozdrav in topel objem  Marjanca`;
+
+async function loadQuestionnaire() {
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    let answers = {};
+    if (typeof db !== 'undefined' && user.userId) {
+        try {
+            const userDoc = await db.collection('users').doc(user.userId).get();
+            if (userDoc.exists) {
+                const data = userDoc.data();
+                answers = data.questionnaireAnswers || {};
+            }
+        } catch (e) {
+            console.error('Error loading questionnaire answers:', e);
+        }
+    }
+    
+    const firstName = (user.name || user.email || '').trim().split(/\s+/)[0] || 'članica';
+    
+    let html = `
+        <div class="questionnaire-intro">
+            <p><strong>Draga ${escapeHtml(firstName)}</strong></p>
+            <p>${QUESTIONNAIRE_INTRO.replace(/\n/g, '<br>')}</p>
+        </div>
+        <div class="questionnaire-questions">
+    `;
+    
+    QUESTIONNAIRE_QUESTIONS.forEach((q, i) => {
+        const key = 'q' + (i + 1);
+        const raw = answers[key] || '';
+        const safeValue = raw.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;');
+        html += `
+            <div class="questionnaire-item">
+                <label class="questionnaire-label">${escapeHtml(q)}</label>
+                <textarea class="questionnaire-answer" data-key="${key}" rows="2" placeholder="Odgovor (opcijsko)">${safeValue}</textarea>
+            </div>
+        `;
+    });
+    
+    html += `
+        </div>
+        <div class="questionnaire-outro">${QUESTIONNAIRE_OUTRO.replace(/\n/g, '<br>')}</div>
+        <div class="questionnaire-actions">
+            <button type="button" class="questionnaire-save-btn" onclick="saveQuestionnaire()">Shrani odgovore</button>
+        </div>
+    `;
+    
+    const content = document.getElementById('questionnaireContent');
+    content.innerHTML = html;
+    
+    content.querySelectorAll('.questionnaire-answer').forEach(ta => {
+        autoResizeTextarea(ta);
+        ta.addEventListener('input', function() { autoResizeTextarea(this); });
+    });
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function autoResizeTextarea(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.max(48, el.scrollHeight) + 'px';
+}
+
+window.saveQuestionnaire = async function() {
+    const user = getCurrentUser();
+    if (!user || !user.userId) return;
+    
+    const answers = {};
+    document.querySelectorAll('.questionnaire-answer').forEach(ta => {
+        const key = ta.getAttribute('data-key');
+        if (key) answers[key] = (ta.value || '').trim();
+    });
+    
+    try {
+        if (typeof db !== 'undefined') {
+            await db.collection('users').doc(user.userId).update({
+                questionnaireAnswers: answers,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        alert('Odgovori so bili shranjeni.');
+    } catch (e) {
+        console.error('Error saving questionnaire:', e);
+        alert('Pri shranjevanju je prišlo do napake. Poskusite znova.');
+    }
+};
 
 // ===== COMMUNITY SECTION =====
 async function loadCommunity() {
@@ -1063,20 +1208,21 @@ window.completeWelcome = async function() {
         currentUser.welcomed = true;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         
-        // Close modal
+        // Close modal and go to questionnaire
         const modal = document.getElementById('welcomeModal');
         if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
         }
+        switchSection('questionnaire');
     } catch (error) {
         console.error('Error updating welcome status:', error);
-        // Still close modal even if update fails
         const modal = document.getElementById('welcomeModal');
         if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
         }
+        switchSection('questionnaire');
     }
 }
 
@@ -1766,6 +1912,22 @@ async function loadProfile() {
         }
     }
     
+    const answers = userData.questionnaireAnswers || {};
+    const hasAnswers = Object.keys(answers).some(k => (answers[k] || '').trim() !== '');
+    
+    let answersHtml = '';
+    if (hasAnswers) {
+        answersHtml = '<div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--almost-white);"><h3 style="font-family: \'Playfair Display\', serif; font-size: 20px; color: var(--dark-violet); margin-bottom: 16px;">Vaši odgovori na vprašalnik</h3>';
+        QUESTIONNAIRE_QUESTIONS.forEach((q, i) => {
+            const key = 'q' + (i + 1);
+            const val = (answers[key] || '').trim();
+            if (!val) return;
+            const preview = val.length > 120 ? val.slice(0, 120) + '…' : val;
+            answersHtml += `<div style="margin-bottom: 16px;"><strong style="color: var(--dark-violet); font-size: 14px;">${escapeHtml(q)}</strong><p style="margin-top: 4px; color: var(--text-dark); font-size: 14px; white-space: pre-wrap;">${escapeHtml(preview)}</p></div>`;
+        });
+        answersHtml += '</div>';
+    }
+    
     const content = document.getElementById('profileContent');
     
     content.innerHTML = `
@@ -1807,6 +1969,21 @@ async function loadProfile() {
                 ">
             </div>
             
+            <div style="margin-bottom: 28px;">
+                <p style="margin-bottom: 12px; color: var(--text-dark);">Odgovore na vprašalnik lahko kadarkoli ogledate in uredite.</p>
+                <button type="button" onclick="switchSection('questionnaire')" style="
+                    background: var(--main-white);
+                    color: var(--dark-violet);
+                    padding: 12px 28px;
+                    border: 2px solid var(--mid-violet);
+                    border-radius: 25px;
+                    font-size: 15px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                ">${hasAnswers ? 'Uredi vprašalnik' : 'Odpri vprašalnik'}</button>
+            </div>
+            ${answersHtml}
             <button type="button" onclick="saveProfile()" style="
                 background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
                 color: var(--white);
