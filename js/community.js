@@ -1284,6 +1284,7 @@ async function loadCalendar() {
         console.log('Loaded events from localStorage');
     }
     
+    let html = '';
     // Calendar header
     const monthNames = ['Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij', 'Avgust', 'September', 'Oktober', 'November', 'December'];
     html += `
@@ -1952,7 +1953,7 @@ async function renderProfileForm(container) {
     
     let answersHtml = '';
     if (hasAnswers) {
-        answersHtml = '<div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--almost-white);"><h3 style="font-family: \'Playfair Display\', serif; font-size: 20px; color: var(--dark-violet); margin-bottom: 16px;">Vaši odgovori na vprašalnik</h3>';
+        answersHtml = '<div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--almost-white);"><h3 style="font-family: \'Playfair Display\', serif; font-size: 20px; color: var(--dark-violet); margin-bottom: 16px;">Vaši odgovori na vprašalnik</h3>';
         QUESTIONNAIRE_QUESTIONS.forEach((q, i) => {
             const key = 'q' + (i + 1);
             const val = (answers[key] || '').trim();
@@ -1960,7 +1961,20 @@ async function renderProfileForm(container) {
             const preview = val.length > 120 ? val.slice(0, 120) + '…' : val;
             answersHtml += `<div style="margin-bottom: 16px;"><strong style="color: var(--dark-violet); font-size: 14px;">${escapeHtml(q)}</strong><p style="margin-top: 4px; color: var(--text-dark); font-size: 14px; white-space: pre-wrap;">${escapeHtml(preview)}</p></div>`;
         });
-        answersHtml += '</div>';
+        answersHtml += `
+            <button type="button" onclick="showProfileTab(\'questionnaire\')" style="
+                margin-top: 20px;
+                background: var(--main-white);
+                color: var(--dark-violet);
+                padding: 12px 28px;
+                border: 2px solid var(--mid-violet);
+                border-radius: 25px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            ">Spremeni odgovore</button>
+        </div>`;
     }
     
     const formHtml = `
@@ -1991,8 +2005,8 @@ async function renderProfileForm(container) {
             </div>
             
             <div style="margin-bottom: 25px;">
-                <label style="display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px;">Novo geslo</label>
-                <input type="password" id="profilePassword" placeholder="Pustite prazno, če ne želite spremeniti gesla" style="
+                <label style="display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px;">Trenutno geslo</label>
+                <input type="password" id="profileCurrentPassword" placeholder="Potrebno za spremembo gesla" style="
                     width: 100%;
                     padding: 12px 16px;
                     border: 2px solid var(--almost-white);
@@ -2002,7 +2016,30 @@ async function renderProfileForm(container) {
                 ">
             </div>
             
-            ${answersHtml}
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px;">Novo geslo</label>
+                <input type="password" id="profileNewPassword" placeholder="Min. 6 znakov" style="
+                    width: 100%;
+                    padding: 12px 16px;
+                    border: 2px solid var(--almost-white);
+                    border-radius: 10px;
+                    font-size: 16px;
+                    font-family: 'Montserrat', sans-serif;
+                ">
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px;">Ponovite novo geslo</label>
+                <input type="password" id="profileNewPasswordConfirm" placeholder="Ponovite novo geslo" style="
+                    width: 100%;
+                    padding: 12px 16px;
+                    border: 2px solid var(--almost-white);
+                    border-radius: 10px;
+                    font-size: 16px;
+                    font-family: 'Montserrat', sans-serif;
+                ">
+            </div>
+            
             <button type="button" onclick="saveProfile()" style="
                 background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
                 color: var(--white);
@@ -2014,6 +2051,8 @@ async function renderProfileForm(container) {
                 cursor: pointer;
                 transition: all 0.3s ease;
             ">Shrani spremembe</button>
+            
+            ${answersHtml}
         </form>
     `;
     container.innerHTML = formHtml;
@@ -2050,11 +2089,33 @@ async function saveProfile() {
     if (!user) return;
     
     const name = document.getElementById('profileName').value.trim();
-    const password = document.getElementById('profilePassword').value;
+    const currentPassword = (document.getElementById('profileCurrentPassword') && document.getElementById('profileCurrentPassword').value) || '';
+    const newPassword = (document.getElementById('profileNewPassword') && document.getElementById('profileNewPassword').value) || '';
+    const newPasswordConfirm = (document.getElementById('profileNewPasswordConfirm') && document.getElementById('profileNewPasswordConfirm').value) || '';
     
     if (!name) {
         alert('Prosimo, izpolnite vsa obvezna polja.');
         return;
+    }
+    
+    const wantsPasswordChange = currentPassword || newPassword || newPasswordConfirm;
+    if (wantsPasswordChange) {
+        if (!currentPassword) {
+            alert('Za spremembo gesla vnesite trenutno geslo.');
+            return;
+        }
+        if (!newPassword) {
+            alert('Vnesite novo geslo.');
+            return;
+        }
+        if (newPassword.length < 6) {
+            alert('Novo geslo mora imeti vsaj 6 znakov.');
+            return;
+        }
+        if (newPassword !== newPasswordConfirm) {
+            alert('Novo geslo in ponovitev se ne ujemata.');
+            return;
+        }
     }
     
     try {
@@ -2066,9 +2127,11 @@ async function saveProfile() {
             });
         }
         
-        // Update password if provided
-        if (password && typeof auth !== 'undefined' && auth.currentUser) {
-            await auth.currentUser.updatePassword(password);
+        // Update password if provided: reauthenticate with current password, then set new
+        if (wantsPasswordChange && typeof auth !== 'undefined' && auth.currentUser) {
+            const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+            await auth.currentUser.reauthenticateWithCredential(credential);
+            await auth.currentUser.updatePassword(newPassword);
         }
         
         // Update localStorage
@@ -2088,9 +2151,11 @@ async function saveProfile() {
         let errorMessage = 'Napaka pri shranjevanju profila.';
         
         if (error.code === 'auth/weak-password') {
-            errorMessage = 'Geslo mora biti vsaj 6 znakov dolgo.';
+            errorMessage = 'Novo geslo mora imeti vsaj 6 znakov.';
         } else if (error.code === 'auth/requires-recent-login') {
             errorMessage = 'Za spremembo gesla se morate znova prijaviti.';
+        } else if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+            errorMessage = 'Trenutno geslo ni pravilno.';
         }
         
         alert(errorMessage);
