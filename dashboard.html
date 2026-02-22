@@ -1338,6 +1338,35 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(100, 56, 67, 0.35);
         }
+        
+        .profile-subnav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--almost-white);
+            padding-bottom: 12px;
+        }
+        .profile-subnav a {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            background: var(--main-white);
+            border: 2px solid var(--almost-white);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .profile-subnav a:hover {
+            border-color: var(--mid-violet);
+            color: var(--dark-violet);
+        }
+        .profile-subnav a.profile-tab-active {
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            border-color: var(--dark-violet);
+        }
     </style>
 </head>
 <body>
@@ -1355,36 +1384,25 @@
         </div>
         
         <nav class="dashboard-nav">
-            <a href="#" class="nav-item active" data-section="community">Skupnost</a>
-            <a href="#" class="nav-item" data-section="classroom">Učilnica</a>
-            <a href="#" class="nav-item" data-section="webinars">Webinari</a>
+            <a href="#" class="nav-item active" data-section="profile">Moj profil</a>
+            <a href="#" class="nav-item" data-section="community">Skupnost</a>
             <a href="#" class="nav-item" data-section="calendar">Koledar</a>
-            <a href="#" class="nav-item" data-section="questionnaire">Vprašalnik</a>
-            <a href="#" class="nav-item" data-section="profile">Moj profil</a>
         </nav>
         
         <div class="dashboard-content">
+            <!-- Profile Section (first; contains Profil, Učilnica, Webinari, Vprašalnik) -->
+            <div id="profile" class="content-section active">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Moj profil</h2>
+                <div id="profileContent">
+                    <!-- Profile tabs and content loaded here -->
+                </div>
+            </div>
+            
             <!-- Community Section -->
-            <div id="community" class="content-section active">
+            <div id="community" class="content-section">
                 <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Skupnost</h2>
                 <div id="communityContent">
                     <!-- Posts will be loaded here -->
-                </div>
-            </div>
-            
-            <!-- Classroom Section -->
-            <div id="classroom" class="content-section">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Učilnica</h2>
-                <div id="classroomContent">
-                    <!-- Courses will be loaded here -->
-                </div>
-            </div>
-            
-            <!-- Webinars Section -->
-            <div id="webinars" class="content-section">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Webinari</h2>
-                <div id="webinarsContent">
-                    <!-- Webinars will be loaded here -->
                 </div>
             </div>
             
@@ -1393,22 +1411,6 @@
                 <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Koledar</h2>
                 <div id="calendarContent">
                     <!-- Events will be loaded here -->
-                </div>
-            </div>
-            
-            <!-- Questionnaire Section -->
-            <div id="questionnaire" class="content-section">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Vprašalnik</h2>
-                <div id="questionnaireContent">
-                    <!-- Questionnaire will be loaded here -->
-                </div>
-            </div>
-            
-            <!-- Profile Section -->
-            <div id="profile" class="content-section">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Moj profil</h2>
-                <div id="profileContent">
-                    <!-- Profile form will be loaded here -->
                 </div>
             </div>
         </div>

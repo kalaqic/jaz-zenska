@@ -133,8 +133,8 @@ function initDashboard() {
         });
     });
     
-    // Load initial section
-    switchSection('community');
+    // Load initial section (profile first)
+    switchSection('profile');
     
     // Check welcome status AFTER everything is initialized
     // Wait for Firebase to be ready
@@ -183,17 +183,8 @@ function switchSection(section) {
             case 'community':
                 loadCommunity();
                 break;
-            case 'classroom':
-                loadClassroom();
-                break;
-            case 'webinars':
-                loadWebinars();
-                break;
             case 'calendar':
                 loadCalendar();
-                break;
-            case 'questionnaire':
-                loadQuestionnaire();
                 break;
             case 'profile':
                 loadProfile();
@@ -252,9 +243,12 @@ S skupnim delom, učenjem, spoznavanjem, vajami, druženjem in medsebojno podpor
 
 Bodi dobro, pozdrav in topel objem  Marjanca`;
 
-async function loadQuestionnaire() {
+async function loadQuestionnaire(container) {
     const user = getCurrentUser();
     if (!user) return;
+    
+    const content = container || document.getElementById('questionnaireContent');
+    if (!content) return;
     
     let answers = {};
     if (typeof db !== 'undefined' && user.userId) {
@@ -299,7 +293,6 @@ async function loadQuestionnaire() {
         </div>
     `;
     
-    const content = document.getElementById('questionnaireContent');
     content.innerHTML = html;
     
     content.querySelectorAll('.questionnaire-answer').forEach(ta => {
@@ -839,8 +832,9 @@ async function addComment(postId) {
 }
 
 // ===== CLASSROOM SECTION =====
-async function loadClassroom() {
-    const content = document.getElementById('classroomContent');
+async function loadClassroom(container) {
+    const content = container || document.getElementById('classroomContent');
+    if (!content) return;
     
     let courses = [];
     
@@ -935,8 +929,9 @@ function openCourse(courseId) {
 }
 
 // ===== WEBINARS SECTION =====
-async function loadWebinars() {
-    const content = document.getElementById('webinarsContent');
+async function loadWebinars(container) {
+    const content = container || document.getElementById('webinarsContent');
+    if (!content) return;
     
     // Initialize webinars if they don't exist
     if (!localStorage.getItem('webinars')) {
@@ -1208,13 +1203,14 @@ window.completeWelcome = async function() {
         currentUser.welcomed = true;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         
-        // Close modal and go to questionnaire
+        // Close modal and go to profile → questionnaire tab
         const modal = document.getElementById('welcomeModal');
         if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
         }
-        switchSection('questionnaire');
+        sessionStorage.setItem('openProfileTab', 'questionnaire');
+        switchSection('profile');
     } catch (error) {
         console.error('Error updating welcome status:', error);
         const modal = document.getElementById('welcomeModal');
@@ -1222,7 +1218,8 @@ window.completeWelcome = async function() {
             modal.classList.remove('active');
             document.body.style.overflow = '';
         }
-        switchSection('questionnaire');
+        sessionStorage.setItem('openProfileTab', 'questionnaire');
+        switchSection('profile');
     }
 }
 
@@ -1929,12 +1926,13 @@ async function loadProfile() {
     }
     
     const content = document.getElementById('profileContent');
+    if (!content) return;
     
-    content.innerHTML = `
+    const profileFormHtml = `
         <form id="profileForm" style="max-width: 600px;">
             <div style="margin-bottom: 25px;">
                 <label style="display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px;">Ime</label>
-                <input type="text" id="profileName" value="${userData.name || ''}" style="
+                <input type="text" id="profileName" value="${escapeHtml(userData.name || '')}" style="
                     width: 100%;
                     padding: 12px 16px;
                     border: 2px solid var(--almost-white);
@@ -1946,7 +1944,7 @@ async function loadProfile() {
             
             <div style="margin-bottom: 25px;">
                 <label style="display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px;">Email</label>
-                <input type="email" id="profileEmail" value="${userData.email || ''}" style="
+                <input type="email" id="profileEmail" value="${escapeHtml(userData.email || '')}" style="
                     width: 100%;
                     padding: 12px 16px;
                     border: 2px solid var(--almost-white);
@@ -1970,8 +1968,8 @@ async function loadProfile() {
             </div>
             
             <div style="margin-bottom: 28px;">
-                <p style="margin-bottom: 12px; color: var(--text-dark);">Odgovore na vprašalnik lahko kadarkoli ogledate in uredite.</p>
-                <button type="button" onclick="switchSection('questionnaire')" style="
+                <p style="margin-bottom: 12px; color: var(--text-dark);">Odgovore na vprašalnik lahko kadarkoli ogledate in uredite v zavihku Vprašalnik.</p>
+                <button type="button" onclick="showProfileTab('questionnaire')" style="
                     background: var(--main-white);
                     color: var(--dark-violet);
                     padding: 12px 28px;
@@ -1997,7 +1995,56 @@ async function loadProfile() {
             ">Shrani spremembe</button>
         </form>
     `;
+    
+    content.innerHTML = `
+        <div class="profile-subnav">
+            <a href="#" class="profile-tab-active" data-tab="profil">Profil</a>
+            <a href="#" data-tab="classroom">Učilnica</a>
+            <a href="#" data-tab="webinars">Webinari</a>
+            <a href="#" data-tab="questionnaire">Vprašalnik</a>
+        </div>
+        <div id="profileTabContent">${profileFormHtml}</div>
+    `;
+    
+    content.querySelectorAll('.profile-subnav a').forEach(a => {
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            showProfileTab(this.getAttribute('data-tab'));
+        });
+    });
+    
+    const openTab = sessionStorage.getItem('openProfileTab');
+    if (openTab) {
+        sessionStorage.removeItem('openProfileTab');
+        showProfileTab(openTab);
+    }
 }
+
+window.showProfileTab = function(tab) {
+    const container = document.getElementById('profileTabContent');
+    if (!container) return;
+    
+    document.querySelectorAll('.profile-subnav a').forEach(a => {
+        a.classList.toggle('profile-tab-active', a.getAttribute('data-tab') === tab);
+    });
+    
+    if (tab === 'profil') {
+        loadProfile();
+        return;
+    }
+    if (tab === 'classroom') {
+        loadClassroom(container);
+        return;
+    }
+    if (tab === 'webinars') {
+        loadWebinars(container);
+        return;
+    }
+    if (tab === 'questionnaire') {
+        loadQuestionnaire(container);
+        return;
+    }
+};
 
 async function saveProfile() {
     const user = getCurrentUser();
