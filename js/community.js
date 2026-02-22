@@ -2000,20 +2000,6 @@ async function renderProfileForm(container) {
                 ">
             </div>
             
-            <div style="margin-bottom: 28px;">
-                <p style="margin-bottom: 12px; color: var(--text-dark);">Odgovore na vprašalnik lahko kadarkoli ogledate in uredite v zavihku Vprašalnik.</p>
-                <button type="button" onclick="showProfileTab('questionnaire')" style="
-                    background: var(--main-white);
-                    color: var(--dark-violet);
-                    padding: 12px 28px;
-                    border: 2px solid var(--mid-violet);
-                    border-radius: 25px;
-                    font-size: 15px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                ">${hasAnswers ? 'Uredi vprašalnik' : 'Odpri vprašalnik'}</button>
-            </div>
             ${answersHtml}
             <button type="button" onclick="saveProfile()" style="
                 background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);

@@ -16,15 +16,32 @@
     <link rel="stylesheet" href="css/main.css">
     <style>
         body {
-            background: linear-gradient(135deg, #F8F1ED 0%, #f5ebe0 100%);
+            background: linear-gradient(160deg, #F8F1ED 0%, #f5ebe0 35%, #fdf0f4 70%, #f8e8ec 100%);
             min-height: 100vh;
             font-family: 'Montserrat', sans-serif;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle at 15% 20%, rgba(153, 98, 122, 0.06) 0%, transparent 40%),
+                              radial-gradient(circle at 85% 80%, rgba(200, 142, 167, 0.05) 0%, transparent 45%),
+                              radial-gradient(circle at 50% 50%, rgba(231, 203, 203, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
         }
         
         .dashboard-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 30px 20px;
+            position: relative;
+            z-index: 1;
         }
         
         .dashboard-container-inner {
@@ -187,12 +204,12 @@
         }
         
         .dashboard-content {
-            background: var(--white);
+            background: linear-gradient(145deg, #fffbfc 0%, #fff6f9 50%, #fef5f8 100%);
             padding: 50px;
             border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(100, 56, 67, 0.06);
             min-height: 500px;
-            border: 1px solid rgba(100, 56, 67, 0.1);
+            border: 1px solid rgba(100, 56, 67, 0.08);
             position: relative;
             overflow: hidden;
         }
@@ -200,13 +217,12 @@
         .dashboard-content::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(200, 142, 167, 0.1) 0%, transparent 70%);
+            top: -40%;
+            right: -15%;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(200, 142, 167, 0.18) 0%, rgba(231, 203, 203, 0.12) 40%, transparent 70%);
             border-radius: 50%;
-            opacity: 0.7;
             pointer-events: none;
             z-index: 0;
         }
@@ -214,13 +230,27 @@
         .dashboard-content::after {
             content: '';
             position: absolute;
-            bottom: -30%;
-            left: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(153, 98, 122, 0.08) 0%, transparent 70%);
+            bottom: -25%;
+            left: -8%;
+            width: 480px;
+            height: 480px;
+            background: radial-gradient(circle, rgba(153, 98, 122, 0.12) 0%, rgba(200, 142, 167, 0.06) 50%, transparent 70%);
             border-radius: 50%;
-            opacity: 0.7;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .dashboard-content .content-section::before {
+            content: '';
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            width: 400px;
+            height: 400px;
+            margin-left: -200px;
+            margin-top: -200px;
+            background: radial-gradient(circle, rgba(231, 203, 203, 0.2) 0%, transparent 65%);
+            border-radius: 50%;
             pointer-events: none;
             z-index: 0;
         }
@@ -236,6 +266,12 @@
         
         .content-section.active {
             display: block;
+            position: relative;
+        }
+        
+        .content-section.active > * {
+            position: relative;
+            z-index: 1;
         }
         
         .logout-btn {
@@ -260,11 +296,11 @@
         
         /* Post Cards */
         .post-card {
-            background: linear-gradient(135deg, var(--white) 0%, #fafafa 100%);
+            background: linear-gradient(135deg, #fffcfd 0%, #fff9fb 50%, #fef8fa 100%);
             padding: 30px;
             border-radius: 20px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(100, 56, 67, 0.04);
             border: 1px solid rgba(100, 56, 67, 0.08);
             transition: all 0.3s ease;
             cursor: pointer;
@@ -896,10 +932,10 @@
         }
         
         .webinar-card {
-            background: linear-gradient(135deg, var(--white) 0%, #fafafa 100%);
+            background: linear-gradient(135deg, #fffcfd 0%, #fff9fb 50%, #fef8fa 100%);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(100, 56, 67, 0.04);
             border: 1px solid rgba(100, 56, 67, 0.08);
             transition: all 0.3s ease;
             cursor: pointer;
@@ -1354,8 +1390,12 @@
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 24px;
-            border-bottom: 2px solid var(--almost-white);
-            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(231, 203, 203, 0.6);
+            padding: 16px 20px 16px 0;
+            border-radius: 12px;
+            background: linear-gradient(90deg, rgba(255, 246, 249, 0.6) 0%, transparent 100%);
+            position: relative;
+            z-index: 1;
         }
         .profile-subnav a {
             padding: 10px 20px;
@@ -1376,6 +1416,17 @@
             background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
             color: var(--white);
             border-color: var(--dark-violet);
+        }
+        
+        .questionnaire-intro,
+        .questionnaire-outro {
+            position: relative;
+            z-index: 1;
+        }
+        
+        #profileTabContent {
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
