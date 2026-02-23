@@ -1,9 +1,6 @@
 // Vercel Serverless Function for Consultation Scheduling
 // This file should be in /api/consultation.js for Vercel deployment
 
-// Use node-fetch v2 for better compatibility
-// Vercel supports node-fetch v2 in CommonJS format
-const fetch = require('node-fetch');
 const admin = require('firebase-admin');
 const { detectBot } = require('../lib/bot-filter');
 
@@ -27,24 +24,11 @@ try {
     console.error('Error initializing Firebase Admin:', error);
 }
 
-// Get API key from environment variable (set in Vercel)
-const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
-const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
-// Campaign ID is now fetched from Firestore slot document (each time slot has its own campaign)
-const CUSTOM_FIELD_PHONE_ID = 'no8Uze'; // phone field - actual GetResponse customFieldId
-const CUSTOM_FIELD_HOUR_ID = 'noddbk'; // hour field - actual GetResponse customFieldId (HH:MM format)
+const { addToMailerLite, GROUPS, MAILERLITE_API_KEY } = require('../lib/mailerlite');
 
-// Validate API key is set
-if (!GETRESPONSE_API_KEY) {
-    console.error('ERROR: GETRESPONSE_API_KEY environment variable is not set!');
+if (!MAILERLITE_API_KEY) {
+    console.error('ERROR: MAILERLITE_API_KEY environment variable is not set!');
 }
-
-// Debug: Log configuration (without exposing full API key)
-console.log('=== GetResponse API Configuration ===');
-console.log('API URL:', GETRESPONSE_API_URL);
-console.log('Campaign ID: (fetched from Firestore slot document)');
-console.log('API Key configured:', GETRESPONSE_API_KEY ? 'Yes' : 'No');
-console.log('Using fetch:', typeof fetch);
 
 module.exports = async function handler(req, res) {
     // Get the origin from the request
@@ -68,12 +52,10 @@ module.exports = async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // Check if API key is configured
-    if (!GETRESPONSE_API_KEY) {
-        console.error('GetResponse API key is not configured');
-        return res.status(500).json({ 
+    if (!MAILERLITE_API_KEY) {
+        return res.status(500).json({
             error: 'Server configuration error',
-            message: 'API key not configured'
+            message: 'API key not configured',
         });
     }
 
@@ -210,16 +192,8 @@ module.exports = async function handler(req, res) {
         
         const slotDocRef = slotQuery.docs[0].ref;
         const slotData = slotQuery.docs[0].data();
-        
-        // Get campaign ID from slot document
-        const campaignId = slotData.campaignId;
-        if (!campaignId) {
-            console.error('Slot missing campaignId:', dateKey, timeKey);
-            return res.status(500).json({
-                error: 'Napaka pri konfiguraciji termina. Prosimo, kontaktirajte podporo.'
-            });
-        }
-        
+        const campaignId = slotData.campaignId || null; // optional, kept for booking record
+
         // Use a transaction to atomically check and book the slot
         // This prevents double-booking if two users try to book the same slot simultaneously
         try {
@@ -246,8 +220,8 @@ module.exports = async function handler(req, res) {
                     email: email.toLowerCase().trim(),
                     date: dateKey,
                     time: timeKey,
-                    campaignId: campaignId,
-                    bookedAt: admin.firestore.FieldValue.serverTimestamp()
+                    campaignId,
+                    bookedAt: admin.firestore.FieldValue.serverTimestamp(),
                 });
             });
             console.log('Slot booked successfully:', dateKey, timeKey, 'Campaign:', campaignId);
@@ -268,228 +242,48 @@ module.exports = async function handler(req, res) {
             });
         }
 
-        // Ensure name is properly set (GetResponse requires name field)
-        // Only use email as fallback if name is truly missing/empty
         const contactName = (name && name.trim()) ? name.trim() : email;
-        
-        // Normalize phone number for GetResponse
-        // GetResponse requires phone numbers with "+" prefix
-        let normalizedPhone = phone.trim();
-        
-        // Remove all spaces, dashes, and parentheses
-        normalizedPhone = normalizedPhone.replace(/[\s\-\(\)]/g, '');
-        
-        // Ensure it starts with "+" for international format
+
+        // Normalize phone for MailerLite (keep +international format)
+        let normalizedPhone = phone.trim().replace(/[\s\-\(\)]/g, '');
         if (!normalizedPhone.startsWith('+')) {
-            // If it starts with country code (e.g., 386 for Slovenia), add "+"
-            // Otherwise, assume it's a local number and add "+386" for Slovenia
             if (normalizedPhone.startsWith('386')) {
                 normalizedPhone = '+' + normalizedPhone;
             } else if (normalizedPhone.startsWith('0')) {
-                // Local format starting with 0, replace with +386
                 normalizedPhone = '+386' + normalizedPhone.substring(1);
             } else {
-                // Assume it's already international format without +, add it
-                normalizedPhone = '+' + normalizedPhone;
+                normalizedPhone = '+' + normalizedPhone.replace(/\D/g, '');
             }
         }
-        
-        // Final validation: should start with + and contain only digits after +
         if (!normalizedPhone.match(/^\+\d+$/)) {
-            // If still invalid, try to clean it up
             normalizedPhone = '+' + normalizedPhone.replace(/\D/g, '');
         }
-        
-        // Prepare complete contact data - send everything at once
-        // GetResponse API v3 format for creating contacts with custom fields
-        // Custom fields must exist in GetResponse account with these exact IDs
-        const contactData = {
-            email: email,
-            name: contactName, // Use actual name, fallback to email only if name is missing
-            campaign: {
-                campaignId: campaignId // Use campaign ID from slot document
-            },
-            customFieldValues: [
-                {
-                    customFieldId: CUSTOM_FIELD_PHONE_ID, // no8Uze - phone field (phone type)
-                    value: [normalizedPhone] // Phone number normalized (digits only, no + prefix) - must be array
-                },
-                {
-                    customFieldId: CUSTOM_FIELD_HOUR_ID, // noddbk - hour field (text type)
-                    value: [hour] // Hour in HH:MM format (e.g., "09:00") - must be array
-                }
-            ]
-            // tags: ['consultation'] // Removed - requires tag ID, not name
-        };
-        
-        // Validate that custom field IDs are set
-        if (!CUSTOM_FIELD_PHONE_ID || !CUSTOM_FIELD_HOUR_ID) {
-            console.error('ERROR: Custom field IDs are not configured!');
-            console.error('Phone ID:', CUSTOM_FIELD_PHONE_ID);
-            console.error('Hour ID:', CUSTOM_FIELD_HOUR_ID);
-        }
-        
-        console.log('=== Creating consultation contact ===');
-        console.log('Raw input - Email:', email);
-        console.log('Raw input - Name:', name);
-        console.log('Raw input - Phone:', phone);
-        console.log('Normalized phone:', normalizedPhone);
-        console.log('Raw input - Hour:', hour);
-        console.log('Raw input - Date:', date);
-        console.log('Campaign ID:', campaignId);
-        console.log('Custom Field IDs:');
-        console.log('  - Phone:', CUSTOM_FIELD_PHONE_ID, '(no8Uze)');
-        console.log('  - Hour:', CUSTOM_FIELD_HOUR_ID, '(noddbk)');
-        console.log('Final contactData.name:', contactData.name);
-        console.log('Custom field values:', JSON.stringify(contactData.customFieldValues, null, 2));
-        console.log('Complete request data:', JSON.stringify(contactData, null, 2));
-        
-        // Try to create contact directly - GetResponse will return 409 if it already exists
-        let response;
-        try {
-            // Format: api-key YOUR_API_KEY (with space after "api-key")
-            const authHeader = `api-key ${GETRESPONSE_API_KEY}`;
-            // Don't log the actual API key - only log that it's configured
-            console.log('Auth header format: api-key [HIDDEN]');
-            console.log('API Key configured: Yes');
-            
-            response = await fetch(GETRESPONSE_API_URL, {
-                method: 'POST',
-                headers: {
-                    'X-Auth-Token': authHeader,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(contactData)
-            });
-            console.log('Fetch completed successfully');
-        } catch (fetchError) {
-            console.error('Fetch threw error:', fetchError);
-            return res.status(500).json({
-                error: 'Network error',
-                message: fetchError.message
-            });
-        }
-        
-        console.log('Response status:', response.status);
-        
-        // Get response text first (might be empty for 202)
-        const responseText = await response.text();
-        let data = {};
-        
-        if (responseText && responseText.length > 0) {
-            try {
-                data = JSON.parse(responseText);
-            } catch (e) {
-                console.log('Response is not JSON (might be empty for 202):', e.message);
-                data = { message: responseText };
-            }
-        }
-        
-        console.log('Response text:', responseText);
-        console.log('Response data:', JSON.stringify(data, null, 2));
 
-        // Handle response
-        console.log('=== GetResponse API Response ===');
-        console.log('Status:', response.status);
-        console.log('Response text:', responseText);
-        console.log('Response data:', JSON.stringify(data, null, 2));
-        
-        // Check if custom fields were saved by examining the response
-        if (data.customFieldValues && Array.isArray(data.customFieldValues)) {
-            console.log('✓ Custom fields found in response:', JSON.stringify(data.customFieldValues, null, 2));
-        } else {
-            console.warn('⚠ WARNING: Response does not include customFieldValues array');
-            console.warn('This might mean custom fields were not saved. Check if custom field IDs are correct.');
-            console.warn('Custom field IDs used:');
-            console.warn('  - Phone:', CUSTOM_FIELD_PHONE_ID);
-            console.warn('  - Hour:', CUSTOM_FIELD_HOUR_ID);
-        }
-        
-        // Check for any errors related to custom fields
-        if (data.context && Array.isArray(data.context)) {
-            const customFieldErrors = data.context.filter(ctx => 
-                ctx.field && (ctx.field.includes('customField') || ctx.field.includes('no8Uze') || ctx.field.includes('noddbk'))
-            );
-            if (customFieldErrors.length > 0) {
-                console.error('✗ Custom field errors found:', JSON.stringify(customFieldErrors, null, 2));
+        // MailerLite: single Consultation Call group, custom fields by key (tags: {$termin_date}, {$termin_time}, {$phone})
+        const result = await addToMailerLite(
+            email.trim().toLowerCase(),
+            contactName,
+            [GROUPS.CONSULTATION],
+            {
+                phone: normalizedPhone,
+                termin_date: dateKey,
+                termin_time: hour,
             }
-        }
-        
-        // 409 = Contact already exists in GetResponse account
-        // BUT check the actual error message to be sure
-        if (response.status === 409) {
-            const errorMessage = data.message || data.error || '';
-            const isAlreadyAdded = errorMessage.includes('already') || 
-                                   errorMessage.includes('duplicate') ||
-                                   (data.code === 1008);
-            
-            console.log('409 response received');
-            console.log('Error message:', errorMessage);
-            console.log('Is "already added" error?', isAlreadyAdded);
-            console.log('Error code:', data.code);
-            
-            if (isAlreadyAdded) {
-                return res.status(409).json({ 
-                    error: 'Contact already added',
-                    message: 'Contact already added',
-                    details: data
-                });
-            } else {
-                // 409 but NOT "already added" - this is a different problem
-                console.error('409 but NOT "already added" error:', data);
-                return res.status(500).json({ 
-                    error: data.message || data.error || 'Failed to schedule consultation',
-                    message: 'Unexpected error occurred',
-                    details: data,
-                    httpStatus: 409
-                });
-            }
-        }
+        );
 
-        // Check if successful (200, 201, 202)
-        const isSuccess = response.status >= 200 && response.status < 300;
-        
-        if (!isSuccess) {
-            // Other errors (400, 500, etc.)
-            console.error('GetResponse API error:', data);
-            console.error('Status:', response.status);
-            console.error('Full error:', JSON.stringify(data, null, 2));
-            
-            let errorMessage = 'Failed to schedule consultation';
-            if (data.message) {
-                errorMessage = data.message;
-            } else if (data.error) {
-                errorMessage = data.error;
-            } else if (data.codeDescription) {
-                errorMessage = data.codeDescription;
-            }
-            
-            return res.status(response.status).json({ 
-                error: errorMessage,
-                details: data,
-                httpStatus: response.status
+        if (!result.success) {
+            console.error('MailerLite consultation error:', result.error, 'Status:', result.status);
+            return res.status(result.status === 422 ? 400 : (result.status >= 400 ? result.status : 500)).json({
+                error: result.error || 'Failed to save consultation details',
+                message: result.error,
             });
         }
 
-        // Success (200, 201, 202)
-        console.log('Contact created successfully');
-        console.log('Response data includes:', JSON.stringify(data, null, 2));
-        
-        // Check if custom fields were saved by looking at the response
-        if (data.customFieldValues) {
-            console.log('Custom fields in response:', JSON.stringify(data.customFieldValues, null, 2));
-        } else {
-            console.warn('WARNING: Response does not include customFieldValues. Custom fields may not have been saved.');
-        }
-        
-        // Booking is already recorded in the transaction above (atomic with slot booking)
-        // This prevents duplicate submissions even if GetResponse fails
-        
-        return res.status(200).json({ 
-            success: true, 
+        console.log('Consultation contact added to MailerLite successfully');
+        return res.status(200).json({
+            success: true,
             message: 'Successfully scheduled consultation',
-            data: data,
-            customFieldsSaved: !!data.customFieldValues
+            customFieldsSaved: true,
         });
     } catch (error) {
         console.error('Server error:', error);

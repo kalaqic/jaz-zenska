@@ -1,12 +1,9 @@
-// Vercel Serverless Function for creating bank transfer invoice
+// Vercel Serverless Function for creating bank transfer invoice (MailerLite for waiting list)
 const Stripe = require('stripe');
 const admin = require('firebase-admin');
-const fetch = require('node-fetch');
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
-const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
-const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
-const PAYMENT_WAITING_CAMPAIGN_ID = 'f5nDe'; // Payment waiting list
+const { addToMailerLite, GROUPS, MAILERLITE_API_KEY } = require('../lib/mailerlite');
 
 if (!STRIPE_SECRET_KEY) {
     console.error('ERROR: STRIPE_SECRET_KEY environment variable is not set!');
@@ -164,33 +161,17 @@ module.exports = async function handler(req, res) {
         await stripe.invoices.sendInvoice(finalizedInvoice.id);
         console.log('✅ Invoice email sent');
 
-        // Step 6: Add to GetResponse Payment waiting list
-        if (GETRESPONSE_API_KEY) {
+        // Step 6: Add to MailerLite "Waiting for payment" group
+        if (MAILERLITE_API_KEY) {
             try {
-                const contactData = {
-                    email: email,
-                    name: `${firstName} ${lastName}`,
-                    campaign: {
-                        campaignId: PAYMENT_WAITING_CAMPAIGN_ID
-                    }
-                };
-
-                const getResponseResponse = await fetch(GETRESPONSE_API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'X-Auth-Token': `api-key ${GETRESPONSE_API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(contactData)
-                });
-
-                if (getResponseResponse.ok || getResponseResponse.status === 409) {
-                    console.log('✅ Added to GetResponse payment waiting list');
+                const result = await addToMailerLite(email, `${firstName} ${lastName}`, [GROUPS.WAITING_FOR_PAYMENT]);
+                if (result.success) {
+                    console.log('✅ Added to MailerLite waiting-for-payment list');
                 } else {
-                    console.warn('⚠️ Failed to add to GetResponse, but continuing');
+                    console.warn('⚠️ MailerLite (non-critical):', result.error);
                 }
-            } catch (getResponseError) {
-                console.warn('⚠️ GetResponse error (non-critical):', getResponseError.message);
+            } catch (mlError) {
+                console.warn('⚠️ MailerLite error (non-critical):', mlError.message);
             }
         }
 

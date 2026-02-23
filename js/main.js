@@ -127,7 +127,7 @@ function initStepsAnimation() {
 // For local testing, set window.API_BASE_URL = 'http://localhost:3000' in HTML before loading this script
 const API_BASE_URL = window.API_BASE_URL || 'https://jaz-zenska.vercel.app';
 
-// Newsletter form submission with GetResponse API
+// Newsletter form submission (MailerLite via /api/newsletter)
 // Uses backend proxy to avoid CORS issues
 function handleNewsletterSubmit(event) {
     event.preventDefault();
@@ -191,7 +191,7 @@ function handleNewsletterSubmit(event) {
         submitBtn.textContent = 'Pošiljanje...';
     }
     
-    // Backend API endpoint (proxy to GetResponse)
+    // Backend API endpoint (MailerLite)
     const API_URL = `${API_BASE_URL}/api/newsletter`;
     
     // Prepare data for backend
@@ -1123,7 +1123,7 @@ function initSchedulingSystem() {
             // Hour is already in HH:MM format (selectedTime)
             const hour = selectedTime; // e.g., "09:00"
             
-            // Backend API endpoint (proxy to GetResponse)
+            // Backend API endpoint (MailerLite)
             const API_URL = `${API_BASE_URL}/api/consultation`;
             
             try {
@@ -1191,7 +1191,7 @@ function initSchedulingSystem() {
                     successMessage.classList.add('active');
                 }, 500);
             } catch (error) {
-                console.error('Error sending to GetResponse:', error);
+                console.error('Error sending to newsletter API:', error);
                 alert('Prišlo je do napake pri pošiljanju. Prosimo, poskusite znova.');
                 scheduleCallBtn.disabled = false;
                 scheduleCallBtn.textContent = 'Prijavi se';

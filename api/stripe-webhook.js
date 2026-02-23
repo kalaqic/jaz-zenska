@@ -1,16 +1,11 @@
-// Vercel Serverless Function for Stripe Webhook
+// Vercel Serverless Function for Stripe Webhook (MailerLite for lists)
 const Stripe = require('stripe');
 const admin = require('firebase-admin');
-const fetch = require('node-fetch');
 const { sendPasswordResetEmail } = require('./send-email');
+const { addToMailerLite, GROUPS } = require('../lib/mailerlite');
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
-const GETRESPONSE_API_KEY = process.env.GETRESPONSE_API_KEY;
-const GETRESPONSE_API_URL = 'https://api.getresponse.com/v3/contacts';
-const IN_GROUP_CAMPAIGN_ID = 'fQYMW'; // In group campaign
-const NEWSLETTER_CAMPAIGN_ID = 'froXf'; // Newsletter campaign
-const PAYMENT_WAITING_CAMPAIGN_ID = 'f5nDe'; // Payment waiting list
 
 if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET) {
     console.error('ERROR: Stripe environment variables are not set!');
@@ -57,38 +52,12 @@ try {
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-// Helper function to add contact to GetResponse campaign
-async function addToGetResponseCampaign(email, name, campaignId) {
-    if (!GETRESPONSE_API_KEY) {
-        return;
-    }
-    
-    try {
-        const contactData = {
-            email: email,
-            name: name || email,
-            campaign: {
-                campaignId: campaignId
-            }
-        };
-        
-        const response = await fetch(GETRESPONSE_API_URL, {
-            method: 'POST',
-            headers: {
-                'X-Auth-Token': `api-key ${GETRESPONSE_API_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(contactData)
-        });
-        
-        if (response.ok || response.status === 409) {
-            console.log(`✅ Added to GetResponse campaign ${campaignId} (or already exists)`);
-        } else {
-            const errorText = await response.text();
-            console.warn(`⚠️ Failed to add to campaign ${campaignId}:`, errorText);
-        }
-    } catch (error) {
-        console.warn(`⚠️ Error adding to campaign ${campaignId} (non-critical):`, error.message);
+async function addToMailerLiteGroups(email, name, groupIds) {
+    const result = await addToMailerLite(email, name || email, groupIds);
+    if (result.success) {
+        console.log('✅ Added to MailerLite group(s)');
+    } else {
+        console.warn('⚠️ MailerLite (non-critical):', result.error);
     }
 }
 
@@ -389,24 +358,14 @@ module.exports = async function handler(req, res) {
                     console.log('   Reset link will redirect to:', resetUrl);
                     console.log('   API response:', JSON.stringify(responseData, null, 2));
 
-                    // 3. Add contact to GetResponse campaigns (for card payment workflow)
-                    console.log('📬 Adding contact to GetResponse campaigns...');
+                    // 3. Add contact to MailerLite (In group + Newsletter) for card payment
+                    console.log('📬 Adding contact to MailerLite...');
                     try {
-                        console.log('   Email:', customerEmail);
-                        console.log('   Name:', customerName);
-                        
-                        // Add to In group (fQYMW)
                         await sendPasswordResetEmail(customerEmail, null, customerName);
-                        
-                        // Add to Newsletter (froXf)
-                        await addToGetResponseCampaign(customerEmail, customerName, NEWSLETTER_CAMPAIGN_ID);
-                        
-                        console.log('✅ Contact added to all GetResponse campaigns successfully');
+                        await addToMailerLiteGroups(customerEmail, customerName, [GROUPS.NEWSLETTER]);
+                        console.log('✅ Contact added to MailerLite successfully');
                     } catch (emailError) {
-                        console.error('❌ Error adding contact to GetResponse:', emailError);
-                        console.error('   Error message:', emailError.message);
-                        console.error('   Error stack:', emailError.stack);
-                        // Don't fail the webhook if GetResponse fails
+                        console.error('❌ Error adding to MailerLite (non-critical):', emailError.message);
                     }
                     
                     // 4. Ensure subscription is set until 2027 (cancel at end date to prevent renewals)
@@ -591,22 +550,12 @@ module.exports = async function handler(req, res) {
                     console.error('❌ Error sending password reset email:', emailError.message);
                 }
                 
-                // Step 7: Remove from payment waiting list and add to three lists
-                if (GETRESPONSE_API_KEY) {
-                    try {
-                        // Remove from payment waiting list (f5nDe) - GetResponse doesn't have a direct remove API
-                        // The automation should handle this, but we'll add to the other lists
-                        
-                        // Add to In group (fQYMW)
-                        await addToGetResponseCampaign(email, `${firstName} ${lastName}`, IN_GROUP_CAMPAIGN_ID);
-                        
-                        // Add to Newsletter (froXf)
-                        await addToGetResponseCampaign(email, `${firstName} ${lastName}`, NEWSLETTER_CAMPAIGN_ID);
-                        
-                        console.log('✅ Updated GetResponse lists');
-                    } catch (getResponseError) {
-                        console.warn('⚠️ GetResponse error (non-critical):', getResponseError.message);
-                    }
+                // Step 7: Add to MailerLite In group + Newsletter (bank transfer paid)
+                try {
+                    await addToMailerLiteGroups(email, `${firstName} ${lastName}`, [GROUPS.IN_GROUP, GROUPS.NEWSLETTER]);
+                    console.log('✅ Updated MailerLite lists');
+                } catch (mlError) {
+                    console.warn('⚠️ MailerLite error (non-critical):', mlError.message);
                 }
                 
                 // Step 8: Create subscription until 2027
