@@ -276,19 +276,33 @@
             z-index: 0;
         }
         
-        .content-logo-watermark {
+        .dashboard-content-logo {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('images/logo/logo_text.webp');
-            background-size: 48%;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.08;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 38%;
+            max-width: 380px;
+            min-width: 200px;
             pointer-events: none;
             z-index: 0;
+        }
+        .dashboard-content-logo img {
+            width: 100%;
+            height: auto;
+            opacity: 0.15;
+            display: block;
+        }
+        .dashboard-content .content-section {
+            max-width: 58%;
+        }
+        @media (max-width: 900px) {
+            .dashboard-content-logo {
+                display: none;
+            }
+            .dashboard-content .content-section {
+                max-width: none;
+            }
         }
         
         .dashboard-content > * {
@@ -1396,7 +1410,9 @@
         </nav>
         
         <div class="dashboard-content">
-            <div class="content-logo-watermark" aria-hidden="true"></div>
+            <div class="dashboard-content-logo" aria-hidden="true">
+                <img src="images/logo/logo_text.webp" alt="">
+            </div>
             <!-- Profile Section (first; contains Profil, Učilnica, Webinari, Vprašalnik) -->
             <div id="profile" class="content-section active">
                 <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Moj profil</h2>
