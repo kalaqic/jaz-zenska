@@ -276,6 +276,21 @@
             z-index: 0;
         }
         
+        .content-logo-watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('images/logo/logo_text.webp');
+            background-size: 48%;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
         .dashboard-content > * {
             position: relative;
             z-index: 1;
@@ -313,84 +328,6 @@
             transform: translateY(-2px);
             background: rgba(255, 255, 255, 0.3);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Post Cards */
-        .post-card {
-            background: linear-gradient(135deg, #fffcfd 0%, #fff9fb 50%, #fef8fa 100%);
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(100, 56, 67, 0.04);
-            border: 1px solid rgba(100, 56, 67, 0.08);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .post-card:hover {
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .post-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            color: var(--dark-violet);
-            margin-bottom: 12px;
-            font-weight: 700;
-        }
-        
-        .post-preview {
-            color: var(--text-dark);
-            line-height: 1.7;
-            margin-bottom: 15px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        .post-full {
-            display: none;
-            color: var(--text-dark);
-            line-height: 1.7;
-            margin-bottom: 20px;
-            white-space: pre-wrap;
-        }
-        
-        .post-full.show {
-            display: block;
-        }
-        
-        .post-actions {
-            display: flex;
-            gap: 25px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(100, 56, 67, 0.1);
-        }
-        
-        .action-btn {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 15px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .action-btn:hover {
-            background: var(--main-white);
-            color: var(--dark-violet);
-        }
-        
-        .action-btn.liked {
-            color: var(--mid-violet);
         }
         
         /* Course Cards */
@@ -787,18 +724,6 @@
         .form-group textarea {
             min-height: 150px;
             resize: vertical;
-        }
-        
-        .post-image {
-            max-width: 60%;
-            max-height: 400px;
-            width: auto;
-            height: auto;
-            border-radius: 15px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            display: block;
         }
         
         .form-group input:focus,
@@ -1467,24 +1392,16 @@
         
         <nav class="dashboard-nav">
             <a href="#" class="nav-item active" data-section="profile">Moj profil</a>
-            <a href="#" class="nav-item" data-section="community">Skupnost</a>
             <a href="#" class="nav-item" data-section="calendar">Koledar</a>
         </nav>
         
         <div class="dashboard-content">
+            <div class="content-logo-watermark" aria-hidden="true"></div>
             <!-- Profile Section (first; contains Profil, Učilnica, Webinari, Vprašalnik) -->
             <div id="profile" class="content-section active">
                 <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Moj profil</h2>
                 <div id="profileContent">
                     <!-- Profile tabs and content loaded here -->
-                </div>
-            </div>
-            
-            <!-- Community Section -->
-            <div id="community" class="content-section">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Skupnost</h2>
-                <div id="communityContent">
-                    <!-- Posts will be loaded here -->
                 </div>
             </div>
             
@@ -1564,35 +1481,30 @@
         </div>
     </div>
 
-    <!-- Add Post Modal -->
-    <div id="addPostModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Nova objava</h2>
-                <button class="modal-close" onclick="closeAddPostModal()">&times;</button>
+    <!-- 25 Stopnic do sreče – upcoming webinar popup -->
+    <div id="stopnicWebinarModal" class="webinar-modal">
+        <div class="webinar-modal-content" style="max-width: 480px;">
+            <div class="webinar-modal-header">
+                <h2 class="webinar-modal-title">25 stopnic do sreče</h2>
+                <button class="webinar-modal-close" onclick="closeStopnicWebinarPopup()">&times;</button>
             </div>
-            <form class="modal-form" onsubmit="submitPost(event)">
-                <div class="form-group">
-                    <label for="postTitle">Naslov</label>
-                    <input type="text" id="postTitle" required>
-                </div>
-                <div class="form-group">
-                    <label for="postContent">Vsebina</label>
-                    <textarea id="postContent" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="postImage">Slika (neobvezno)</label>
-                    <input type="file" id="postImage" accept="image/*" onchange="previewPostImage(event)">
-                    <div id="postImagePreview" style="margin-top: 10px; display: none;">
-                        <img id="postImagePreviewImg" src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 10px; margin-top: 10px;">
-                        <button type="button" onclick="removePostImage()" style="margin-top: 5px; padding: 5px 15px; background: #fee; color: #c33; border: none; border-radius: 5px; cursor: pointer; font-size: 12px;">Odstrani sliko</button>
-                    </div>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeAddPostModal()">Prekliči</button>
-                    <button type="submit" class="btn-primary">Objavi</button>
-                </div>
-            </form>
+            <div class="webinar-modal-body" style="padding: 24px;">
+                <p style="color: var(--text-dark); font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+                    Ta webinar je načrtovan za <strong>5. marec</strong>. Še vedno se mu lahko pridružite!
+                </p>
+                <a href="https://www.jazzenska.com/sreca" target="_blank" rel="noopener noreferrer" style="
+                    display: inline-block;
+                    background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+                    color: var(--white);
+                    padding: 14px 32px;
+                    border-radius: 25px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    text-decoration: none;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(100, 56, 67, 0.3)'">Pridruži se</a>
+            </div>
         </div>
     </div>
 

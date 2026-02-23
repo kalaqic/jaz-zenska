@@ -14,11 +14,6 @@ function ensureAbsoluteUrl(url) {
 
 // Initialize data structures in localStorage
 function initDataStructures() {
-    // Initialize posts if they don't exist
-    if (!localStorage.getItem('posts')) {
-        localStorage.setItem('posts', JSON.stringify([]));
-    }
-    
     // Initialize courses as empty array
     if (!localStorage.getItem('courses')) {
         localStorage.setItem('courses', JSON.stringify([]));
@@ -180,9 +175,6 @@ function switchSection(section) {
         
         // Load section content
         switch(section) {
-            case 'community':
-                loadCommunity();
-                break;
             case 'calendar':
                 loadCalendar();
                 break;
@@ -338,500 +330,6 @@ window.saveQuestionnaire = async function() {
         alert('Pri shranjevanju je prišlo do napake. Poskusite znova.');
     }
 };
-
-// ===== COMMUNITY SECTION =====
-async function loadCommunity() {
-    const user = getCurrentUser();
-    const content = document.getElementById('communityContent');
-    
-    let posts = [];
-    
-    // Try to load from Firestore first
-    try {
-        if (typeof db !== 'undefined') {
-            const postsSnapshot = await db.collection('posts')
-                .orderBy('createdAt', 'desc')
-                .get();
-            
-            if (!postsSnapshot.empty) {
-                posts = postsSnapshot.docs.map(doc => {
-                    const data = doc.data();
-                    return {
-                        id: doc.id,
-                        title: data.title,
-                        author: data.author,
-                        authorId: data.authorId,
-                        content: data.content,
-                        image: data.image || null,
-                        likes: data.likes || [],
-                        likesCount: data.likesCount || (data.likes ? data.likes.length : 0),
-                        commentsCount: data.commentsCount || 0,
-                        createdAt: data.createdAt ? (data.createdAt.toDate ? data.createdAt.toDate().toISOString() : data.createdAt) : new Date().toISOString()
-                    };
-                });
-                
-                // Update localStorage cache
-                localStorage.setItem('posts', JSON.stringify(posts));
-                console.log('Loaded posts from Firestore');
-            }
-        }
-    } catch (error) {
-        console.error('Error loading posts from Firestore:', error);
-    }
-    
-    // Fallback to localStorage if Firestore failed or returned no posts
-    if (posts.length === 0) {
-        posts = JSON.parse(localStorage.getItem('posts') || '[]');
-        console.log('Loaded posts from localStorage');
-    }
-    
-    // Filter out the old welcome post (but keep the welcome message box)
-    const welcomePostTitles = [
-        'Dobrodošla v skupnosti!',
-        'Dobrodošle v skupnost Jaz Ženska!'
-    ];
-    posts = posts.filter(post => !welcomePostTitles.includes(post.title));
-    
-    let html = '';
-    
-    // Welcome message with start date information
-    html += `
-        <div style="
-            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
-            padding: 40px 35px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            border-left: 5px solid var(--mid-violet);
-            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
-        ">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px; text-align: center;">Dobrodošla draga Ženska!</h3>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-bottom: 15px; text-align: center;">
-                Hvala ker si se nam pridružila. S skupnim delom bomo začele <strong>25. marca</strong>. Do takrat te vabim da si pogledaš zanimive vsebine na naši spletni strani in se nam pridružiš na FB, instagramu in youtubu.
-            </p>
-            <div style="background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(153, 98, 122, 0.2);">
-                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px; text-align: center;">
-                    <strong style="color: var(--dark-violet);">Tvoja članarina začne teči s 1. aprilom 2026</strong>, če pa si plačala letno članarino, le ta velja do 31. 12. 2027.
-                </p>
-            </div>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-top: 20px; text-align: center;">
-                Veselim se sodelovanja s tabo. Če imaš že sedaj kakšna vprašanja ali izzive, mi lahko pišeš na <a href="mailto:Marjanca@jazzenska.com" style="color: var(--mid-violet); text-decoration: underline; font-weight: 600;">Marjanca@jazzenska.com</a>.
-            </p>
-        </div>
-    `;
-    
-    // Add post button for admin
-    if (isAdmin()) {
-        html += `
-            <div style="margin-bottom: 30px;">
-                <button onclick="showAddPostModal()" style="
-                    background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-                    color: var(--white);
-                    padding: 12px 30px;
-                    border: none;
-                    border-radius: 25px;
-                    font-size: 16px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                ">+ Dodaj novo objavo</button>
-            </div>
-        `;
-    }
-    
-    // Info message about clicking posts
-    html += `
-        <div style="
-            background: linear-gradient(135deg, var(--main-white) 0%, #fafafa 100%);
-            padding: 15px 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            border-left: 4px solid var(--mid-violet);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        ">
-            <span style="font-size: 20px;">💡</span>
-            <span style="color: var(--text-dark); font-size: 14px; font-weight: 500;">Kliknite na objavo, da vidite celotno vsebino in slike</span>
-        </div>
-    `;
-    
-    // Display posts
-    if (posts.length === 0) {
-        html += '<p style="color: var(--text-light); text-align: center; padding: 40px;">Trenutno ni objav.</p>';
-    } else {
-        // Load user likes from Firestore
-        let userLikes = [];
-        try {
-            if (typeof db !== 'undefined' && user.userId) {
-                const likesSnapshot = await db.collection('users').doc(user.userId)
-                    .collection('likes').get();
-                userLikes = likesSnapshot.docs.map(doc => doc.id);
-            }
-        } catch (error) {
-            console.error('Error loading user likes:', error);
-        }
-        
-        posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(post => {
-            const likes = post.likes || [];
-            const comments = post.comments || [];
-            // Check if user liked from Firestore data, fallback to localStorage
-            const isLiked = userLikes.includes(post.id) || likes.includes(user.userId);
-            const likeCount = likes.length;
-            const commentCount = comments.length;
-            const title = post.title || 'Brez naslova';
-            const preview = post.content.length > 150 ? post.content.substring(0, 150) + '...' : post.content;
-            const isExpanded = localStorage.getItem(`post-expanded-${post.id}`) === 'true';
-            
-            html += `
-                <div class="post-card" onclick="togglePostExpand('${post.id}')">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
-                        <div>
-                            <div style="font-weight: 600; color: var(--dark-violet); font-size: 18px;">${post.author}</div>
-                            <div style="font-size: 12px; color: var(--text-light);">${new Date(post.createdAt).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
-                        </div>
-                    </div>
-                    <div class="post-title">${title}</div>
-                    <div class="post-preview" id="preview-${post.id}">${preview}</div>
-                    <div class="post-full ${isExpanded ? 'show' : ''}" id="full-${post.id}">
-                        ${post.content}
-                        ${post.image ? `<img src="${post.image}" alt="Post image" class="post-image" onclick="event.stopPropagation();">` : ''}
-                    </div>
-                    <div class="post-actions" onclick="event.stopPropagation()">
-                        <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
-                            <span style="font-size: 20px;">${isLiked ? '❤️' : '🤍'}</span>
-                            <span>Všeč mi je!</span>
-                            <span style="margin-left: 5px; font-weight: 600;">${likeCount}</span>
-                        </button>
-                        <button class="action-btn" onclick="showComments('${post.id}')">
-                            <span style="font-size: 20px;">💬</span>
-                            <span>Komentiraj!</span>
-                            <span style="margin-left: 5px; font-weight: 600;">${commentCount}</span>
-                        </button>
-                    </div>
-                    <div id="comments-${post.id}" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(100, 56, 67, 0.1);" onclick="event.stopPropagation()">
-                        <div id="comments-list-${post.id}"></div>
-                        <div style="margin-top: 15px;">
-                            <input type="text" id="comment-input-${post.id}" placeholder="Napišite komentar..." style="
-                                width: 100%;
-                                padding: 12px 18px;
-                                border: 2px solid var(--almost-white);
-                                border-radius: 25px;
-                                font-size: 14px;
-                                transition: all 0.3s ease;
-                            " onkeypress="if(event.key==='Enter') addComment('${post.id}')" onfocus="this.style.borderColor='var(--mid-violet)'" onblur="this.style.borderColor='var(--almost-white)'">
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-    }
-    
-    content.innerHTML = html;
-}
-
-let postImageData = null;
-
-function showAddPostModal() {
-    document.getElementById('addPostModal').classList.add('show');
-    document.getElementById('postTitle').value = '';
-    document.getElementById('postContent').value = '';
-    document.getElementById('postImage').value = '';
-    document.getElementById('postImagePreview').style.display = 'none';
-    postImageData = null;
-}
-
-function closeAddPostModal() {
-    document.getElementById('addPostModal').classList.remove('show');
-    document.getElementById('postImage').value = '';
-    document.getElementById('postImagePreview').style.display = 'none';
-    postImageData = null;
-}
-
-function previewPostImage(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    if (!file.type.startsWith('image/')) {
-        alert('Prosimo, izberite slikovno datoteko.');
-        event.target.value = '';
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        postImageData = e.target.result;
-        document.getElementById('postImagePreviewImg').src = postImageData;
-        document.getElementById('postImagePreview').style.display = 'block';
-    };
-    reader.readAsDataURL(file);
-}
-
-function removePostImage() {
-    document.getElementById('postImage').value = '';
-    document.getElementById('postImagePreview').style.display = 'none';
-    postImageData = null;
-}
-
-async function submitPost(event) {
-    event.preventDefault();
-    
-    const title = document.getElementById('postTitle').value.trim();
-    const content = document.getElementById('postContent').value.trim();
-    const postImageData = window.postImageData || null;
-    
-    if (!title || !content) {
-        alert('Prosimo, izpolnite vsa obvezna polja.');
-        return;
-    }
-    
-    const user = getCurrentUser();
-    if (!user || !user.userId) {
-        alert('Morate biti prijavljeni za objavo.');
-        return;
-    }
-    
-    // Create post object
-    const newPost = {
-        title: title,
-        author: user.name || 'Marjanca',
-        authorId: user.userId,
-        content: content,
-        image: postImageData || null,
-        likes: [],
-        likesCount: 0,
-        commentsCount: 0,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-    
-    try {
-        // Save to Firestore
-        if (typeof db !== 'undefined') {
-            const docRef = await db.collection('posts').add(newPost);
-            console.log('Post saved to Firestore with ID:', docRef.id);
-            
-            // Also update localStorage cache
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-            posts.push({
-                ...newPost,
-                id: docRef.id,
-                createdAt: new Date().toISOString()
-            });
-            localStorage.setItem('posts', JSON.stringify(posts));
-        } else {
-            // Fallback to localStorage if Firestore not available
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-            const postWithId = {
-                ...newPost,
-                id: Date.now().toString(),
-                createdAt: new Date().toISOString()
-            };
-            posts.push(postWithId);
-            localStorage.setItem('posts', JSON.stringify(posts));
-            console.warn('Firestore not available, saved to localStorage');
-        }
-        
-        // Clear form
-        document.getElementById('postTitle').value = '';
-        document.getElementById('postContent').value = '';
-        document.getElementById('postImage').value = '';
-        if (window.postImageData) {
-            window.postImageData = null;
-        }
-        if (document.getElementById('postImagePreview')) {
-            document.getElementById('postImagePreview').style.display = 'none';
-        }
-        
-        closeAddPostModal();
-        loadCommunity();
-    } catch (error) {
-        console.error('Error saving post:', error);
-        alert('Napaka pri shranjevanju objave. Prosimo, poskusite znova.');
-    }
-}
-
-function togglePostExpand(postId) {
-    const preview = document.getElementById(`preview-${postId}`);
-    const full = document.getElementById(`full-${postId}`);
-    
-    if (!preview || !full) return;
-    
-    const isExpanded = full.classList.contains('show');
-    
-    if (isExpanded) {
-        full.classList.remove('show');
-        preview.style.display = '-webkit-box';
-        localStorage.setItem(`post-expanded-${postId}`, 'false');
-    } else {
-        full.classList.add('show');
-        preview.style.display = 'none';
-        localStorage.setItem(`post-expanded-${postId}`, 'true');
-    }
-}
-
-async function toggleLike(postId) {
-    event.stopPropagation();
-    const user = getCurrentUser();
-    if (!user || !user.userId) return;
-    
-    const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-    const post = posts.find(p => p.id === postId);
-    
-    if (!post) return;
-    
-    if (!post.likes) post.likes = [];
-    
-    const index = post.likes.indexOf(user.userId);
-    const isLiked = index > -1;
-    
-    if (isLiked) {
-        post.likes.splice(index, 1);
-    } else {
-        post.likes.push(user.userId);
-    }
-    
-    localStorage.setItem('posts', JSON.stringify(posts));
-    
-    // Save to Firestore
-    try {
-        if (typeof db !== 'undefined') {
-            const userLikesRef = db.collection('users').doc(user.userId)
-                .collection('likes').doc(postId);
-            
-            if (isLiked) {
-                // Unlike - remove from Firestore
-                await userLikesRef.delete();
-            } else {
-                // Like - add to Firestore
-                await userLikesRef.set({
-                    postId: postId,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            }
-            
-            // Update post likes count in Firestore
-            await db.collection('posts').doc(postId).set({
-                likes: post.likes,
-                likesCount: post.likes.length,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
-        }
-    } catch (error) {
-        console.error('Error saving like to Firestore:', error);
-    }
-    
-    loadCommunity();
-}
-
-function showComments(postId) {
-    event.stopPropagation();
-    const commentsDiv = document.getElementById(`comments-${postId}`);
-    if (commentsDiv.style.display === 'none') {
-        commentsDiv.style.display = 'block';
-        loadComments(postId);
-    } else {
-        commentsDiv.style.display = 'none';
-    }
-}
-
-async function loadComments(postId) {
-    const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-    const post = posts.find(p => p.id === postId);
-    if (!post) return;
-    
-    let comments = post.comments || [];
-    
-    // Try to load from Firestore
-    try {
-        if (typeof db !== 'undefined') {
-            const commentsSnapshot = await db.collection('posts').doc(postId)
-                .collection('comments').orderBy('createdAt', 'asc').get();
-            
-            if (!commentsSnapshot.empty) {
-                comments = commentsSnapshot.docs.map(doc => {
-                    const data = doc.data();
-                    return {
-                        id: doc.id,
-                        author: data.author,
-                        authorId: data.authorId,
-                        content: data.content,
-                        createdAt: data.createdAt?.toDate?.()?.toISOString() || data.createdAt
-                    };
-                });
-                
-                // Update localStorage cache
-                post.comments = comments;
-                localStorage.setItem('posts', JSON.stringify(posts));
-            }
-        }
-    } catch (error) {
-        console.error('Error loading comments from Firestore:', error);
-    }
-    
-    const commentsList = document.getElementById(`comments-list-${postId}`);
-    
-    if (comments.length === 0) {
-        commentsList.innerHTML = '<p style="color: var(--text-light); font-size: 14px;">Ni komentarjev.</p>';
-    } else {
-        commentsList.innerHTML = comments.map(comment => `
-            <div style="padding: 10px 0; border-bottom: 1px solid var(--almost-white);">
-                <div style="font-weight: 600; color: var(--dark-violet); font-size: 14px;">${comment.author}</div>
-                <div style="color: var(--text-dark); font-size: 14px; margin-top: 5px;">${comment.content}</div>
-                <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">${new Date(comment.createdAt).toLocaleDateString('sl-SI')}</div>
-            </div>
-        `).join('');
-    }
-}
-
-async function addComment(postId) {
-    const input = document.getElementById(`comment-input-${postId}`);
-    const content = input.value.trim();
-    if (!content) return;
-    
-    const user = getCurrentUser();
-    if (!user || !user.userId) return;
-    
-    const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-    const post = posts.find(p => p.id === postId);
-    
-    if (!post) return;
-    
-    if (!post.comments) post.comments = [];
-    
-    const comment = {
-        id: Date.now().toString(),
-        author: user.name || user.email,
-        authorId: user.userId,
-        content: content,
-        createdAt: new Date().toISOString()
-    };
-    
-    post.comments.push(comment);
-    localStorage.setItem('posts', JSON.stringify(posts));
-    input.value = '';
-    
-    // Save to Firestore
-    try {
-        if (typeof db !== 'undefined') {
-            await db.collection('posts').doc(postId)
-                .collection('comments').add({
-                    author: comment.author,
-                    authorId: comment.authorId,
-                    content: comment.content,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            
-            // Update comment count in post
-            await db.collection('posts').doc(postId).set({
-                commentsCount: post.comments.length,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
-        }
-    } catch (error) {
-        console.error('Error saving comment to Firestore:', error);
-    }
-    
-    await loadComments(postId);
-}
 
 // ===== CLASSROOM SECTION =====
 async function loadClassroom(container) {
@@ -998,9 +496,12 @@ async function loadWebinars(container) {
     } else {
         html = '<div class="webinars-grid">';
         webinars.forEach(webinar => {
+            const isStopnic = webinar.title === '25 Stopnic do srece';
+            const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
+            const cardOnclick = isStopnic ? 'showStopnicWebinarPopup()' : `openWebinar('${webinar.id}')`;
             html += `
-                <div class="webinar-card" onclick="openWebinar('${webinar.id}')">
-                    <img src="images/moja moc je v meni.webp" alt="${escapeHtml(webinar.title)}" class="webinar-card-image">
+                <div class="webinar-card" onclick="${cardOnclick}">
+                    <img src="${cardImage}" alt="${escapeHtml(webinar.title)}" class="webinar-card-image">
                     <div class="webinar-title">${webinar.title}</div>
                     <div class="webinar-date">${webinar.date || ''}</div>
                     <div class="webinar-description">${webinar.description || ''}</div>
@@ -1011,6 +512,22 @@ async function loadWebinars(container) {
     }
     
     content.innerHTML = html;
+}
+
+function showStopnicWebinarPopup() {
+    const modal = document.getElementById('stopnicWebinarModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeStopnicWebinarPopup() {
+    const modal = document.getElementById('stopnicWebinarModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 }
 
 function openWebinar(webinarId) {
@@ -1072,12 +589,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    const stopnicModal = document.getElementById('stopnicWebinarModal');
+    if (stopnicModal) {
+        stopnicModal.addEventListener('click', function(e) {
+            if (e.target === stopnicModal) {
+                closeStopnicWebinarPopup();
+            }
+        });
+    }
+    
     // Close on Escape key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             const modal = document.getElementById('webinarModal');
             if (modal && modal.classList.contains('active')) {
                 closeWebinarModal();
+            }
+            const stopnic = document.getElementById('stopnicWebinarModal');
+            if (stopnic && stopnic.classList.contains('active')) {
+                closeStopnicWebinarPopup();
             }
         }
     });
@@ -1284,6 +814,21 @@ async function loadCalendar() {
         console.log('Loaded events from localStorage');
     }
     
+    // Ensure "25 Stopnic do sreče" webinar on 5 March is always present
+    const stopnicDate = '2026-03-05T10:00:00.000Z';
+    const hasStopnic = events.some(e => e.title === '25 Stopnic do sreče' && (e.date && (e.date.startsWith('2026-03-05') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 5))));
+    if (!hasStopnic) {
+        events.push({
+            id: 'stopnic-webinar-2026',
+            title: '25 Stopnic do sreče',
+            description: 'Brezplačni webinar 25 stopnic do sreče. Začetek ob 19:00. Povezava za Zoom bo dodana pravočasno.',
+            date: stopnicDate,
+            time: '19:00',
+            type: 'webinar',
+            location: 'https://www.jazzenska.com/sreca'
+        });
+    }
+    
     let html = '';
     // Calendar header
     const monthNames = ['Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij', 'Avgust', 'September', 'Oktober', 'November', 'December'];
@@ -1480,6 +1025,8 @@ async function showDayEvents(dateStr) {
             </h3>
             ${dayEvents.map(event => {
                 const eventDate = new Date(event.date);
+                const isStopnic = event.title === '25 Stopnic do sreče';
+                const eventImage = isStopnic ? '<img src="images/aktualen dogodek 2.webp" alt="25 Stopnic do sreče" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px 12px 0 0; margin: -20px -20px 16px -20px; display: block;">' : '';
                 return `
                     <div style="
                         background: var(--main-white);
@@ -1487,7 +1034,9 @@ async function showDayEvents(dateStr) {
                         border-radius: 15px;
                         margin-bottom: 15px;
                         border-left: 4px solid var(--mid-violet);
+                        overflow: hidden;
                     ">
+                        ${eventImage}
                         <h4 style="font-family: 'Playfair Display', serif; font-size: 20px; color: var(--dark-violet); margin-bottom: 10px;">${event.title}</h4>
                         <p style="color: var(--text-dark); line-height: 1.6; margin-bottom: 10px; white-space: pre-wrap;">${event.description || ''}</p>
                         <div style="margin-bottom: 10px;">
@@ -1510,7 +1059,7 @@ async function showDayEvents(dateStr) {
                                     display: inline-block;
                                     transition: all 0.3s ease;
                                     box-shadow: 0 2px 8px rgba(100, 56, 67, 0.3);
-                                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(100, 56, 67, 0.3)'">🔗 Odpri povezavo</a>
+                                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(100, 56, 67, 0.3)'">🔗 Pridruži se</a>
                             ` : ''}
                         </div>
                     </div>
@@ -1528,11 +1077,6 @@ function closeEventModal() {
 
 // Close modal when clicking outside
 document.addEventListener('click', function(e) {
-    const postModal = document.getElementById('addPostModal');
-    if (postModal && e.target === postModal) {
-        closeAddPostModal();
-    }
-    
     const eventModal = document.getElementById('addEventModal');
     if (eventModal && e.target === eventModal) {
         closeAddEventModal();
