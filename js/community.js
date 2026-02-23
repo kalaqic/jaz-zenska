@@ -1073,24 +1073,27 @@ async function showDayEvents(dateStr) {
                             ${event.type === 'webinar' ? '<span style="background: var(--main-white); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: var(--dark-violet);">Webinar</span>' : ''}
                             ${event.type === 'zoom' ? '<span style="background: var(--main-white); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: var(--dark-violet);">Zoom klic</span>' : ''}
                         </div>
-                        <div style="display: flex; gap: 20px; align-items: center; font-size: 14px; color: var(--text-light); flex-wrap: wrap;">
-                            <span>🕐 ${event.time}</span>
-                            ${event.type === 'real-life' ? `<span>📍 ${event.location}</span>` : ''}
-                            ${event.type === 'webinar' || event.type === 'zoom' ? `
-                                <a href="${ensureAbsoluteUrl(event.location)}" target="_blank" rel="noopener noreferrer" style="
-                                    background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-                                    color: var(--white);
-                                    padding: 8px 20px;
-                                    border-radius: 20px;
-                                    font-size: 14px;
-                                    font-weight: 600;
-                                    text-decoration: none;
-                                    display: inline-block;
-                                    transition: all 0.3s ease;
-                                    box-shadow: 0 2px 8px rgba(100, 56, 67, 0.3);
-                                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(100, 56, 67, 0.3)'">🔗 Pridruži se</a>
-                            ` : ''}
+                        <div style="font-size: 14px; color: var(--text-light); margin-bottom: 12px;">
+                            <div style="margin-bottom: 4px;">🕐 ${event.time}</div>
+                            <div>📅 ${eventDate.toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                         </div>
+                        ${event.type === 'real-life' ? `<div style="font-size: 14px; color: var(--text-light); margin-bottom: 12px;">📍 ${event.location}</div>` : ''}
+                        ${event.type === 'webinar' || event.type === 'zoom' ? `
+                        <div style="margin-top: 12px;">
+                            <a href="${ensureAbsoluteUrl(event.location)}" target="_blank" rel="noopener noreferrer" style="
+                                background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+                                color: var(--white);
+                                padding: 10px 24px;
+                                border-radius: 20px;
+                                font-size: 14px;
+                                font-weight: 600;
+                                text-decoration: none;
+                                display: inline-block;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(100, 56, 67, 0.3);
+                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(100, 56, 67, 0.3)'">Pridruži se</a>
+                        </div>
+                        ` : ''}
                     </div>
                 `;
             }).join('')}
