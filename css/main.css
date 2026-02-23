@@ -86,33 +86,6 @@ html {
     height: auto;
 }
 
-/* ===== CUSTOM SCROLLBAR ===== */
-/* Webkit browsers (Chrome, Safari, Edge) */
-::-webkit-scrollbar {
-    width: 12px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--almost-white);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--pinky) 0%, var(--mid-violet) 100%);
-    border-radius: 10px;
-    border: 2px solid var(--almost-white);
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-}
-
-/* Firefox */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--mid-violet) var(--almost-white);
-}
-
 /* ===== TOP BAR ===== */
 .top-bar {
     background: #643843;
