@@ -814,6 +814,15 @@ async function loadCalendar() {
         console.log('Loaded events from localStorage');
     }
     
+    // Exclude events on 6 Feb (user requested removal)
+    function toLocalDateStringCal(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+    }
+    events = events.filter(e => toLocalDateStringCal(new Date(e.date)) !== '2026-02-06');
+    
     // Ensure "25 Stopnic do sreče" webinar on 5 March is always present
     const stopnicDate = '2026-03-05T10:00:00.000Z';
     const hasStopnic = events.some(e => e.title === '25 Stopnic do sreče' && (e.date && (e.date.startsWith('2026-03-05') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 5))));
@@ -1001,6 +1010,26 @@ async function showDayEvents(dateStr) {
         const day = String(d.getDate()).padStart(2, '0');
         return y + '-' + m + '-' + day;
     }
+    
+    // Exclude events on 6 Feb (user requested removal)
+    events = events.filter(e => toLocalDateString(new Date(e.date)) !== '2026-02-06');
+    
+    // Ensure "25 Stopnic do sreče" on 5 March is available when opening that day
+    if (dateStr === '2026-03-05') {
+        const hasStopnic = events.some(e => e.title === '25 Stopnic do sreče');
+        if (!hasStopnic) {
+            events.push({
+                id: 'stopnic-webinar-2026',
+                title: '25 Stopnic do sreče',
+                description: 'Brezplačni webinar 25 stopnic do sreče. Začetek ob 19:00. Povezava za Zoom bo dodana pravočasno.',
+                date: '2026-03-05T10:00:00.000Z',
+                time: '19:00',
+                type: 'webinar',
+                location: 'https://www.jazzenska.com/sreca'
+            });
+        }
+    }
+    
     const dayEvents = events.filter(e => {
         const ed = new Date(e.date);
         return toLocalDateString(ed) === dateStr;
