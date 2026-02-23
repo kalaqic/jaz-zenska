@@ -116,15 +116,16 @@ function initDashboard() {
     roleEl.className = `user-role ${user.role}`;
     
     // Navigation
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function(e) {
+    document.querySelectorAll('.dashboard-switcher .switch-card').forEach(card => {
+        card.addEventListener('click', function(e) {
             e.preventDefault();
             const section = this.getAttribute('data-section');
             switchSection(section);
             
-            // Update active nav
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelectorAll('.dashboard-switcher .switch-card').forEach(c => c.classList.remove('active'));
             this.classList.add('active');
+            this.setAttribute('aria-current', 'page');
+            document.querySelectorAll('.dashboard-switcher .switch-card:not(.active)').forEach(c => c.removeAttribute('aria-current'));
         });
     });
     
