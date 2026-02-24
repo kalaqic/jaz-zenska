@@ -743,21 +743,12 @@ function initSchedulingSystem() {
             });
             
             availableDates = Array.from(availableDates).sort();
-            
-            // If no slots found, initialize with default (for backward compatibility)
+
             if (availableDates.length === 0) {
-                console.log('No slots found in Firestore, using default');
-                const defaultDate = '2026-02-16';
-                const defaultTimes = ['09:00', '09:30', '10:00', '10:30', '11:00'];
-                availableSlots[defaultDate] = {};
-                defaultTimes.forEach(time => {
-                    availableSlots[defaultDate][time] = true;
-                });
-                availableDates = [defaultDate];
-            }
-            
-            // Initialize calendar after fetching slots
-            if (availableDates.length > 0) {
+                console.log('No consultation slots found in Firestore');
+                selectedDate = null;
+                selectedTime = null;
+            } else {
                 const firstAvailableDate = new Date(availableDates[0] + 'T00:00:00');
                 if (!selectedDate || !availableDates.includes(
                     `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
@@ -776,21 +767,11 @@ function initSchedulingSystem() {
             updateSelectedInfo();
         } catch (error) {
             console.error('Error fetching available slots:', error);
-            // Fallback to default if Firestore fails
-            const defaultDate = '2026-02-16';
-            const defaultTimes = ['09:00', '09:30', '10:00', '10:30', '11:00'];
-            availableSlots[defaultDate] = {};
-            defaultTimes.forEach(time => {
-                availableSlots[defaultDate][time] = true;
-            });
-            availableDates = [defaultDate];
-            
-            const firstDate = new Date(defaultDate + 'T00:00:00');
-            currentDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), 1);
-            selectedDate = firstDate;
+            availableSlots = {};
+            availableDates = [];
             renderCalendar();
             updateMonthNavigation();
-            renderTimeSlots();
+            if (selectedDate) renderTimeSlots();
             updateSelectedInfo();
         }
     }
