@@ -132,13 +132,17 @@ module.exports = async function handler(req, res) {
             });
         }
 
-        // Validate hour format (HH:MM)
-        const hourRegex = /^\d{2}:\d{2}$/;
-        if (!hourRegex.test(hour)) {
-            console.error('Invalid hour format:', hour);
-            return res.status(400).json({ 
-                error: 'Invalid hour format. Expected: HH:MM',
-                received: hour
+        // Validate and normalize hour to HH (Firebase and MailerLite use HH only)
+        const hourStr = String(hour).trim();
+        let timeKey; // 2-digit HH e.g. "09", "15"
+        if (/^\d{1,2}$/.test(hourStr)) {
+            timeKey = hourStr.padStart(2, '0'); // "9" -> "09", "15" -> "15"
+        } else if (/^\d{2}:\d{2}$/.test(hourStr)) {
+            timeKey = hourStr.slice(0, 2); // "15:00" -> "15"
+        } else {
+            return res.status(400).json({
+                error: 'Invalid hour. Expected HH (e.g. 9 or 15) or HH:MM (e.g. 15:00).',
+                received: hour,
             });
         }
 
@@ -146,14 +150,13 @@ module.exports = async function handler(req, res) {
         const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
         if (!dateRegex.test(date)) {
             console.error('Invalid date format:', date);
-            return res.status(400).json({ 
+            return res.status(400).json({
                 error: 'Invalid date format. Expected: YYYY-MM-DD',
-                received: date
+                received: date,
             });
         }
-        
+
         const dateKey = date; // YYYY-MM-DD
-        const timeKey = hour; // HH:MM format (already in CET)
         
         // Check availability in Firestore
         if (!db) {
@@ -191,8 +194,6 @@ module.exports = async function handler(req, res) {
         }
         
         const slotDocRef = slotQuery.docs[0].ref;
-        const slotData = slotQuery.docs[0].data();
-        const campaignId = slotData.campaignId || null; // optional, kept for booking record
 
         // Use a transaction to atomically check and book the slot
         // This prevents double-booking if two users try to book the same slot simultaneously
@@ -220,11 +221,10 @@ module.exports = async function handler(req, res) {
                     email: email.toLowerCase().trim(),
                     date: dateKey,
                     time: timeKey,
-                    campaignId,
                     bookedAt: admin.firestore.FieldValue.serverTimestamp(),
                 });
             });
-            console.log('Slot booked successfully:', dateKey, timeKey, 'Campaign:', campaignId);
+            console.log('Slot booked successfully:', dateKey, timeKey);
         } catch (transactionError) {
             console.error('Transaction error:', transactionError);
             if (transactionError.message === 'Slot does not exist') {
@@ -259,7 +259,8 @@ module.exports = async function handler(req, res) {
             normalizedPhone = '+' + normalizedPhone.replace(/\D/g, '');
         }
 
-        // MailerLite: single Consultation Call group, custom fields by key (tags: {$termin_date}, {$termin_time}, {$phone})
+        // MailerLite: Consultation Call group. termin_time as HH without leading zero ("9", "15")
+        const hourForMailerLite = parseInt(timeKey, 10).toString(); // "09" -> "9", "15" -> "15"
         const result = await addToMailerLite(
             email.trim().toLowerCase(),
             contactName,
@@ -267,7 +268,7 @@ module.exports = async function handler(req, res) {
             {
                 phone: normalizedPhone,
                 termin_date: dateKey,
-                termin_time: hour,
+                termin_time: hourForMailerLite,
             }
         );
 

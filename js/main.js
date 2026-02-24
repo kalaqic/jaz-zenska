@@ -902,6 +902,14 @@ function initSchedulingSystem() {
         }
     }
     
+    // Show hour as HH:00 (backend stores HH only)
+    function formatTimeDisplay(time) {
+        if (!time) return time;
+        const t = String(time).trim();
+        if (t.includes(':')) return t;
+        return t.padStart(2, '0') + ':00';
+    }
+
     // Render time slots
     function renderTimeSlots() {
         const timeSlotsGrid = document.getElementById('time-slots-grid');
@@ -932,7 +940,7 @@ function initSchedulingSystem() {
         allTimes.forEach(time => {
             const slot = document.createElement('div');
             slot.className = 'time-slot';
-            slot.textContent = time;
+            slot.textContent = formatTimeDisplay(time);
             
             const isAvailable = timesForDate[time] === true;
             
@@ -969,7 +977,7 @@ function initSchedulingSystem() {
                 month: 'long', 
                 day: 'numeric' 
             });
-            selectedInfo.innerHTML = `<p><strong>Izbrano:</strong> ${dateStr} ob ${selectedTime}</p>`;
+            selectedInfo.innerHTML = `<p><strong>Izbrano:</strong> ${dateStr} ob ${formatTimeDisplay(selectedTime)}</p>`;
         } else if (selectedDate) {
             const dateStr = selectedDate.toLocaleDateString('sl-SI', { 
                 weekday: 'long', 
