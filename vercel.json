@@ -24,6 +24,10 @@
       "destination": "/sreca.html"
     },
     {
+      "source": "/pohod",
+      "destination": "/pohod.html"
+    },
+    {
       "source": "/ebook-signup",
       "destination": "/ebook-signup.html"
     },
@@ -112,6 +116,11 @@
     {
       "source": "/sreca.html",
       "destination": "/sreca",
+      "permanent": true
+    },
+    {
+      "source": "/pohod.html",
+      "destination": "/pohod",
       "permanent": true
     },
     {
