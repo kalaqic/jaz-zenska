@@ -14,7 +14,23 @@
     <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
     <link rel="stylesheet" href="css/main.css">
     <style>
-        .pohod-checkout-section { padding: 60px 20px 80px; max-width: 560px; margin: 0 auto; }
+        .pohod-checkout-wrapper {
+            position: relative; padding: 60px 20px 80px; overflow: hidden;
+            background: linear-gradient(135deg, #f8f0f2 0%, #f5f0f2 50%, #f0e8ed 100%);
+        }
+        .pohod-checkout-wrapper::before {
+            content: ''; position: absolute; top: 50%; right: -100px; transform: translateY(-50%);
+            width: 500px; height: 500px; background-image: url('images/background-decorations.webp');
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            opacity: 0.7; z-index: 0; pointer-events: none;
+        }
+        .pohod-checkout-wrapper::after {
+            content: ''; position: absolute; top: 20%; left: -120px; transform: translateY(-50%);
+            width: 400px; height: 400px; background-image: url('images/background-decorations.webp');
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            opacity: 0.5; z-index: 0; pointer-events: none;
+        }
+        .pohod-checkout-section { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
         .pohod-checkout-section h1 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--dark-violet); text-align: center; margin-bottom: 12px; }
         .pohod-checkout-section .subtitle { text-align: center; font-size: 18px; color: #555; margin-bottom: 32px; }
         .pohod-form-box {
@@ -99,6 +115,7 @@
         </div>
     </div>
 
+    <section class="pohod-checkout-wrapper">
     <section class="pohod-checkout-section">
         <h1>Pohod 100 Žensk na Trško Goro</h1>
         <p class="subtitle">Vstopnica 27 € – varno plačilo preko Stripe</p>
@@ -124,6 +141,7 @@
             <p>Žal je bilo 100 mest za Pohod 100 Žensk na Trško Goro že razporejenih. Hvala za vaše zanimanje!</p>
             <a href="pohod.html">← Nazaj na pohod</a>
         </div>
+    </section>
     </section>
 
     <script src="js/main.js"></script>
