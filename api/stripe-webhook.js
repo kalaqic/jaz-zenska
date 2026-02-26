@@ -165,13 +165,67 @@ module.exports = async function handler(req, res) {
         console.log('Session ID:', session.id);
         console.log('Mode:', session.mode); // 'subscription' or 'payment'
         console.log('Payment status:', session.payment_status);
-        console.log('Status:', session.status);
-        console.log('Customer email:', session.customer_details?.email);
-        console.log('Customer details:', JSON.stringify(session.customer_details, null, 2));
-        console.log('Subscription metadata:', session.metadata);
+        console.log('Metadata:', session.metadata);
 
-        const customerEmail = session.customer_details?.email || session.customer_email;
-        const customerName = session.customer_details?.name || '';
+        const customerEmail = session.customer_details?.email || session.customer_email || session.metadata?.email;
+        const customerName = session.customer_details?.name || session.metadata?.name || '';
+
+        // —— Pohod: one-time payment 27 € —— assign event_number, MailerLite, send confirmation email
+        if (session.metadata && session.metadata.type === 'pohod') {
+            console.log('📌 Pohod checkout – assigning number and sending confirmation');
+            const { addToMailerLite, GROUPS } = require('../lib/mailerlite');
+            const POHOD_DOC_ID = 'pohod';
+            const MAX_TICKETS = 100;
+
+            if (!customerEmail) {
+                console.error('❌ Pohod: no email in session');
+                return res.status(400).json({ error: 'No email in session' });
+            }
+
+            const db = admin.firestore();
+            const ticketRef = db.collection('availableTickets').doc(POHOD_DOC_ID);
+            let eventNumber;
+
+            try {
+                await db.runTransaction(async (tx) => {
+                    const doc = await tx.get(ticketRef);
+                    let nextNumber;
+                    if (!doc.exists) {
+                        nextNumber = 2;
+                        eventNumber = 1;
+                        tx.set(ticketRef, { nextNumber });
+                    } else {
+                        nextNumber = doc.data().nextNumber || 1;
+                        if (nextNumber > MAX_TICKETS) throw new Error('POHOD_SOLD_OUT');
+                        eventNumber = nextNumber;
+                        tx.update(ticketRef, { nextNumber: nextNumber + 1 });
+                    }
+                });
+            } catch (e) {
+                if (e.message === 'POHOD_SOLD_OUT') {
+                    console.warn('Pohod sold out after payment – manual check needed');
+                    return res.status(200).json({ received: true });
+                }
+                throw e;
+            }
+
+            if (GROUPS.POHOD) {
+                const result = await addToMailerLite(customerEmail, customerName, [GROUPS.POHOD], {
+                    event_number: String(eventNumber),
+                    phone: session.metadata.phone || '',
+                });
+                if (!result.success) console.warn('MailerLite pohod:', result.error);
+            }
+
+            // Confirmation email: add contact to MailerLite with event_number above.
+            // Set up a MailerLite automation that sends when someone is added to the Pohod group,
+            // using the merge field {{ event_number }} in the email body.
+            console.log('✅ Pohod checkout handled – event_number', eventNumber);
+            return res.status(200).json({ received: true });
+        }
+
+        // —— Default: membership subscription flow ——
+        console.log('Customer details:', JSON.stringify(session.customer_details, null, 2));
         
         console.log('Extracted email:', customerEmail);
         console.log('Extracted name:', customerName);

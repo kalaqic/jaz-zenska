@@ -10,177 +10,120 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>100 Žensk Pohod na Trško Goro – Jaz Ženska</title>
+    <title>Pohod 100 Žensk na Trško Goro – Jaz Ženska</title>
     <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
     <link rel="stylesheet" href="css/main.css">
     <style>
-        .pohod-banner {
-            position: relative;
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto 40px;
+        .webinar-section { position: relative; padding: 80px 20px; overflow: hidden; }
+        .webinar-intro-section { background: linear-gradient(135deg, #f8f0f2 0%, #f5f0f2 50%, #f0e8ed 100%); position: relative; }
+        .webinar-intro-section .webinar-container { position: relative; z-index: 1; }
+        .webinar-invitation-section { background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%); position: relative; }
+        .webinar-invitation-section::before {
+            content: ''; position: absolute; top: 50%; right: -100px; transform: translateY(-50%);
+            width: 500px; height: 500px; background-image: url('images/background-decorations.webp');
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            opacity: 0.7; z-index: 0; pointer-events: none;
         }
-        .pohod-banner img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 12px;
+        .webinar-invitation-section .webinar-container { position: relative; z-index: 1; }
+        .webinar-about-section { background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%); position: relative; padding-top: 0; }
+        .webinar-about-section::before {
+            content: ''; position: absolute; top: 50%; left: -100px; transform: translateY(-50%);
+            width: 500px; height: 500px; background-image: url('images/background-decorations.webp');
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            opacity: 0.7; z-index: 0; pointer-events: none;
         }
-        .pohod-badge {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--mid-violet);
-            color: var(--white);
-            padding: 12px 28px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 20px rgba(100, 56, 67, 0.4);
-            z-index: 2;
+        .webinar-about-section .webinar-container { position: relative; z-index: 1; }
+        .webinar-benefits-section { background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%); position: relative; padding-top: 0; }
+        .webinar-benefits-section::before {
+            content: ''; position: absolute; top: 50%; right: -100px; transform: translateY(-50%);
+            width: 500px; height: 500px; background-image: url('images/background-decorations.webp');
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            opacity: 0.7; z-index: 0; pointer-events: none;
         }
-        .pohod-section {
-            padding: 40px 20px 80px;
-            background: #fff;
-            position: relative;
-            overflow: hidden;
+        .webinar-benefits-section .webinar-container { position: relative; z-index: 1; }
+        .webinar-container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+        .webinar-header { text-align: center; margin-bottom: 50px; }
+        .webinar-header h1 { font-family: 'Playfair Display', serif; font-size: 48px; color: var(--dark-violet); margin-bottom: 20px; line-height: 1.3; }
+        .section-content { position: relative; z-index: 1; }
+        .section-content h2 { font-family: 'Playfair Display', serif; font-size: 36px; color: var(--dark-violet); margin-top: 0; margin-bottom: 25px; text-align: center; }
+        .section-content p { font-size: 17px; line-height: 1.9; color: #4a4a4a; margin-bottom: 22px; }
+        .section-content p:last-of-type { margin-bottom: 0; }
+        .section-content a { color: var(--mid-violet); font-weight: 600; }
+        .section-content a:hover { text-decoration: underline; }
+        .section-content .cta-button,
+        .section-content .cta-button:hover { color: #fff !important; }
+        .cta-section { text-align: center; margin-top: 30px; margin-bottom: 0; }
+        .cta-button {
+            display: inline-block; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: #fff;
+            padding: 22px 60px; border-radius: 50px; font-size: 20px; font-weight: 700; text-decoration: none;
+            text-align: center; margin: 30px auto; transition: all 0.3s ease; cursor: pointer; border: none;
+            box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4); text-transform: uppercase; letter-spacing: 1px;
         }
-        .pohod-section::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: -100px;
-            transform: translateY(-50%);
-            width: 500px;
-            height: 500px;
-            background-image: url('images/background-decorations.webp');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.7;
-            z-index: 0;
+        .cta-button:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5); color: #fff; }
+        .content-image { text-align: center; margin: 40px 0; }
+        .content-image img { width: 100%; max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+        .webinar-banner {
+            background: linear-gradient(135deg, var(--dark-violet) 0%, var(--mid-violet) 100%);
+            padding: 80px 20px; position: relative; overflow: hidden;
+        }
+        .webinar-banner::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
             pointer-events: none;
         }
-        .pohod-section::after {
-            content: '';
-            position: absolute;
-            top: 30%;
-            left: -120px;
-            width: 400px;
-            height: 400px;
-            background-image: url('images/background-decorations.webp');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.5;
-            z-index: 0;
-            pointer-events: none;
+        .webinar-banner-container { max-width: 1200px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+        .webinar-banner-label {
+            display: inline-block; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+            color: rgba(255,255,255,0.9); margin-bottom: 20px; padding-bottom: 15px; position: relative;
         }
-        .pohod-container {
-            max-width: 700px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
+        .webinar-banner-label::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 60px; height: 2px; background: rgba(255,255,255,0.6);
         }
-        .pohod-section h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 36px;
-            color: var(--dark-violet);
-            text-align: center;
-            margin-bottom: 24px;
-            line-height: 1.3;
+        .webinar-banner-title {
+            font-family: 'Playfair Display', serif; font-size: 48px; font-weight: 700; color: var(--white);
+            margin-bottom: 30px; line-height: 1.2; text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        .pohod-section .pohod-lead {
-            font-size: 18px;
-            color: var(--text-dark);
-            text-align: center;
-            margin-bottom: 32px;
-            line-height: 1.7;
+        .webinar-banner-date {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: 20px; color: rgba(255,255,255,0.95); font-weight: 500;
         }
-        .pohod-body {
-            font-size: 17px;
-            color: var(--text-dark);
-            line-height: 1.85;
-            margin-bottom: 36px;
-        }
-        .pohod-body p {
-            margin-bottom: 1em;
-        }
-        .pohod-body p:last-child {
-            margin-bottom: 0;
-        }
-        .pohod-body a {
-            color: var(--mid-violet);
-            font-weight: 600;
-        }
-        .pohod-body a:hover {
-            text-decoration: underline;
-        }
+        .webinar-banner-date svg { width: 24px; height: 24px; }
         .pohod-form-box {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            max-width: 500px; margin: 30px auto 0;
         }
-        .pohod-form-box label {
-            display: block;
-            font-weight: 600;
-            color: var(--dark-violet);
-            margin-bottom: 8px;
-        }
+        .pohod-form-box label { display: block; font-weight: 600; color: var(--dark-violet); margin-bottom: 8px; }
         .pohod-form-box input[type="text"],
         .pohod-form-box input[type="email"] {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid var(--almost-white);
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
+            width: 100%; padding: 15px 20px; border: 2px solid var(--almost-white); border-radius: 15px;
+            font-size: 16px; margin-bottom: 20px; box-sizing: border-box;
         }
-        .pohod-form-box input:focus {
-            outline: none;
-            border-color: var(--mid-violet);
-        }
+        .pohod-form-box input:focus { outline: none; border-color: var(--mid-violet); }
         .pohod-form-box button[type="submit"] {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-            color: var(--white);
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
+            width: 100%; padding: 16px; background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white); border: none; border-radius: 50px; font-size: 18px; font-weight: 600;
+            cursor: pointer; font-family: 'Montserrat', sans-serif;
         }
-        .pohod-form-box button[type="submit"]:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.3);
-        }
-        .pohod-form-box button[type="submit"]:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+        .pohod-form-box button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(100,56,67,0.3); }
+        .pohod-form-box button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
         .pohod-message { margin-top: 20px; padding: 14px; border-radius: 10px; display: none; }
-        .pohod-message.error { background: #fee; color: #c00; display: block; }
-        .pohod-message.success { background: #efe; color: #060; display: block; }
-        .pohod-sold-out {
-            text-align: center;
-            padding: 40px 20px;
-            background: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-        }
+        .pohod-message.error { background: #f8d7da; color: #721c24; display: block; }
+        .pohod-sold-out { text-align: center; padding: 40px 20px; }
         .pohod-sold-out h2 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 16px; }
-        .pohod-sold-out p { font-size: 17px; color: var(--text-dark); line-height: 1.6; }
         .pohod-thank-you { text-align: center; padding: 40px 20px; display: none; }
         .pohod-thank-you.active { display: block; }
-        .pohod-thank-you .icon { width: 70px; height: 70px; background: linear-gradient(135deg, var(--mid-violet), var(--dark-violet)); border-radius: 50%; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; font-size: 36px; color: var(--white); }
-        .pohod-thank-you h2 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 12px; }
-        .pohod-thank-you p { font-size: 17px; color: var(--text-dark); }
+        .pohod-thank-you .icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--mid-violet), var(--dark-violet)); border-radius: 50%; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--white); }
+        .pohod-thank-you h2 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--dark-violet); margin-bottom: 15px; }
+        .pohod-thank-you p { font-size: 18px; color: var(--text-light); line-height: 1.6; }
+        @media (max-width: 768px) {
+            .webinar-header h1 { font-size: 36px; }
+            .section-content h2 { font-size: 28px; }
+            .webinar-section { padding: 60px 15px; }
+            .webinar-banner { padding: 60px 20px; }
+            .webinar-banner-title { font-size: 36px; }
+            .webinar-banner-date { font-size: 18px; }
+        }
     </style>
 </head>
 <body>
@@ -238,109 +181,85 @@
         </div>
     </div>
 
-    <section class="pohod-section">
-        <div class="pohod-container">
-            <div class="pohod-banner">
-                <img src="images/pohod.webp" alt="100 Žensk Pohod na Trško Goro">
+    <!-- Banner (same as sreca) -->
+    <section class="webinar-banner">
+        <div class="webinar-banner-container">
+            <span class="webinar-banner-label">Pohod</span>
+            <h1 class="webinar-banner-title">Pohod 100 Žensk na Trško Goro</h1>
+            <div class="webinar-banner-date">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>Zbor ob 8:00 v Sevnu – vrh Trške gore</span>
             </div>
-            <h1>100 Žensk Pohod na Trško Goro</h1>
+        </div>
+    </section>
 
-            <div class="pohod-body">
-                <p><strong>Draga Ženska!</strong></p>
+    <!-- Section 1: Intro -->
+    <section class="webinar-section webinar-intro-section">
+        <div class="webinar-container">
+            <div class="webinar-header">
+                <h1>Draga Ženska!</h1>
+            </div>
+            <div class="section-content">
                 <p>Vabim te, da se nam pridružiš na 2. pohodu 100 žensk na Trško Goro.</p>
                 <p>Trška Gora je veliko več kot vinorodno področje. Je prostor zelena oaza nad reko Krko, posejana z vinogradi in zidanicami, kjer so se od nekdaj ljudje družili, se veselili, prepevali, delali in živeli. Na vrhu stoji čudovita Marijina cerkev, ob kateri rastejo mogočne lipe.</p>
-                <p>Ob 8 uri zjutraj se bomo zbrali ob vznožju Trške gore v kraju Sevno, kjer se ob Centru biotehnike in turizma Grm Novo mesto nahaja vstopna točka z urejenimi parkirnimi prostori. Za začetek nas bo pot peljala mimo zidanice, kjer je ustvarjal skladatelj Marjan Kozina. Tam bo naš prvi postanek in prvo, prav prijetno presenečenje. Nadaljevanje poti do zidanice Teropšič, kje nam bodo pripravili dobrodošlico in malico. Po kratkem počitku in uživanju v prekrasnih pogledih in razgledih na dolino reke Krke in zelene Gorjance, pa se bomo podale na vrh Trške gore. V senci mogočnih lip se bomo najprej osvežile, nato pa se zazrle vase in začutile neverjetno moč narave in se prepustile vodeni meditaciji ob žvrgolenju ptic. Spust v dolino bo lahkoten, ob prijetnem druženju in klepetu, zaključile pa bomo s pozdravom novih prijateljic in obljubo, da pridemo ponovno naslednje leto.</p>
-                <p>Naj te opozorim, da bomo na pohod sprejeli res samo 100 žensk, da bo vsaka ob prijavi prejela svojo vstopnico, ki pa bo hkrati tudi srečka in mogoče boš ravno ti dobila kakšno od lepih nagrad. Kot lani, bo tudi letos glavna nagrada križarjenje po Jadranu na luksuzni ladji 5* in še tri lepe nagrade.</p>
-                <p><strong>Prijavi se in se nam pridruži.</strong></p>
-                <p>Pohod je brezplačen, bomo pa veseli prostovoljnih prispevkov, ki jih bomo namenili domačinom, ki nam bodo pripravili dobrodošlico, malico, in še kakšno lepo presenečenje.</p>
-                <p>Pohod je primeren za vse, ki lahko hodite po blagih strminah, dolg je malo manj kot 7 km in za samo hojo bomo porabile okoli 2 uri. Z vmesnimi postanki, druženjem, malico in meditacijo bo trajal okoli 5 ur, tako da se bomo na izhodiščno točko vrnile nekje med 13 in 14 uro.</p>
-                <p>Ne odlašaj, prijavi se takoj in si zagotovi udeležbo na enkratnem pohodu 100 žensk na Trško Goro.</p>
-                <p>Če pa imaš še kakšna dodatna vprašanja, prosim piši na: <a href="mailto:info@jazenska.com">info@jazenska.com</a></p>
-            </div>
-
-            <div id="pohod-form-wrap">
-                <div class="pohod-form-box">
-                    <form id="pohod-signup-form">
-                        <input type="text" name="are_you_a_bot" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
-                        <input type="hidden" name="form_start_time" id="pohod_form_start_time">
-                        <label for="pohod-name">Vaše ime</label>
-                        <input type="text" id="pohod-name" name="name" placeholder="Vaše ime" required>
-                        <label for="pohod-email">Vaš email</label>
-                        <input type="email" id="pohod-email" name="email" placeholder="vas@email.com" required>
-                        <button type="submit" id="pohod-submit">Prijavi me – zagotovi si mesto</button>
-                        <div class="pohod-message" id="pohod-message"></div>
-                    </form>
+                <div class="content-image">
+                    <img src="images/pohod.webp" alt="100 Žensk Pohod na Trško Goro">
+                </div>
+                <p>Ob 8 uri zjutraj se bomo zbrali ob vznožju Trške gore v kraju Sevno, kjer se ob Centru biotehnike in turizma Grm Novo mesto nahaja vstopna točka z urejenimi parkirnimi prostori. Za začetek nas bo pot peljala mimo zidanice, kjer je ustvarjal skladatelj Marjan Kozina. Tam bo naš prvi postanek in prvo, prav prijetno presenečenje.</p>
+                <div class="cta-section">
+                    <a href="pohod-checkout.html" class="cta-button">Prijavi se</a>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="pohod-sold-out" id="pohod-sold-out" style="display: none;">
-                <h2>Vsa mesta so zasedena</h2>
-                <p>Žal je bilo 100 mest za Pohod na Trško Goro že razporejenih. Hvala za vaše zanimanje!</p>
+    <!-- Section 2 -->
+    <section class="webinar-section webinar-invitation-section">
+        <div class="webinar-container">
+            <div class="section-content">
+                <p>Nadaljevanje poti do zidanice Teropšič, kje nam bodo pripravili dobrodošlico in malico. Po kratkem počitku in uživanju v prekrasnih pogledih in razgledih na dolino reke Krke in zelene Gorjance, pa se bomo podale na vrh Trške gore. V senci mogočnih lip se bomo najprej osvežile, nato pa se zazrle vase in začutile neverjetno moč narave in se prepustile vodeni meditaciji ob žvrgolenju ptic.</p>
+                <p>Spust v dolino bo lahkoten, ob prijetnem druženju in klepetu, zaključile pa bomo s pozdravom novih prijateljic in obljubo, da pridemo ponovno naslednje leto.</p>
+                <div class="cta-section">
+                    <a href="pohod-checkout.html" class="cta-button">Zagotovi si mesto</a>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <div class="pohod-thank-you" id="pohod-thank-you">
-                <div class="icon">✓</div>
-                <h2>Hvala za prijavo!</h2>
-                <p>Uspešno ste se prijavili na 100 Žensk Pohod na Trško Goro. Potrditveno sporočilo boste prejele na email.</p>
+    <!-- Section 3 -->
+    <section class="webinar-section webinar-about-section">
+        <div class="webinar-container">
+            <div class="section-content">
+                <p>Naj te opozorim, da bomo na pohod sprejeli res samo 100 žensk, da bo vsaka ob prijavi prejela svojo vstopnico, ki pa bo hkrati tudi srečka in mogoče boš ravno ti dobila kakšno od lepih nagrad. Kot lani, bo tudi letos glavna nagrada križarjenje po Jadranu na luksuzni ladji 5* in še tri lepe nagrade.</p>
+                <p><strong>Prijavi se in se nam pridruži.</strong></p>
+                <p>Udeležba stane 27 €. Z nakupom vstopnice si zagotoviš mesto in prejmeš svojo številko udeleženke ter potrdilo na email.</p>
+                <div class="cta-section">
+                    <a href="pohod-checkout.html" class="cta-button">Prijavi me</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Checkout CTA -->
+    <section class="webinar-section webinar-benefits-section" id="pohod-prijava">
+        <div class="webinar-container">
+            <div class="section-content">
+                <p>Pohod je primeren za vse, ki lahko hodite po blagih strminah, dolg je malo manj kot 7 km in za samo hojo bomo porabile okoli 2 uri. Z vmesnimi postanki, druženjem, malico in meditacijo bo trajal okoli 5 ur, tako da se bomo na izhodiščno točko vrnile nekje med 13 in 14 uro.</p>
+                <p>Pohod bo vodila Marjanca Trščinar Antić, ustanoviteljica skupnosti Jaz ženska, življenjska učiteljica, hipnoterapevtka in vodnica z dolgoletnimi izkušnjami. Več si lahko pogledaš na <a href="https://www.jazzenska.com">www.jazzenska.com</a>.</p>
+                <p>Ne odlašaj – za udeležbo plačaj 27 € in si zagotovi mesto. Na strani za plačilo vnesete podatke in preko Stripe varno poravnate. Po plačilu boste prejeli email s svojo številko udeleženke.</p>
+                <p>Če pa imaš še kakšna dodatna vprašanja, prosim piši na: <a href="mailto:info@jazenska.com">info@jazenska.com</a></p>
+                <div class="cta-section">
+                    <a href="pohod-checkout.html" class="cta-button">Nadaljuj na plačilo (27 €)</a>
+                </div>
             </div>
         </div>
     </section>
 
     <script src="js/main.js"></script>
-    <script>
-        (function() {
-            const form = document.getElementById('pohod-signup-form');
-            const wrap = document.getElementById('pohod-form-wrap');
-            const soldOut = document.getElementById('pohod-sold-out');
-            const thankYou = document.getElementById('pohod-thank-you');
-            const message = document.getElementById('pohod-message');
-            const submitBtn = document.getElementById('pohod-submit');
-            const formStartInput = document.getElementById('pohod_form_start_time');
-
-            form.addEventListener('focusin', function() {
-                if (!formStartInput.value) formStartInput.value = Date.now();
-            }, { once: true });
-
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                message.className = 'pohod-message';
-                message.textContent = '';
-                message.style.display = 'none';
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Pošiljanje...';
-
-                const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
-                const res = await fetch(apiBase + '/api/pohod-signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: document.getElementById('pohod-name').value.trim(),
-                        email: document.getElementById('pohod-email').value.trim(),
-                        form_start_time: formStartInput.value || Date.now()
-                    })
-                });
-
-                const data = await res.json().catch(function() { return {}; });
-
-                if (res.ok && data.success) {
-                    wrap.style.display = 'none';
-                    thankYou.classList.add('active');
-                    return;
-                }
-
-                if (data.soldOut || (res.status === 400 && data.error)) {
-                    wrap.style.display = 'none';
-                    soldOut.style.display = 'block';
-                    return;
-                }
-
-                message.className = 'pohod-message error';
-                message.textContent = data.error || 'Prišlo je do napake. Poskusite znova.';
-                message.style.display = 'block';
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Prijavi me – zagotovi si mesto';
-            });
-        })();
-    </script>
 </body>
 </html>
