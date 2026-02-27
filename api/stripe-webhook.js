@@ -168,21 +168,37 @@ module.exports = async function handler(req, res) {
         console.log('Metadata:', session.metadata);
 
         const customerEmail = session.customer_details?.email || session.customer_email || session.metadata?.email;
-        const customerName = session.customer_details?.name || session.metadata?.name || '';
+        const customerName = session.customer_details?.name || session.metadata?.name || session.client_reference_id || '';
 
-        // —— Pohod: one-time payment 27 € —— assign event_number, MailerLite, send confirmation email
-        if (session.metadata && session.metadata.type === 'pohod') {
-            console.log('📌 Pohod checkout – assigning number and sending confirmation');
+        // Pohod: either metadata.type === 'pohod' (API-created session) or session from our Payment Link
+        const isPohodPayment = (session.metadata && session.metadata.type === 'pohod') ||
+            (process.env.STRIPE_POHOD_PAYMENT_LINK_ID && session.payment_link === process.env.STRIPE_POHOD_PAYMENT_LINK_ID);
+
+        // —— Pohod: one-time payment 27 € —— assign event_number, MailerLite; confirmation email via MailerLite automation
+        if (isPohodPayment) {
+            console.log('📌 Pohod checkout – processing');
             const { addToMailerLite, GROUPS } = require('../lib/mailerlite');
             const POHOD_DOC_ID = 'pohod';
             const MAX_TICKETS = 100;
+            const db = admin.firestore();
+            const processedRef = db.collection('pohodPayments').doc(session.id);
+
+            // Idempotency: avoid processing the same session twice (e.g. Stripe retries)
+            const alreadyProcessed = await processedRef.get();
+            if (alreadyProcessed.exists) {
+                console.log('✅ Pohod session already processed (idempotent skip):', session.id);
+                return res.status(200).json({ received: true });
+            }
 
             if (!customerEmail) {
                 console.error('❌ Pohod: no email in session');
                 return res.status(400).json({ error: 'No email in session' });
             }
 
-            const db = admin.firestore();
+            if (!GROUPS.POHOD) {
+                console.error('❌ Pohod: MAILERLITE_GROUP_POHOD is not set – contact will not be added to MailerLite');
+            }
+
             const ticketRef = db.collection('availableTickets').doc(POHOD_DOC_ID);
             let eventNumber;
 
@@ -214,12 +230,24 @@ module.exports = async function handler(req, res) {
                     event_number: String(eventNumber),
                     phone: session.metadata.phone || '',
                 });
-                if (!result.success) console.warn('MailerLite pohod:', result.error);
+                if (result.success) {
+                    console.log('✅ MailerLite: added to Pohod group –', customerEmail, 'event_number', eventNumber);
+                } else {
+                    console.error('❌ MailerLite pohod add failed:', result.error);
+                }
             }
 
-            // Confirmation email: add contact to MailerLite with event_number above.
-            // Set up a MailerLite automation that sends when someone is added to the Pohod group,
-            // using the merge field {{ event_number }} in the email body.
+            // Mark session as processed so we never process it again
+            await processedRef.set({
+                sessionId: session.id,
+                email: customerEmail,
+                name: customerName,
+                eventNumber,
+                processedAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+            // Confirmation email: create a MailerLite automation with trigger "Subscriber joins group [Pohod]"
+            // and use merge field {{ event_number }} in the email. Create custom field "event_number" in MailerLite if needed.
             console.log('✅ Pohod checkout handled – event_number', eventNumber);
             return res.status(200).json({ received: true });
         }

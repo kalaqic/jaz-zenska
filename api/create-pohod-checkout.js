@@ -81,8 +81,9 @@ module.exports = async function handler(req, res) {
             });
         }
 
-        const origin = req.headers.origin || req.headers.referer || 'https://jaz-zenska.vercel.app';
-        const baseUrl = origin.replace(/\/$/, '');
+        // Success/cancel URLs: use SITE_URL if set (e.g. https://jaz-zenska.vercel.app), else origin from request
+        const siteUrl = process.env.SITE_URL || req.headers.origin || req.headers.referer || 'https://jaz-zenska.vercel.app';
+        const baseUrl = String(siteUrl).replace(/\/$/, '');
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],

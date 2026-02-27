@@ -51,6 +51,14 @@
         }
         .pohod-form-box button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(100,56,67,0.3); }
         .pohod-form-box button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
+        .pohod-pay-button {
+            display: block; width: 100%; padding: 18px; margin-top: 10px;
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: #fff; border: none; border-radius: 50px; font-size: 18px; font-weight: 600;
+            cursor: pointer; font-family: 'Montserrat', sans-serif; text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .pohod-pay-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(100,56,67,0.3); }
         .pohod-message { margin-top: 20px; padding: 14px; border-radius: 10px; display: none; }
         .pohod-message.error { background: #f8d7da; color: #721c24; display: block; }
         .pohod-sold-out { text-align: center; padding: 50px 20px; }
@@ -127,10 +135,8 @@
                     <input type="text" id="pohod-name" name="name" placeholder="Vaše ime" required>
                     <label for="pohod-email">E-pošta *</label>
                     <input type="email" id="pohod-email" name="email" placeholder="vas@email.com" required>
-                    <label for="pohod-phone">Telefonska številka</label>
-                    <input type="tel" id="pohod-phone" name="phone" placeholder="+386 41 123 456">
-                    <button type="submit" id="pohod-checkout-submit">Plačaj 27 €</button>
-                    <p class="price-note">Preusmerjeni boste na varno Stripe plačilo. Po plačilu prejmete email s svojo številko udeleženke.</p>
+                    <button type="submit" id="pohod-checkout-submit" class="pohod-pay-button">Prijavi se</button>
+                    <p class="price-note">Preusmerjeni boste na varno Stripe plačilo (27 €). Po plačilu boste preusmerjeni na potrditveno stran in prejmete email s svojo številko udeleženke.</p>
                     <div class="pohod-message" id="pohod-checkout-message"></div>
                 </form>
             </div>
@@ -147,51 +153,56 @@
     <script src="js/main.js"></script>
     <script>
         (function() {
-            const form = document.getElementById('pohod-checkout-form');
-            const wrap = document.getElementById('pohod-checkout-form-wrap');
-            const soldOut = document.getElementById('pohod-sold-out');
-            const message = document.getElementById('pohod-checkout-message');
-            const submitBtn = document.getElementById('pohod-checkout-submit');
+            var form = document.getElementById('pohod-checkout-form');
+            var submitBtn = document.getElementById('pohod-checkout-submit');
+            var messageEl = document.getElementById('pohod-checkout-message');
+            var wrap = document.getElementById('pohod-checkout-form-wrap');
+            var soldOut = document.getElementById('pohod-sold-out');
 
-            form.addEventListener('submit', async function(e) {
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                message.className = 'pohod-message';
-                message.textContent = '';
-                message.style.display = 'none';
+                var email = (document.getElementById('pohod-email').value || '').trim();
+                var name = (document.getElementById('pohod-name').value || '').trim();
+                if (!email || !name) return;
+
+                messageEl.style.display = 'none';
+                messageEl.textContent = '';
+                messageEl.className = 'pohod-message';
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Preusmerjanje na plačilo...';
 
-                const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
-                const res = await fetch(apiBase + '/api/create-pohod-checkout', {
+                var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+                fetch(apiBase + '/api/create-pohod-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: document.getElementById('pohod-name').value.trim(),
-                        email: document.getElementById('pohod-email').value.trim(),
-                        phone: document.getElementById('pohod-phone').value.trim()
-                    })
-                });
-
-                const data = await res.json().catch(function() { return {}; });
-
-                if (data.soldOut) {
-                    wrap.style.display = 'none';
-                    soldOut.style.display = 'block';
+                    body: JSON.stringify({ name: name, email: email, phone: '' })
+                })
+                .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+                .then(function(result) {
+                    if (result.data.soldOut) {
+                        wrap.style.display = 'none';
+                        soldOut.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Prijavi se';
+                        return;
+                    }
+                    if (result.ok && result.data.url) {
+                        window.location.href = result.data.url;
+                        return;
+                    }
+                    messageEl.className = 'pohod-message error';
+                    messageEl.textContent = result.data.error || 'Prišlo je do napake. Poskusite znova.';
+                    messageEl.style.display = 'block';
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Plačaj 27 €';
-                    return;
-                }
-
-                if (res.ok && data.url) {
-                    window.location.href = data.url;
-                    return;
-                }
-
-                message.className = 'pohod-message error';
-                message.textContent = data.error || 'Prišlo je do napake. Poskusite znova.';
-                message.style.display = 'block';
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Plačaj 27 €';
+                    submitBtn.textContent = 'Prijavi se';
+                })
+                .catch(function() {
+                    messageEl.className = 'pohod-message error';
+                    messageEl.textContent = 'Prišlo je do napake. Poskusite znova.';
+                    messageEl.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Prijavi se';
+                });
             });
         })();
     </script>

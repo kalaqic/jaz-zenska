@@ -37,6 +37,11 @@
         .success-button:hover {
             transform: translateY(-2px); box-shadow: 0 8px 25px rgba(100, 56, 67, 0.3);
         }
+        .success-buttons { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 32px; }
+        .success-button-secondary {
+            background: #1877f2; color: var(--white);
+        }
+        .success-button-secondary:hover { box-shadow: 0 8px 25px rgba(24, 119, 242, 0.35); }
     </style>
 </head>
 <body>
@@ -100,10 +105,21 @@
             <h1>Hvala za plačilo!</h1>
             <p>Vaša plačilo za Pohod 100 Žensk na Trško Goro je bilo uspešno. Na vaš e-poštni naslov boste v kratkem prejeli sporočilo s <strong>številko udeleženke</strong>.</p>
             <p>Ob 8:00 se zberemo v Sevnu ob vznožju Trške gore. Do takrat!</p>
-            <a href="index.html" class="success-button">Na domačo stran</a>
+            <div class="success-buttons">
+                <a href="index.html" class="success-button">Na domačo stran</a>
+                <a href="#" id="share-facebook-btn" class="success-button success-button-secondary" target="_blank" rel="noopener noreferrer">Deli na Facebooku – grem na dogodek!</a>
+            </div>
         </div>
     </div>
 
     <script src="js/main.js"></script>
+    <script>
+        (function() {
+            var shareBtn = document.getElementById('share-facebook-btn');
+            var base = window.location.origin;
+            var pohodUrl = base + '/pohod';
+            shareBtn.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(pohodUrl) + '&quote=' + encodeURIComponent('Grem na Pohod 100 Žensk na Trško Goro! 🥾');
+        })();
+    </script>
 </body>
 </html>
