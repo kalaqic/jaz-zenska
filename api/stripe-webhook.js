@@ -174,13 +174,24 @@ module.exports = async function handler(req, res) {
         const isPohodPayment = (session.metadata && session.metadata.type === 'pohod') ||
             (process.env.STRIPE_POHOD_PAYMENT_LINK_ID && session.payment_link === process.env.STRIPE_POHOD_PAYMENT_LINK_ID);
 
+        console.log('isPohodPayment:', isPohodPayment, 'metadata.type:', session.metadata?.type, 'payment_link:', session.payment_link ? 'set' : 'none');
+
         // —— Pohod: one-time payment 27 € —— assign event_number, MailerLite; confirmation email via MailerLite automation
         if (isPohodPayment) {
             console.log('📌 Pohod checkout – processing');
             const { addToMailerLite, GROUPS } = require('../lib/mailerlite');
             const POHOD_DOC_ID = 'pohod';
             const MAX_TICKETS = 100;
-            const db = admin.firestore();
+
+            // Firebase must be initialized (FIREBASE_SERVICE_ACCOUNT set and valid)
+            let db;
+            try {
+                db = admin.firestore();
+            } catch (firestoreErr) {
+                console.error('❌ Pohod: Firebase/Firestore not available:', firestoreErr.message);
+                return res.status(500).json({ error: 'Server misconfiguration: Firebase not initialized' });
+            }
+
             const processedRef = db.collection('pohodPayments').doc(session.id);
 
             // Idempotency: avoid processing the same session twice (e.g. Stripe retries)
@@ -196,7 +207,7 @@ module.exports = async function handler(req, res) {
             }
 
             if (!GROUPS.POHOD) {
-                console.error('❌ Pohod: MAILERLITE_GROUP_POHOD is not set – contact will not be added to MailerLite');
+                console.error('❌ Pohod: MAILERLITE_GROUP_POHOD / POHOD group is not set – contact will not be added to MailerLite');
             }
 
             const ticketRef = db.collection('availableTickets').doc(POHOD_DOC_ID);
@@ -222,13 +233,14 @@ module.exports = async function handler(req, res) {
                     console.warn('Pohod sold out after payment – manual check needed');
                     return res.status(200).json({ received: true });
                 }
+                console.error('❌ Pohod Firestore transaction failed:', e.message);
                 throw e;
             }
 
             if (GROUPS.POHOD) {
                 const result = await addToMailerLite(customerEmail, customerName, [GROUPS.POHOD], {
                     event_number: String(eventNumber),
-                    phone: session.metadata.phone || '',
+                    phone: (session.metadata && session.metadata.phone) || '',
                 });
                 if (result.success) {
                     console.log('✅ MailerLite: added to Pohod group –', customerEmail, 'event_number', eventNumber);
@@ -237,17 +249,19 @@ module.exports = async function handler(req, res) {
                 }
             }
 
-            // Mark session as processed so we never process it again
-            await processedRef.set({
-                sessionId: session.id,
-                email: customerEmail,
-                name: customerName,
-                eventNumber,
-                processedAt: admin.firestore.FieldValue.serverTimestamp(),
-            });
+            try {
+                await processedRef.set({
+                    sessionId: session.id,
+                    email: customerEmail,
+                    name: customerName,
+                    eventNumber,
+                    processedAt: admin.firestore.FieldValue.serverTimestamp(),
+                });
+            } catch (writeErr) {
+                console.error('❌ Pohod: failed to write pohodPayments doc:', writeErr.message);
+                return res.status(500).json({ error: 'Failed to record payment' });
+            }
 
-            // Confirmation email: create a MailerLite automation with trigger "Subscriber joins group [Pohod]"
-            // and use merge field {{ event_number }} in the email. Create custom field "event_number" in MailerLite if needed.
             console.log('✅ Pohod checkout handled – event_number', eventNumber);
             return res.status(200).json({ received: true });
         }

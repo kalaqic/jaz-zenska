@@ -85,11 +85,35 @@ With that, the flow is: user clicks link → pays on Stripe → redirect to than
 
 | Issue | What happens | Mitigation |
 |-------|----------------|------------|
+| **Payment goes through, redirect works, but no email and nothing in Firebase** | Webhook wasn't called, failed (e.g. 500), or the session wasn't treated as Pohod. | See **Troubleshooting** below. |
 | **MailerLite returns 422** | Custom fields `event_number` or `phone` don’t exist in your account. Subscriber is not added; number is still consumed. | Create fields in MailerLite (Subscribers → Fields) with keys `event_number` and `phone`. Check Vercel logs for `MailerLite pohod add failed`. |
 | **Wrong redirect after payment** | `Origin`/`Referer` can be missing or wrong, so success_url points to wrong domain. | Set **SITE_URL** in Vercel (e.g. `https://jaz-zenska.vercel.app`). create-pohod-checkout uses it for success/cancel URLs. |
 | **Webhook signature fails** | Vercel may parse body before the webhook runs; Stripe needs raw body for verification. | Ensure webhook is configured to receive raw body if needed, or use the test-mode fallback in code only for debugging. In production use correct webhook secret and raw body. |
 | **101st payment** | Race: 100th and 101st checkout created before any webhook runs. Both pay. One gets number 100, the other hits POHOD_SOLD_OUT and gets no number / no MailerLite. | Acceptable: only one “extra” payer can be affected. Optionally handle POHOD_SOLD_OUT in webhook (e.g. add to waitlist or trigger refund). |
 | **Automation email not sent** | Contact is in group but automation doesn’t run or merge field is wrong. | In MailerLite, confirm automation trigger is “Subscriber joins group” and the group is the Pohod group. Use merge field `{{ event_number }}` (key must match). |
+
+---
+
+## Troubleshooting: Payment succeeded but no email / nothing in Firebase
+
+1. **Stripe Dashboard**  
+   Go to **Developers → Webhooks** → your endpoint (e.g. `https://your-domain.com/api/stripe-webhook`).  
+   - Open the **event** for this payment (`checkout.session.completed`).  
+   - Check **Response**: if it's **200**, the webhook ran; if **400** or **500**, the response body and logs explain the failure.  
+   - If there is **no event** for this payment, the webhook URL is wrong, or you're looking at the wrong Stripe mode (test vs live): the key used in Checkout must match the webhook's mode.
+
+2. **Vercel logs**  
+   In Vercel → Project → **Logs** (or **Functions** → `stripe-webhook`), find the request for that time.  
+   - Look for **`isPohodPayment: true`** and **`metadata.type: pohod`**.  
+   - If you see **`isPohodPayment: false`**: the session was not created by your API (e.g. it was created from a **Payment Link**). Then either use the **form** on pohod-checkout (so the API creates the session with `metadata.type = 'pohod'`), or add metadata `type = pohod` to the Payment Link in Stripe, or set **STRIPE_POHOD_PAYMENT_LINK_ID** to that Payment Link's ID.  
+   - Look for errors: **Firebase not initialized**, **Pohod Firestore transaction failed**, **MailerLite pohod add failed**, **failed to write pohodPayments**.  
+   - If you see **Webhook signature verification failed** then **Processing without verification**, the event is still processed; the next log line should be either success or one of the errors above.
+
+3. **Checkout must create a session with `metadata.type = 'pohod'`**  
+   The form on **pohod-checkout.html** that calls **POST /api/create-pohod-checkout** does this. If users pay via a **direct Stripe Payment Link** (no form, no API call), the session has no `metadata.type` unless you set it on the Payment Link or use **STRIPE_POHOD_PAYMENT_LINK_ID**.
+
+4. **Testing on localhost**  
+   Stripe **cannot** send webhooks to `localhost`. If you ran the site locally and paid there: payment and redirect work, but the webhook never runs, so no Firebase update and no MailerLite/email. **Fix:** Deploy to Vercel, add the webhook endpoint `https://your-vercel-domain.com/api/stripe-webhook` in Stripe, and run a test payment on the **deployed** site.
 
 ---
 
