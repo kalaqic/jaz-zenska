@@ -163,6 +163,11 @@
                 e.preventDefault();
                 var email = (document.getElementById('pohod-email').value || '').trim();
                 var name = (document.getElementById('pohod-name').value || '').trim();
+                function capitalizeName(s) {
+                    if (!s) return s;
+                    return s.split(/\s+/).map(function(w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); }).join(' ');
+                }
+                name = capitalizeName(name);
                 if (!email || !name) return;
 
                 messageEl.style.display = 'none';

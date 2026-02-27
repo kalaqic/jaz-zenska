@@ -14,10 +14,27 @@
     <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
     <link rel="stylesheet" href="css/main.css">
     <style>
-        .success-wrapper { min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        .success-wrapper {
+            min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px;
+            position: relative; overflow: hidden;
+            background: linear-gradient(135deg, #f8f0f2 0%, #f5f0f2 50%, #f0e8ed 100%);
+        }
+        .success-wrapper::before {
+            content: ''; position: absolute; top: 50%; right: -100px; transform: translateY(-50%);
+            width: 500px; height: 500px; background-image: url('images/background-decorations.webp');
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            opacity: 0.7; z-index: 0; pointer-events: none;
+        }
+        .success-wrapper::after {
+            content: ''; position: absolute; top: 20%; left: -120px; transform: translateY(-50%);
+            width: 400px; height: 400px; background-image: url('images/background-decorations.webp');
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            opacity: 0.5; z-index: 0; pointer-events: none;
+        }
         .success-container {
             max-width: 560px; width: 100%; padding: 50px 30px; background: var(--white);
             border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); text-align: center;
+            position: relative; z-index: 1;
         }
         .success-icon {
             width: 80px; height: 80px; background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
@@ -40,7 +57,9 @@
         .success-buttons { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 32px; }
         .success-button-secondary {
             background: #1877f2; color: var(--white);
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
         }
+        .success-button-secondary .fb-icon { width: 22px; height: 22px; flex-shrink: 0; }
         .success-button-secondary:hover { box-shadow: 0 8px 25px rgba(24, 119, 242, 0.35); }
     </style>
 </head>
@@ -103,23 +122,16 @@
         <div class="success-container">
             <div class="success-icon">✓</div>
             <h1>Hvala za plačilo!</h1>
-            <p>Vaša plačilo za Pohod 100 Žensk na Trško Goro je bilo uspešno. Na vaš e-poštni naslov boste v kratkem prejeli sporočilo s <strong>številko udeleženke</strong>.</p>
-            <p>Ob 8:00 se zberemo v Sevnu ob vznožju Trške gore. Do takrat!</p>
+            <p>Vaša plačilo za Pohod 100 Žensk na Trško Goro je bilo uspešno. Na vaš e-poštni naslov boste v kratkem času prejeli sporočilo z dodatnimi informacijami o dogodku.</p>
+            <p>Hvaležni bomo, če boste povabili tudi svoje prijatelijce!</p>
             <div class="success-buttons">
+                
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/share/182h9g2DqE/" id="share-facebook-btn" class="success-button success-button-secondary" target="_blank" rel="noopener noreferrer"><svg class="fb-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2.03998C6.5 2.03998 2 6.52998 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.84998C10.44 7.33998 11.93 5.95998 14.22 5.95998C15.31 5.95998 16.45 6.14998 16.45 6.14998V8.61998H15.19C13.95 8.61998 13.56 9.38998 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96C15.9164 21.5878 18.0622 20.3855 19.6099 18.57C21.1576 16.7546 22.0054 14.4456 22 12.06C22 6.52998 17.5 2.03998 12 2.03998Z"/></svg>Povabi prijateljice</a>
                 <a href="index.html" class="success-button">Na domačo stran</a>
-                <a href="#" id="share-facebook-btn" class="success-button success-button-secondary" target="_blank" rel="noopener noreferrer">Deli na Facebooku – grem na dogodek!</a>
             </div>
         </div>
     </div>
 
     <script src="js/main.js"></script>
-    <script>
-        (function() {
-            var shareBtn = document.getElementById('share-facebook-btn');
-            var base = window.location.origin;
-            var pohodUrl = base + '/pohod';
-            shareBtn.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(pohodUrl) + '&quote=' + encodeURIComponent('Grem na Pohod 100 Žensk na Trško Goro! 🥾');
-        })();
-    </script>
 </body>
 </html>

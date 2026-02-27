@@ -7,6 +7,13 @@ const POHOD_DOC_ID = 'pohod';
 const MAX_TICKETS = 100;
 const POHOD_PRICE_EUR = 27;
 
+function capitalizeName(str) {
+    if (!str || typeof str !== 'string') return str;
+    return str.trim().split(/\s+/).map(function(w) {
+        return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    }).join(' ');
+}
+
 let db;
 try {
     const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
@@ -60,7 +67,7 @@ module.exports = async function handler(req, res) {
 
         const { name, email, phone } = body;
         const normalizedEmail = String(email || '').trim().toLowerCase();
-        const normalizedName = String(name || '').trim();
+        const normalizedName = capitalizeName(String(name || '').trim());
         const normalizedPhone = String(phone || '').trim();
 
         if (!normalizedEmail || !normalizedName) {

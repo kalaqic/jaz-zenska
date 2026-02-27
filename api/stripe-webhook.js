@@ -61,6 +61,13 @@ async function addToMailerLiteGroups(email, name, groupIds) {
     }
 }
 
+function capitalizeName(str) {
+    if (!str || typeof str !== 'string') return str;
+    return str.trim().split(/\s+/).map(function(w) {
+        return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    }).join(' ');
+}
+
 // Configure to receive raw body for webhook signature verification
 module.exports = async function handler(req, res) {
     // Log that webhook was called
@@ -168,7 +175,7 @@ module.exports = async function handler(req, res) {
         console.log('Metadata:', session.metadata);
 
         const customerEmail = session.customer_details?.email || session.customer_email || session.metadata?.email;
-        const customerName = session.customer_details?.name || session.metadata?.name || session.client_reference_id || '';
+        const customerName = capitalizeName(session.customer_details?.name || session.metadata?.name || session.client_reference_id || '');
 
         // Pohod: either metadata.type === 'pohod' (API-created session) or session from our Payment Link
         const isPohodPayment = (session.metadata && session.metadata.type === 'pohod') ||
