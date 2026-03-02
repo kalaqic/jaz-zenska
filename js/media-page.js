@@ -16,6 +16,15 @@ const mediaData = {
         link: 'https://sites.google.com/view/kpodbkp-klubposlovneodlicnosti/dogodki-2026?authuser=0',
         linkText: 'Preberi več'
     },
+    8: {
+        image: 'images/media/ogledmesta.webp',
+        title: 'Po sledeh Dragotina Ketteja z Marjanco Trščinar Antić v Novem mestu',
+        description: `
+            <p>Letos je bil voden ogled Novega mesta organiziran že štiriindvajsetič. Zbrali smo se pri TIC-u Novo mesto. Vse zbrane, bilo nas je skoraj dvesto, je kot vsa leta doslej pozdravila in vodila turistična vodnica Marjanca Trščinar Antić. Letos mineva 150 let od rojstva velikega pesnika Dragotina Ketteja, zato so se sprehodili mimo Mestne hiše, kjer stoji njegov doprsni kip, do Kettejevega vodnjaka in Kettejevega drevoreda, šli smo do Kapitlja in se spustili do Jakčevega doma.</p>
+        `,
+        link: 'https://svet24.si/lokalno/dolenjska/posavje/novice/dragotin-kette-marjanca-trscinar-antic-novo-mesto-sprehod-1880047',
+        linkText: 'Preberi več'
+    },
     1: {
         image: 'images/media/zmajcek isce prijatelje.jpg',
         title: 'Projektni teden Zmajček išče prijatelje',
