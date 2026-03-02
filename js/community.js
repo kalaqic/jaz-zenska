@@ -485,7 +485,7 @@ async function loadWebinars(container) {
         console.error('Error loading webinars from Firestore:', error);
     }
     
-    const stopnicWebinar = { id: '2', title: '25 Stopnic do srece', date: '5. marca 2026', description: 'Webinar 25 stopnic do sreče.', videoId: '', videoUrl: '' };
+    const stopnicWebinar = { id: '2', title: '25 Stopnic do srece', date: '9. marca 2026', description: 'Webinar 25 stopnic do sreče.', videoId: '', videoUrl: '' };
     if (!webinars.some(w => w.title === '25 Stopnic do srece')) {
         webinars.unshift(stopnicWebinar);
     }
