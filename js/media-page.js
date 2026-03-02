@@ -2,6 +2,20 @@
 
 // Media data with full content
 const mediaData = {
+    7: {
+        image: 'images/media/kaval.webp',
+        title: 'Moja moč je v meni – Bistro Kaval, Brusnice',
+        description: `
+            <p>Marjanca Trščinar Antić nas je skozi delavnico »Moj steber moči« ponovno spomnila na nekaj zelo preprostega – in hkrati zelo zahtevnega: moči ne iščemo zunaj. Moč je v nas.</p>
+            <p>Z močno metaforo dveh volkov v vsakem izmed nas – enega, ki se zna postaviti zase, in drugega, ki je preveč ubogljiv – nas je povabila k razmisleku, katerega hranimo vsak dan. Katera prepričanja sprejemamo? Kdo vpliva na naše odločitve? Kako hitro nas okolica potegne v dvom, strah ali prilagajanje?</p>
+            <p>Govorili smo o tem, kako zelo pomembno je, da se sami odločimo, kako bomo neko situacijo sprejeli. Da prevzamemo odgovornost za svojo reakcijo. Da ne dovolimo, da zunanji glasovi postanejo glasnejši od našega notranjega.</p>
+            <p>Poseben trenutek večera je bila kratka, a močna meditativna vaja. V tišini smo začutili svojo prisotnost, nato pa s ponosom izgovorili svoje ime – jasno, glasno, samozavestno. Kot simbol trdnih temeljev, na katerih stojimo. Bil je preprost trenutek. A zelo močan.</p>
+            <p>Ena izmed udeleženk je po dogodku zapisala:<br>»Zavedela sem se, kako pogosto reagiram avtomatično. Danes sem si dovolila ustaviti in izbrati drugače.«</p>
+            <p>Drugi udeleženec pa je dodal:<br>»Včasih ne potrebuješ nove strategije. Potrebuješ samo pogum, da stojiš za sabo.«</p>
+        `,
+        link: 'https://sites.google.com/view/kpodbkp-klubposlovneodlicnosti/dogodki-2026?authuser=0',
+        linkText: 'Preberi več'
+    },
     1: {
         image: 'images/media/zmajcek isce prijatelje.jpg',
         title: 'Projektni teden Zmajček išče prijatelje',
