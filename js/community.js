@@ -824,6 +824,9 @@ async function loadCalendar() {
     }
     events = events.filter(e => toLocalDateStringCal(new Date(e.date)) !== '2026-02-06');
     
+    // Remove "25 Stopnic do sreče" from 5.3 – webinar is on 9.3 (Monday) only
+    events = events.filter(e => !(e.title === '25 Stopnic do sreče' && (e.date && (e.date.startsWith('2026-03-05') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 5)))));
+    
     // Ensure "25 Stopnic do sreče" webinar on 9 March (Monday) is always present
     const stopnicDate = '2026-03-09T10:00:00.000Z';
     const hasStopnic = events.some(e => e.title === '25 Stopnic do sreče' && (e.date && (e.date.startsWith('2026-03-09') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 9))));
@@ -1014,6 +1017,9 @@ async function showDayEvents(dateStr) {
     
     // Exclude events on 6 Feb (user requested removal)
     events = events.filter(e => toLocalDateString(new Date(e.date)) !== '2026-02-06');
+    
+    // Remove "25 Stopnic do sreče" on 5.3 – only 9.3 (Monday) is correct
+    events = events.filter(e => !(e.title === '25 Stopnic do sreče' && (e.date && (String(e.date).startsWith('2026-03-05') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 5)))));
     
     // Ensure "25 Stopnic do sreče" on 9 March (Monday) is available when opening that day
     if (dateStr === '2026-03-09') {
