@@ -5,6 +5,9 @@ node_modules/
 .env
 .env.local
 
+# MailerLite list script (may be run with API key in env; ignore to avoid accidental commit)
+scripts/list-mailerlite-groups.js
+
 # IDE
 .vscode/
 .idea/

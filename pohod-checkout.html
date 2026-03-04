@@ -76,11 +76,6 @@
         .pohod-payment-card.selected { border-color: var(--mid-violet); background: linear-gradient(135deg, #fff6f9 0%, #fff 100%); border-width: 3px; }
         .pohod-payment-card .label { font-weight: 600; color: var(--dark-violet); font-size: 16px; margin-bottom: 6px; }
         .pohod-payment-card .hint { font-size: 13px; color: var(--text-light); }
-        .pohod-disclaimer {
-            margin-top: 20px; padding: 16px; background: #f8f4f7; border-radius: 12px;
-            font-size: 14px; color: var(--text-light); line-height: 1.6; border-left: 4px solid var(--mid-violet);
-        }
-        .pohod-disclaimer a { color: var(--mid-violet); font-weight: 600; }
         @media (max-width: 600px) { .pohod-payment-options { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -157,10 +152,7 @@
                         <div class="hint">Prejmete račun z navodili</div>
                     </div>
                 </div>
-                <p style="margin-bottom: 16px; color: var(--text-light); font-size: 15px;">Klikni spodaj – pri kartici boste preusmerjeni na varno Stripe plačilo (27 €), pri bančnem nakazilu na vnos podatkov za račun. Po plačilu prejmete potrditev in email s svojo številko udeleženke.</p>
-                <div class="pohod-disclaimer">
-                    <strong>Plačujete za več oseb?</strong> Pošljite nam na <a href="mailto:info@jazzenska.com">info@jazzenska.com</a> imena in e-pošte vseh udeleženk, da jim lahko posredujemo vstopnico.
-                </div>
+                <p id="pohod-payment-desc" style="margin-bottom: 16px; color: var(--text-light); font-size: 15px;">Preusmerjeni boste na varno Stripe plačilo (27 €). Po plačilu prejmete potrditev in email s svojo številko udeleženke.</p>
                 <button type="button" id="pohod-checkout-submit" class="pohod-pay-button">Nadaljuj</button>
                 <div class="pohod-message" id="pohod-checkout-message"></div>
             </div>
@@ -187,11 +179,13 @@
                 selectedPayment = 'card';
                 document.querySelectorAll('.pohod-payment-card').forEach(function(c) { c.classList.remove('selected'); });
                 document.getElementById('pohod-pay-card').classList.add('selected');
+                document.getElementById('pohod-payment-desc').textContent = 'Preusmerjeni boste na varno Stripe plačilo (27 €). Po plačilu prejmete potrditev in email s svojo številko udeleženke.';
             });
             document.getElementById('pohod-pay-bank').addEventListener('click', function() {
                 selectedPayment = 'bank';
                 document.querySelectorAll('.pohod-payment-card').forEach(function(c) { c.classList.remove('selected'); });
                 document.getElementById('pohod-pay-bank').classList.add('selected');
+                document.getElementById('pohod-payment-desc').textContent = 'Preusmerjeni boste na vnos podatkov za račun. Po plačilu prejmete potrditev in email s svojo številko udeleženke.';
             });
 
             submitBtn.addEventListener('click', function() {

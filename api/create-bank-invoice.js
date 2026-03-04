@@ -170,14 +170,19 @@ module.exports = async function handler(req, res) {
         await stripe.invoices.sendInvoice(finalizedInvoice.id);
         console.log('✅ Invoice email sent');
 
-        // Step 6: Add to MailerLite "Waiting for payment" group
+        // Step 6: Add to MailerLite waiting-for-payment group (pohod = Trška Gora group, subscription = main waiting group)
         if (MAILERLITE_API_KEY) {
             try {
-                const result = await addToMailerLite(email, `${firstName} ${lastName}`, [GROUPS.WAITING_FOR_PAYMENT]);
-                if (result.success) {
-                    console.log('✅ Added to MailerLite waiting-for-payment list');
-                } else {
-                    console.warn('⚠️ MailerLite (non-critical):', result.error);
+                const waitingGroup = isPohod ? GROUPS.WAITING_POHOD : GROUPS.WAITING_FOR_PAYMENT;
+                if (waitingGroup) {
+                    const result = await addToMailerLite(email, `${firstName} ${lastName}`, [waitingGroup]);
+                    if (result.success) {
+                        console.log('✅ Added to MailerLite waiting list:', isPohod ? 'pohod' : 'subscription');
+                    } else {
+                        console.warn('⚠️ MailerLite (non-critical):', result.error);
+                    }
+                } else if (isPohod) {
+                    console.warn('⚠️ MAILERLITE_GROUP_WAITING_POHOD not set – contact not added to waiting list');
                 }
             } catch (mlError) {
                 console.warn('⚠️ MailerLite error (non-critical):', mlError.message);
