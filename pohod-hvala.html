@@ -123,6 +123,7 @@
             <div class="success-icon">✓</div>
             <h1>Hvala za plačilo!</h1>
             <p>Vaša plačilo za Pohod 100 Žensk na Trško Goro je bilo uspešno. Na vaš e-poštni naslov boste v kratkem času prejeli sporočilo z dodatnimi informacijami o dogodku.</p>
+            <p id="pohod-event-number-p" style="display: none; font-weight: 600; color: var(--dark-violet);">Vaša številka udeleženke: <span id="pohod-event-number"></span>.</p>
             <p>Hvaležni bomo, če boste povabili tudi svoje prijatelijce!</p>
             <div class="success-buttons">
                 
@@ -133,5 +134,27 @@
     </div>
 
     <script src="js/main.js"></script>
+    <script>
+        (function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var sessionId = urlParams.get('session_id');
+            if (!sessionId) return;
+            var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+            var url = (apiBase + '/api/pohod-ensure-group').replace(/\/\/api/, '/api');
+            // Delay so Stripe webhook usually runs first; ensure-group is fallback if webhook didn't run
+            setTimeout(function() {
+                fetch(url + '?session_id=' + encodeURIComponent(sessionId), { method: 'GET', credentials: 'omit' })
+                    .then(function(r) { return r.json().then(function(data) { return { ok: r.ok, data: data }; }); })
+                    .then(function(result) {
+                        if (result.ok && result.data && result.data.success && result.data.eventNumber) {
+                            var el = document.getElementById('pohod-event-number');
+                            var p = document.getElementById('pohod-event-number-p');
+                            if (el && p) { el.textContent = result.data.eventNumber; p.style.display = 'block'; }
+                        }
+                    })
+                    .catch(function() {});
+            }, 1500);
+        })();
+    </script>
 </body>
 </html>

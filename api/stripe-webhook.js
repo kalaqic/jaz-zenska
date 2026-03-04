@@ -201,7 +201,7 @@ module.exports = async function handler(req, res) {
 
             const processedRef = db.collection('pohodPayments').doc(session.id);
 
-            // Idempotency: avoid processing the same session twice (e.g. Stripe retries)
+            // Idempotency: avoid processing the same session twice (e.g. Stripe retries or ensure-group API)
             const alreadyProcessed = await processedRef.get();
             if (alreadyProcessed.exists) {
                 console.log('✅ Pohod session already processed (idempotent skip):', session.id);
@@ -219,9 +219,15 @@ module.exports = async function handler(req, res) {
 
             const ticketRef = db.collection('availableTickets').doc(POHOD_DOC_ID);
             let eventNumber;
+            let weProcessed = false;
 
             try {
                 await db.runTransaction(async (tx) => {
+                    const existing = await tx.get(processedRef);
+                    if (existing.exists) {
+                        eventNumber = existing.data().eventNumber;
+                        return;
+                    }
                     const doc = await tx.get(ticketRef);
                     let nextNumber;
                     if (!doc.exists) {
@@ -234,6 +240,15 @@ module.exports = async function handler(req, res) {
                         eventNumber = nextNumber;
                         tx.update(ticketRef, { nextNumber: nextNumber + 1 });
                     }
+                    tx.set(processedRef, {
+                        sessionId: session.id,
+                        email: customerEmail,
+                        name: customerName,
+                        eventNumber,
+                        processedAt: admin.firestore.FieldValue.serverTimestamp(),
+                        source: 'stripe-webhook',
+                    });
+                    weProcessed = true;
                 });
             } catch (e) {
                 if (e.message === 'POHOD_SOLD_OUT') {
@@ -244,7 +259,7 @@ module.exports = async function handler(req, res) {
                 throw e;
             }
 
-            if (GROUPS.POHOD) {
+            if (weProcessed && GROUPS.POHOD) {
                 const result = await addToMailerLite(customerEmail, customerName, [GROUPS.POHOD], {
                     event_number: String(eventNumber),
                     phone: (session.metadata && session.metadata.phone) || '',
@@ -254,19 +269,6 @@ module.exports = async function handler(req, res) {
                 } else {
                     console.error('❌ MailerLite pohod add failed:', result.error);
                 }
-            }
-
-            try {
-                await processedRef.set({
-                    sessionId: session.id,
-                    email: customerEmail,
-                    name: customerName,
-                    eventNumber,
-                    processedAt: admin.firestore.FieldValue.serverTimestamp(),
-                });
-            } catch (writeErr) {
-                console.error('❌ Pohod: failed to write pohodPayments doc:', writeErr.message);
-                return res.status(500).json({ error: 'Failed to record payment' });
             }
 
             console.log('✅ Pohod checkout handled – event_number', eventNumber);
