@@ -140,7 +140,7 @@
             var sessionId = urlParams.get('session_id');
             if (!sessionId) return;
             var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
-            var url = (apiBase + '/api/pohod-ensure-group').replace(/\/\/api/, '/api');
+            var url = (apiBase + '/api/create-pohod-checkout').replace(/\/\/api/, '/api');
             // Delay so Stripe webhook usually runs first; ensure-group is fallback if webhook didn't run
             setTimeout(function() {
                 fetch(url + '?session_id=' + encodeURIComponent(sessionId), { method: 'GET', credentials: 'omit' })
