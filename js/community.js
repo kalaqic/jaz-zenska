@@ -448,7 +448,7 @@ async function loadWebinars(container) {
             {
                 id: '2',
                 title: '25 Stopnic do srece',
-                date: '5. marca 2026',
+                date: '9. marca 2026',
                 description: 'Webinar 25 stopnic do sreče.',
                 videoId: '',
                 videoUrl: ''
@@ -824,9 +824,9 @@ async function loadCalendar() {
     }
     events = events.filter(e => toLocalDateStringCal(new Date(e.date)) !== '2026-02-06');
     
-    // Ensure "25 Stopnic do sreče" webinar on 5 March is always present
-    const stopnicDate = '2026-03-05T10:00:00.000Z';
-    const hasStopnic = events.some(e => e.title === '25 Stopnic do sreče' && (e.date && (e.date.startsWith('2026-03-05') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 5))));
+    // Ensure "25 Stopnic do sreče" webinar on 9 March (Monday) is always present
+    const stopnicDate = '2026-03-09T10:00:00.000Z';
+    const hasStopnic = events.some(e => e.title === '25 Stopnic do sreče' && (e.date && (e.date.startsWith('2026-03-09') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 9))));
     if (!hasStopnic) {
         events.push({
             id: 'stopnic-webinar-2026',
@@ -1015,15 +1015,15 @@ async function showDayEvents(dateStr) {
     // Exclude events on 6 Feb (user requested removal)
     events = events.filter(e => toLocalDateString(new Date(e.date)) !== '2026-02-06');
     
-    // Ensure "25 Stopnic do sreče" on 5 March is available when opening that day
-    if (dateStr === '2026-03-05') {
+    // Ensure "25 Stopnic do sreče" on 9 March (Monday) is available when opening that day
+    if (dateStr === '2026-03-09') {
         const hasStopnic = events.some(e => e.title === '25 Stopnic do sreče');
         if (!hasStopnic) {
             events.push({
                 id: 'stopnic-webinar-2026',
                 title: '25 Stopnic do sreče',
                 description: 'Brezplačni webinar 25 stopnic do sreče. Začetek ob 19:00. Povezava za Zoom bo dodana pravočasno.',
-                date: '2026-03-05T10:00:00.000Z',
+                date: '2026-03-09T10:00:00.000Z',
                 time: '19:00',
                 type: 'webinar',
                 location: 'https://www.jazzenska.com/sreca'
