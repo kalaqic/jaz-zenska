@@ -9,6 +9,10 @@
       gtag('js', new Date());
       gtag('config', 'G-1N85FSYHNH');
     </script>
+    <!-- Meta Pixel Code -->
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1776825749946412');fbq('track','PageView');</script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1776825749946412&ev=PageView&noscript=1"/></noscript>
+    <!-- End Meta Pixel Code -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pridruži se - Jaz Ženska</title>
@@ -566,6 +570,7 @@
                 
                 // If bank transfer, redirect to bank transfer form
                 if (selectedPaymentMethod === 'bank') {
+                    if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout', { content_name: 'Skupnost JAZ ŽENSKA', value: 119, currency: 'EUR' });
                     window.location.href = 'bank-transfer.html';
                     return;
                 }
@@ -642,6 +647,7 @@
 
                 // Redirect to Stripe Checkout
                 if (data.url) {
+                    if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout', { content_name: 'Skupnost JAZ ŽENSKA', value: 119, currency: 'EUR' });
                     window.location.href = data.url;
                 } else {
                     throw new Error('Stripe Checkout URL ni na voljo');
@@ -703,5 +709,6 @@
             // The plan selection screen is already visible, no need to change anything
         }
     </script>
+    <script>if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:'Plačilo skupina'});</script>
 </body>
 </html>

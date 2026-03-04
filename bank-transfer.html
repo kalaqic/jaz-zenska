@@ -9,6 +9,10 @@
       gtag('js', new Date());
       gtag('config', 'G-1N85FSYHNH');
     </script>
+    <!-- Meta Pixel Code -->
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1776825749946412');fbq('track','PageView');</script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1776825749946412&ev=PageView&noscript=1"/></noscript>
+    <!-- End Meta Pixel Code -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bančno nakazilo - Jaz Ženska</title>
@@ -291,6 +295,7 @@
                 
                 // Success
                 loading.classList.remove('active');
+                if (typeof fbq !== 'undefined') fbq('track', 'AddPaymentInfo', { content_name: isPohod ? 'Pohod 100 Žensk' : 'Skupnost JAZ ŽENSKA', value: isPohod ? 27 : 119, currency: 'EUR' });
                 var successHtml = isPohod
                     ? '<p style="margin-bottom: 20px;">Hvala! Račun in navodila za plačilo so bili poslani na vaš email. Po opravljenem nakazilu vam bomo poslali potrditev in številko udeleženke.</p>'
                     : '<p style="margin-bottom: 20px;">Hvala! Račun in navodila za plačilo so bili poslani na vaš email naslov.</p><p style="margin-bottom: 20px; font-size: 14px; color: #666;">Ker imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞</p>';
