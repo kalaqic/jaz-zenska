@@ -173,8 +173,8 @@
     <div class="bank-transfer-wrapper">
         <div class="bank-transfer-container">
             <div class="bank-transfer-header">
-                <h1>🏦 Bančno nakazilo</h1>
-                <p>Vnesite vaše podatke in prejmete račun z navodili za plačilo</p>
+                <h1 id="bankHeader">🏦 Bančno nakazilo</h1>
+                <p id="bankSubtitle">Vnesite vaše podatke in prejmete račun z navodili za plačilo</p>
             </div>
             
             <div class="error-message" id="errorMessage"></div>
@@ -197,7 +197,7 @@
                 </div>
                 
                 <button type="submit" class="submit-button" id="submitButton">
-                    Pošlji mi račun
+                    <span id="submitButtonText">Pošlji mi račun</span>
                 </button>
             </form>
             
@@ -209,6 +209,16 @@
     </div>
 
     <script>
+        var isPohod = (function() {
+            var p = new URLSearchParams(window.location.search);
+            return p.get('product') === 'pohod';
+        })();
+        if (isPohod) {
+            document.getElementById('bankHeader').textContent = '🏦 Bančno nakazilo – Pohod 100 Žensk na Trško Goro';
+            document.getElementById('bankSubtitle').textContent = 'Vstopnica 27 € – vnesite podatke in prejmete račun z navodili za plačilo. Po plačilu vam pošljemo potrditev in številko udeleženke.';
+            document.getElementById('submitButtonText').textContent = 'Pošlji mi račun (27 €)';
+        }
+
         // Capitalize first letter of name fields
         document.getElementById('firstName').addEventListener('input', function(e) {
             const value = e.target.value;
@@ -255,7 +265,8 @@
                     body: JSON.stringify({
                         email: email,
                         firstName: firstName,
-                        lastName: lastName
+                        lastName: lastName,
+                        product: isPohod ? 'pohod' : undefined
                     }),
                 });
                 
@@ -280,24 +291,11 @@
                 
                 // Success
                 loading.classList.remove('active');
-                successMessage.innerHTML = `
-                    <p style="margin-bottom: 20px;">Hvala! Račun in navodila za plačilo so bili poslani na vaš email naslov.</p>
-                    <p style="margin-bottom: 20px; font-size: 14px; color: #666;">Ker imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞</p>
-                    <a href="index.html" style="
-                        display: inline-block;
-                        padding: 14px 28px;
-                        background: linear-gradient(135deg, var(--pinky, #c88ea7) 0%, var(--mid-violet, #99627a) 100%);
-                        color: var(--white, #ffffff);
-                        text-decoration: none;
-                        border-radius: 50px;
-                        font-weight: 600;
-                        font-size: 16px;
-                        letter-spacing: 0.5px;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 4px 15px rgba(200, 142, 167, 0.2);
-                        margin-top: 10px;
-                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(200, 142, 167, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(200, 142, 167, 0.2)'">Nazaj na domačo stran</a>
-                `;
+                var successHtml = isPohod
+                    ? '<p style="margin-bottom: 20px;">Hvala! Račun in navodila za plačilo so bili poslani na vaš email. Po opravljenem nakazilu vam bomo poslali potrditev in številko udeleženke.</p>'
+                    : '<p style="margin-bottom: 20px;">Hvala! Račun in navodila za plačilo so bili poslani na vaš email naslov.</p><p style="margin-bottom: 20px; font-size: 14px; color: #666;">Ker imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞</p>';
+                successHtml += '<a href="' + (isPohod ? 'pohod.html' : 'index.html') + '" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, var(--pinky, #c88ea7) 0%, var(--mid-violet, #99627a) 100%); color: var(--white, #ffffff); text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(200, 142, 167, 0.2); margin-top: 10px;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 8px 25px rgba(200, 142, 167, 0.3)\'" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 4px 15px rgba(200, 142, 167, 0.2)\'">Nazaj</a>';
+                successMessage.innerHTML = successHtml;
                 successMessage.classList.add('active');
                 
             } catch (error) {

@@ -70,7 +70,14 @@ module.exports = async function handler(req, res) {
             body = {};
         }
 
-        const { email, firstName, lastName } = body;
+        const { email, firstName, lastName, product } = body;
+
+        // product: undefined or 'subscription' = group (119€); 'pohod' = pohod (27€)
+        const isPohod = product === 'pohod';
+        const amountCents = isPohod ? 2700 : 11900; // 27 € or 119 €
+        const description = isPohod
+            ? 'Pohod 100 Žensk na Trško Goro – vstopnica 27 €'
+            : 'Skupnost JAZ ŽENSKA - Letna naročnina do 31. 12. 2027';
 
         // Validate input
         if (!email || !firstName || !lastName) {
@@ -94,7 +101,8 @@ module.exports = async function handler(req, res) {
                 firstName: firstName,
                 lastName: lastName,
                 payment_method: 'bank_transfer',
-                country: 'SI'
+                country: 'SI',
+                product: isPohod ? 'pohod' : 'subscription'
             }
         });
 
@@ -128,7 +136,8 @@ module.exports = async function handler(req, res) {
                 payment_method: 'bank_transfer',
                 firstName: firstName,
                 lastName: lastName,
-                country: 'SI'
+                country: 'SI',
+                product: isPohod ? 'pohod' : 'subscription'
             }
         });
         
@@ -143,9 +152,9 @@ module.exports = async function handler(req, res) {
         await stripe.invoiceItems.create({
             customer: customer.id,
             invoice: invoice.id,
-            amount: 11900, // €119.00 in cents
+            amount: amountCents,
             currency: 'eur',
-            description: 'Skupnost JAZ ŽENSKA - Letna naročnina do 31. 12. 2027'
+            description: description
         });
 
         console.log('✅ Invoice item added');
@@ -179,7 +188,7 @@ module.exports = async function handler(req, res) {
         if (firebaseApp) {
             try {
                 const db = admin.firestore();
-                await db.collection('waiting_payments').doc(customer.id).set({
+                const data = {
                     email: email,
                     firstName: firstName,
                     lastName: lastName,
@@ -187,9 +196,11 @@ module.exports = async function handler(req, res) {
                     invoiceId: finalizedInvoice.id,
                     paymentStatus: 'waiting',
                     createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                    amount: 11900,
-                    currency: 'eur'
-                });
+                    amount: amountCents,
+                    currency: 'eur',
+                    product: isPohod ? 'pohod' : 'subscription'
+                };
+                await db.collection('waiting_payments').doc(customer.id).set(data);
                 console.log('✅ Added to Firebase waiting_payments');
             } catch (firebaseError) {
                 console.error('❌ Firebase error (non-critical):', firebaseError.message);

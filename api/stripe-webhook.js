@@ -183,7 +183,7 @@ module.exports = async function handler(req, res) {
 
         console.log('isPohodPayment:', isPohodPayment, 'metadata.type:', session.metadata?.type, 'payment_link:', session.payment_link ? 'set' : 'none');
 
-        // —— Pohod: one-time payment 27 € —— assign event_number, MailerLite; confirmation email via MailerLite automation
+        // —— Pohod: one-time payment 27 € —— event number from DB, add to MailerLite, counter +1 for next person
         if (isPohodPayment) {
             console.log('📌 Pohod checkout – processing');
             const { addToMailerLite, GROUPS } = require('../lib/mailerlite');
@@ -562,9 +562,72 @@ module.exports = async function handler(req, res) {
                 
                 const waitingPayment = waitingPaymentDoc.data();
                 console.log('✅ Found waiting payment:', waitingPayment);
-                
+
                 const { email, firstName, lastName } = waitingPayment;
-                
+                const isPohodBank = waitingPayment.product === 'pohod';
+
+                // —— Pohod bank transfer: add to POHOD group with event number, then remove from waiting ——
+                if (isPohodBank) {
+                    const POHOD_DOC_ID = 'pohod';
+                    const MAX_TICKETS = 100;
+                    const customerName = `${firstName} ${lastName}`.trim();
+                    const processedRef = db.collection('pohodPayments').doc(customerId);
+                    const ticketRef = db.collection('availableTickets').doc(POHOD_DOC_ID);
+                    let eventNumber;
+                    let weProcessed = false;
+                    try {
+                        await db.runTransaction(async (tx) => {
+                            const existing = await tx.get(processedRef);
+                            if (existing.exists) {
+                                eventNumber = existing.data().eventNumber;
+                                return;
+                            }
+                            const ticketDoc = await tx.get(ticketRef);
+                            let nextNumber;
+                            if (!ticketDoc.exists) {
+                                nextNumber = 2;
+                                eventNumber = 1;
+                                tx.set(ticketRef, { nextNumber });
+                            } else {
+                                nextNumber = ticketDoc.data().nextNumber || 1;
+                                if (nextNumber > MAX_TICKETS) throw new Error('POHOD_SOLD_OUT');
+                                eventNumber = nextNumber;
+                                tx.update(ticketRef, { nextNumber: nextNumber + 1 });
+                            }
+                            tx.set(processedRef, {
+                                customerId: customerId,
+                                email: email,
+                                name: customerName,
+                                eventNumber,
+                                processedAt: admin.firestore.FieldValue.serverTimestamp(),
+                                source: 'invoice.paid',
+                            });
+                            weProcessed = true;
+                        });
+                    } catch (e) {
+                        if (e.message === 'POHOD_SOLD_OUT') {
+                            console.warn('Pohod sold out (bank)');
+                            await waitingPaymentRef.delete();
+                            return res.status(200).json({ received: true });
+                        }
+                        throw e;
+                    }
+                    if (weProcessed && GROUPS.POHOD) {
+                        const result = await addToMailerLite(email, customerName, [GROUPS.POHOD], {
+                            event_number: String(eventNumber),
+                        });
+                        if (result.success) {
+                            console.log('✅ MailerLite: added to Pohod (bank) –', email, 'event_number', eventNumber);
+                        } else {
+                            console.error('❌ MailerLite pohod (bank) add failed:', result.error);
+                        }
+                    }
+                    await waitingPaymentRef.delete();
+                    console.log('✅ Pohod bank transfer completed – event_number', eventNumber);
+                    return res.status(200).json({ received: true });
+                }
+
+                // —— Subscription bank transfer (existing flow) ——
                 // Step 2: Update payment status to paid
                 await waitingPaymentRef.update({
                     paymentStatus: 'paid',

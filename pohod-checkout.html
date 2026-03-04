@@ -66,6 +66,22 @@
         .pohod-sold-out p { color: #555; margin-bottom: 24px; }
         .pohod-sold-out a { color: var(--mid-violet); font-weight: 600; }
         .price-note { text-align: center; font-size: 15px; color: #666; margin-top: 16px; }
+        .pohod-payment-options { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+        .pohod-payment-card {
+            background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+            padding: 24px 20px; border-radius: 16px; border: 2px solid #e8e0e4;
+            cursor: pointer; transition: all 0.3s ease; text-align: center;
+        }
+        .pohod-payment-card:hover { border-color: var(--mid-violet); box-shadow: 0 8px 24px rgba(100,56,67,0.12); }
+        .pohod-payment-card.selected { border-color: var(--mid-violet); background: linear-gradient(135deg, #fff6f9 0%, #fff 100%); border-width: 3px; }
+        .pohod-payment-card .label { font-weight: 600; color: var(--dark-violet); font-size: 16px; margin-bottom: 6px; }
+        .pohod-payment-card .hint { font-size: 13px; color: var(--text-light); }
+        .pohod-disclaimer {
+            margin-top: 20px; padding: 16px; background: #f8f4f7; border-radius: 12px;
+            font-size: 14px; color: var(--text-light); line-height: 1.6; border-left: 4px solid var(--mid-violet);
+        }
+        .pohod-disclaimer a { color: var(--mid-violet); font-weight: 600; }
+        @media (max-width: 600px) { .pohod-payment-options { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -130,15 +146,23 @@
 
         <div id="pohod-checkout-form-wrap">
             <div class="pohod-form-box">
-                <form id="pohod-checkout-form">
-                    <label for="pohod-name">Ime in priimek *</label>
-                    <input type="text" id="pohod-name" name="name" placeholder="Vaše ime" required>
-                    <label for="pohod-email">E-pošta *</label>
-                    <input type="email" id="pohod-email" name="email" placeholder="vas@email.com" required>
-                    <button type="submit" id="pohod-checkout-submit" class="pohod-pay-button">Prijavi se</button>
-                    <p class="price-note">Preusmerjeni boste na varno Stripe plačilo (27 €). Po plačilu boste preusmerjeni na potrditveno stran in prejmete email s svojo številko udeleženke.</p>
-                    <div class="pohod-message" id="pohod-checkout-message"></div>
-                </form>
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 20px; color: var(--dark-violet); margin-bottom: 16px; text-align: center;">Izberite način plačila</h3>
+                <div class="pohod-payment-options">
+                    <div class="pohod-payment-card selected" id="pohod-pay-card" data-payment="card">
+                        <div class="label">💳 Plačilo s kartico</div>
+                        <div class="hint">Takojšnji dostop po plačilu</div>
+                    </div>
+                    <div class="pohod-payment-card" id="pohod-pay-bank" data-payment="bank">
+                        <div class="label">🏦 Bančno nakazilo</div>
+                        <div class="hint">Prejmete račun z navodili</div>
+                    </div>
+                </div>
+                <p style="margin-bottom: 16px; color: var(--text-light); font-size: 15px;">Klikni spodaj – pri kartici boste preusmerjeni na varno Stripe plačilo (27 €), pri bančnem nakazilu na vnos podatkov za račun. Po plačilu prejmete potrditev in email s svojo številko udeleženke.</p>
+                <div class="pohod-disclaimer">
+                    <strong>Plačujete za več oseb?</strong> Pošljite nam na <a href="mailto:info@jazzenska.com">info@jazzenska.com</a> imena in e-pošte vseh udeleženk, da jim lahko posredujemo vstopnico.
+                </div>
+                <button type="button" id="pohod-checkout-submit" class="pohod-pay-button">Nadaljuj</button>
+                <div class="pohod-message" id="pohod-checkout-message"></div>
             </div>
         </div>
 
@@ -153,22 +177,28 @@
     <script src="js/main.js"></script>
     <script>
         (function() {
-            var form = document.getElementById('pohod-checkout-form');
             var submitBtn = document.getElementById('pohod-checkout-submit');
             var messageEl = document.getElementById('pohod-checkout-message');
             var wrap = document.getElementById('pohod-checkout-form-wrap');
             var soldOut = document.getElementById('pohod-sold-out');
+            var selectedPayment = 'card';
 
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                var email = (document.getElementById('pohod-email').value || '').trim();
-                var name = (document.getElementById('pohod-name').value || '').trim();
-                function capitalizeName(s) {
-                    if (!s) return s;
-                    return s.split(/\s+/).map(function(w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); }).join(' ');
+            document.getElementById('pohod-pay-card').addEventListener('click', function() {
+                selectedPayment = 'card';
+                document.querySelectorAll('.pohod-payment-card').forEach(function(c) { c.classList.remove('selected'); });
+                document.getElementById('pohod-pay-card').classList.add('selected');
+            });
+            document.getElementById('pohod-pay-bank').addEventListener('click', function() {
+                selectedPayment = 'bank';
+                document.querySelectorAll('.pohod-payment-card').forEach(function(c) { c.classList.remove('selected'); });
+                document.getElementById('pohod-pay-bank').classList.add('selected');
+            });
+
+            submitBtn.addEventListener('click', function() {
+                if (selectedPayment === 'bank') {
+                    window.location.href = 'bank-transfer.html?product=pohod';
+                    return;
                 }
-                name = capitalizeName(name);
-                if (!email || !name) return;
 
                 messageEl.style.display = 'none';
                 messageEl.textContent = '';
@@ -180,7 +210,7 @@
                 fetch(apiBase + '/api/create-pohod-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: name, email: email, phone: '' })
+                    body: JSON.stringify({})
                 })
                 .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
                 .then(function(result) {
@@ -188,7 +218,7 @@
                         wrap.style.display = 'none';
                         soldOut.style.display = 'block';
                         submitBtn.disabled = false;
-                        submitBtn.textContent = 'Prijavi se';
+                        submitBtn.textContent = 'Nadaljuj';
                         return;
                     }
                     if (result.ok && result.data.url) {
@@ -199,14 +229,14 @@
                     messageEl.textContent = result.data.error || 'Prišlo je do napake. Poskusite znova.';
                     messageEl.style.display = 'block';
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Prijavi se';
+                    submitBtn.textContent = 'Nadaljuj';
                 })
                 .catch(function() {
                     messageEl.className = 'pohod-message error';
                     messageEl.textContent = 'Prišlo je do napake. Poskusite znova.';
                     messageEl.style.display = 'block';
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Prijavi se';
+                    submitBtn.textContent = 'Nadaljuj';
                 });
             });
         })();

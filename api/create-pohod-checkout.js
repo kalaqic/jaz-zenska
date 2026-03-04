@@ -116,7 +116,7 @@ module.exports = async function handler(req, res) {
         }
     }
 
-    // —— POST: create checkout session (existing behavior) ——
+    // —— POST: create checkout session (like Jaz Ženska subscription: no form, Stripe collects details) ——
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -130,26 +130,7 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        let body = req.body;
-        if (typeof body === 'string') {
-            try {
-                body = JSON.parse(body);
-            } catch (e) {
-                return res.status(400).json({ error: 'Invalid JSON' });
-            }
-        }
-        body = body || {};
-
-        const { name, email, phone } = body;
-        const normalizedEmail = String(email || '').trim().toLowerCase();
-        const normalizedName = capitalizeName(String(name || '').trim());
-        const normalizedPhone = String(phone || '').trim();
-
-        if (!normalizedEmail || !normalizedName) {
-            return res.status(400).json({ error: 'Potrebna sta ime in e-pošta.' });
-        }
-
-        // Check sold out (read nextNumber; we don't increment until webhook after payment)
+        // Check sold out (read nextNumber; we don't increment until after payment when adding to group)
         const ticketRef = db.collection('availableTickets').doc(POHOD_DOC_ID);
         const doc = await ticketRef.get();
         let nextNumber = 1;
@@ -163,10 +144,10 @@ module.exports = async function handler(req, res) {
             });
         }
 
-        // Success/cancel URLs: use SITE_URL if set (e.g. https://jaz-zenska.vercel.app), else origin from request
         const siteUrl = process.env.SITE_URL || req.headers.origin || req.headers.referer || 'https://jaz-zenska.vercel.app';
         const baseUrl = String(siteUrl).replace(/\/$/, '');
 
+        // No customer_email or metadata.name/email – Stripe Checkout collects them (same as subscription)
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             mode: 'payment',
@@ -187,12 +168,10 @@ module.exports = async function handler(req, res) {
             ],
             success_url: `${baseUrl}/pohod-hvala.html?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${baseUrl}/pohod-checkout.html`,
-            customer_email: normalizedEmail,
+            billing_address_collection: 'required',
+            customer_creation: 'always',
             metadata: {
                 type: 'pohod',
-                name: normalizedName,
-                email: normalizedEmail,
-                phone: normalizedPhone,
             },
         });
 
