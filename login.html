@@ -15,32 +15,150 @@
     <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
     <link rel="stylesheet" href="css/main.css">
     <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px 60px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #faf5f7 0%, #f5eef2 35%, #f0e8ed 70%, #ebe0e8 100%);
+        }
+        .login-page::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -80px;
+            transform: translateY(-50%);
+            width: 480px;
+            height: 480px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.65;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .login-page::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: -100px;
+            width: 380px;
+            height: 380px;
+            background-image: url('images/background-decorations.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.45;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .login-page .login-accent-blur {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.25;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .login-page .login-accent-blur-1 {
+            width: 320px;
+            height: 320px;
+            background: linear-gradient(135deg, var(--pinky, #c88ea7) 0%, var(--mid-violet, #99627a) 100%);
+            top: 10%;
+            right: 15%;
+        }
+        .login-page .login-accent-blur-2 {
+            width: 260px;
+            height: 260px;
+            background: linear-gradient(135deg, var(--mid-violet, #99627a) 0%, var(--dark-violet, #643843) 100%);
+            bottom: 20%;
+            left: 10%;
+        }
+        .back-home-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: var(--white);
+            padding: 12px 28px;
+            border: none;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(100, 56, 67, 0.35);
+            text-decoration: none;
+            display: inline-block;
+            z-index: 10;
+        }
+        .back-home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(100, 56, 67, 0.45);
+        }
         .login-container {
-            max-width: 500px;
-            margin: 100px auto;
-            padding: 40px;
+            max-width: 460px;
+            width: 100%;
+            padding: 48px 44px 44px;
             background: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+            position: relative;
+            z-index: 1;
+        }
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--pinky, #c88ea7) 0%, var(--mid-violet, #99627a) 50%, var(--dark-violet, #643843) 100%);
+            border-radius: 24px 24px 0 0;
         }
         .login-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 36px;
+        }
+        .login-header-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--pinky, #c88ea7) 0%, var(--mid-violet, #99627a) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--white);
+            box-shadow: 0 8px 24px rgba(153, 98, 122, 0.35);
         }
         .login-header h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 36px;
+            font-size: 32px;
             color: var(--dark-violet);
-            margin-bottom: 10px;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
         }
         .login-header p {
             color: var(--text-light);
-            font-size: 16px;
+            font-size: 15px;
+            margin: 0;
         }
         .login-form {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 22px;
         }
         .form-group {
             display: flex;
@@ -49,94 +167,92 @@
         }
         .form-group label {
             font-weight: 600;
-            color: var(--text-dark);
+            color: var(--dark-violet);
             font-size: 14px;
         }
         .form-group input {
-            padding: 12px 16px;
-            border: 2px solid var(--almost-white);
-            border-radius: 10px;
+            padding: 14px 18px;
+            border: 2px solid #e8e0e4;
+            border-radius: 14px;
             font-size: 16px;
             font-family: 'Montserrat', sans-serif;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
         }
         .form-group input:focus {
             outline: none;
             border-color: var(--mid-violet);
+            box-shadow: 0 0 0 4px rgba(153, 98, 122, 0.12);
+        }
+        .form-group input::placeholder {
+            color: #aaa;
         }
         .login-button {
             background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
             color: var(--white);
-            padding: 15px;
+            padding: 16px 24px;
             border: none;
             border-radius: 50px;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin-top: 10px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            margin-top: 6px;
+            box-shadow: 0 6px 24px rgba(100, 56, 67, 0.3);
         }
         .login-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(100, 56, 67, 0.3);
+            box-shadow: 0 10px 32px rgba(100, 56, 67, 0.4);
         }
         .login-button:disabled {
-            opacity: 0.6;
+            opacity: 0.65;
             cursor: not-allowed;
+            transform: none;
         }
         .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 12px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #fef2f2 0%, #fee 100%);
+            color: #b91c1c;
+            padding: 14px 18px;
+            border-radius: 12px;
             font-size: 14px;
             display: none;
+            border: 1px solid #fecaca;
         }
         .error-message.show {
             display: block;
         }
         .forgot-password {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 24px;
         }
         .forgot-password a {
             color: var(--mid-violet);
             text-decoration: none;
             font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
         }
         .forgot-password a:hover {
+            color: var(--dark-violet);
             text-decoration: underline;
         }
-        .back-home-btn {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-            color: var(--white);
-            padding: 10px 25px;
-            border: none;
-            border-radius: 25px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
-            text-decoration: none;
-            display: inline-block;
-        }
-        .back-home-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(100, 56, 67, 0.4);
+        @media (max-width: 520px) {
+            .login-container { padding: 36px 24px 32px; }
+            .login-header h1 { font-size: 28px; }
+            .login-page::before, .login-page::after { opacity: 0.35; }
         }
     </style>
 </head>
 <body>
     <a href="index.html" class="back-home-btn">← Nazaj na domačo stran</a>
-    <div class="login-container">
-        <div class="login-header">
-            <h1>Prijava</h1>
-            <p>Prijavite se v svoj račun</p>
-        </div>
+    <div class="login-page">
+        <div class="login-accent-blur login-accent-blur-1" aria-hidden="true"></div>
+        <div class="login-accent-blur login-accent-blur-2" aria-hidden="true"></div>
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-header-icon" aria-hidden="true">◆</div>
+                <h1>Prijava</h1>
+                <p>Prijavite se v svoj račun skupnosti JAZ ŽENSKA</p>
+            </div>
         <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
             <div class="error-message" id="errorMessage"></div>
             <div class="form-group">
@@ -152,6 +268,7 @@
         <div class="forgot-password">
             <a href="#" onclick="handleForgotPassword(event)">Pozabljeno geslo?</a>
         </div>
+    </div>
     </div>
 
     <!-- Firebase SDK -->
