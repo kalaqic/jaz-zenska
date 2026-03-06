@@ -156,7 +156,7 @@ header {
     height: 100px;
     width: auto;
     object-fit: contain;
-    margin-right: 120px;
+    margin-right: 70px;
 }
 
 .logo {
@@ -176,7 +176,7 @@ nav ul {
 }
 
 .desktop-nav {
-    margin-left: 80px;
+    margin-left: 40px;
     flex: 1;
 }
 
@@ -990,6 +990,18 @@ nav a:hover::after {
     top: 0;
     left: 0;
     z-index: 1;
+}
+
+.hero-image-right .hero-slide {
+    transition: opacity 0.8s ease-in-out;
+}
+.hero-image-right .hero-slide.active {
+    opacity: 1;
+    z-index: 1;
+}
+.hero-image-right .hero-slide:not(.active) {
+    opacity: 0;
+    z-index: 0;
 }
 
 .hero-image {

@@ -420,7 +420,7 @@
         <div class="top-bar-content">
             <a href="o-meni.html">O meni</a>
             <a href="media.html">Mediji</a>
-            <a href="login.html">Moj račun</a>
+            <a href="stik-z-nami.html">Stik z nami</a>
         </div>
     </div>
 
@@ -436,7 +436,7 @@
                     <li><a href="#aktualno">Aktualno</a></li>
                     <li><a href="blog.html">Blog</a></li>
                     <li><a href="#affirmations">Meditacije</a></li>
-                    <li><a href="stik-z-nami.html">Stik z nami</a></li>
+                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
                 </ul>
             </nav>
             <a href="#newsletter" class="header-consultation-btn desktop-social">PRIJAVI SE NA E-NOVICE</a>
@@ -460,7 +460,7 @@
             <div class="mobile-top-links">
                 <a href="o-meni.html">O meni</a>
                 <a href="media.html">Mediji</a>
-                <a href="login.html">Moj račun</a>
+                <a href="stik-z-nami.html">Stik z nami</a>
             </div>
             <nav class="mobile-nav">
                 <ul>
@@ -468,7 +468,7 @@
                     <li><a href="#aktualno">Aktualno</a></li>
                     <li><a href="blog.html">Blog</a></li>
                     <li><a href="#affirmations">Meditacije</a></li>
-                    <li><a href="stik-z-nami.html">Stik z nami</a></li>
+                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
                 </ul>
             </nav>
             <div class="mobile-social-icons">
@@ -488,7 +488,8 @@
                 <a href="pridruzi-se.html" class="hero-cta-btn">PRIDRUŽI SE</a>
         </div>
             <div class="hero-image-right">
-                <img src="images/nebo.webp" alt="Hero image" fetchpriority="high">
+                <img src="images/nebo.webp" alt="Hero image" class="hero-slide active" fetchpriority="high">
+                <img src="images/ladja.webp" alt="Hero image" class="hero-slide">
             </div>
         </div>
     </section>
@@ -1153,6 +1154,33 @@
         initFirebaseForScheduling();
     </script>
     <script src="js/main.js"></script>
+    <script>
+        // Hero image slider (home hero: images/nebo.webp & images/ladja.webp)
+        document.addEventListener('DOMContentLoaded', function () {
+            const heroSlides = document.querySelectorAll('.hero-image-right .hero-slide');
+            if (!heroSlides.length) return;
+
+            let currentHeroIndex = 0;
+
+            function showHeroSlide(index) {
+                heroSlides.forEach((slide, i) => {
+                    if (i === index) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                });
+            }
+
+            // Ensure first slide is active on load
+            showHeroSlide(currentHeroIndex);
+
+            setInterval(() => {
+                currentHeroIndex = (currentHeroIndex + 1) % heroSlides.length;
+                showHeroSlide(currentHeroIndex);
+            }, 7000); // change every 5 seconds
+        });
+    </script>
     <script>
         // Webinar Signup Modal
         const webinarModal = document.getElementById('webinarModal');

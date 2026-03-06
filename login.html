@@ -212,6 +212,22 @@
             cursor: not-allowed;
             transform: none;
         }
+        .login-no-account {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        .login-no-account a {
+            color: var(--mid-violet);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .login-no-account a:hover {
+            color: var(--dark-violet);
+            text-decoration: underline;
+        }
         .error-message {
             background: linear-gradient(135deg, #fef2f2 0%, #fee 100%);
             color: #b91c1c;
@@ -269,6 +285,7 @@
             </div>
             <button type="submit" class="login-button" id="loginButton">Prijavi se</button>
         </form>
+        <p class="login-no-account">Še nimaš računa? <a href="jaz-zenska.html">Pridruži se nam</a> in izvej več o skupini.</p>
         <div class="forgot-password">
             <a href="#" onclick="handleForgotPassword(event)">Pozabljeno geslo?</a>
         </div>
