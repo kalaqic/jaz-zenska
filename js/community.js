@@ -490,10 +490,38 @@ function showNoAccessPopup() {
     overlay.classList.add('show');
 }
 
+// Locked content message for guests (calendar, webinars)
+function getGuestLockedHtml() {
+    return `
+        <div class="guest-locked-block" style="
+            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
+            padding: 48px 32px;
+            border-radius: 20px;
+            text-align: center;
+            border-left: 5px solid var(--mid-violet);
+            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
+        ">
+            <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.6;">🔒</div>
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 22px; color: var(--dark-violet); margin: 0 0 12px;">Dostop je na voljo članicam skupine</h3>
+            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.7; margin: 0 0 24px;">Koledar in webinari so del celotne skupine Jaz Ženska. Pridružite se skupini za 119 € in dobite dostop do vseh vsebin, webinarjev in dogodkov.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+                <a href="pridruzi-se.html" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none;">Celotna skupina (119 €)</a>
+                <a href="spletna-trgovina.html" style="display: inline-block; padding: 14px 28px; background: var(--main-white); color: var(--dark-violet); border: 2px solid var(--mid-violet); border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none;">Spletna trgovina</a>
+            </div>
+        </div>
+    `;
+}
+
 // ===== WEBINARS SECTION =====
 async function loadWebinars(container) {
     const content = container || document.getElementById('webinarsContent');
     if (!content) return;
+    
+    const user = getCurrentUser();
+    if (user && user.role === 'guest') {
+        content.innerHTML = typeof getGuestLockedHtml === 'function' ? getGuestLockedHtml() : '';
+        return;
+    }
     
     // Initialize webinars if they don't exist
     if (!localStorage.getItem('webinars')) {
@@ -577,6 +605,11 @@ async function loadWebinars(container) {
 }
 
 function showStopnicWebinarPopup() {
+    const user = getCurrentUser();
+    if (user && user.role === 'guest') {
+        showNoAccessPopup();
+        return;
+    }
     const modal = document.getElementById('stopnicWebinarModal');
     if (modal) {
         modal.classList.add('active');
@@ -593,6 +626,12 @@ function closeStopnicWebinarPopup() {
 }
 
 function openWebinar(webinarId) {
+    const user = getCurrentUser();
+    if (user && user.role === 'guest') {
+        showNoAccessPopup();
+        return;
+    }
+    
     const webinars = JSON.parse(localStorage.getItem('webinars') || '[]');
     const webinar = webinars.find(w => w.id === webinarId);
     
@@ -836,6 +875,12 @@ let currentCalendarDate = new Date();
 
 async function loadCalendar() {
     const content = document.getElementById('calendarContent');
+    
+    const user = getCurrentUser();
+    if (user && user.role === 'guest') {
+        if (content) content.innerHTML = typeof getGuestLockedHtml === 'function' ? getGuestLockedHtml() : '';
+        return;
+    }
     
     let events = [];
     
