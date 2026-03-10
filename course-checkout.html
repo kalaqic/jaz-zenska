@@ -1,34 +1,243 @@
 <!DOCTYPE html>
 <html lang="sl">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1N85FSYHNH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1N85FSYHNH');
+    </script>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1776825749946412');fbq('track','PageView');</script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1776825749946412&ev=PageView&noscript=1"/></noscript>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plačilo tečaja – Jaz Ženska</title>
+    <meta name="description" content="Varno plačilo tečaja Moč besede. Dostop v spletni učilnici takoj po plačilu.">
     <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .course-checkout-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; background: linear-gradient(135deg, #f8f4f7 0%, #f0e8ed 50%, #fff6f9 100%); }
-        .course-checkout-box { max-width: 480px; width: 100%; background: var(--white); border-radius: 24px; padding: 45px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); border: 1px solid rgba(100,56,67,0.08); }
-        .course-checkout-box h1 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 10px; }
-        .course-checkout-box .sub { font-size: 15px; color: var(--text-light); margin-bottom: 28px; }
-        .form-group { margin-bottom: 22px; }
-        .form-group label { display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; font-size: 14px; }
-        .form-group input { width: 100%; padding: 14px 18px; border: 2px solid var(--almost-white); border-radius: 12px; font-size: 16px; font-family: 'Montserrat', sans-serif; box-sizing: border-box; }
-        .form-group input:focus { outline: none; border-color: var(--mid-violet); }
-        .course-checkout-btn { width: 100%; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; padding: 18px; border: none; border-radius: 50px; font-size: 18px; font-weight: 700; cursor: pointer; font-family: 'Montserrat', sans-serif; margin-top: 10px; transition: all 0.3s ease; box-shadow: 0 8px 30px rgba(100,56,67,0.4); }
-        .course-checkout-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 35px rgba(100,56,67,0.45); }
-        .course-checkout-btn:disabled { opacity: 0.7; cursor: not-allowed; }
-        .course-checkout-loading { display: none; text-align: center; padding: 20px; color: var(--text-light); }
-        .course-checkout-error { color: #c62828; font-size: 14px; margin-top: 12px; }
-        .back-link { display: inline-block; margin-top: 24px; color: var(--mid-violet); font-weight: 600; text-decoration: none; font-size: 14px; }
-        .back-link:hover { text-decoration: underline; }
+        :root {
+            --luxe-bg: #faf8f6;
+            --luxe-cream: #f5f0eb;
+            --luxe-gold: #b8860b;
+            --luxe-gold-light: #d4a84b;
+            --luxe-ink: #2c2228;
+            --luxe-muted: #6b5b62;
+            --luxe-violet: #643843;
+            --luxe-rose: #99627A;
+        }
+        body.course-checkout-page {
+            background: var(--luxe-bg);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--luxe-ink);
+            font-weight: 400;
+        }
+        /* Checkout hero strip */
+        .checkout-hero {
+            background: linear-gradient(160deg, var(--luxe-cream) 0%, rgba(245,240,235,0.6) 100%);
+            border-bottom: 1px solid rgba(184, 134, 11, 0.12);
+            padding: 32px 24px 40px;
+            text-align: center;
+        }
+        .checkout-hero .luxe-line {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--luxe-gold) 0%, var(--luxe-gold-light) 100%);
+            margin: 0 auto 24px;
+        }
+        .checkout-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 600;
+            color: var(--luxe-ink);
+            margin: 0 0 12px;
+            letter-spacing: -0.02em;
+        }
+        .checkout-hero .sub {
+            font-size: 16px;
+            color: var(--luxe-muted);
+            margin: 0;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        /* Checkout card */
+        .course-checkout-wrapper {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+            position: relative;
+        }
+        .course-checkout-box {
+            background: var(--luxe-cream);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 16px 48px rgba(44, 34, 40, 0.06);
+            border: 1px solid rgba(184, 134, 11, 0.12);
+            position: relative;
+        }
+        .course-checkout-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--luxe-gold) 0%, var(--luxe-gold-light) 100%);
+            border-radius: 24px 24px 0 0;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--luxe-ink);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid rgba(184, 134, 11, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            box-sizing: border-box;
+            background: #fff;
+            color: var(--luxe-ink);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-group input::placeholder {
+            color: var(--luxe-muted);
+            opacity: 0.8;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--luxe-gold);
+            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.12);
+        }
+        .course-checkout-btn {
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, var(--luxe-rose) 0%, var(--luxe-violet) 100%);
+            color: #fff;
+            padding: 20px 48px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 8px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.35);
+        }
+        .course-checkout-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 48px rgba(100, 56, 67, 0.4);
+        }
+        .course-checkout-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .course-checkout-loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--luxe-muted);
+            font-size: 15px;
+        }
+        .course-checkout-error {
+            color: #b71c1c;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+        .checkout-back {
+            display: inline-block;
+            margin-top: 28px;
+            font-size: 14px;
+            color: var(--luxe-muted);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .checkout-back:hover {
+            color: var(--luxe-violet);
+        }
+        @media (max-width: 768px) {
+            .course-checkout-box { padding: 32px 24px; }
+        }
     </style>
 </head>
-<body>
+<body class="course-checkout-page">
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <a href="o-meni.html">O meni</a>
+            <a href="media.html">Mediji</a>
+            <a href="stik-z-nami.html">Stik z nami</a>
+        </div>
+    </div>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="header-logo">
+                <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska Logo" width="200" height="60">
+            </a>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="index.html#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
+                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
+                </ul>
+            </nav>
+            <a href="index.html#newsletter" class="header-consultation-btn desktop-social">PRIJAVI SE NA E-NOVICE</a>
+            <button class="burger-menu" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+    <div class="mobile-menu-overlay">
+        <button class="mobile-menu-close" aria-label="Close menu">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <div class="mobile-menu-content">
+            <div class="mobile-top-links">
+                <a href="o-meni.html">O meni</a>
+                <a href="media.html">Mediji</a>
+                <a href="stik-z-nami.html">Stik z nami</a>
+            </div>
+            <nav class="mobile-nav">
+                <ul>
+                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="index.html#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
+                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-social-icons">
+                <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
+                <a href="https://www.instagram.com/jaz.zenska/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
+                <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
+            </div>
+        </div>
+    </div>
+
+    <section class="checkout-hero">
+        <div class="luxe-line"></div>
+        <h1>Plačilo tečaja</h1>
+        <p class="sub">Vnesite podatke in preusmerjeni boste na varno plačilo s karto.</p>
+    </section>
+
     <div class="course-checkout-wrapper">
         <div class="course-checkout-box">
-            <h1>Plačilo tečaja</h1>
-            <p class="sub">Vnesite podatke in preusmerjeni boste na varno plačilo s karto.</p>
             <form id="courseCheckoutForm">
                 <div class="form-group">
                     <label for="name">Ime in priimek</label>
@@ -42,9 +251,11 @@
                 <button type="submit" class="course-checkout-btn" id="courseCheckoutBtn">Plačaj 29 €</button>
             </form>
             <div id="courseCheckoutLoading" class="course-checkout-loading">Priprava plačila...</div>
-            <a href="spletna-trgovina.html" class="back-link">← Nazaj na trgovino</a>
+            <a href="spletna-trgovina.html" class="checkout-back">← Nazaj na trgovino</a>
         </div>
     </div>
+
+    <script src="js/main.js"></script>
     <script>
         (function() {
             var form = document.getElementById('courseCheckoutForm');
