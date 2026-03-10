@@ -502,12 +502,17 @@ module.exports = async function handler(req, res) {
                         console.log('   Subscription status: active');
                     } else {
                         console.log('   Document exists, updating subscription info...');
-                        // Update existing user document
+                        // Update existing user: subscription + upgrade guest → member so they get full group access
                         const updateData = {
                             subscriptionStatus: 'active',
                             subscriptionType: session.metadata?.subscription_type || session.metadata?.plan || 'unknown',
                             updatedAt: admin.firestore.FieldValue.serverTimestamp()
                         };
+                        const existingData = userDoc.data();
+                        if (existingData.role === 'guest') {
+                            updateData.role = 'member';
+                            console.log('   Upgrading guest to member (full group access)');
+                        }
                         console.log('   Update data:', JSON.stringify(updateData, null, 2));
                         await userDocRef.update(updateData);
                         console.log('✅ Updated Firestore user document successfully');
