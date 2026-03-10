@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plačilo tečaja – Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .course-checkout-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; background: linear-gradient(135deg, #f8f4f7 0%, #f0e8ed 50%, #fff6f9 100%); }
+        .course-checkout-box { max-width: 480px; width: 100%; background: var(--white); border-radius: 24px; padding: 45px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); border: 1px solid rgba(100,56,67,0.08); }
+        .course-checkout-box h1 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 10px; }
+        .course-checkout-box .sub { font-size: 15px; color: var(--text-light); margin-bottom: 28px; }
+        .form-group { margin-bottom: 22px; }
+        .form-group label { display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; font-size: 14px; }
+        .form-group input { width: 100%; padding: 14px 18px; border: 2px solid var(--almost-white); border-radius: 12px; font-size: 16px; font-family: 'Montserrat', sans-serif; box-sizing: border-box; }
+        .form-group input:focus { outline: none; border-color: var(--mid-violet); }
+        .course-checkout-btn { width: 100%; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; padding: 18px; border: none; border-radius: 50px; font-size: 18px; font-weight: 700; cursor: pointer; font-family: 'Montserrat', sans-serif; margin-top: 10px; transition: all 0.3s ease; box-shadow: 0 8px 30px rgba(100,56,67,0.4); }
+        .course-checkout-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 35px rgba(100,56,67,0.45); }
+        .course-checkout-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .course-checkout-loading { display: none; text-align: center; padding: 20px; color: var(--text-light); }
+        .course-checkout-error { color: #c62828; font-size: 14px; margin-top: 12px; }
+        .back-link { display: inline-block; margin-top: 24px; color: var(--mid-violet); font-weight: 600; text-decoration: none; font-size: 14px; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="course-checkout-wrapper">
+        <div class="course-checkout-box">
+            <h1>Plačilo tečaja</h1>
+            <p class="sub">Vnesite podatke in preusmerjeni boste na varno plačilo s karto.</p>
+            <form id="courseCheckoutForm">
+                <div class="form-group">
+                    <label for="name">Ime in priimek</label>
+                    <input type="text" id="name" name="name" placeholder="Vaše ime" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="email">E-pošta *</label>
+                    <input type="email" id="email" name="email" placeholder="vas@email.si" required autocomplete="email">
+                </div>
+                <div id="courseCheckoutError" class="course-checkout-error"></div>
+                <button type="submit" class="course-checkout-btn" id="courseCheckoutBtn">Plačaj 29 €</button>
+            </form>
+            <div id="courseCheckoutLoading" class="course-checkout-loading">Priprava plačila...</div>
+            <a href="spletna-trgovina.html" class="back-link">← Nazaj na trgovino</a>
+        </div>
+    </div>
+    <script>
+        (function() {
+            var form = document.getElementById('courseCheckoutForm');
+            var btn = document.getElementById('courseCheckoutBtn');
+            var loading = document.getElementById('courseCheckoutLoading');
+            var errEl = document.getElementById('courseCheckoutError');
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                errEl.textContent = '';
+                var name = (document.getElementById('name').value || '').trim();
+                var email = (document.getElementById('email').value || '').trim();
+                if (!email) {
+                    errEl.textContent = 'E-pošta je obvezna.';
+                    return;
+                }
+                btn.disabled = true;
+                loading.style.display = 'block';
+                try {
+                    var base = window.location.origin || (window.location.protocol + '//' + window.location.host);
+                    var res = await fetch(base + '/api/create-course-checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: name, email: email })
+                    });
+                    var data = await res.json().catch(function() { return {}; });
+                    if (!res.ok) {
+                        throw new Error(data.error || data.message || 'Napaka pri pripravi plačila.');
+                    }
+                    if (data.url) {
+                        window.location.href = data.url;
+                    } else {
+                        throw new Error('Povezava do plačila ni na voljo.');
+                    }
+                } catch (err) {
+                    errEl.textContent = err.message || 'Prišlo je do napake. Poskusite znova.';
+                    btn.disabled = false;
+                    loading.style.display = 'none';
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

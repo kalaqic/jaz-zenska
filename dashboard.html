@@ -185,6 +185,13 @@
             backdrop-filter: blur(10px);
         }
         
+        .user-role.guest {
+            background: rgba(255, 255, 255, 0.25);
+            color: var(--white);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
         .dashboard-switcher {
             display: flex;
             justify-content: center;
@@ -1627,7 +1634,8 @@
                                 userId: user.uid,
                                 email: userData.email,
                                 name: userData.name,
-                                role: userData.role || 'member'
+                                role: userData.role || 'member',
+                                purchasedCourses: userData.purchasedCourses || []
                             }));
                         } else {
                             // User exists in Auth but not in Firestore - create basic profile
@@ -1642,18 +1650,20 @@
                                 userId: user.uid,
                                 email: userData.email,
                                 name: userData.name,
-                                role: userData.role
+                                role: userData.role,
+                                purchasedCourses: []
                             }));
                         }
                     } catch (error) {
                         console.error('Error loading user data:', error);
                         // Even if Firestore fails, allow access if Firebase Auth succeeded
                         localStorage.setItem('currentUser', JSON.stringify({
-                            userId: user.uid,
-                            email: user.email,
-                            name: user.displayName || user.email.split('@')[0],
-                            role: 'member'
-                        }));
+                                userId: user.uid,
+                                email: user.email,
+                                name: user.displayName || user.email.split('@')[0],
+                                role: 'member',
+                                purchasedCourses: []
+                            }));
                     }
                 });
                 

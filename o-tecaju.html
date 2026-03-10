@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1N85FSYHNH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1N85FSYHNH');
+    </script>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments)};n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1776825749946412');fbq('track','PageView');</script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1776825749946412&ev=PageView&noscript=1"/></noscript>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moč besede – Tečaj Jaz Ženska</title>
+    <meta name="description" content="Tečaj Moč besede: odkrijte, kako besede oblikujejo vašo resničnost, samopogovor in odnose. Dostop v spletni učilnici.">
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --luxe-bg: #faf8f6;
+            --luxe-cream: #f5f0eb;
+            --luxe-gold: #b8860b;
+            --luxe-gold-light: #d4a84b;
+            --luxe-ink: #2c2228;
+            --luxe-muted: #6b5b62;
+            --luxe-violet: #643843;
+            --luxe-rose: #99627A;
+        }
+        body.otecaju-page {
+            background: var(--luxe-bg);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--luxe-ink);
+            font-weight: 400;
+        }
+        /* Hero */
+        .otecaju-hero {
+            position: relative;
+            min-height: 70vh;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 24px 80px;
+            overflow: hidden;
+        }
+        .otecaju-hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .otecaju-hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .otecaju-hero-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(44,34,40,0.92) 0%, rgba(44,34,40,0.5) 45%, transparent 70%);
+            z-index: 1;
+        }
+        .otecaju-hero-inner {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .otecaju-hero-label {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--luxe-gold-light);
+            margin-bottom: 16px;
+        }
+        .otecaju-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 6vw, 56px);
+            font-weight: 600;
+            color: #fff;
+            margin: 0 0 20px;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+        .otecaju-hero p {
+            font-size: 18px;
+            color: rgba(255,255,255,0.88);
+            margin: 0;
+            max-width: 520px;
+            line-height: 1.65;
+            font-weight: 400;
+        }
+        /* Decorative line */
+        .luxe-line {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--luxe-gold) 0%, var(--luxe-gold-light) 100%);
+            margin: 48px 0 40px;
+        }
+        .luxe-line.centered { margin-left: auto; margin-right: auto; }
+        /* Sections */
+        .otecaju-section {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 72px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .otecaju-section::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -15%;
+            width: 380px;
+            height: 380px;
+            background: url('images/background-decorations.webp') no-repeat center;
+            background-size: contain;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .otecaju-section:nth-of-type(even)::before {
+            right: auto;
+            left: -15%;
+            top: 20%;
+        }
+        .otecaju-section > * {
+            position: relative;
+            z-index: 1;
+        }
+        .otecaju-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 600;
+            color: var(--luxe-ink);
+            margin: 0 0 28px;
+            letter-spacing: -0.01em;
+        }
+        .otecaju-section p {
+            font-size: 16px;
+            line-height: 1.85;
+            color: var(--luxe-muted);
+            margin: 0 0 20px;
+        }
+        .otecaju-section p:last-child { margin-bottom: 0; }
+        /* What you get */
+        .otecaju-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px;
+            margin-top: 40px;
+        }
+        .otecaju-feature {
+            text-align: center;
+            padding: 36px 24px;
+            background: var(--luxe-cream);
+            border-radius: 16px;
+            border: 1px solid rgba(184, 134, 11, 0.15);
+            position: relative;
+        }
+        .otecaju-feature::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--luxe-gold), var(--luxe-gold-light));
+            border-radius: 1px;
+        }
+        .otecaju-feature-icon {
+            font-size: 28px;
+            margin-bottom: 16px;
+            line-height: 1;
+        }
+        .otecaju-feature h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--luxe-ink);
+            margin: 0 0 10px;
+        }
+        .otecaju-feature p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--luxe-muted);
+            margin: 0;
+        }
+        /* List */
+        .otecaju-list {
+            list-style: none;
+            padding: 0;
+            margin: 28px 0 0;
+        }
+        .otecaju-list li {
+            position: relative;
+            padding-left: 32px;
+            margin-bottom: 18px;
+            font-size: 16px;
+            line-height: 1.75;
+            color: var(--luxe-muted);
+        }
+        .otecaju-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.55em;
+            width: 8px;
+            height: 8px;
+            background: var(--luxe-gold);
+            border-radius: 50%;
+        }
+        /* CTA block */
+        .otecaju-cta-block {
+            text-align: center;
+            padding: 64px 24px;
+            background: linear-gradient(180deg, var(--luxe-cream) 0%, rgba(245,240,235,0.5) 100%);
+            border-top: 1px solid rgba(184, 134, 11, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+        .otecaju-cta-block::before {
+            content: '';
+            position: absolute;
+            bottom: -15%;
+            left: -10%;
+            width: 320px;
+            height: 320px;
+            background: url('images/background-decorations.webp') no-repeat center;
+            background-size: contain;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .otecaju-cta-block::after {
+            content: '';
+            position: absolute;
+            top: -5%;
+            right: -8%;
+            width: 280px;
+            height: 280px;
+            background: url('images/background-decorations.webp') no-repeat center;
+            background-size: contain;
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .otecaju-cta-block .otecaju-section-title,
+        .otecaju-cta-block .sub,
+        .otecaju-cta-block .otecaju-price,
+        .otecaju-cta-block .otecaju-price-note,
+        .otecaju-cta-block .otecaju-cta-btn,
+        .otecaju-cta-block .otecaju-back,
+        .otecaju-cta-block .luxe-line,
+        .otecaju-cta-block p {
+            position: relative;
+            z-index: 1;
+        }
+        .otecaju-cta-block .otecaju-section-title {
+            margin-bottom: 12px;
+        }
+        .otecaju-cta-block .sub {
+            font-size: 16px;
+            color: var(--luxe-muted);
+            margin-bottom: 32px;
+        }
+        .otecaju-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 600;
+            color: var(--luxe-violet);
+            margin-bottom: 24px;
+        }
+        .otecaju-price-note {
+            font-size: 14px;
+            color: var(--luxe-muted);
+            margin-bottom: 28px;
+        }
+        .otecaju-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, var(--luxe-rose) 0%, var(--luxe-violet) 100%);
+            color: #fff;
+            padding: 20px 48px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.35);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .otecaju-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 48px rgba(100, 56, 67, 0.4);
+        }
+        .otecaju-cta-btn svg { width: 20px; height: 20px; }
+        .otecaju-back {
+            display: inline-block;
+            margin-top: 28px;
+            font-size: 14px;
+            color: var(--luxe-muted);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .otecaju-back:hover { color: var(--luxe-violet); }
+        @media (max-width: 768px) {
+            .otecaju-hero { min-height: 60vh; padding-bottom: 48px; }
+            .otecaju-section { padding: 48px 24px; }
+            .otecaju-cta-block { padding: 48px 24px; }
+        }
+    </style>
+</head>
+<body class="otecaju-page">
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <a href="o-meni.html">O meni</a>
+            <a href="media.html">Mediji</a>
+            <a href="stik-z-nami.html">Stik z nami</a>
+        </div>
+    </div>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="header-logo">
+                <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska Logo" width="200" height="60">
+            </a>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="index.html#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
+                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
+                </ul>
+            </nav>
+            <a href="index.html#newsletter" class="header-consultation-btn desktop-social">PRIJAVI SE NA E-NOVICE</a>
+            <button class="burger-menu" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+    <div class="mobile-menu-overlay">
+        <button class="mobile-menu-close" aria-label="Close menu">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <div class="mobile-menu-content">
+            <div class="mobile-top-links">
+                <a href="o-meni.html">O meni</a>
+                <a href="media.html">Mediji</a>
+                <a href="stik-z-nami.html">Stik z nami</a>
+            </div>
+            <nav class="mobile-nav">
+                <ul>
+                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="index.html#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
+                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-social-icons">
+                <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
+                <a href="https://www.instagram.com/jaz.zenska/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
+                <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
+            </div>
+        </div>
+    </div>
+
+    <section class="otecaju-hero">
+        <div class="otecaju-hero-bg">
+            <img src="images/anticinična.webp" alt="Moč besede">
+        </div>
+        <div class="otecaju-hero-inner">
+            <p class="otecaju-hero-label">Tečaj</p>
+            <h1>Moč besede</h1>
+            <p>Besede ustvarjajo svet okoli nas. V tem tečaju odkrijte, kako z zavestno izbiro besed spremenite samopogovor, odnose in življenje.</p>
+        </div>
+    </section>
+
+    <section class="otecaju-section">
+        <div class="luxe-line"></div>
+        <h2 class="otecaju-section-title">O tečaju</h2>
+        <p>Tečaj <strong>Moč besede</strong> vas popelje v svet besed, ki jih vsak dan izrečemo sami sebi in drugim. Naučite se prepoznati, kako besede oblikujejo vaša prepričanja, čustva in odzive ter kako z majhno spremembo besedila v glavi in v ustih ustvarite več miru, samozavesti in povezanosti.</p>
+        <p>Vsebina temelji na znanju iz NLP, coachinga in dela z notranjo močjo. Primerna je za vse, ki želite poglabljati odnos do sebe in drugih ter odkrivati moč zavestne komunikacije. Posnetki in vaje so pripravljeni tako, da jih spremljate v svojem ritmu; dostop do vsebine ohranite tudi po zaključku.</p>
+    </section>
+
+    <section class="otecaju-section">
+        <div class="luxe-line"></div>
+        <h2 class="otecaju-section-title">Kaj boste pridobili</h2>
+        <div class="otecaju-features">
+            <div class="otecaju-feature">
+                <div class="otecaju-feature-icon">✦</div>
+                <h3>Moč samopogovora</h3>
+                <p>Razumete, kako vaš notranji dialog vpliva na počutje in dejanja, in se naučite ga usmerjati v podporo.</p>
+            </div>
+            <div class="otecaju-feature">
+                <div class="otecaju-feature-icon">◇</div>
+                <h3>Zavestna izbira besed</h3>
+                <p>Praktične vaje za izbiro besed, ki sprožajo spremembo v sebi in v odnosih z drugimi.</p>
+            </div>
+            <div class="otecaju-feature">
+                <div class="otecaju-feature-icon">✧</div>
+                <h3>Trajen dostop</h3>
+                <p>Vsi posnetki in materiali tečaja Moč besede na voljo v spletni učilnici kadarkoli.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="otecaju-section">
+        <div class="luxe-line"></div>
+        <h2 class="otecaju-section-title">Kako poteka</h2>
+        <ul class="otecaju-list">
+            <li>Po plačilu na vaš e-poštni naslov prejete povezavo za nastavitev gesla.</li>
+            <li>Z nastavljenim geslom se prijavite v spletno učilnico in odprete svoj račun.</li>
+            <li>V razdelku tečajev najdete kupljeno vsebino in jo lahko takoj začnete spremljati.</li>
+            <li>Posnetke lahko predvajate večkrat in se k njim vračate kadarkoli.</li>
+        </ul>
+    </section>
+
+    <section class="otecaju-cta-block">
+        <div class="luxe-line centered"></div>
+        <h2 class="otecaju-section-title">Pridobite dostop do Moči besede</h2>
+        <p class="sub">Enkratno plačilo, trajen dostop do tečaja v spletni učilnici.</p>
+        <p class="otecaju-price">29 €</p>
+        <p class="otecaju-price-note">varno plačilo s karto · dostop takoj po plačilu</p>
+        <a href="course-checkout.html" class="otecaju-cta-btn">
+            Kupi tečaj
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <p><a href="spletna-trgovina.html" class="otecaju-back">← Nazaj na spletno trgovino</a></p>
+    </section>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -89,6 +89,29 @@ async function loadCourse() {
         return;
     }
     
+    // Access check: guests may only view purchased courses
+    const user = getCurrentUser();
+    if (user && user.role === 'guest') {
+        let purchased = user.purchasedCourses || [];
+        if (typeof db !== 'undefined' && user.userId) {
+            try {
+                const userDoc = await db.collection('users').doc(user.userId).get();
+                if (userDoc.exists && userDoc.data().purchasedCourses) {
+                    purchased = userDoc.data().purchasedCourses;
+                    if (!user.purchasedCourses || user.purchasedCourses.length !== purchased.length) {
+                        const u = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                        u.purchasedCourses = purchased;
+                        localStorage.setItem('currentUser', JSON.stringify(u));
+                    }
+                }
+            } catch (e) { console.error('Error fetching user purchases:', e); }
+        }
+        if (!purchased.includes(course.id)) {
+            showNoAccessPopupCoursePage();
+            return;
+        }
+    }
+    
     // Set header title
     document.getElementById('courseHeaderTitle').textContent = course.title;
     
@@ -426,3 +449,36 @@ function showCongratulationsPopup() {
 document.addEventListener('DOMContentLoaded', function() {
     loadCourse();
 });
+
+function showNoAccessPopupCoursePage() {
+    const overlay = document.createElement('div');
+    overlay.id = 'noAccessCourseModal';
+    overlay.className = 'no-access-course-overlay';
+    overlay.innerHTML = `
+        <div class="no-access-course-box">
+            <h3>Nimate dostopa do te vsebine</h3>
+            <p>Kupite ta tečaj v spletni trgovini ali se pridružite celotni skupini za 119 € in dobite dostop do vsega!</p>
+            <div class="no-access-course-btns">
+                <a href="spletna-trgovina.html" class="no-acc-btn no-acc-btn-primary">Kupi tečaj</a>
+                <a href="pridruzi-se.html" class="no-acc-btn no-acc-btn-secondary">Celotna skupina (119 €)</a>
+            </div>
+            <a href="dashboard.html" class="no-acc-back">← Nazaj na učilnico</a>
+        </div>
+    `;
+    const style = document.createElement('style');
+    style.textContent = `
+        .no-access-course-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .no-access-course-box { background: var(--white); border-radius: 20px; padding: 40px; max-width: 440px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.35); }
+        .no-access-course-box h3 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark-violet); margin: 0 0 16px; }
+        .no-access-course-box p { color: var(--text-dark); font-size: 16px; line-height: 1.7; margin: 0 0 28px; }
+        .no-access-course-btns { display: flex; flex-direction: column; gap: 12px; }
+        .no-acc-btn { display: block; text-align: center; padding: 14px 24px; border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; }
+        .no-acc-btn-primary { background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; box-shadow: 0 6px 24px rgba(100,56,67,0.35); }
+        .no-acc-btn-primary:hover { transform: translateY(-2px); }
+        .no-acc-btn-secondary { background: var(--main-white); color: var(--dark-violet); border: 2px solid var(--mid-violet); }
+        .no-acc-btn-secondary:hover { background: rgba(153,98,122,0.1); }
+        .no-acc-back { display: inline-block; margin-top: 20px; color: var(--mid-violet); font-weight: 600; font-size: 14px; }
+    `;
+    document.head.appendChild(style);
+    document.body.appendChild(overlay);
+}

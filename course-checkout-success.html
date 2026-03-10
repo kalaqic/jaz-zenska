@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plačilo uspešno – Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .success-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; background: linear-gradient(135deg, #f8f4f7 0%, #f0e8ed 100%); }
+        .success-box { max-width: 560px; width: 100%; background: var(--white); border-radius: 24px; padding: 50px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; }
+        .success-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 28px; font-size: 40px; color: var(--white); }
+        .success-box h1 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--dark-violet); margin-bottom: 18px; }
+        .success-box p { color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-bottom: 24px; }
+        .success-btn { display: inline-block; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; padding: 16px 44px; border-radius: 50px; font-size: 18px; font-weight: 600; text-decoration: none; margin-top: 10px; transition: all 0.3s ease; box-shadow: 0 8px 30px rgba(100,56,67,0.4); }
+        .success-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 35px rgba(100,56,67,0.45); }
+    </style>
+</head>
+<body>
+    <div class="success-wrap">
+        <div class="success-box">
+            <div class="success-icon">✓</div>
+            <h1>Hvala za nakup!</h1>
+            <p>Plačilo je bilo uspešno. Na vaš e-poštni naslov boste kmalu prejeli povezavo za nastavitev gesla. Z geslom se boste lahko prijavili v <a href="login.html">Spletno učilnico</a> in dostopali do kupljenega tečaja.</p>
+            <p>Če e-pošte ne najdete, preverite tudi mapo »Nezelena pošta«.</p>
+            <a href="login.html" class="success-btn">Prijava v učilnico</a>
+            <p style="margin-top: 28px;"><a href="index.html" style="color: var(--mid-violet); font-weight: 600;">Nazaj na domačo stran</a></p>
+        </div>
+    </div>
+    <script>
+        var sessionId = new URLSearchParams(window.location.search).get('session_id');
+        if (sessionId) console.log('Session ID:', sessionId);
+        if (typeof fbq !== 'undefined') {
+            fbq('track', 'Purchase', { content_name: 'Tečaj – Spletna trgovina', value: 29, currency: 'EUR' });
+        }
+    </script>
+</body>
+</html>

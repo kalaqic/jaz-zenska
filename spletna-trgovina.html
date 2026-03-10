@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1N85FSYHNH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1N85FSYHNH');
+    </script>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1776825749946412');fbq('track','PageView');</script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1776825749946412&ev=PageView&noscript=1"/></noscript>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spletna trgovina – Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --shop-bg: #faf6f8;
+            --shop-card: #ffffff;
+            --shop-ink: #3d2a33;
+            --shop-muted: #7a6570;
+            --shop-accent: #99627A;
+            --shop-accent-dark: #643843;
+        }
+        body.trgovina-page {
+            background: var(--shop-bg);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--shop-ink);
+        }
+        /* Hero */
+        .trg-hero {
+            position: relative;
+            padding: 56px 24px 64px;
+            text-align: center;
+            overflow: hidden;
+            background: linear-gradient(165deg, #fdf9fb 0%, #f6eef2 40%, #efe4ea 100%);
+        }
+        .trg-hero::before {
+            content: '';
+            position: absolute;
+            top: -15%;
+            right: -10%;
+            width: 420px;
+            height: 420px;
+            background: url('images/background-decorations.webp') no-repeat center;
+            background-size: contain;
+            opacity: 0.45;
+            pointer-events: none;
+        }
+        .trg-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -5%;
+            left: -8%;
+            width: 280px;
+            height: 280px;
+            background: url('images/background-decorations.webp') no-repeat center;
+            background-size: contain;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .trg-hero-inner {
+            position: relative;
+            z-index: 1;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .trg-hero-label {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--shop-accent);
+            margin-bottom: 16px;
+        }
+        .trg-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 5vw, 44px);
+            font-weight: 700;
+            color: var(--shop-ink);
+            margin: 0 0 12px;
+            line-height: 1.2;
+        }
+        .trg-hero p {
+            font-size: 17px;
+            color: var(--shop-muted);
+            margin: 0;
+            line-height: 1.6;
+        }
+        /* Main content */
+        .trg-main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+        .trg-product {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: stretch;
+            background: var(--shop-card);
+            border-radius: 28px;
+            padding: 48px;
+            box-shadow: 0 20px 60px rgba(61, 42, 51, 0.08), 0 0 0 1px rgba(61, 42, 51, 0.04);
+            margin-top: -24px;
+            position: relative;
+            z-index: 2;
+        }
+        @media (max-width: 768px) {
+            .trg-product {
+                grid-template-columns: 1fr;
+                padding: 32px 24px;
+                margin-top: 0;
+                gap: 32px;
+            }
+        }
+        .trg-product-visual {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 1/1;
+            width: 100%;
+            background: linear-gradient(145deg, #f0e6ec 0%, #e8dce3 100%);
+            min-height: 0;
+        }
+        .trg-product-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        .trg-product-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--shop-ink);
+            margin: 0 0 16px;
+            line-height: 1.3;
+        }
+        .trg-product-content .trg-desc {
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--shop-muted);
+            margin: 0 0 24px;
+        }
+        .trg-product-content .trg-desc a {
+            color: var(--shop-accent);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .trg-product-content .trg-desc a:hover {
+            text-decoration: underline;
+        }
+        .trg-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .trg-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--shop-accent);
+        }
+        .trg-price-note {
+            font-size: 14px;
+            color: var(--shop-muted);
+        }
+        .trg-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--shop-accent) 0%, var(--shop-accent-dark) 100%);
+            color: #fff;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 10px 32px rgba(153, 98, 122, 0.35);
+        }
+        .trg-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px rgba(153, 98, 122, 0.4);
+        }
+        .trg-cta svg {
+            width: 18px;
+            height: 18px;
+        }
+        .trg-cta-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--shop-accent);
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid var(--shop-accent);
+            transition: background 0.25s ease, color 0.25s ease;
+        }
+        .trg-cta-secondary:hover {
+            background: rgba(153, 98, 122, 0.08);
+            color: var(--shop-accent-dark);
+        }
+        .trg-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+        }
+        .trg-trust {
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(61, 42, 51, 0.08);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 13px;
+            color: var(--shop-muted);
+        }
+        .trg-trust span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .trg-trust svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="trgovina-page">
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <a href="o-meni.html">O meni</a>
+            <a href="media.html">Mediji</a>
+            <a href="stik-z-nami.html">Stik z nami</a>
+        </div>
+    </div>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="header-logo">
+                <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska Logo" width="200" height="60">
+            </a>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="index.html#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
+                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
+                </ul>
+            </nav>
+            <a href="index.html#newsletter" class="header-consultation-btn desktop-social">PRIJAVI SE NA E-NOVICE</a>
+            <button class="burger-menu" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+    <div class="mobile-menu-overlay">
+        <button class="mobile-menu-close" aria-label="Close menu">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <div class="mobile-menu-content">
+            <div class="mobile-top-links">
+                <a href="o-meni.html">O meni</a>
+                <a href="media.html">Mediji</a>
+                <a href="stik-z-nami.html">Stik z nami</a>
+            </div>
+            <nav class="mobile-nav">
+                <ul>
+                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="index.html#aktualno">Aktualno</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#affirmations">Meditacije</a></li>
+                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-social-icons">
+                <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="images/svg/facebook.svg" alt="Facebook"></a>
+                <a href="https://www.instagram.com/jaz.zenska/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><img src="images/svg/instagram.svg" alt="Instagram"></a>
+                <a href="#" aria-label="YouTube"><img src="images/svg/youtube.svg" alt="YouTube"></a>
+            </div>
+        </div>
+    </div>
+
+    <section class="trg-hero">
+        <div class="trg-hero-inner">
+            <p class="trg-hero-label">Tečaji in vsebine</p>
+            <h1>Spletna trgovina</h1>
+            <p>Izberite tečaj in pridobite dostop v spletni učilnici. Po plačilu prejmete povezavo za nastavitev gesla in takojšen dostop.</p>
+        </div>
+    </section>
+
+    <main class="trg-main">
+        <article class="trg-product">
+            <div class="trg-product-visual">
+                <img src="images/anticinična.webp" alt="Moč besede – Tečaj">
+            </div>
+            <div class="trg-product-content">
+                <h2>Moč besede</h2>
+                <p class="trg-desc">
+                    Besede ustvarjajo svet. V tem tečaju odkrijte, kako z zavestno izbiro besed spremenite samopogovor, odnose in življenje. Dostop do vseh posnetkov in materialov v spletni učilnici.
+                </p>
+                <p class="trg-desc">
+                    Za dostop do vseh tečajev in vsebin skupine se lahko <a href="pridruzi-se.html">pridružite celotni skupini za 119 €</a>.
+                </p>
+                <div class="trg-price-row">
+                    <span class="trg-price" id="shopPrice">29 €</span>
+                    <span class="trg-price-note">enkratno</span>
+                </div>
+                <div class="trg-buttons">
+                    <a href="course-checkout.html" class="trg-cta">
+                        Kupi tečaj
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="o-tecaju.html" class="trg-cta-secondary">Več o tečaju</a>
+                </div>
+                <div class="trg-trust">
+                    <span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Varno plačilo s karto
+                    </span>
+                    <span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        Dostop takoj po plačilu
+                    </span>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

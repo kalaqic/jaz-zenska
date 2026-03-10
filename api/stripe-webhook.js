@@ -275,6 +275,118 @@ module.exports = async function handler(req, res) {
             return res.status(200).json({ received: true });
         }
 
+        // —— Course (web shop) one-time payment —— guest account, MailerLite, purchasedCourses, password reset
+        const isCoursePayment = session.metadata && session.metadata.type === 'course';
+        if (isCoursePayment) {
+            console.log('📌 Course checkout – processing');
+            const courseId = session.metadata.course_id || process.env.SHOP_COURSE_ID || 'prvi-tecaj';
+
+            let db;
+            try {
+                db = admin.firestore();
+            } catch (firestoreErr) {
+                console.error('❌ Course: Firebase not available:', firestoreErr.message);
+                return res.status(500).json({ error: 'Server misconfiguration: Firebase not initialized' });
+            }
+
+            if (!customerEmail) {
+                console.error('❌ Course: no email in session');
+                return res.status(400).json({ error: 'No email in session' });
+            }
+
+            const auth = admin.auth();
+            if (!firebaseApp) {
+                try { firebaseApp = admin.app(); } catch (e) {
+                    const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
+                    if (serviceAccountRaw) {
+                        const serviceAccount = JSON.parse(serviceAccountRaw);
+                        if (serviceAccount.project_id || serviceAccount.projectId) {
+                            firebaseApp = admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+                        }
+                    }
+                }
+            }
+
+            if (!firebaseApp) {
+                console.error('❌ Course: Firebase not initialized');
+                return res.status(500).json({ error: 'Firebase not initialized' });
+            }
+
+            let user;
+            try {
+                user = await auth.getUserByEmail(customerEmail);
+                console.log('✅ Course: user already exists');
+            } catch (err) {
+                if (err.code === 'auth/user-not-found') {
+                    const tempPassword = Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12) + 'A1!';
+                    user = await auth.createUser({
+                        email: customerEmail,
+                        password: tempPassword,
+                        emailVerified: false,
+                        disabled: false
+                    });
+                    console.log('✅ Course: created new Firebase Auth user');
+                } else throw err;
+            }
+
+            const userDocRef = db.collection('users').doc(user.uid);
+            const userDoc = await userDocRef.get();
+
+            if (!userDoc.exists) {
+                await userDocRef.set({
+                    email: customerEmail,
+                    name: customerName || customerEmail.split('@')[0],
+                    role: 'guest',
+                    purchasedCourses: [courseId],
+                    welcomed: false,
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                });
+                console.log('✅ Course: created user doc with role guest, purchasedCourses:', [courseId]);
+            } else {
+                const data = userDoc.data();
+                const existing = data.purchasedCourses || [];
+                if (!existing.includes(courseId)) {
+                    await userDocRef.update({
+                        purchasedCourses: admin.firestore.FieldValue.arrayUnion(courseId),
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                    });
+                    console.log('✅ Course: added course to purchasedCourses');
+                }
+                if (data.role !== 'guest' && data.role !== 'member') {
+                    await userDocRef.update({ role: 'guest' });
+                }
+            }
+
+            if (GROUPS.COURSE_BUYERS) {
+                const result = await addToMailerLite(customerEmail, customerName, [GROUPS.COURSE_BUYERS]);
+                if (result.success) console.log('✅ MailerLite: added to Course buyers group');
+                else console.warn('⚠️ MailerLite course add:', result.error);
+            }
+
+            try {
+                const resetUrl = process.env.SITE_URL ? `${process.env.SITE_URL.replace(/\/$/, '')}/login.html?mode=resetPassword` : 'https://jaz-zenska.vercel.app/login.html?mode=resetPassword';
+                await auth.generatePasswordResetLink(customerEmail, { url: resetUrl, handleCodeInApp: false });
+                const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
+                if (FIREBASE_API_KEY) {
+                    await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${FIREBASE_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            requestType: 'PASSWORD_RESET',
+                            email: customerEmail,
+                            continueUrl: resetUrl,
+                        }),
+                    });
+                    console.log('✅ Course: password reset email sent');
+                }
+            } catch (emailErr) {
+                console.error('❌ Course: password reset email failed:', emailErr.message);
+            }
+
+            console.log('✅ Course checkout handled –', customerEmail, 'course_id', courseId);
+            return res.status(200).json({ received: true });
+        }
+
         // —— Default: membership subscription flow ——
         console.log('Customer details:', JSON.stringify(session.customer_details, null, 2));
         
