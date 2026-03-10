@@ -32,72 +32,125 @@
             font-family: 'Montserrat', sans-serif;
             color: var(--shop-ink);
         }
-        /* Hero */
+        /* Shop header */
         .trg-hero {
             position: relative;
-            padding: 56px 24px 64px;
+            padding: 48px 24px 56px;
             text-align: center;
             overflow: hidden;
-            background: linear-gradient(165deg, #fdf9fb 0%, #f6eef2 40%, #efe4ea 100%);
+            background: linear-gradient(160deg, #fff 0%, #fcf8fa 25%, #f8f0f4 60%, #f2e8ee 100%);
+            border-bottom: 1px solid rgba(153, 98, 122, 0.12);
         }
         .trg-hero::before {
             content: '';
             position: absolute;
-            top: -15%;
-            right: -10%;
-            width: 420px;
-            height: 420px;
+            top: -20%;
+            right: -8%;
+            width: 400px;
+            height: 400px;
             background: url('images/background-decorations.webp') no-repeat center;
             background-size: contain;
-            opacity: 0.45;
+            opacity: 0.4;
             pointer-events: none;
         }
         .trg-hero::after {
             content: '';
             position: absolute;
-            bottom: -5%;
-            left: -8%;
-            width: 280px;
-            height: 280px;
+            bottom: -15%;
+            left: -5%;
+            width: 320px;
+            height: 320px;
             background: url('images/background-decorations.webp') no-repeat center;
             background-size: contain;
-            opacity: 0.3;
+            opacity: 0.28;
             pointer-events: none;
         }
         .trg-hero-inner {
             position: relative;
             z-index: 1;
-            max-width: 640px;
+            max-width: 720px;
             margin: 0 auto;
         }
-        .trg-hero-label {
-            display: inline-block;
-            font-size: 11px;
+        .trg-hero-ribbon {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, var(--shop-accent) 0%, var(--shop-accent-dark) 100%);
+            color: #ffffff;
+            font-size: 13px;
             font-weight: 700;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
-            color: var(--shop-accent);
-            margin-bottom: 16px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            box-shadow: 0 6px 24px rgba(153, 98, 122, 0.35);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+        }
+        .trg-hero-ribbon::before {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fff' stroke-width='2'%3E%3Cpath d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'/%3E%3C/svg%3E") no-repeat center;
+            background-size: contain;
+            opacity: 0.9;
         }
         .trg-hero h1 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(32px, 5vw, 44px);
+            font-size: clamp(38px, 6.5vw, 52px);
             font-weight: 700;
             color: var(--shop-ink);
-            margin: 0 0 12px;
-            line-height: 1.2;
+            margin: 0 0 16px;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+        .trg-hero-title-underline {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--shop-accent), var(--shop-accent-dark));
+            margin: 0 auto 20px;
+            border-radius: 2px;
         }
         .trg-hero p {
-            font-size: 17px;
+            font-size: 16px;
             color: var(--shop-muted);
             margin: 0;
-            line-height: 1.6;
+            line-height: 1.65;
+        }
+        .trg-shop-meta {
+            margin-top: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+            font-size: 13px;
+            color: var(--shop-muted);
+        }
+        .trg-shop-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .trg-shop-meta svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
         }
         /* Main content */
         .trg-main {
-            max-width: 1000px;
+            max-width: 1040px;
             margin: 0 auto;
-            padding: 0 24px 80px;
+            padding: 40px 24px 80px;
+        }
+        .trg-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--shop-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 24px;
+            padding-left: 4px;
         }
         .trg-product {
             display: grid;
@@ -105,20 +158,36 @@
             gap: 48px;
             align-items: stretch;
             background: var(--shop-card);
-            border-radius: 28px;
-            padding: 48px;
-            box-shadow: 0 20px 60px rgba(61, 42, 51, 0.08), 0 0 0 1px rgba(61, 42, 51, 0.04);
-            margin-top: -24px;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 16px 48px rgba(61, 42, 51, 0.06), 0 0 0 1px rgba(61, 42, 51, 0.06);
+            margin-top: 0;
             position: relative;
+            z-index: 2;
+            border: 1px solid rgba(153, 98, 122, 0.08);
+        }
+        .trg-product-badge {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, var(--shop-accent) 0%, var(--shop-accent-dark) 100%);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-radius: 6px;
             z-index: 2;
         }
         @media (max-width: 768px) {
             .trg-product {
                 grid-template-columns: 1fr;
-                padding: 32px 24px;
+                padding: 28px 20px;
                 margin-top: 0;
-                gap: 32px;
+                gap: 28px;
             }
+            .trg-product-badge { top: 16px; right: 16px; }
         }
         .trg-product-visual {
             position: relative;
@@ -299,14 +368,31 @@
 
     <section class="trg-hero">
         <div class="trg-hero-inner">
-            <p class="trg-hero-label">Tečaji in vsebine</p>
+            <p class="trg-hero-ribbon">Tečaji in vsebine</p>
             <h1>Spletna trgovina</h1>
-            <p>Izberite tečaj in pridobite dostop v spletni učilnici. Po plačilu prejmete povezavo za nastavitev gesla in takojšen dostop.</p>
+            <div class="trg-hero-title-underline"></div>
+            <p>Izberite tečaj in pridobite takojšen dostop v spletni učilnici. Varno plačilo, dostop po potrditvi.</p>
+            <div class="trg-shop-meta">
+                <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Varno plačilo
+                </span>
+                <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    Takojšen dostop
+                </span>
+                <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    V lastnem ritmu
+                </span>
+            </div>
         </div>
     </section>
 
     <main class="trg-main">
+        <h2 class="trg-section-title">Naša ponudba</h2>
         <article class="trg-product">
+            <span class="trg-product-badge">Tečaj</span>
             <div class="trg-product-visual">
                 <img src="images/anticinična.webp" alt="Moč besede – Tečaj">
             </div>

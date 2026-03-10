@@ -1,4 +1,5 @@
-// Vercel Serverless Function for Newsletter Subscription (MailerLite)
+// Vercel Serverless Function for Newsletter + Ebook signup (MailerLite)
+// POST body: { email, name, type?: 'newsletter' | 'ebook' } — default type is 'newsletter'
 const { detectBot } = require('../lib/bot-filter');
 const { addToMailerLite, GROUPS, MAILERLITE_API_KEY } = require('../lib/mailerlite');
 
@@ -38,12 +39,14 @@ module.exports = async function handler(req, res) {
             }
         }
 
-        const { email, name, are_you_a_bot, form_start_time } = body;
+        const { email, name, type = 'newsletter', are_you_a_bot, form_start_time } = body || {};
+        const signupType = String(type).toLowerCase() === 'ebook' ? 'ebook' : 'newsletter';
+        const groupIds = signupType === 'ebook' ? [GROUPS.EBOOK] : [GROUPS.NEWSLETTER];
 
         const botCheck = detectBot(req, body);
         if (botCheck.isBot) {
             console.log('Bot detected:', botCheck.reason, 'IP:', req.headers['x-forwarded-for'] || 'unknown');
-            return res.status(200).json({ success: true, message: 'Successfully subscribed to newsletter' });
+            return res.status(200).json({ success: true, message: signupType === 'ebook' ? 'Successfully signed up for ebook' : 'Successfully subscribed to newsletter' });
         }
 
         if (!email || !name) {
@@ -53,12 +56,14 @@ module.exports = async function handler(req, res) {
         const normalizedEmail = String(email).trim().toLowerCase();
         const normalizedName = String(name).trim();
 
-        const result = await addToMailerLite(normalizedEmail, normalizedName, [GROUPS.NEWSLETTER]);
+        const result = await addToMailerLite(normalizedEmail, normalizedName, groupIds);
 
         if (result.success) {
             return res.status(200).json({
                 success: true,
-                message: result.alreadyExists ? 'Already subscribed to newsletter' : 'Successfully subscribed to newsletter',
+                message: result.alreadyExists
+                    ? (signupType === 'ebook' ? 'Already signed up for ebook' : 'Already subscribed to newsletter')
+                    : (signupType === 'ebook' ? 'Successfully signed up for ebook' : 'Successfully subscribed to newsletter'),
                 alreadyExists: result.alreadyExists,
             });
         }
@@ -72,7 +77,7 @@ module.exports = async function handler(req, res) {
 
         console.error('MailerLite error:', result.error, 'Status:', result.status);
         return res.status(result.status >= 400 ? result.status : 500).json({
-            error: result.error || 'Failed to subscribe to newsletter',
+            error: result.error || (signupType === 'ebook' ? 'Failed to sign up for ebook' : 'Failed to subscribe to newsletter'),
             message: result.error,
         });
     } catch (error) {

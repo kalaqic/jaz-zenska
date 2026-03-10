@@ -387,12 +387,13 @@
             
             // Get API base URL
             const API_BASE_URL = window.location.origin;
-            const API_URL = `${API_BASE_URL}/api/ebook-signup`;
+            const API_URL = `${API_BASE_URL}/api/newsletter`;
             
-            // Prepare data for backend
+            // Prepare data for backend (same API as newsletter; type=ebook adds to ebook group)
             const requestData = {
                 email: email,
                 name: name,
+                type: 'ebook',
                 are_you_a_bot: honeypotField ? honeypotField.value.trim() : '',
                 website: websiteField ? websiteField.value.trim() : '',
                 company: companyField ? companyField.value.trim() : '',
