@@ -317,6 +317,125 @@
             z-index: 1;
         }
         
+        /* Guest locked block – luxe "missing out" design */
+        .guest-locked-block {
+            max-width: 560px;
+            margin: 0 auto;
+            background: linear-gradient(165deg, #faf8f6 0%, #f5f0eb 40%, #f2ebe6 100%);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 20px 50px rgba(44, 34, 40, 0.08), 0 0 0 1px rgba(184, 134, 11, 0.1);
+            border: 1px solid rgba(184, 134, 11, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+        .guest-locked-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #b8860b 0%, #d4a84b 100%);
+            border-radius: 24px 24px 0 0;
+        }
+        .guest-locked-inner {
+            position: relative;
+        }
+        .guest-locked-accent {
+            width: 48px;
+            height: 2px;
+            background: linear-gradient(90deg, #b8860b 0%, #d4a84b 100%);
+            margin-bottom: 20px;
+            border-radius: 1px;
+        }
+        .guest-locked-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #b8860b;
+            margin: 0 0 12px;
+        }
+        .guest-locked-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c2228;
+            margin: 0 0 16px;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        .guest-locked-lead {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #6b5b62;
+            margin: 0 0 24px;
+        }
+        .guest-locked-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 28px;
+        }
+        .guest-locked-list li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 14px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #2c2228;
+        }
+        .guest-locked-icon {
+            position: absolute;
+            left: 0;
+            color: #b8860b;
+            font-size: 14px;
+        }
+        .guest-locked-cta-text {
+            font-size: 14px;
+            color: #6b5b62;
+            margin: 0 0 24px;
+        }
+        .guest-locked-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+        }
+        .guest-locked-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 36px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .guest-locked-btn-primary {
+            background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+            color: #fff;
+            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.35);
+        }
+        .guest-locked-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 48px rgba(100, 56, 67, 0.4);
+        }
+        .guest-locked-btn-secondary {
+            background: transparent;
+            color: #643843;
+            border: 2px solid #99627A;
+        }
+        .guest-locked-btn-secondary:hover {
+            background: rgba(153, 98, 122, 0.08);
+        }
+        @media (max-width: 600px) {
+            .guest-locked-block { padding: 32px 24px; }
+            .guest-locked-title { font-size: 24px; }
+        }
+        
         .logout-btn {
             background: rgba(255, 255, 255, 0.2);
             color: var(--white);

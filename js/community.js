@@ -490,23 +490,26 @@ function showNoAccessPopup() {
     overlay.classList.add('show');
 }
 
-// Locked content message for guests (calendar, webinars)
+// Locked content message for guests (calendar, webinars) – luxe design, "missing out" copy
 function getGuestLockedHtml() {
     return `
-        <div class="guest-locked-block" style="
-            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
-            padding: 48px 32px;
-            border-radius: 20px;
-            text-align: center;
-            border-left: 5px solid var(--mid-violet);
-            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
-        ">
-            <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.6;">🔒</div>
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 22px; color: var(--dark-violet); margin: 0 0 12px;">Dostop je na voljo članicam skupine</h3>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.7; margin: 0 0 24px;">Koledar in webinari so del celotne skupine Jaz Ženska. Pridružite se skupini za 119 € in dobite dostop do vseh vsebin, webinarjev in dogodkov.</p>
-            <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
-                <a href="pridruzi-se.html" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none;">Celotna skupina (119 €)</a>
-                <a href="spletna-trgovina.html" style="display: inline-block; padding: 14px 28px; background: var(--main-white); color: var(--dark-violet); border: 2px solid var(--mid-violet); border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none;">Spletna trgovina</a>
+        <div class="guest-locked-block">
+            <div class="guest-locked-inner">
+                <div class="guest-locked-accent"></div>
+                <p class="guest-locked-label">Dostop samo za članice skupine</p>
+                <h3 class="guest-locked-title">Tu se dogaja vse</h3>
+                <p class="guest-locked-lead">Članice skupine imajo dostop do tedenskih webinarjev v živo, koledarja dogodkov, druženj in vseh tečajev. Pridružite se in ne zamudite.</p>
+                <ul class="guest-locked-list">
+                    <li><span class="guest-locked-icon">✦</span> Tedenski webinari v živo z Marjanto in gostje</li>
+                    <li><span class="guest-locked-icon">✦</span> Koledar dogodkov, Zoom klici in srečanja v živo</li>
+                    <li><span class="guest-locked-icon">✦</span> Vsi posnetki webinarjev in dodatne vsebine</li>
+                    <li><span class="guest-locked-icon">✦</span> Druženje in podpora skupine do konca 2027</li>
+                </ul>
+                <p class="guest-locked-cta-text">Odklenejte dostop – pridružite se celotni skupini ali kupite tečaj v trgovini.</p>
+                <div class="guest-locked-buttons">
+                    <a href="pridruzi-se.html" class="guest-locked-btn guest-locked-btn-primary">Celotna skupina – 119 €</a>
+                    <a href="spletna-trgovina.html" class="guest-locked-btn guest-locked-btn-secondary">Spletna trgovina</a>
+                </div>
             </div>
         </div>
     `;
