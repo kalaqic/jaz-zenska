@@ -385,35 +385,41 @@ async function loadClassroom(container) {
     
     // Guests see only courses they have purchased
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (currentUser.role === 'guest' && Array.isArray(currentUser.purchasedCourses) && currentUser.purchasedCourses.length > 0) {
-        courses = courses.filter(course => currentUser.purchasedCourses.includes(course.id));
+    const purchasedCourses = Array.isArray(currentUser.purchasedCourses)
+        ? currentUser.purchasedCourses
+        : (Array.isArray(currentUser.boughtCourses) ? currentUser.boughtCourses : []);
+    if (currentUser.role === 'guest' && purchasedCourses.length > 0) {
+        courses = courses.filter(course => purchasedCourses.includes(course.id));
     } else if (currentUser.role === 'guest') {
         courses = [];
     }
     
-    let html = `
-        <div style="
-            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
-            padding: 40px 35px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            border-left: 5px solid var(--mid-violet);
-            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.1);
-        ">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 20px; text-align: center;">Dobrodošla draga Ženska!</h3>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-bottom: 15px; text-align: center;">
-                Hvala ker si se nam pridružila. S skupnim delom bomo začele <strong>25. marca</strong>. Do takrat te vabim da si pogledaš zanimive vsebine na naši spletni strani in se nam pridružiš na FB, instagramu in youtubu.
-            </p>
-            <div style="background: rgba(255, 255, 255, 0.6); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(153, 98, 122, 0.2);">
-                <p style="color: var(--text-dark); font-size: 15px; line-height: 1.7; margin-bottom: 8px; text-align: center;">
-                    <strong style="color: var(--dark-violet);">Tvoja članarina začne teči s 1. aprilom 2026</strong>, če pa si plačala letno članarino, le ta velja do 31. 12. 2027.
-                </p>
+    let html = '';
+    
+    // Test button: only show when user has purchased moc-besede
+    if (purchasedCourses.includes('moc-besede')) {
+        html += `
+            <div style="
+                margin-bottom: 22px;
+                text-align: center;
+            ">
+                <a href="course.html?id=moc-besede" style="
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+                    color: #fff;
+                    padding: 12px 24px;
+                    border-radius: 999px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    text-decoration: none;
+                    box-shadow: 0 6px 20px rgba(100, 56, 67, 0.22);
+                ">Test: Odpri Moč besede</a>
             </div>
-            <p style="color: var(--text-dark); font-size: 16px; line-height: 1.8; margin-top: 20px; text-align: center;">
-                Veselim se sodelovanja s tabo. Če imaš že sedaj kakšna vprašanja ali izzive, mi lahko pišeš na <a href="mailto:Marjanca@jazzenska.com" style="color: var(--mid-violet); text-decoration: underline; font-weight: 600;">Marjanca@jazzenska.com</a>.
-            </p>
-        </div>
-    `;
+        `;
+    }
     
     if (courses.length > 0) {
         html += '<div class="courses-grid">';
@@ -429,6 +435,35 @@ async function loadClassroom(container) {
             `;
         });
         html += '</div>';
+    } else if (currentUser.role === 'guest') {
+        html += `
+            <div style="
+                max-width: 560px;
+                margin: 10px auto 0;
+                background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
+                border: 1px solid rgba(153, 98, 122, 0.2);
+                border-left: 4px solid var(--mid-violet);
+                border-radius: 16px;
+                padding: 24px;
+                text-align: center;
+                box-shadow: 0 8px 24px rgba(100, 56, 67, 0.1);
+            ">
+                <p style="margin: 0 0 12px; color: var(--text-dark); font-size: 16px; line-height: 1.6;">
+                    Nimate dostopa do nobenega tečaja.
+                </p>
+                <a href="spletna-trgovina.html" style="
+                    display: inline-block;
+                    background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+                    color: #fff;
+                    padding: 12px 24px;
+                    border-radius: 999px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    text-decoration: none;
+                    box-shadow: 0 6px 20px rgba(100,56,67,0.25);
+                ">Klikni tukaj za dostop</a>
+            </div>
+        `;
     }
     
     content.innerHTML = html;
