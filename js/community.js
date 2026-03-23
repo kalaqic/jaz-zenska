@@ -400,9 +400,37 @@ async function loadClassroom(container) {
     if (purchasedCourses.includes('moc-besede')) {
         html += `
             <div style="
-                margin-bottom: 22px;
+                position: relative;
+                max-width: 620px;
+                margin: 0 auto 24px;
+                padding: 28px 24px;
                 text-align: center;
+                background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
+                border: 1px solid rgba(153, 98, 122, 0.2);
+                border-left: 4px solid var(--mid-violet);
+                border-radius: 18px;
+                box-shadow: 0 10px 28px rgba(100, 56, 67, 0.12);
+                overflow: hidden;
             ">
+                <div style="
+                    position: absolute;
+                    top: -35px;
+                    right: -35px;
+                    width: 170px;
+                    height: 170px;
+                    background: url('images/background-decorations.webp') no-repeat center;
+                    background-size: contain;
+                    opacity: 0.22;
+                    pointer-events: none;
+                "></div>
+                <p style="
+                    margin: 0 0 14px;
+                    font-family: 'Playfair Display', serif;
+                    font-size: 22px;
+                    color: var(--dark-violet);
+                    position: relative;
+                    z-index: 1;
+                ">Vaš kupljen tečaj je pripravljen</p>
                 <a href="course.html?id=moc-besede" style="
                     display: inline-flex;
                     align-items: center;
@@ -416,7 +444,9 @@ async function loadClassroom(container) {
                     font-weight: 600;
                     text-decoration: none;
                     box-shadow: 0 6px 20px rgba(100, 56, 67, 0.22);
-                ">Test: Odpri Moč besede</a>
+                    position: relative;
+                    z-index: 1;
+                ">Odpri Moč besede</a>
             </div>
         `;
     }
@@ -435,19 +465,32 @@ async function loadClassroom(container) {
             `;
         });
         html += '</div>';
-    } else if (currentUser.role === 'guest') {
+    } else if (currentUser.role === 'guest' && purchasedCourses.length === 0) {
         html += `
             <div style="
-                max-width: 560px;
-                margin: 10px auto 0;
+                position: relative;
+                max-width: 620px;
+                margin: 8px auto 0;
                 background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
                 border: 1px solid rgba(153, 98, 122, 0.2);
                 border-left: 4px solid var(--mid-violet);
-                border-radius: 16px;
-                padding: 24px;
+                border-radius: 18px;
+                padding: 30px 24px;
                 text-align: center;
-                box-shadow: 0 8px 24px rgba(100, 56, 67, 0.1);
+                box-shadow: 0 10px 28px rgba(100, 56, 67, 0.12);
+                overflow: hidden;
             ">
+                <div style="
+                    position: absolute;
+                    bottom: -35px;
+                    left: -30px;
+                    width: 170px;
+                    height: 170px;
+                    background: url('images/background-decorations.webp') no-repeat center;
+                    background-size: contain;
+                    opacity: 0.2;
+                    pointer-events: none;
+                "></div>
                 <p style="margin: 0 0 12px; color: var(--text-dark); font-size: 16px; line-height: 1.6;">
                     Nimate dostopa do nobenega tečaja.
                 </p>
