@@ -3,7 +3,7 @@ const Stripe = require('stripe');
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 // Course ID in Firestore (must match a document in courses collection). Optional env override.
-const SHOP_COURSE_ID = process.env.SHOP_COURSE_ID || 'prvi-tecaj';
+const SHOP_COURSE_ID = process.env.SHOP_COURSE_ID || 'moc-besede';
 // Price in cents. e.g. 2900 = 29€
 const SHOP_COURSE_PRICE_CENTS = parseInt(process.env.SHOP_COURSE_PRICE_CENTS || '2900', 10);
 

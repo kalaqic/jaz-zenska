@@ -279,7 +279,7 @@ module.exports = async function handler(req, res) {
         const isCoursePayment = session.metadata && session.metadata.type === 'course';
         if (isCoursePayment) {
             console.log('📌 Course checkout – processing');
-            const courseId = session.metadata.course_id || process.env.SHOP_COURSE_ID || 'prvi-tecaj';
+            const courseId = session.metadata.course_id || process.env.SHOP_COURSE_ID || 'moc-besede';
 
             let db;
             try {

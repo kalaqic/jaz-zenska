@@ -490,27 +490,34 @@ function showNoAccessPopup() {
     overlay.classList.add('show');
 }
 
-// Locked content message for guests (calendar, webinars) – luxe design, "missing out" copy
+// Locked content message for guests (calendar, webinars)
 function getGuestLockedHtml() {
     return `
-        <div class="guest-locked-block">
-            <div class="guest-locked-inner">
-                <div class="guest-locked-accent"></div>
-                <p class="guest-locked-label">Dostop samo za članice skupine</p>
-                <h3 class="guest-locked-title">Tu se dogaja vse</h3>
-                <p class="guest-locked-lead">Članice skupine imajo dostop do tedenskih webinarjev v živo, koledarja dogodkov, druženj in vseh tečajev. Pridružite se in ne zamudite.</p>
-                <ul class="guest-locked-list">
-                    <li><span class="guest-locked-icon">✦</span> Tedenski webinari v živo z Marjanto in gostje</li>
-                    <li><span class="guest-locked-icon">✦</span> Koledar dogodkov, Zoom klici in srečanja v živo</li>
-                    <li><span class="guest-locked-icon">✦</span> Vsi posnetki webinarjev in dodatne vsebine</li>
-                    <li><span class="guest-locked-icon">✦</span> Druženje in podpora skupine do konca 2027</li>
-                </ul>
-                <p class="guest-locked-cta-text">Odklenejte dostop – pridružite se celotni skupini ali kupite tečaj v trgovini.</p>
-                <div class="guest-locked-buttons">
-                    <a href="pridruzi-se.html" class="guest-locked-btn guest-locked-btn-primary">Celotna skupina – 119 €</a>
-                    <a href="spletna-trgovina.html" class="guest-locked-btn guest-locked-btn-secondary">Spletna trgovina</a>
-                </div>
-            </div>
+        <div style="
+            max-width: 520px;
+            margin: 24px auto;
+            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
+            border: 1px solid rgba(153, 98, 122, 0.2);
+            border-left: 4px solid var(--mid-violet);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(100, 56, 67, 0.1);
+            text-align: center;
+        ">
+            <p style="margin: 0 0 12px; color: var(--text-dark); font-size: 16px; line-height: 1.6;">
+                Želite dostop do vseh tečajev?
+            </p>
+            <a href="pridruzi-se.html" style="
+                display: inline-block;
+                background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+                color: #fff;
+                padding: 12px 24px;
+                border-radius: 999px;
+                font-size: 14px;
+                font-weight: 600;
+                text-decoration: none;
+                box-shadow: 0 6px 20px rgba(100,56,67,0.25);
+            ">Pridruži se skupini Jaz Ženska</a>
         </div>
     `;
 }
