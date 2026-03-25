@@ -226,6 +226,73 @@
             padding: 14px 16px 18px;
         }
 
+        .mini-week-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .mini-day {
+            border: 1px solid rgba(100, 56, 67, 0.10);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 8px 6px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .mini-day.today {
+            background: linear-gradient(135deg, rgba(153, 98, 122, 0.14) 0%, rgba(100, 56, 67, 0.10) 100%);
+            border-color: rgba(184, 134, 11, 0.34);
+        }
+
+        .mini-day-name {
+            font-size: 10px;
+            color: var(--text-light);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .mini-day-number {
+            font-size: 14px;
+            color: var(--dark-violet);
+            font-weight: 800;
+            margin-top: 3px;
+        }
+
+        .mini-day-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin: 6px auto 0;
+            background: rgba(100,56,67,0.16);
+        }
+
+        .mini-day-dot.has {
+            background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+        }
+
+        .mini-calendar-open {
+            width: 100%;
+            border: 1px solid rgba(100, 56, 67, 0.16);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--dark-violet);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mini-calendar-open:hover {
+            border-color: rgba(184, 134, 11, 0.35);
+            transform: translateY(-1px);
+        }
+
         .right-divider {
             height: 1px;
             background: rgba(100, 56, 67, 0.08);
@@ -1833,8 +1900,8 @@
                                 <div class="right-panel-subtitle">Aktualno & dogodki</div>
                             </div>
                             <div class="right-panel-body">
-                                <div id="calendarContent">
-                                    <!-- Events will be loaded here -->
+                                <div id="miniCalendarContent">
+                                    <!-- Mini week calendar rendered here -->
                                 </div>
 
                                 <div class="right-divider"></div>
@@ -2012,6 +2079,19 @@
             </div>
             <div id="allEventsList">
                 <!-- Events will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Calendar Modal -->
+    <div id="fullCalendarModal" class="modal">
+        <div class="modal-content" style="max-width: 980px; max-height: 92vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 class="modal-title">Koledar</h2>
+                <button class="modal-close" onclick="closeFullCalendarModal()">&times;</button>
+            </div>
+            <div id="calendarContent">
+                <!-- Full calendar is rendered here -->
             </div>
         </div>
     </div>

@@ -82,6 +82,7 @@ async function handleLogout() {
 
 // Track if dashboard is initialized to prevent duplicate initialization
 let dashboardInitialized = false;
+let currentSidebarTab = 'classroom';
 
 // Initialize dashboard
 function initDashboard() {
@@ -127,19 +128,11 @@ function initDashboard() {
             this.classList.add('active');
 
             if (tab === 'calendar') {
-                // Calendar always lives in the right panel
-                loadCalendar();
+                openFullCalendarModal();
                 return;
             }
 
-            // Profile-related tabs live in the center panel
-            if (tab === 'classroom') {
-                sessionStorage.setItem('openProfileTab', 'classroom');
-            } else if (tab === 'webinars') {
-                sessionStorage.setItem('openProfileTab', 'webinars');
-            } else if (tab === 'profil') {
-                sessionStorage.setItem('openProfileTab', 'profil');
-            }
+            currentSidebarTab = tab;
             switchSection('profile');
         });
     });
@@ -148,9 +141,10 @@ function initDashboard() {
     switchSection('profile');
     // Right panel content
     renderRightPanel();
-    loadCalendar().then(() => {
-        // Re-render after Firestore-loaded events update localStorage
+    loadMiniWeekCalendar().then(() => {
+        // Re-render panel after Firestore-loaded events update localStorage
         renderRightPanel();
+        loadMiniWeekCalendar();
     });
     
     // Check welcome status AFTER everything is initialized
@@ -253,6 +247,87 @@ function renderRightPanel() {
         </div>
     `;
 }
+
+async function loadMiniWeekCalendar() {
+    const content = document.getElementById('miniCalendarContent');
+    if (!content) return;
+
+    let events = [];
+    try {
+        if (typeof db !== 'undefined') {
+            const eventsSnapshot = await db.collection('events').orderBy('date', 'asc').get();
+            if (!eventsSnapshot.empty) {
+                events = eventsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        title: data.title,
+                        date: data.date ? (data.date.toDate ? data.date.toDate().toISOString() : data.date) : new Date().toISOString(),
+                        type: data.type
+                    };
+                });
+                localStorage.setItem('events', JSON.stringify(events));
+            }
+        }
+    } catch (e) {
+        console.error('Error loading mini calendar events:', e);
+    }
+
+    if (events.length === 0) {
+        events = JSON.parse(localStorage.getItem('events') || '[]');
+    }
+
+    const now = new Date();
+    const day = now.getDay(); // 0-6, Sunday 0
+    const mondayOffset = day === 0 ? -6 : 1 - day;
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() + mondayOffset);
+    weekStart.setHours(0, 0, 0, 0);
+
+    const weekDays = Array.from({ length: 7 }).map((_, i) => {
+        const d = new Date(weekStart);
+        d.setDate(weekStart.getDate() + i);
+        return d;
+    });
+
+    const toLocalDateString = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+    content.innerHTML = `
+        <div class="mini-week-calendar" onclick="openFullCalendarModal()">
+            ${weekDays.map(d => {
+                const key = toLocalDateString(d);
+                const count = events.filter(e => {
+                    const ed = new Date(e.date);
+                    return toLocalDateString(ed) === key;
+                }).length;
+                const isToday = toLocalDateString(d) === toLocalDateString(now);
+                return `
+                    <div class="mini-day ${isToday ? 'today' : ''}">
+                        <div class="mini-day-name">${d.toLocaleDateString('sl-SI', { weekday: 'short' })}</div>
+                        <div class="mini-day-number">${d.getDate()}</div>
+                        <div class="mini-day-dot ${count > 0 ? 'has' : ''}"></div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+        <button type="button" class="mini-calendar-open" onclick="openFullCalendarModal()">Odpri celoten koledar</button>
+    `;
+}
+
+window.openFullCalendarModal = function() {
+    const modal = document.getElementById('fullCalendarModal');
+    if (!modal) return;
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    loadCalendar();
+};
+
+window.closeFullCalendarModal = function() {
+    const modal = document.getElementById('fullCalendarModal');
+    if (!modal) return;
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+};
 
 // Wait for Firebase to be ready before checking welcome status
 async function waitForFirebaseAndCheckWelcome() {
@@ -1346,6 +1421,11 @@ document.addEventListener('click', function(e) {
     if (allEventsModal && e.target === allEventsModal) {
         closeAllEventsModal();
     }
+
+    const fullCalendarModal = document.getElementById('fullCalendarModal');
+    if (fullCalendarModal && e.target === fullCalendarModal) {
+        closeFullCalendarModal();
+    }
     
 });
 
@@ -1702,32 +1782,30 @@ async function loadProfile() {
     
     const content = document.getElementById('profileContent');
     if (!content) return;
-    
-    content.innerHTML = `
-        <div class="profile-subnav">
-            <a href="#" class="profile-tab-active" data-tab="classroom">Tečaji</a>
-            <a href="#" data-tab="webinars">Webinari</a>
-            <a href="#" data-tab="questionnaire">Vprašalnik</a>
-            <a href="#" data-tab="profil">Nastavitve</a>
-        </div>
-        <div id="profileTabContent"></div>
-    `;
-    
-    const container = document.getElementById('profileTabContent');
-    content.querySelectorAll('.profile-subnav a').forEach(a => {
-        a.addEventListener('click', function(e) {
-            e.preventDefault();
-            showProfileTab(this.getAttribute('data-tab'));
-        });
-    });
-    
-    const openTab = sessionStorage.getItem('openProfileTab');
-    if (openTab) {
-        sessionStorage.removeItem('openProfileTab');
-        showProfileTab(openTab);
-    } else {
-        loadClassroom(container);
+
+    const titleEl = document.querySelector('#profile h2');
+    if (titleEl) {
+        const titleMap = {
+            classroom: 'Tečaji',
+            webinars: 'Webinarji',
+            profil: 'Nastavitve'
+        };
+        titleEl.textContent = titleMap[currentSidebarTab] || 'Spletna učilnica';
     }
+
+    if (currentSidebarTab === 'classroom') {
+        loadClassroom(content);
+        return;
+    }
+    if (currentSidebarTab === 'webinars') {
+        loadWebinars(content);
+        return;
+    }
+    if (currentSidebarTab === 'profil') {
+        renderProfileForm(content);
+        return;
+    }
+    loadClassroom(content);
 }
 
 async function renderProfileForm(container) {
