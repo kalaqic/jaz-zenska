@@ -383,28 +383,22 @@ async function loadClassroom(container) {
     
     courses = courses.filter(course => !coursesToDelete.includes(course.title));
     
-    // Guests see only courses they have purchased
+    // Guests can see all courses; lock those they do not own
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const purchasedCourses = Array.isArray(currentUser.purchasedCourses)
         ? currentUser.purchasedCourses
         : (Array.isArray(currentUser.boughtCourses) ? currentUser.boughtCourses : []);
-    if (currentUser.role === 'guest' && purchasedCourses.length > 0) {
-        courses = courses.filter(course => purchasedCourses.includes(course.id));
-    } else if (currentUser.role === 'guest') {
-        courses = [];
-    }
     
     let html = '';
     
-    // Test button: only show when user has purchased moc-besede
+    // Test/CTA block: show only when user has purchased moc-besede
     if (purchasedCourses.includes('moc-besede')) {
         html += `
             <div style="
                 position: relative;
                 max-width: 620px;
                 margin: 0 auto 24px;
-                padding: 28px 24px;
-                text-align: center;
+                padding: 18px;
                 background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
                 border: 1px solid rgba(153, 98, 122, 0.2);
                 border-left: 4px solid var(--mid-violet);
@@ -423,30 +417,24 @@ async function loadClassroom(container) {
                     opacity: 0.22;
                     pointer-events: none;
                 "></div>
-                <p style="
-                    margin: 0 0 14px;
-                    font-family: 'Playfair Display', serif;
-                    font-size: 22px;
-                    color: var(--dark-violet);
-                    position: relative;
-                    z-index: 1;
-                ">Vaš kupljen tečaj je pripravljen</p>
                 <a href="course.html?id=moc-besede" style="
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 8px;
-                    background: linear-gradient(135deg, #99627A 0%, #643843 100%);
-                    color: #fff;
-                    padding: 12px 24px;
-                    border-radius: 999px;
-                    font-size: 14px;
-                    font-weight: 600;
-                    text-decoration: none;
-                    box-shadow: 0 6px 20px rgba(100, 56, 67, 0.22);
                     position: relative;
                     z-index: 1;
-                ">Odpri Moč besede</a>
+                    display: block;
+                    border-radius: 14px;
+                    overflow: hidden;
+                    box-shadow: 0 10px 26px rgba(100, 56, 67, 0.18);
+                    transition: transform 0.25s ease, box-shadow 0.25s ease;
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 16px 42px rgba(100, 56, 67, 0.22)';"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 26px rgba(100, 56, 67, 0.18)';">
+                    <img src="images/moc besede.webp" alt="Moč besede" style="
+                        width: 100%;
+                        height: auto;
+                        display: block;
+                        aspect-ratio: 16/10;
+                        object-fit: cover;
+                    ">
+                </a>
             </div>
         `;
     }
@@ -454,12 +442,15 @@ async function loadClassroom(container) {
     if (courses.length > 0) {
         html += '<div class="courses-grid">';
         courses.forEach(course => {
+            const isGuest = currentUser.role === 'guest';
+            const hasAccess = !isGuest || purchasedCourses.includes(course.id);
             html += `
-                <div class="course-card" onclick="openCourse('${course.id}')">
+                <div class="course-card ${hasAccess ? '' : 'locked'}" onclick="openCourse('${course.id}', ${hasAccess})">
                     <div class="course-title">${course.title}</div>
                     <div class="course-info">
                         <span>${course.episodes?.length || 0} epizod</span>
                         ${course.progress ? `<span>${course.progress}% dokončano</span>` : ''}
+                        ${!hasAccess ? '<span class="course-lock-note">Nimate dostopa do tega tečaja</span>' : ''}
                     </div>
                 </div>
             `;
@@ -512,14 +503,16 @@ async function loadClassroom(container) {
     content.innerHTML = html;
 }
 
-function openCourse(courseId) {
+function getCourseBuyUrl(courseId) {
+    if (courseId === 'moc-besede') return 'o-tecaju.html';
+    return 'spletna-trgovina.html';
+}
+
+function openCourse(courseId, hasAccess = true) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (currentUser.role === 'guest') {
-        const purchased = currentUser.purchasedCourses || [];
-        if (!purchased.includes(courseId)) {
-            showNoAccessPopup();
-            return;
-        }
+    if (currentUser.role === 'guest' && !hasAccess) {
+        window.location.href = getCourseBuyUrl(courseId);
+        return;
     }
     window.location.href = `course.html?id=${courseId}`;
 }
@@ -728,28 +721,8 @@ function openWebinar(webinarId) {
         return;
     }
     
-    const modal = document.getElementById('webinarModal');
-    const titleEl = document.getElementById('webinarModalTitle');
-    const videoContainer = document.getElementById('webinarVideoContainer');
-    
-    if (titleEl) titleEl.textContent = webinar.title;
-    
-    if (videoContainer) {
-        videoContainer.innerHTML = `
-            <iframe 
-                src="${webinar.videoUrl}" 
-                frameborder="0" 
-                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
-                referrerpolicy="strict-origin-when-cross-origin" 
-                title="${webinar.title}">
-            </iframe>
-        `;
-    }
-    
-    if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    // Open in course-style layout (progress bar + episode list)
+    window.location.href = `course.html?webinar=${encodeURIComponent(webinar.id)}`;
 }
 
 function closeWebinarModal() {
@@ -963,13 +936,6 @@ let currentCalendarDate = new Date();
 
 async function loadCalendar() {
     const content = document.getElementById('calendarContent');
-    
-    const user = getCurrentUser();
-    if (user && user.role === 'guest') {
-        if (content) content.innerHTML = typeof getGuestLockedHtml === 'function' ? getGuestLockedHtml() : '';
-        return;
-    }
-    
     let events = [];
     
     // Try to load from Firestore first
@@ -1255,7 +1221,17 @@ async function showDayEvents(dateStr) {
             </h3>
             ${dayEvents.map(event => {
                 const eventDate = new Date(event.date);
-                const isStopnic = event.title === '25 Stopnic do sreče';
+                const isStopnic = event.title === '25 Stopnic do sreče' || event.title === '25 Stopnic do srece';
+                const now = new Date();
+                const eventDateTime = new Date(eventDate);
+                if (event && event.time && typeof event.time === 'string') {
+                    const [hh, mm] = event.time.split(':').map(n => parseInt(n, 10));
+                    if (!Number.isNaN(hh)) {
+                        eventDateTime.setHours(hh, Number.isNaN(mm) ? 0 : mm, 0, 0);
+                    }
+                }
+                const isPast = eventDateTime < now;
+                const actionLabel = (isStopnic && isPast) ? 'Ogled replaya' : 'Pridruži se';
                 const eventImage = isStopnic ? '<img src="images/aktualen dogodek 2.webp" alt="25 Stopnic do sreče" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px 12px 0 0; margin: -20px -20px 16px -20px; display: block;">' : '';
                 return `
                     <div style="
@@ -1292,7 +1268,7 @@ async function showDayEvents(dateStr) {
                                 display: inline-block;
                                 transition: all 0.3s ease;
                                 box-shadow: 0 2px 8px rgba(100, 56, 67, 0.3);
-                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(100, 56, 67, 0.3)'">Pridruži se</a>
+                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(100, 56, 67, 0.3)'">${actionLabel}</a>
                         </div>
                         ` : ''}
                     </div>
@@ -1683,7 +1659,7 @@ async function loadProfile() {
     
     content.innerHTML = `
         <div class="profile-subnav">
-            <a href="#" class="profile-tab-active" data-tab="classroom">Učilnica</a>
+            <a href="#" class="profile-tab-active" data-tab="classroom">Tečaji</a>
             <a href="#" data-tab="webinars">Webinari</a>
             <a href="#" data-tab="questionnaire">Vprašalnik</a>
             <a href="#" data-tab="profil">Nastavitve</a>

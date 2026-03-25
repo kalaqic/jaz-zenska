@@ -35,53 +35,121 @@ function getCourseId() {
     return params.get('id');
 }
 
+function getWebinarId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('webinar');
+}
+
+function getActiveContentId() {
+    const courseId = getCourseId();
+    if (courseId) return courseId;
+    const webinarId = getWebinarId();
+    return webinarId ? `webinar-${webinarId}` : null;
+}
+
 // Load course
 async function loadCourse() {
     const courseId = getCourseId();
-    if (!courseId) {
+    const webinarId = getWebinarId();
+    const isWebinar = !!webinarId && !courseId;
+
+    if (!courseId && !webinarId) {
         window.location.href = 'dashboard.html';
         return;
     }
     
     let course = null;
-    
-    // Try to load from Firestore first
-    try {
-        if (typeof db !== 'undefined') {
-            const courseDoc = await db.collection('courses').doc(courseId).get();
-            
-            if (courseDoc.exists) {
-                const data = courseDoc.data();
-                course = {
-                    id: courseDoc.id,
-                    title: data.title,
-                    description: data.description,
-                    episodes: data.episodes || [],
-                    progress: data.progress || 0,
-                    completed: data.completed || false
-                };
-                
-                // Update localStorage cache
-                const courses = JSON.parse(localStorage.getItem('courses') || '[]');
-                const courseIndex = courses.findIndex(c => c.id === courseId);
-                if (courseIndex !== -1) {
-                    courses[courseIndex] = course;
-                } else {
-                    courses.push(course);
+
+    if (isWebinar) {
+        let webinars = JSON.parse(localStorage.getItem('webinars') || '[]');
+
+        try {
+            if (typeof db !== 'undefined') {
+                const webinarsSnapshot = await db.collection('webinars').get();
+                if (!webinarsSnapshot.empty) {
+                    webinars = webinarsSnapshot.docs.map(doc => {
+                        const data = doc.data();
+                        return {
+                            id: doc.id,
+                            title: data.title,
+                            date: data.date,
+                            description: data.description,
+                            videoId: data.videoId,
+                            videoUrl: data.videoUrl
+                        };
+                    });
+                    localStorage.setItem('webinars', JSON.stringify(webinars));
                 }
-                localStorage.setItem('courses', JSON.stringify(courses));
-                console.log('Loaded course from Firestore');
             }
+        } catch (error) {
+            console.error('Error loading webinars from Firestore:', error);
         }
-    } catch (error) {
-        console.error('Error loading course from Firestore:', error);
-    }
-    
-    // Fallback to localStorage
-    if (!course) {
-        initCourseData();
-        const courses = JSON.parse(localStorage.getItem('courses') || '[]');
-        course = courses.find(c => c.id === courseId);
+
+        const webinar = webinars.find(w => String(w.id) === String(webinarId));
+        if (webinar) {
+            course = {
+                id: `webinar-${webinar.id}`,
+                title: webinar.title || 'Webinar',
+                description: webinar.description || '',
+                episodes: [
+                    {
+                        id: '1',
+                        title: webinar.title || 'Webinar',
+                        description: webinar.description || 'Posnetek webinarja',
+                        videoUrl: webinar.videoUrl || '',
+                        duration: ''
+                    }
+                ],
+                progress: 0,
+                completed: false
+            };
+
+            // cache webinar content as a course-like item for progress handling
+            const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+            const existingIndex = courses.findIndex(c => c.id === course.id);
+            if (existingIndex !== -1) courses[existingIndex] = course;
+            else courses.push(course);
+            localStorage.setItem('courses', JSON.stringify(courses));
+        }
+    } else {
+        // Try to load from Firestore first
+        try {
+            if (typeof db !== 'undefined') {
+                const courseDoc = await db.collection('courses').doc(courseId).get();
+                
+                if (courseDoc.exists) {
+                    const data = courseDoc.data();
+                    course = {
+                        id: courseDoc.id,
+                        title: data.title,
+                        description: data.description,
+                        episodes: data.episodes || [],
+                        progress: data.progress || 0,
+                        completed: data.completed || false
+                    };
+                    
+                    // Update localStorage cache
+                    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+                    const courseIndex = courses.findIndex(c => c.id === courseId);
+                    if (courseIndex !== -1) {
+                        courses[courseIndex] = course;
+                    } else {
+                        courses.push(course);
+                    }
+                    localStorage.setItem('courses', JSON.stringify(courses));
+                    console.log('Loaded course from Firestore');
+                }
+            }
+        } catch (error) {
+            console.error('Error loading course from Firestore:', error);
+        }
+        
+        // Fallback to localStorage
+        if (!course) {
+            initCourseData();
+            const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+            course = courses.find(c => c.id === courseId);
+        }
     }
     
     if (!course) {
@@ -89,9 +157,13 @@ async function loadCourse() {
         return;
     }
     
-    // Access check: guests may only view purchased courses
+    // Access check
     const user = getCurrentUser();
-    if (user && user.role === 'guest') {
+    if (user && user.role === 'guest' && isWebinar) {
+        showNoAccessPopupCoursePage();
+        return;
+    }
+    if (user && user.role === 'guest' && !isWebinar) {
         let purchased = user.purchasedCourses || [];
         if (typeof db !== 'undefined' && user.userId) {
             try {
@@ -114,6 +186,12 @@ async function loadCourse() {
     
     // Set header title
     document.getElementById('courseHeaderTitle').textContent = course.title;
+    if (isWebinar) {
+        const progressLabel = document.querySelector('.progress-label');
+        const episodesTitle = document.querySelector('.episodes-title');
+        if (progressLabel) progressLabel.textContent = 'Napredek vsebine';
+        if (episodesTitle) episodesTitle.textContent = 'Vsebina';
+    }
     
     // Load episodes
     loadEpisodes(course);
@@ -301,7 +379,7 @@ async function loadEpisodes(course) {
 
 // Get current course
 function getCurrentCourse() {
-    const courseId = getCourseId();
+    const courseId = getActiveContentId();
     if (!courseId) return null;
     
     const courses = JSON.parse(localStorage.getItem('courses') || '[]');
@@ -309,9 +387,9 @@ function getCurrentCourse() {
 }
 
 // Load episode content
-function loadEpisodeContent(episodeId, course = null, element = null) {
+async function loadEpisodeContent(episodeId, course = null, element = null) {
     if (!course) {
-        const courseId = getCourseId();
+        const courseId = getActiveContentId();
         const courses = JSON.parse(localStorage.getItem('courses') || '[]');
         course = courses.find(c => c.id === courseId);
     }

@@ -499,6 +499,30 @@
             transform: translateY(-5px) scale(1.02);
             box-shadow: 0 12px 35px rgba(100, 56, 67, 0.3);
         }
+
+        .course-card.locked {
+            background: linear-gradient(135deg, #a9a9a9 0%, #7f7f7f 100%);
+            box-shadow: 0 8px 25px rgba(80, 80, 80, 0.22);
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+
+        .course-card.locked:hover {
+            transform: none;
+            box-shadow: 0 8px 25px rgba(80, 80, 80, 0.22);
+        }
+
+        .course-lock-note {
+            display: inline-block;
+            margin-top: 4px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.22);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
         
         .course-title {
             font-family: 'Playfair Display', serif;
@@ -1519,7 +1543,7 @@
         <div class="dashboard-switcher">
             <a href="#" class="switch-card active" data-section="profile" aria-current="page">
                 <span class="switch-icon" aria-hidden="true">👤</span>
-                <span>Moj profil</span>
+                <span>Spletna učilnica</span>
             </a>
             <a href="#" class="switch-card" data-section="calendar">
                 <span class="switch-icon" aria-hidden="true">📅</span>
@@ -1530,7 +1554,7 @@
         <div class="dashboard-content">
             <!-- Profile Section (first; contains Profil, Učilnica, Webinari, Vprašalnik) -->
             <div id="profile" class="content-section active">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Moj profil</h2>
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Spletna učilnica</h2>
                 <div id="profileContent">
                     <!-- Profile tabs and content loaded here -->
                 </div>
