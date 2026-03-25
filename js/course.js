@@ -1,4 +1,5 @@
 // Course Detail Page JavaScript
+const MOC_BESSEDE_INTRO_VIDEO_URL = 'https://player.vimeo.com/video/1176831636?badge=0&autopause=0&player_id=0&app_id=58479';
 
 // Initialize course data structure
 function initCourseData() {
@@ -7,22 +8,41 @@ function initCourseData() {
     // Add episodes to courses if they don't have them
     courses.forEach(course => {
         if (!course.episodes || course.episodes.length === 0) {
-            course.episodes = [
-                {
-                    id: '1',
-                    title: 'Uvod v tečaj',
-                    description: 'Spoznajte osnove in začnite svojo pot.',
-                    videoUrl: '',
-                    duration: '10 min'
-                },
-                {
-                    id: '2',
-                    title: 'Glavna vsebina',
-                    description: 'Poglobljeno delo z vsebino tečaja.',
-                    videoUrl: '',
-                    duration: '20 min'
-                }
-            ];
+            if (course.id === 'moc-besede') {
+                course.episodes = [
+                    {
+                        id: '1',
+                        title: 'Uvod',
+                        description: 'Uvod v delavnico Moč besede.',
+                        videoUrl: MOC_BESSEDE_INTRO_VIDEO_URL,
+                        duration: ''
+                    },
+                    {
+                        id: '2',
+                        title: 'Glavna vsebina',
+                        description: 'Posnetek bo kmalu na voljo.',
+                        videoUrl: '',
+                        duration: ''
+                    }
+                ];
+            } else {
+                course.episodes = [
+                    {
+                        id: '1',
+                        title: 'Uvod v tečaj',
+                        description: 'Spoznajte osnove in začnite svojo pot.',
+                        videoUrl: '',
+                        duration: '10 min'
+                    },
+                    {
+                        id: '2',
+                        title: 'Glavna vsebina',
+                        description: 'Poglobljeno delo z vsebino tečaja.',
+                        videoUrl: '',
+                        duration: '20 min'
+                    }
+                ];
+            }
         }
     });
     
@@ -155,6 +175,20 @@ async function loadCourse() {
     if (!course) {
         window.location.href = 'dashboard.html';
         return;
+    }
+
+    // Moč besede: ensure first intro episode uses the correct Vimeo embed
+    if (course.id === 'moc-besede') {
+        if (!course.episodes || course.episodes.length === 0) {
+            initCourseData();
+            const cachedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
+            course = cachedCourses.find(c => c.id === 'moc-besede') || course;
+        }
+        if (course.episodes && course.episodes.length > 0) {
+            if (!course.episodes[0].videoUrl || String(course.episodes[0].videoUrl).trim() === '') {
+                course.episodes[0].videoUrl = MOC_BESSEDE_INTRO_VIDEO_URL;
+            }
+        }
     }
     
     // Access check
@@ -428,7 +462,16 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
     contentArea.innerHTML = `
         <div class="course-content-title">${episode.title}</div>
         <div class="course-video">
-            ${episode.videoUrl ? `<iframe src="${episode.videoUrl}" frameborder="0" allowfullscreen style="width: 100%; height: 100%;"></iframe>` : 'Video bo kmalu na voljo'}
+            ${episode.videoUrl ? `
+                <iframe
+                    src="${episode.videoUrl}"
+                    frameborder="0"
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                    style="width: 100%; height: 100%;"
+                ></iframe>
+            ` : 'Video bo kmalu na voljo'}
         </div>
         <div class="course-description">${episode.description || 'Opis epizode bo kmalu na voljo.'}</div>
         <div class="episode-actions">
