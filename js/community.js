@@ -395,55 +395,16 @@ async function loadClassroom(container) {
 
     const isGuest = currentUser.role === 'guest';
     const hasMocBesedeAccess = !isGuest || purchasedCourses.includes('moc-besede');
-    const mocBesedeCardUrl = hasMocBesedeAccess ? 'course.html?id=moc-besede' : getCourseBuyUrl('moc-besede');
-
-    // Keep "Moč besede" always as the dedicated photo card (owned OR locked)
+    // Keep "Moč besede" always as a featured card in webinar-like design
     html += `
-        <div style="
-            position: relative;
-            max-width: 620px;
-            margin: 0 auto 24px;
-            padding: 18px;
-            background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
-            border: 1px solid rgba(153, 98, 122, 0.2);
-            border-left: 4px solid var(--mid-violet);
-            border-radius: 18px;
-            box-shadow: 0 10px 28px rgba(100, 56, 67, 0.12);
-            overflow: hidden;
-        ">
-            <div style="
-                position: absolute;
-                top: -35px;
-                right: -35px;
-                width: 170px;
-                height: 170px;
-                background: url('images/background-decorations.webp') no-repeat center;
-                background-size: contain;
-                opacity: 0.22;
-                pointer-events: none;
-            "></div>
-            <a href="${mocBesedeCardUrl}" style="
-                position: relative;
-                z-index: 1;
-                display: block;
-                border-radius: 14px;
-                overflow: hidden;
-                box-shadow: 0 10px 26px rgba(100, 56, 67, 0.18);
-                transition: transform 0.25s ease, box-shadow 0.25s ease;
-                cursor: ${hasMocBesedeAccess ? 'pointer' : 'not-allowed'};
-            "
-               onmouseover="${hasMocBesedeAccess ? "this.style.transform='translateY(-2px)'; this.style.boxShadow='0 16px 42px rgba(100, 56, 67, 0.22)';" : ''}"
-               onmouseout="${hasMocBesedeAccess ? "this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 26px rgba(100, 56, 67, 0.18)';" : ''}">
-                <img src="images/moc besede.webp" alt="Moč besede" style="
-                    width: 100%;
-                    height: auto;
-                    display: block;
-                    aspect-ratio: 16/10;
-                    object-fit: cover;
-                    ${hasMocBesedeAccess ? '' : 'filter: grayscale(100%); opacity: 0.75;'}
-                ">
-            </a>
-            ${!hasMocBesedeAccess ? '<div class="course-lock-note" style="margin-top: 14px;">Nimate dostopa do tega tečaja</div>' : ''}
+        <div class="webinars-grid" style="margin-bottom: 24px;">
+            <div class="webinar-card ${hasMocBesedeAccess ? '' : 'locked'}" onclick="openCourse('moc-besede', ${hasMocBesedeAccess})">
+                <img src="images/moc besede.webp" alt="Moč besede" class="webinar-card-image">
+                <div class="webinar-title">Moč besede</div>
+                <div class="webinar-date">30-dnevna e-delavnica</div>
+                <div class="webinar-description">Spoznaj moč besed in kako z majhnimi spremembami v izražanju vplivaš na počutje, odnose in rezultate v življenju.</div>
+                ${!hasMocBesedeAccess ? '<div class="webinar-lock-note">Nimate dostopa do tega tečaja</div>' : ''}
+            </div>
         </div>
     `;
 

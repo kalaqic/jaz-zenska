@@ -172,6 +172,26 @@ async function loadCourse() {
         }
     }
     
+    // Hard fallback for Moč besede so the page always opens
+    if (!course && courseId === 'moc-besede') {
+        course = {
+            id: 'moc-besede',
+            title: 'Moč besede',
+            description: '30-dnevna e-delavnica',
+            episodes: [
+                {
+                    id: '1',
+                    title: 'Uvod',
+                    description: 'Uvod v delavnico Moč besede.',
+                    videoUrl: MOC_BESSEDE_INTRO_VIDEO_URL,
+                    duration: ''
+                }
+            ],
+            progress: 0,
+            completed: false
+        };
+    }
+
     if (!course) {
         window.location.href = 'dashboard.html';
         return;
@@ -204,7 +224,9 @@ async function loadCourse() {
                 const userDoc = await db.collection('users').doc(user.userId).get();
                 if (userDoc.exists && userDoc.data().purchasedCourses) {
                     purchased = userDoc.data().purchasedCourses;
-                    if (!user.purchasedCourses || user.purchasedCourses.length !== purchased.length) {
+                    const cachedPurchased = Array.isArray(user.purchasedCourses) ? user.purchasedCourses : [];
+                    const changed = cachedPurchased.length !== purchased.length || cachedPurchased.some(id => !purchased.includes(id));
+                    if (changed) {
                         const u = JSON.parse(localStorage.getItem('currentUser') || '{}');
                         u.purchasedCourses = purchased;
                         localStorage.setItem('currentUser', JSON.stringify(u));
@@ -231,7 +253,7 @@ async function loadCourse() {
     loadEpisodes(course);
     
     // Update progress
-    updateCourseProgress(courseId);
+    updateCourseProgress(course.id);
     
     // Load first episode content
     if (course.episodes && course.episodes.length > 0) {
