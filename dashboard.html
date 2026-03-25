@@ -131,7 +131,7 @@
             padding: 12px 12px;
             border-radius: 14px;
             text-decoration: none;
-            color: rgba(255, 255, 255, 0.88);
+            color: var(--mid-violet);
             border: 1px solid transparent;
             transition: all 0.2s ease;
             cursor: pointer;
@@ -140,12 +140,14 @@
         .sidebar-item:hover {
             background: rgba(255, 255, 255, 0.04);
             border-color: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.98);
         }
 
         .sidebar-item.active {
             background: linear-gradient(135deg, rgba(153, 98, 122, 0.28) 0%, rgba(100, 56, 67, 0.20) 100%);
             border-color: rgba(184, 134, 11, 0.30);
             box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            color: rgba(255, 255, 255, 0.98);
         }
 
         .sidebar-item-icon {
@@ -224,6 +226,27 @@
 
         .right-panel-body {
             padding: 14px 16px 18px;
+        }
+
+        .right-menu-hamburger {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.18);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 14px;
+            font-size: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+
+        .right-menu-hamburger:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .mini-week-calendar {
@@ -346,6 +369,25 @@
             .dashboard-main { margin-left: 0; }
             .dashboard-columns { grid-template-columns: 1fr; }
             .dashboard-right { position: relative; top: auto; }
+        }
+
+        @media (max-width: 768px) {
+            .right-menu-hamburger { display: inline-flex; }
+            .dashboard-right { display: none; }
+            .dashboard-right.open {
+                display: block;
+                position: fixed;
+                top: 92px;
+                left: 12px;
+                right: 12px;
+                z-index: 80;
+                max-height: calc(100vh - 120px);
+                overflow-y: auto;
+                background: rgba(255, 255, 255, 0.75);
+                backdrop-filter: blur(10px);
+                border-radius: 18px;
+                padding: 0;
+            }
         }
         
         .dashboard-header {
@@ -1868,7 +1910,8 @@
                 <div class="user-name" id="userName">Nalaganje...</div>
                 <div class="user-role" id="userRole"></div>
             </div>
-            <div class="user-info">
+                    <div class="user-info">
+                        <button type="button" id="rightMenuToggle" class="right-menu-hamburger" onclick="toggleRightPanel()" aria-label="Odpri desni panel" aria-expanded="false">☰</button>
                 <a href="index.html" class="back-home-btn">← Nazaj na domačo stran</a>
                 <button class="logout-btn" onclick="handleLogout()">Odjavi se</button>
             </div>
@@ -1885,7 +1928,7 @@
                         </div>
                     </div>
 
-                    <aside class="dashboard-right">
+                    <aside class="dashboard-right" id="rightPanel">
                         <div class="right-panel-card">
                             <div class="right-panel-header">
                                 <h3 class="right-panel-title">Koledar</h3>

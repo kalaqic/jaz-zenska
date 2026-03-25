@@ -84,6 +84,37 @@ async function handleLogout() {
 let dashboardInitialized = false;
 let currentSidebarTab = 'classroom';
 
+function setRightPanelOpen(open) {
+    const rightPanel = document.getElementById('rightPanel') || document.querySelector('.dashboard-right');
+    const toggleBtn = document.getElementById('rightMenuToggle');
+    if (!rightPanel || !toggleBtn) return;
+
+    if (open) {
+        rightPanel.classList.add('open');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+    } else {
+        rightPanel.classList.remove('open');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    // Only lock scrolling on mobile drawer
+    try {
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+        if (isMobile) {
+            document.body.style.overflow = open ? 'hidden' : '';
+        }
+    } catch (e) {
+        // no-op
+    }
+}
+
+window.toggleRightPanel = function() {
+    const rightPanel = document.getElementById('rightPanel') || document.querySelector('.dashboard-right');
+    if (!rightPanel) return;
+    const nextOpen = !rightPanel.classList.contains('open');
+    setRightPanelOpen(nextOpen);
+};
+
 // Initialize dashboard
 function initDashboard() {
     if (dashboardInitialized) {
@@ -328,6 +359,21 @@ window.closeFullCalendarModal = function() {
     modal.classList.remove('show');
     document.body.style.overflow = '';
 };
+
+// Close right drawer when clicking outside (mobile)
+document.addEventListener('click', function(e) {
+    const rightPanel = document.getElementById('rightPanel') || document.querySelector('.dashboard-right');
+    const toggleBtn = document.getElementById('rightMenuToggle');
+    if (!rightPanel || !toggleBtn) return;
+    const isOpen = rightPanel.classList.contains('open');
+    if (!isOpen) return;
+
+    const clickedInsidePanel = !!e.target.closest('#rightPanel');
+    const clickedToggle = !!e.target.closest('#rightMenuToggle');
+    if (clickedInsidePanel || clickedToggle) return;
+
+    setRightPanelOpen(false);
+});
 
 // Wait for Firebase to be ready before checking welcome status
 async function waitForFirebaseAndCheckWelcome() {
