@@ -238,10 +238,6 @@ function renderRightPanel() {
 
     upcomingEl.innerHTML = `
         <div class="right-list">
-            <div style="font-family:'Playfair Display', serif; font-weight:800; color: var(--dark-violet); font-size:16px; margin-bottom:4px;">
-                Prihajajoče
-            </div>
-
             <div style="color: var(--text-light); font-weight:800; font-size:12px; letter-spacing:0.02em; margin-top:10px;">
                 Dogodki
             </div>
