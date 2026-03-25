@@ -195,27 +195,34 @@
         .dashboard-switcher {
             display: flex;
             justify-content: center;
-            gap: 16px;
-            margin-bottom: 28px;
+            gap: 0;
+            margin: 0 auto 28px;
             flex-wrap: wrap;
+            max-width: 560px;
+            padding: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(100, 56, 67, 0.10);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
         }
         
         .dashboard-switcher .switch-card {
             flex: 1;
-            min-width: 160px;
-            max-width: 220px;
-            padding: 20px 28px;
-            border-radius: 20px;
-            border: 2px solid rgba(100, 56, 67, 0.15);
-            background: var(--white);
-            color: var(--text-dark);
+            min-width: 190px;
+            max-width: 280px;
+            padding: 14px 22px;
+            border-radius: 999px;
+            border: none;
+            background: transparent;
+            color: rgba(56, 34, 43, 0.92);
             font-weight: 600;
             font-size: 16px;
             text-align: center;
             text-decoration: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            transition: all 0.25s ease;
+            box-shadow: none;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -229,17 +236,14 @@
         }
         
         .dashboard-switcher .switch-card:hover {
-            border-color: var(--mid-violet);
             color: var(--dark-violet);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(100, 56, 67, 0.12);
+            background: rgba(153, 98, 122, 0.08);
         }
         
         .dashboard-switcher .switch-card.active {
             background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
             color: var(--white);
-            border-color: var(--dark-violet);
-            box-shadow: 0 6px 20px rgba(100, 56, 67, 0.35);
+            box-shadow: 0 10px 30px rgba(100, 56, 67, 0.28);
         }
         
         .dashboard-switcher .switch-card.active .switch-icon {
@@ -1568,13 +1572,13 @@
         </div>
         
         <div class="dashboard-switcher">
-            <a href="#" class="switch-card active" data-section="profile" aria-current="page">
-                <span class="switch-icon" aria-hidden="true">👤</span>
-                <span>Spletna učilnica</span>
-            </a>
-            <a href="#" class="switch-card" data-section="calendar">
+            <a href="#" class="switch-card active" data-section="calendar" aria-current="page">
                 <span class="switch-icon" aria-hidden="true">📅</span>
                 <span>Koledar</span>
+            </a>
+            <a href="#" class="switch-card" data-section="profile">
+                <span class="switch-icon" aria-hidden="true">✨</span>
+                <span>Učilnica</span>
             </a>
         </div>
         

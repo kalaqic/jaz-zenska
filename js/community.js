@@ -130,8 +130,8 @@ function initDashboard() {
         });
     });
     
-    // Load initial section (profile first)
-    switchSection('profile');
+    // Load initial section (calendar first)
+    switchSection('calendar');
     
     // Check welcome status AFTER everything is initialized
     // Wait for Firebase to be ready

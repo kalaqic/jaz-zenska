@@ -190,6 +190,13 @@ async function loadCourse() {
             progress: 0,
             completed: false
         };
+
+        // Cache fallback course so progress calculations can find it
+        const coursesCache = JSON.parse(localStorage.getItem('courses') || '[]');
+        const existing = coursesCache.findIndex(c => c.id === 'moc-besede');
+        if (existing !== -1) coursesCache[existing] = course;
+        else coursesCache.push(course);
+        localStorage.setItem('courses', JSON.stringify(coursesCache));
     }
 
     if (!course) {
@@ -277,7 +284,7 @@ async function getWatchedEpisodes(courseId) {
             
             if (progressDoc.exists) {
                 const data = progressDoc.data();
-                const watchedEpisodes = data.watchedEpisodes || [];
+                const watchedEpisodes = (data.watchedEpisodes || []).map(id => String(id));
                 
                 // Cache in localStorage
                 const watched = JSON.parse(localStorage.getItem('watchedEpisodes') || '{}');
@@ -293,7 +300,7 @@ async function getWatchedEpisodes(courseId) {
     
     // Fallback to localStorage
     const watched = JSON.parse(localStorage.getItem('watchedEpisodes') || '{}');
-    return watched[courseId] || [];
+    return (watched[courseId] || []).map(id => String(id));
 }
 
 // Mark episode as watched/unwatched
@@ -322,13 +329,14 @@ async function toggleEpisodeWatched(courseId, episodeId, isWatched) {
     // Get current watched episodes
     const currentWatched = await getWatchedEpisodes(courseId);
     let newWatched = [...currentWatched];
+    const normalizedEpisodeId = String(episodeId);
     
     if (isWatched) {
-        if (!newWatched.includes(episodeId)) {
-            newWatched.push(episodeId);
+        if (!newWatched.includes(normalizedEpisodeId)) {
+            newWatched.push(normalizedEpisodeId);
         }
     } else {
-        newWatched = newWatched.filter(id => id !== episodeId);
+        newWatched = newWatched.filter(id => String(id) !== normalizedEpisodeId);
     }
     
     // Update localStorage cache
