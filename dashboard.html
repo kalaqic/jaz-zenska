@@ -1041,6 +1041,33 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
         }
+
+        .webinar-card.locked {
+            background: linear-gradient(135deg, #f1ecee 0%, #e5dde0 100%);
+            border-color: rgba(120, 120, 120, 0.25);
+            opacity: 0.72;
+            cursor: not-allowed;
+        }
+
+        .webinar-card.locked:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(100, 56, 67, 0.04);
+            transform: none;
+        }
+
+        .webinar-card.locked .webinar-card-image {
+            filter: grayscale(100%);
+        }
+
+        .webinar-lock-note {
+            margin-top: 14px;
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(100, 56, 67, 0.75);
+        }
         
         .webinar-card-image {
             width: calc(100% + 60px);

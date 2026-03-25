@@ -456,48 +456,6 @@ async function loadClassroom(container) {
             `;
         });
         html += '</div>';
-    } else if (currentUser.role === 'guest' && purchasedCourses.length === 0) {
-        html += `
-            <div style="
-                position: relative;
-                max-width: 620px;
-                margin: 8px auto 0;
-                background: linear-gradient(135deg, #f8f0f2 0%, #fff6f9 100%);
-                border: 1px solid rgba(153, 98, 122, 0.2);
-                border-left: 4px solid var(--mid-violet);
-                border-radius: 18px;
-                padding: 30px 24px;
-                text-align: center;
-                box-shadow: 0 10px 28px rgba(100, 56, 67, 0.12);
-                overflow: hidden;
-            ">
-                <div style="
-                    position: absolute;
-                    bottom: -35px;
-                    left: -30px;
-                    width: 170px;
-                    height: 170px;
-                    background: url('images/background-decorations.webp') no-repeat center;
-                    background-size: contain;
-                    opacity: 0.2;
-                    pointer-events: none;
-                "></div>
-                <p style="margin: 0 0 12px; color: var(--text-dark); font-size: 16px; line-height: 1.6;">
-                    Nimate dostopa do nobenega tečaja.
-                </p>
-                <a href="spletna-trgovina.html" style="
-                    display: inline-block;
-                    background: linear-gradient(135deg, #99627A 0%, #643843 100%);
-                    color: #fff;
-                    padding: 12px 24px;
-                    border-radius: 999px;
-                    font-size: 14px;
-                    font-weight: 600;
-                    text-decoration: none;
-                    box-shadow: 0 6px 20px rgba(100,56,67,0.25);
-                ">Klikni tukaj za dostop</a>
-            </div>
-        `;
     }
     
     content.innerHTML = html;
@@ -599,10 +557,7 @@ async function loadWebinars(container) {
     if (!content) return;
     
     const user = getCurrentUser();
-    if (user && user.role === 'guest') {
-        content.innerHTML = typeof getGuestLockedHtml === 'function' ? getGuestLockedHtml() : '';
-        return;
-    }
+    const isGuest = !!(user && user.role === 'guest');
     
     // Initialize webinars if they don't exist
     if (!localStorage.getItem('webinars')) {
@@ -669,13 +624,17 @@ async function loadWebinars(container) {
         webinars.forEach(webinar => {
             const isStopnic = webinar.title === '25 Stopnic do srece';
             const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
-            const cardOnclick = isStopnic ? 'showStopnicWebinarPopup()' : `openWebinar('${webinar.id}')`;
+            const hasAccess = !isGuest;
+            const cardOnclick = isStopnic
+                ? `showStopnicWebinarPopup(${hasAccess})`
+                : `openWebinar('${webinar.id}', ${hasAccess})`;
             html += `
-                <div class="webinar-card" onclick="${cardOnclick}">
+                <div class="webinar-card ${hasAccess ? '' : 'locked'}" onclick="${cardOnclick}">
                     <img src="${cardImage}" alt="${escapeHtml(webinar.title)}" class="webinar-card-image">
                     <div class="webinar-title">${webinar.title}</div>
                     <div class="webinar-date">${webinar.date || ''}</div>
                     <div class="webinar-description">${webinar.description || ''}</div>
+                    ${!hasAccess ? '<div class="webinar-lock-note">Nimate dostopa do webinarja</div>' : ''}
                 </div>
             `;
         });
@@ -685,10 +644,9 @@ async function loadWebinars(container) {
     content.innerHTML = html;
 }
 
-function showStopnicWebinarPopup() {
-    const user = getCurrentUser();
-    if (user && user.role === 'guest') {
-        showNoAccessPopup();
+function showStopnicWebinarPopup(hasAccess = true) {
+    if (!hasAccess) {
+        window.location.href = 'pridruzi-se.html';
         return;
     }
     const modal = document.getElementById('stopnicWebinarModal');
@@ -706,10 +664,9 @@ function closeStopnicWebinarPopup() {
     }
 }
 
-function openWebinar(webinarId) {
-    const user = getCurrentUser();
-    if (user && user.role === 'guest') {
-        showNoAccessPopup();
+function openWebinar(webinarId, hasAccess = true) {
+    if (!hasAccess) {
+        window.location.href = 'pridruzi-se.html';
         return;
     }
     
@@ -1814,6 +1771,7 @@ async function renderProfileForm(container) {
 window.showProfileTab = function(tab) {
     const container = document.getElementById('profileTabContent');
     if (!container) return;
+    const user = getCurrentUser();
     
     document.querySelectorAll('.profile-subnav a').forEach(a => {
         a.classList.toggle('profile-tab-active', a.getAttribute('data-tab') === tab);
@@ -1832,6 +1790,22 @@ window.showProfileTab = function(tab) {
         return;
     }
     if (tab === 'questionnaire') {
+        if (user && user.role === 'guest') {
+            container.innerHTML = `
+                <div class="guest-locked-block">
+                    <div class="guest-locked-inner">
+                        <div class="guest-locked-accent"></div>
+                        <p class="guest-locked-label">Samo za članice</p>
+                        <h3 class="guest-locked-title">Vprašalnik je del članstva</h3>
+                        <p class="guest-locked-lead">Ko se pridružiš skupini, dobiš dostop do celotnega vprašalnika, vseh webinarjev in vseh tečajev v učilnici.</p>
+                        <div class="guest-locked-buttons">
+                            <a href="pridruzi-se.html" class="guest-locked-btn guest-locked-btn-primary">Odkleni dostop</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return;
+        }
         loadQuestionnaire(container);
         return;
     }
