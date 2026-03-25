@@ -73,6 +73,213 @@
             max-width: 1400px;
             margin: 0 auto;
         }
+
+        /* ===== Modern SaaS Layout (Left Sidebar + Center + Right Panel) ===== */
+        .dashboard-shell {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .dashboard-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 240px;
+            background: #0f1115;
+            color: rgba(255, 255, 255, 0.92);
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 22px 18px;
+            z-index: 20;
+            overflow: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 8px 18px;
+        }
+
+        .sidebar-brand img {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        }
+
+        .sidebar-brand-title {
+            font-family: 'Priestacy', cursive;
+            font-size: 22px;
+            line-height: 1.1;
+            letter-spacing: 0.02em;
+            margin: 0;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 12px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.88);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(135deg, rgba(153, 98, 122, 0.28) 0%, rgba(100, 56, 67, 0.20) 100%);
+            border-color: rgba(184, 134, 11, 0.30);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+        }
+
+        .sidebar-item-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.04);
+            font-size: 16px;
+        }
+
+        .sidebar-item.active .sidebar-item-icon {
+            background: rgba(184, 134, 11, 0.18);
+        }
+
+        .sidebar-item-label {
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.01em;
+        }
+
+        .dashboard-main {
+            margin-left: 240px;
+            flex: 1;
+        }
+
+        .dashboard-columns {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 360px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .dashboard-center {
+            min-width: 0;
+        }
+
+        .dashboard-right {
+            position: sticky;
+            top: 24px;
+        }
+
+        .right-panel-card {
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid rgba(100, 56, 67, 0.10);
+            border-radius: 18px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        .right-panel-header {
+            padding: 16px 16px 12px;
+            border-bottom: 1px solid rgba(100, 56, 67, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .right-panel-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--dark-violet);
+            margin: 0;
+            font-weight: 800;
+        }
+
+        .right-panel-subtitle {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .right-panel-body {
+            padding: 14px 16px 18px;
+        }
+
+        .right-divider {
+            height: 1px;
+            background: rgba(100, 56, 67, 0.08);
+            margin: 14px 0;
+        }
+
+        .right-block-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: var(--dark-violet);
+            margin: 0 0 10px;
+            font-weight: 800;
+        }
+
+        .right-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .right-list-item {
+            padding: 12px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(100, 56, 67, 0.08);
+            background: rgba(255, 255, 255, 0.55);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .right-list-item:hover {
+            border-color: rgba(184, 134, 11, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .right-list-item-title {
+            font-weight: 800;
+            color: var(--dark-violet);
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .right-list-item-meta {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 1100px) {
+            .dashboard-sidebar { position: relative; width: 100%; height: auto; }
+            .dashboard-main { margin-left: 0; }
+            .dashboard-columns { grid-template-columns: 1fr; }
+            .dashboard-right { position: relative; top: auto; }
+        }
         
         .dashboard-header {
             background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
@@ -195,55 +402,64 @@
         .dashboard-switcher {
             display: flex;
             justify-content: center;
-            gap: 0;
-            margin: 0 auto 28px;
+            gap: 16px;
+            margin-bottom: 22px;
             flex-wrap: wrap;
-            max-width: 560px;
-            padding: 8px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.58);
-            border: 1px solid rgba(100, 56, 67, 0.10);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
         }
         
         .dashboard-switcher .switch-card {
             flex: 1;
-            min-width: 190px;
-            max-width: 280px;
-            padding: 14px 22px;
-            border-radius: 999px;
-            border: none;
-            background: transparent;
-            color: rgba(56, 34, 43, 0.92);
+            min-width: 140px;
+            max-width: 200px;
+            padding: 16px 22px;
+            border-radius: 18px;
+            border: 1px solid rgba(100, 56, 67, 0.14);
+            background: var(--white);
+            color: var(--text-dark);
             font-weight: 600;
-            font-size: 16px;
+            font-size: 14px;
             text-align: center;
             text-decoration: none;
             cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 18px rgba(100, 56, 67, 0.10);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
         }
         
         .dashboard-switcher .switch-card .switch-icon {
-            font-size: 28px;
+            font-size: 24px;
             line-height: 1;
             opacity: 0.9;
         }
         
         .dashboard-switcher .switch-card:hover {
+            border-color: var(--mid-violet);
             color: var(--dark-violet);
-            background: rgba(153, 98, 122, 0.08);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 26px rgba(100, 56, 67, 0.16);
         }
         
         .dashboard-switcher .switch-card.active {
-            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            background: linear-gradient(135deg, rgba(212, 168, 75, 0.22) 0%, rgba(184, 134, 11, 0.22) 15%, var(--mid-violet) 40%, var(--dark-violet) 100%);
             color: var(--white);
+            border-color: rgba(184, 134, 11, 0.35);
             box-shadow: 0 10px 30px rgba(100, 56, 67, 0.28);
+        }
+        
+        .dashboard-switcher .switch-card.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #b8860b 0%, #d4a84b 100%);
+            opacity: 0.9;
         }
         
         .dashboard-switcher .switch-card.active .switch-icon {
@@ -1558,8 +1774,36 @@
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <div class="dashboard-header">
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-brand">
+                <img src="images/logo/logo jaz zenska.webp" alt="Jaz Ženska">
+                <h2 class="sidebar-brand-title">Jaz Ženska</h2>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-item active" data-sidebar="classroom">
+                    <span class="sidebar-item-icon" aria-hidden="true">👩‍🎓</span>
+                    <span class="sidebar-item-label">Tečaji</span>
+                </a>
+                <a href="#" class="sidebar-item" data-sidebar="webinars">
+                    <span class="sidebar-item-icon" aria-hidden="true">🎥</span>
+                    <span class="sidebar-item-label">Webinarji</span>
+                </a>
+                <a href="#" class="sidebar-item" data-sidebar="calendar">
+                    <span class="sidebar-item-icon" aria-hidden="true">📅</span>
+                    <span class="sidebar-item-label">Koledar</span>
+                </a>
+                <a href="#" class="sidebar-item" data-sidebar="profil">
+                    <span class="sidebar-item-icon" aria-hidden="true">⚙️</span>
+                    <span class="sidebar-item-label">Nastavitve</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="dashboard-main">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
             <h1>Skupnost Jaz Ženska</h1>
             <div class="user-info">
                 <div class="user-details">
@@ -1569,33 +1813,42 @@
                 <a href="index.html" class="back-home-btn">← Nazaj na domačo stran</a>
                 <button class="logout-btn" onclick="handleLogout()">Odjavi se</button>
             </div>
-        </div>
-        
-        <div class="dashboard-switcher">
-            <a href="#" class="switch-card active" data-section="calendar" aria-current="page">
-                <span class="switch-icon" aria-hidden="true">📅</span>
-                <span>Koledar</span>
-            </a>
-            <a href="#" class="switch-card" data-section="profile">
-                <span class="switch-icon" aria-hidden="true">✨</span>
-                <span>Učilnica</span>
-            </a>
-        </div>
-        
-        <div class="dashboard-content">
-            <!-- Profile Section (first; contains Profil, Učilnica, Webinari, Vprašalnik) -->
-            <div id="profile" class="content-section active">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Spletna učilnica</h2>
-                <div id="profileContent">
-                    <!-- Profile tabs and content loaded here -->
                 </div>
-            </div>
-            
-            <!-- Calendar Section -->
-            <div id="calendar" class="content-section">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Koledar</h2>
-                <div id="calendarContent">
-                    <!-- Events will be loaded here -->
+
+                <div class="dashboard-columns">
+                    <div class="dashboard-center">
+                        <!-- Profile Section (Profil, Učilnica, Webinari, Vprašalnik) -->
+                        <div id="profile" class="content-section active">
+                            <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--dark-violet); margin-bottom: 30px;">Spletna učilnica</h2>
+                            <div id="profileContent">
+                                <!-- Profile tabs and content loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside class="dashboard-right">
+                        <div class="right-panel-card">
+                            <div class="right-panel-header">
+                                <h3 class="right-panel-title">Koledar</h3>
+                                <div class="right-panel-subtitle">Aktualno & dogodki</div>
+                            </div>
+                            <div class="right-panel-body">
+                                <div id="calendarContent">
+                                    <!-- Events will be loaded here -->
+                                </div>
+
+                                <div class="right-divider"></div>
+
+                                <h4 class="right-block-title">Prihajajoče</h4>
+                                <div id="rightUpcoming" class="right-list"></div>
+
+                                <div class="right-divider"></div>
+
+                                <h4 class="right-block-title">Aktivnost</h4>
+                                <div id="rightStats"></div>
+                            </div>
+                        </div>
+                    </aside>
                 </div>
             </div>
         </div>

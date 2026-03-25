@@ -117,25 +117,141 @@ function initDashboard() {
     roleEl.className = `user-role ${user.role}`;
     
     // Navigation
-    document.querySelectorAll('.dashboard-switcher .switch-card').forEach(card => {
-        card.addEventListener('click', function(e) {
+    // Left sidebar navigation (Tečaji / Webinarji / Koledar / Nastavitve)
+    document.querySelectorAll('[data-sidebar]').forEach(item => {
+        item.addEventListener('click', function(e) {
             e.preventDefault();
-            const section = this.getAttribute('data-section');
-            switchSection(section);
-            
-            document.querySelectorAll('.dashboard-switcher .switch-card').forEach(c => c.classList.remove('active'));
+            const tab = this.getAttribute('data-sidebar');
+
+            document.querySelectorAll('[data-sidebar].sidebar-item').forEach(x => x.classList.remove('active'));
             this.classList.add('active');
-            this.setAttribute('aria-current', 'page');
-            document.querySelectorAll('.dashboard-switcher .switch-card:not(.active)').forEach(c => c.removeAttribute('aria-current'));
+
+            if (tab === 'calendar') {
+                // Calendar always lives in the right panel
+                loadCalendar();
+                return;
+            }
+
+            // Profile-related tabs live in the center panel
+            if (tab === 'classroom') {
+                sessionStorage.setItem('openProfileTab', 'classroom');
+            } else if (tab === 'webinars') {
+                sessionStorage.setItem('openProfileTab', 'webinars');
+            } else if (tab === 'profil') {
+                sessionStorage.setItem('openProfileTab', 'profil');
+            }
+            switchSection('profile');
         });
     });
     
-    // Load initial section (calendar first)
-    switchSection('calendar');
+    // Load initial section (profile first)
+    switchSection('profile');
+    // Right panel content
+    renderRightPanel();
+    loadCalendar().then(() => {
+        // Re-render after Firestore-loaded events update localStorage
+        renderRightPanel();
+    });
     
     // Check welcome status AFTER everything is initialized
     // Wait for Firebase to be ready
     waitForFirebaseAndCheckWelcome();
+}
+
+function renderRightPanel() {
+    const upcomingEl = document.getElementById('rightUpcoming');
+    const statsEl = document.getElementById('rightStats');
+    if (!upcomingEl || !statsEl) return;
+
+    const user = getCurrentUser() || {};
+    const currentUser = user || {};
+
+    // Stats (lightweight)
+    const purchasedCourses = Array.isArray(currentUser.purchasedCourses) ? currentUser.purchasedCourses : [];
+    const role = currentUser.role || 'member';
+
+    const coursesOwnedCount = purchasedCourses.length;
+    const webinarsCount = (JSON.parse(localStorage.getItem('webinars') || '[]') || []).length;
+
+    statsEl.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="font-family:'Playfair Display', serif; font-weight:800; color: var(--dark-violet); font-size:18px;">Stats</div>
+            <div style="display:flex; justify-content:space-between; gap:12px;">
+                <span style="color: var(--text-light); font-weight:700; font-size:12px; letter-spacing:0.02em;">Vloga</span>
+                <span style="color: var(--dark-violet); font-weight:800; font-size:12px;">${escapeHtml(role)}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; gap:12px;">
+                <span style="color: var(--text-light); font-weight:700; font-size:12px; letter-spacing:0.02em;">Tečaji</span>
+                <span style="color: var(--dark-violet); font-weight:800; font-size:12px;">${coursesOwnedCount}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; gap:12px;">
+                <span style="color: var(--text-light); font-weight:700; font-size:12px; letter-spacing:0.02em;">Webinarji</span>
+                <span style="color: var(--dark-violet); font-weight:800; font-size:12px;">${webinarsCount}</span>
+            </div>
+        </div>
+    `;
+
+    // Upcoming events (from events cache)
+    const events = JSON.parse(localStorage.getItem('events') || '[]') || [];
+    const toLocalDateStringCal = (d) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+    };
+
+    const now = new Date();
+    const upcomingEvents = events
+        .map(e => ({ ...e, _dt: e.date ? new Date(e.date) : null }))
+        .filter(e => e._dt && !Number.isNaN(e._dt.getTime()) && e._dt >= now)
+        .sort((a, b) => a._dt - b._dt)
+        .slice(0, 3);
+
+    const webinars = JSON.parse(localStorage.getItem('webinars') || '[]') || [];
+    const hasWebinarAccess = role !== 'guest';
+    const upcomingWebinars = webinars.slice(0, 2);
+
+    upcomingEl.innerHTML = `
+        <div class="right-list">
+            <div style="font-family:'Playfair Display', serif; font-weight:800; color: var(--dark-violet); font-size:16px; margin-bottom:4px;">
+                Prihajajoče
+            </div>
+
+            <div style="color: var(--text-light); font-weight:800; font-size:12px; letter-spacing:0.02em; margin-top:10px;">
+                Dogodki
+            </div>
+            ${upcomingEvents.length === 0 ? `
+                <div class="right-list-item" style="cursor:default;">
+                    <div class="right-list-item-title">Ni prihajajočih dogodkov</div>
+                    <div class="right-list-item-meta">Preveri koledar</div>
+                </div>
+            ` : upcomingEvents.map(evt => {
+                const d = new Date(evt._dt);
+                const dateStr = toLocalDateStringCal(d);
+                return `
+                    <div class="right-list-item" onclick="showDayEvents('${dateStr}')">
+                        <div class="right-list-item-title">${escapeHtml(evt.title || 'Dogodek')}</div>
+                        <div class="right-list-item-meta">🗓 ${escapeHtml(d.toLocaleDateString('sl-SI', { year:'numeric', month:'long', day:'numeric' }))}</div>
+                    </div>
+                `;
+            }).join('')}
+
+            <div style="color: var(--text-light); font-weight:800; font-size:12px; letter-spacing:0.02em; margin-top:10px;">
+                Webinarji
+            </div>
+            ${upcomingWebinars.length === 0 ? `
+                <div class="right-list-item" style="cursor:default;">
+                    <div class="right-list-item-title">Ni webinarjev</div>
+                    <div class="right-list-item-meta">V prihodnosti kmalu</div>
+                </div>
+            ` : upcomingWebinars.map(w => `
+                <div class="right-list-item" onclick="openWebinar('${w.id}', ${hasWebinarAccess})" style="${hasWebinarAccess ? '' : 'opacity:0.9;'}">
+                    <div class="right-list-item-title">${escapeHtml(w.title || 'Webinar')}</div>
+                    <div class="right-list-item-meta">📅 ${escapeHtml(w.date || '')}${hasWebinarAccess ? '' : ' • zaklenjeno'}</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
 // Wait for Firebase to be ready before checking welcome status
