@@ -36,13 +36,13 @@
         /* Jaz Ženska Page Sections */
         .jaz-zenska-section {
             position: relative;
-            padding: 80px 20px;
+            padding: 96px 24px;
             overflow: hidden;
         }
         
         /* Section 1 - Main Content */
         .jaz-zenska-main-section {
-            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            background: linear-gradient(180deg, #fffdfd 0%, #fbf7f8 100%);
             position: relative;
         }
         
@@ -50,15 +50,15 @@
             content: '';
             position: absolute;
             top: 50%;
-            right: -100px;
+            right: -140px;
             transform: translateY(-50%);
-            width: 500px;
-            height: 500px;
+            width: 380px;
+            height: 380px;
             background-image: url('images/background-decorations.webp');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            opacity: 0.7;
+            opacity: 0.16;
             z-index: 0;
             pointer-events: none;
         }
@@ -70,7 +70,7 @@
         
         /* Section 3 - Highlight */
         .jaz-zenska-highlight-section {
-            background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+            background: linear-gradient(180deg, #ffffff 0%, #fbf8f9 100%);
             position: relative;
         }
         
@@ -78,15 +78,15 @@
             content: '';
             position: absolute;
             top: 50%;
-            left: -100px;
+            left: -140px;
             transform: translateY(-50%);
-            width: 500px;
-            height: 500px;
+            width: 380px;
+            height: 380px;
             background-image: url('images/background-decorations.webp');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            opacity: 0.7;
+            opacity: 0.16;
             z-index: 0;
             pointer-events: none;
         }
@@ -97,7 +97,7 @@
         }
         
         .jaz-zenska-container {
-            max-width: 900px;
+            max-width: 860px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
@@ -105,15 +105,16 @@
         
         .jaz-zenska-header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 56px;
         }
         
         .jaz-zenska-header h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 48px;
+            font-size: 52px;
             color: var(--dark-violet);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             line-height: 1.3;
+            letter-spacing: 0.01em;
         }
         
         .section-content {
@@ -123,11 +124,12 @@
         
         .section-content h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 36px;
+            font-size: 34px;
             color: var(--dark-violet);
-            margin-top: 40px;
-            margin-bottom: 25px;
+            margin-top: 52px;
+            margin-bottom: 22px;
             text-align: center;
+            font-weight: 600;
         }
         
         .section-content h2:first-child {
@@ -135,10 +137,10 @@
         }
         
         .section-content p {
-            font-size: 17px;
+            font-size: 18px;
             line-height: 1.9;
-            color: #4a4a4a;
-            margin-bottom: 22px;
+            color: #524a4d;
+            margin-bottom: 24px;
         }
         
         .section-content p:last-of-type {
@@ -150,22 +152,22 @@
         }
         
         .section-content .intro {
-            font-size: 22px;
+            font-size: 21px;
             line-height: 1.9;
             color: var(--dark-violet);
             margin-bottom: 30px;
-            font-weight: 600;
+            font-weight: 500;
             text-align: center;
         }
         
         .highlight-box {
-            background: rgba(248, 240, 245, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 35px;
-            border-radius: 18px;
-            margin: 35px 0;
-            border-left: 5px solid var(--mid-violet);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            background: linear-gradient(135deg, #fff9fb 0%, #f9f1f4 100%);
+            padding: 32px;
+            border-radius: 16px;
+            margin: 36px 0;
+            border: 1px solid rgba(153, 98, 122, 0.18);
+            border-left: 3px solid var(--mid-violet);
+            box-shadow: 0 10px 28px rgba(100, 56, 67, 0.08);
             position: relative;
             overflow: hidden;
         }
@@ -173,34 +175,20 @@
         .highlight-box::before {
             content: '';
             position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 200px;
-            height: 200px;
+            top: -80px;
+            right: -80px;
+            width: 220px;
+            height: 220px;
             background-image: url('images/background-decorations.webp');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            opacity: 0.4;
+            opacity: 0.12;
             z-index: 0;
             pointer-events: none;
         }
         
-        .highlight-box::after {
-            content: '';
-            position: absolute;
-            bottom: -50px;
-            left: -50px;
-            width: 200px;
-            height: 200px;
-            background-image: url('images/background-decorations.webp');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.4;
-            z-index: 0;
-            pointer-events: none;
-        }
+        .highlight-box::after { content: none; }
         
         .highlight-box p {
             position: relative;
@@ -335,22 +323,23 @@
             display: inline-block;
             background: linear-gradient(135deg, #99627A 0%, #643843 100%);
             color: white;
-            padding: 22px 60px;
+            padding: 16px 42px;
             border-radius: 50px;
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 600;
             text-decoration: none;
             text-align: center;
-            margin: 30px auto;
+            margin: 18px auto;
             transition: all 0.3s ease;
             cursor: pointer;
             border: none;
-            box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4);
+            box-shadow: 0 8px 24px rgba(100, 56, 67, 0.25);
+            letter-spacing: 0.02em;
         }
         
         .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(100, 56, 67, 0.32);
         }
         
         .cta-section {
@@ -362,10 +351,10 @@
         .content-image {
             width: 100%;
             max-width: 100%;
-            margin: 0 auto 45px auto;
-            border-radius: 18px;
+            margin: 0 auto 42px auto;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 30px rgba(70, 42, 52, 0.12);
             position: relative;
             z-index: 1;
         }
@@ -392,20 +381,20 @@
         
         @media (max-width: 768px) {
             .jaz-zenska-section {
-                padding: 60px 15px;
+                padding: 72px 16px;
             }
             
             .jaz-zenska-header h1 {
-                font-size: 36px;
+                font-size: 40px;
             }
             
             .section-content h2 {
-                font-size: 28px;
+                font-size: 30px;
             }
             
             .section-content p,
             .section-content .intro {
-                font-size: 16px;
+                font-size: 17px;
             }
             
             .jaz-zenska-container {
@@ -413,8 +402,8 @@
             }
             
             .cta-button {
-                padding: 18px 40px;
-                font-size: 18px;
+                padding: 14px 34px;
+                font-size: 15px;
             }
         }
         
