@@ -538,7 +538,7 @@ function showNoAccessPopupCoursePage() {
             <p>Kupite ta tečaj v spletni trgovini ali se pridružite celotni skupini za 119 € in dobite dostop do vsega!</p>
             <div class="no-access-course-btns">
                 <a href="spletna-trgovina.html" class="no-acc-btn no-acc-btn-primary">Kupi tečaj</a>
-                <a href="pridruzi-se.html" class="no-acc-btn no-acc-btn-secondary">Celotna skupina (119 €)</a>
+                <a href="jaz-zenska.html" class="no-acc-btn no-acc-btn-secondary">Celotna skupina (119 €)</a>
             </div>
             <a href="dashboard.html" class="no-acc-back">← Nazaj na učilnico</a>
         </div>

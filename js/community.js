@@ -378,7 +378,9 @@ async function loadClassroom(container) {
     const coursesToDelete = [
         'Moj jutranji obred in meditacija',
         'Vadba za lahkotnost, prožnost in vitalnost',
-        'Meditativni ples za sproščanje'
+        'Meditativni ples za sproščanje',
+        // Webinar (not a course) - remove from classroom grid
+        'Moja moč je v meni'
     ];
     
     courses = courses.filter(course => !coursesToDelete.includes(course.title));
@@ -390,9 +392,14 @@ async function loadClassroom(container) {
         : (Array.isArray(currentUser.boughtCourses) ? currentUser.boughtCourses : []);
     
     let html = '';
-    
-    // Test/CTA block: show only when user has purchased moc-besede
-    if (purchasedCourses.includes('moc-besede')) {
+
+    const isGuest = currentUser.role === 'guest';
+    const hasMocBesedeAccess = !isGuest || purchasedCourses.includes('moc-besede');
+    const mocBesedeCardUrl = hasMocBesedeAccess ? 'course.html?id=moc-besede' : getCourseBuyUrl('moc-besede');
+
+    // Keep "Moč besede" always as the dedicated photo card (owned OR locked)
+    const mocBesedeExists = courses.some(c => c.id === 'moc-besede');
+    if (mocBesedeExists) {
         html += `
             <div style="
                 position: relative;
@@ -417,7 +424,7 @@ async function loadClassroom(container) {
                     opacity: 0.22;
                     pointer-events: none;
                 "></div>
-                <a href="course.html?id=moc-besede" style="
+                <a href="${mocBesedeCardUrl}" style="
                     position: relative;
                     z-index: 1;
                     display: block;
@@ -425,19 +432,26 @@ async function loadClassroom(container) {
                     overflow: hidden;
                     box-shadow: 0 10px 26px rgba(100, 56, 67, 0.18);
                     transition: transform 0.25s ease, box-shadow 0.25s ease;
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 16px 42px rgba(100, 56, 67, 0.22)';"
-                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 26px rgba(100, 56, 67, 0.18)';">
+                    cursor: ${hasMocBesedeAccess ? 'pointer' : 'not-allowed'};
+                "
+                   onmouseover="${hasMocBesedeAccess ? "this.style.transform='translateY(-2px)'; this.style.boxShadow='0 16px 42px rgba(100, 56, 67, 0.22)';" : ''}"
+                   onmouseout="${hasMocBesedeAccess ? "this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 26px rgba(100, 56, 67, 0.18)';" : ''}">
                     <img src="images/moc besede.webp" alt="Moč besede" style="
                         width: 100%;
                         height: auto;
                         display: block;
                         aspect-ratio: 16/10;
                         object-fit: cover;
+                        ${hasMocBesedeAccess ? '' : 'filter: grayscale(100%); opacity: 0.75;'}
                     ">
                 </a>
+                ${!hasMocBesedeAccess ? '<div class="course-lock-note" style="margin-top: 14px;">Nimate dostopa do tega tečaja</div>' : ''}
             </div>
         `;
     }
+
+    // Remove moc-besede from the generic grid so it doesn't appear as a purple card
+    courses = courses.filter(course => course.id !== 'moc-besede');
     
     if (courses.length > 0) {
         html += '<div class="courses-grid">';
@@ -457,7 +471,8 @@ async function loadClassroom(container) {
         });
         html += '</div>';
     }
-    
+
+    // If only moc-besede exists, the page will still render the photo card above.
     content.innerHTML = html;
 }
 
@@ -490,7 +505,7 @@ function showNoAccessPopup() {
             <p class="no-access-text">Kupite ta tečaj v spletni trgovini ali se pridružite celotni skupini za 119 € in dobite dostop do vsega!</p>
             <div class="no-access-buttons">
                 <a href="spletna-trgovina.html" class="no-access-btn no-access-btn-primary">Kupi tečaj</a>
-                <a href="pridruzi-se.html" class="no-access-btn no-access-btn-secondary">Celotna skupina (119 €)</a>
+                <a href="jaz-zenska.html" class="no-access-btn no-access-btn-secondary">Celotna skupina (119 €)</a>
             </div>
             <button type="button" class="no-access-close" aria-label="Zapri">&times;</button>
         </div>
@@ -536,7 +551,7 @@ function getGuestLockedHtml() {
             <p style="margin: 0 0 12px; color: var(--text-dark); font-size: 16px; line-height: 1.6;">
                 Želite dostop do vseh tečajev?
             </p>
-            <a href="pridruzi-se.html" style="
+            <a href="jaz-zenska.html" style="
                 display: inline-block;
                 background: linear-gradient(135deg, #99627A 0%, #643843 100%);
                 color: #fff;
@@ -646,7 +661,7 @@ async function loadWebinars(container) {
 
 function showStopnicWebinarPopup(hasAccess = true) {
     if (!hasAccess) {
-        window.location.href = 'pridruzi-se.html';
+        window.location.href = 'jaz-zenska.html';
         return;
     }
     const modal = document.getElementById('stopnicWebinarModal');
@@ -666,7 +681,7 @@ function closeStopnicWebinarPopup() {
 
 function openWebinar(webinarId, hasAccess = true) {
     if (!hasAccess) {
-        window.location.href = 'pridruzi-se.html';
+        window.location.href = 'jaz-zenska.html';
         return;
     }
     
@@ -1799,7 +1814,7 @@ window.showProfileTab = function(tab) {
                         <h3 class="guest-locked-title">Vprašalnik je del članstva</h3>
                         <p class="guest-locked-lead">Ko se pridružiš skupini, dobiš dostop do celotnega vprašalnika, vseh webinarjev in vseh tečajev v učilnici.</p>
                         <div class="guest-locked-buttons">
-                            <a href="pridruzi-se.html" class="guest-locked-btn guest-locked-btn-primary">Odkleni dostop</a>
+                            <a href="jaz-zenska.html" class="guest-locked-btn guest-locked-btn-primary">Odkleni dostop</a>
                         </div>
                     </div>
                 </div>
