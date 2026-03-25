@@ -382,13 +382,10 @@
             z-index: 1;
         }
         
-        .dashboard-header h1 {
-            font-family: 'Priestacy', cursive;
-            font-size: 36px;
-            color: var(--white);
-            margin: 0;
-            font-weight: normal;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        .dashboard-identity {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
         
         @font-face {
@@ -424,16 +421,12 @@
             gap: 20px;
         }
         
-        .user-details {
-            text-align: right;
-        }
-        
         .user-name {
             font-weight: 600;
             color: var(--white);
-            font-size: 16px;
-            margin-bottom: 5px;
+            font-size: 18px;
             text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+            margin: 0;
         }
         
         .user-role {
@@ -746,15 +739,15 @@
         /* Course Cards */
         .courses-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 18px;
         }
         
         .course-card {
             aspect-ratio: 1;
             background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
             border-radius: 20px;
-            padding: 30px;
+            padding: 22px;
             box-shadow: 0 8px 25px rgba(100, 56, 67, 0.2);
             cursor: pointer;
             transition: all 0.3s ease;
@@ -1310,14 +1303,14 @@
         /* Webinar Cards */
         .webinars-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
         }
         
         .webinar-card {
             background: linear-gradient(135deg, #fffcfd 0%, #fff9fb 50%, #fef8fa 100%);
             border-radius: 20px;
-            padding: 30px;
+            padding: 22px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(100, 56, 67, 0.04);
             border: 1px solid rgba(100, 56, 67, 0.08);
             transition: all 0.3s ease;
@@ -1357,12 +1350,12 @@
         }
         
         .webinar-card-image {
-            width: calc(100% + 60px);
+            width: calc(100% + 44px);
             max-width: none;
-            height: 180px;
+            height: 156px;
             object-fit: cover;
             border-radius: 20px 20px 0 0;
-            margin: -30px -30px 20px -30px;
+            margin: -22px -22px 16px -22px;
             display: block;
         }
         
@@ -1679,7 +1672,7 @@
                 text-align: center;
             }
             
-            .user-details {
+            .dashboard-identity {
                 text-align: center;
             }
             
@@ -1871,12 +1864,11 @@
         <div class="dashboard-main">
             <div class="dashboard-container">
                 <div class="dashboard-header">
-            <h1>Skupnost Jaz Ženska</h1>
+            <div class="dashboard-identity">
+                <div class="user-name" id="userName">Nalaganje...</div>
+                <div class="user-role" id="userRole"></div>
+            </div>
             <div class="user-info">
-                <div class="user-details">
-                    <div class="user-name" id="userName">Nalaganje...</div>
-                    <div class="user-role" id="userRole"></div>
-                </div>
                 <a href="index.html" class="back-home-btn">← Nazaj na domačo stran</a>
                 <button class="logout-btn" onclick="handleLogout()">Odjavi se</button>
             </div>
