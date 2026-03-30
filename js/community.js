@@ -84,6 +84,21 @@ async function handleLogout() {
 let dashboardInitialized = false;
 let currentSidebarTab = 'classroom';
 
+function updateMobileDrawerBodyLock() {
+    try {
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+        if (!isMobile) {
+            document.body.style.overflow = '';
+            return;
+        }
+        const rightOpen = !!document.querySelector('.dashboard-right.open');
+        const leftOpen = !!document.querySelector('.dashboard-sidebar.open');
+        document.body.style.overflow = (rightOpen || leftOpen) ? 'hidden' : '';
+    } catch (e) {
+        // no-op
+    }
+}
+
 function setRightPanelOpen(open) {
     const rightPanel = document.getElementById('rightPanel') || document.querySelector('.dashboard-right');
     const toggleBtn = document.getElementById('rightMenuToggle');
@@ -97,15 +112,7 @@ function setRightPanelOpen(open) {
         toggleBtn.setAttribute('aria-expanded', 'false');
     }
 
-    // Only lock scrolling on mobile drawer
-    try {
-        const isMobile = window.matchMedia('(max-width: 768px)').matches;
-        if (isMobile) {
-            document.body.style.overflow = open ? 'hidden' : '';
-        }
-    } catch (e) {
-        // no-op
-    }
+    updateMobileDrawerBodyLock();
 }
 
 window.toggleRightPanel = function() {
@@ -113,6 +120,32 @@ window.toggleRightPanel = function() {
     if (!rightPanel) return;
     const nextOpen = !rightPanel.classList.contains('open');
     setRightPanelOpen(nextOpen);
+};
+
+function setLeftMenuOpen(open) {
+    const leftMenu = document.querySelector('.dashboard-sidebar');
+    const toggleBtn = document.getElementById('leftMenuToggle');
+    if (!leftMenu || !toggleBtn) return;
+
+    if (open) {
+        leftMenu.classList.add('open');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+    } else {
+        leftMenu.classList.remove('open');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+    updateMobileDrawerBodyLock();
+}
+
+window.toggleLeftMenu = function() {
+    const leftMenu = document.querySelector('.dashboard-sidebar');
+    if (!leftMenu) return;
+    const nextOpen = !leftMenu.classList.contains('open');
+    setLeftMenuOpen(nextOpen);
+};
+
+window.closeLeftMenu = function() {
+    setLeftMenuOpen(false);
 };
 
 // Initialize dashboard
@@ -165,6 +198,7 @@ function initDashboard() {
 
             currentSidebarTab = tab;
             switchSection('profile');
+            setLeftMenuOpen(false);
         });
     });
     
@@ -369,6 +403,21 @@ document.addEventListener('click', function(e) {
     if (clickedInsidePanel || clickedToggle) return;
 
     setRightPanelOpen(false);
+});
+
+// Close left menu when clicking outside (mobile)
+document.addEventListener('click', function(e) {
+    const leftMenu = document.querySelector('.dashboard-sidebar');
+    const toggleBtn = document.getElementById('leftMenuToggle');
+    if (!leftMenu || !toggleBtn) return;
+    const isOpen = leftMenu.classList.contains('open');
+    if (!isOpen) return;
+
+    const clickedInsideMenu = !!e.target.closest('.dashboard-sidebar');
+    const clickedToggle = !!e.target.closest('#leftMenuToggle');
+    if (clickedInsideMenu || clickedToggle) return;
+
+    setLeftMenuOpen(false);
 });
 
 // Wait for Firebase to be ready before checking welcome status

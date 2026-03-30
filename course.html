@@ -154,6 +154,28 @@
             margin-bottom: 25px;
             font-weight: 700;
         }
+
+        .episodes-mobile-toggle-wrap {
+            display: none;
+        }
+
+        .episodes-mobile-toggle {
+            width: 100%;
+            border: 1px solid rgba(100, 56, 67, 0.2);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--dark-violet);
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .episodes-mobile-toggle:hover {
+            border-color: var(--mid-violet);
+            transform: translateY(-1px);
+        }
         
         .episode-item {
             padding: 18px;
@@ -533,6 +555,15 @@
                 max-height: none;
                 order: 2;
             }
+
+            .episodes-mobile-toggle-wrap {
+                display: block;
+                margin-bottom: 12px;
+            }
+
+            .course-episodes.mobile-collapsed #episodesList {
+                display: none;
+            }
             
             .course-content {
                 order: 1;
@@ -563,7 +594,10 @@
                 </div>
                 
                 <div class="course-episodes">
-                    <div class="episodes-title">Epizode</div>
+                    <div class="episodes-title">All episodes</div>
+                    <div class="episodes-mobile-toggle-wrap">
+                        <button type="button" id="episodesToggleBtn" class="episodes-mobile-toggle" onclick="toggleEpisodesPanel()" aria-expanded="false">Izberi epizodo</button>
+                    </div>
                     <div id="episodesList">
                         <!-- Episodes will be loaded here -->
                     </div>

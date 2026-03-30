@@ -706,6 +706,7 @@ async function loadEpisodes(course) {
     
     // Update progress
     await updateCourseProgress(courseId);
+    syncEpisodesPanelForViewport();
 }
 
 // Get current course
@@ -715,6 +716,41 @@ function getCurrentCourse() {
     
     const courses = JSON.parse(localStorage.getItem('courses') || '[]');
     return courses.find(c => c.id === courseId);
+}
+
+function isMobileViewport() {
+    return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function setEpisodesPanelOpen(open) {
+    const panel = document.querySelector('.course-episodes');
+    const btn = document.getElementById('episodesToggleBtn');
+    if (!panel || !btn) return;
+
+    if (isMobileViewport()) {
+        panel.classList.toggle('mobile-collapsed', !open);
+        btn.textContent = open ? 'Skrij epizode' : 'Izberi epizodo';
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    } else {
+        panel.classList.remove('mobile-collapsed');
+        btn.textContent = 'Izberi epizodo';
+        btn.setAttribute('aria-expanded', 'false');
+    }
+}
+
+window.toggleEpisodesPanel = function() {
+    const panel = document.querySelector('.course-episodes');
+    if (!panel) return;
+    const isOpen = !panel.classList.contains('mobile-collapsed');
+    setEpisodesPanelOpen(!isOpen);
+};
+
+function syncEpisodesPanelForViewport() {
+    if (isMobileViewport()) {
+        setEpisodesPanelOpen(false);
+    } else {
+        setEpisodesPanelOpen(true);
+    }
 }
 
 // Load episode content
@@ -809,6 +845,11 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
             `}
         </div>
     `;
+
+    // Keep episode list collapsed on mobile after selection
+    if (isMobileViewport()) {
+        setEpisodesPanelOpen(false);
+    }
 }
 
 window.goToEpisode = function(courseId, targetEpisodeId) {
@@ -1056,6 +1097,8 @@ function showCongratulationsPopup() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     loadCourse();
+    syncEpisodesPanelForViewport();
+    window.addEventListener('resize', syncEpisodesPanelForViewport);
 });
 
 document.addEventListener('keydown', function(e) {
