@@ -1879,6 +1879,7 @@ async function loadProfile() {
         const titleMap = {
             classroom: 'Tečaji',
             webinars: 'Webinarji',
+            questionnaire: 'Vprašalnik',
             profil: 'Nastavitve'
         };
         titleEl.textContent = titleMap[currentSidebarTab] || 'Spletna učilnica';
@@ -1890,6 +1891,10 @@ async function loadProfile() {
     }
     if (currentSidebarTab === 'webinars') {
         loadWebinars(content);
+        return;
+    }
+    if (currentSidebarTab === 'questionnaire') {
+        loadQuestionnaire(content);
         return;
     }
     if (currentSidebarTab === 'profil') {

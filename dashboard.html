@@ -122,6 +122,11 @@
             flex-direction: column;
             gap: 6px;
             margin-top: 10px;
+            min-height: calc(100vh - 120px);
+        }
+
+        .sidebar-item-settings {
+            margin-top: auto;
         }
 
         .sidebar-item {
@@ -398,43 +403,38 @@
             .dashboard-identity {
                 flex-direction: row;
                 align-items: center;
-                justify-content: center;
+                justify-content: flex-start;
                 gap: 12px;
-            }
-            .dashboard-shell {
-                display: flex;
-                flex-direction: column;
-            }
-            .dashboard-main {
-                order: 1;
+                width: 100%;
             }
             .dashboard-sidebar {
-                position: relative;
-                order: 2;
-                inset: auto;
-                width: 100%;
-                height: auto;
-                max-height: none;
-                transform: none;
-                transition: none;
-                padding: 14px 12px;
-                margin: 14px 0 0;
-                border-radius: 16px;
-            }
-            .dashboard-right { display: none; }
-            .dashboard-right.open {
-                display: block;
                 position: fixed;
-                top: 92px;
-                left: 12px;
-                right: 12px;
-                z-index: 80;
-                max-height: calc(100vh - 120px);
-                overflow-y: auto;
-                background: rgba(255, 255, 255, 0.75);
-                backdrop-filter: blur(10px);
-                border-radius: 18px;
-                padding: 0;
+                inset: 0;
+                width: 100vw;
+                height: 100vh;
+                max-height: 100vh;
+                z-index: 120;
+                transform: translateX(-100%);
+                transition: transform 0.28s ease;
+                padding-top: 16px;
+                border-radius: 0;
+            }
+            .dashboard-sidebar.open {
+                transform: translateX(0);
+            }
+            .dashboard-columns {
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+            }
+            .dashboard-right {
+                display: block;
+                position: relative;
+                top: auto;
+                left: auto;
+                right: auto;
+                max-height: none;
+                overflow: visible;
             }
         }
         
@@ -1940,11 +1940,15 @@
                     <span class="sidebar-item-icon" aria-hidden="true">🎥</span>
                     <span class="sidebar-item-label">Webinarji</span>
                 </a>
+                <a href="#" class="sidebar-item" data-sidebar="questionnaire">
+                    <span class="sidebar-item-icon" aria-hidden="true">📝</span>
+                    <span class="sidebar-item-label">Vprašalnik</span>
+                </a>
                 <a href="#" class="sidebar-item" data-sidebar="calendar">
                     <span class="sidebar-item-icon" aria-hidden="true">📅</span>
                     <span class="sidebar-item-label">Koledar</span>
                 </a>
-                <a href="#" class="sidebar-item" data-sidebar="profil">
+                <a href="#" class="sidebar-item sidebar-item-settings" data-sidebar="profil">
                     <span class="sidebar-item-icon" aria-hidden="true">⚙️</span>
                     <span class="sidebar-item-label">Nastavitve</span>
                 </a>
@@ -1955,7 +1959,7 @@
             <div class="dashboard-container">
                 <div class="dashboard-header">
             <div class="dashboard-identity">
-                <button type="button" id="leftMenuToggle" class="left-menu-hamburger" onclick="toggleRightPanel()" aria-label="Odpri koledar in dogodke" aria-expanded="false">☰</button>
+                <button type="button" id="leftMenuToggle" class="left-menu-hamburger" onclick="toggleLeftMenu()" aria-label="Odpri meni" aria-expanded="false">☰</button>
                 <div class="user-name" id="userName">Nalaganje...</div>
                 <div class="user-role" id="userRole"></div>
             </div>
