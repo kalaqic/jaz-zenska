@@ -548,12 +548,17 @@
         
         @media (max-width: 768px) {
             .course-detail-container {
-                grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
             }
-            
+
+            .course-left-column {
+                order: 2;
+            }
+
             .course-episodes {
                 max-height: none;
-                order: 2;
             }
 
             .episodes-mobile-toggle-wrap {
@@ -584,7 +589,7 @@
         </div>
         
         <div class="course-detail-container">
-            <div>
+            <div class="course-left-column">
                 <div class="course-progress">
                     <div class="progress-label">Napredek tečaja</div>
                     <div class="progress-bar-container">
@@ -594,7 +599,7 @@
                 </div>
                 
                 <div class="course-episodes">
-                    <div class="episodes-title">All episodes</div>
+                    <div class="episodes-title">Vse epizode</div>
                     <div class="episodes-mobile-toggle-wrap">
                         <button type="button" id="episodesToggleBtn" class="episodes-mobile-toggle" onclick="toggleEpisodesPanel()" aria-expanded="false">Izberi epizodo</button>
                     </div>

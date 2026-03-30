@@ -101,7 +101,7 @@ function updateMobileDrawerBodyLock() {
 
 function setRightPanelOpen(open) {
     const rightPanel = document.getElementById('rightPanel') || document.querySelector('.dashboard-right');
-    const toggleBtn = document.getElementById('rightMenuToggle');
+    const toggleBtn = document.getElementById('rightMenuToggle') || document.getElementById('leftMenuToggle');
     if (!rightPanel || !toggleBtn) return;
 
     if (open) {
@@ -393,13 +393,13 @@ window.closeFullCalendarModal = function() {
 // Close right drawer when clicking outside (mobile)
 document.addEventListener('click', function(e) {
     const rightPanel = document.getElementById('rightPanel') || document.querySelector('.dashboard-right');
-    const toggleBtn = document.getElementById('rightMenuToggle');
+    const toggleBtn = document.getElementById('rightMenuToggle') || document.getElementById('leftMenuToggle');
     if (!rightPanel || !toggleBtn) return;
     const isOpen = rightPanel.classList.contains('open');
     if (!isOpen) return;
 
     const clickedInsidePanel = !!e.target.closest('#rightPanel');
-    const clickedToggle = !!e.target.closest('#rightMenuToggle');
+    const clickedToggle = !!e.target.closest('#rightMenuToggle') || !!e.target.closest('#leftMenuToggle');
     if (clickedInsidePanel || clickedToggle) return;
 
     setRightPanelOpen(false);
