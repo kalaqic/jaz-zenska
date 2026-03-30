@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moč besede Import</title>
+  <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: #f8f9fb;
+      color: #2c2228;
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid rgba(100, 56, 67, 0.12);
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      color: #643843;
+    }
+    .muted {
+      color: #6b5b62;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    label {
+      display: block;
+      margin: 0 0 8px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #643843;
+    }
+    select, textarea, input {
+      width: 100%;
+      border: 1px solid rgba(100, 56, 67, 0.2);
+      border-radius: 10px;
+      padding: 10px 12px;
+      box-sizing: border-box;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+    }
+    textarea {
+      min-height: 280px;
+      line-height: 1.45;
+      resize: vertical;
+      white-space: pre;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #99627A 0%, #643843 100%);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #f1ecee;
+      color: #643843;
+      border: 1px solid rgba(100, 56, 67, 0.14);
+    }
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: none;
+      white-space: pre-wrap;
+    }
+    .ok { background: #edf8ef; color: #1b6f32; border: 1px solid #bfe6c8; display: block; }
+    .err { background: #fff1f1; color: #9c2d2d; border: 1px solid #efc0c0; display: block; }
+    code {
+      background: #f7f1f3;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Moč besede — Import</h1>
+      <p class="muted">
+        Uvoz v Firestore kolekcijo <code>moc_besede_words</code>.
+        Podprta sta JSON in TSV format. Zahtevan je admin račun.
+      </p>
+    </div>
+
+    <div class="card">
+      <label for="format">Format</label>
+      <select id="format">
+        <option value="json">JSON (priporočeno)</option>
+        <option value="tsv">TSV (tab-separated)</option>
+      </select>
+
+      <div class="row">
+        <div>
+          <label for="mergeMode">Način zapisa</label>
+          <select id="mergeMode">
+            <option value="merge">Merge (posodobi obstoječe)</option>
+            <option value="overwrite">Overwrite (prepiši dokument)</option>
+          </select>
+        </div>
+        <div>
+          <label for="defaultSortStart">Default sort start (če manjka)</label>
+          <input id="defaultSortStart" type="number" value="1" />
+        </div>
+      </div>
+
+      <label for="payload" style="margin-top: 12px;">Vsebina za uvoz</label>
+      <textarea id="payload" placeholder=""></textarea>
+
+      <div class="actions">
+        <button class="btn-secondary" type="button" onclick="fillExample()">Vstavi primer</button>
+        <button class="btn-primary" type="button" onclick="runImport()">Uvozi v Firestore</button>
+      </div>
+
+      <div id="status" class="status"></div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script>
+    let auth, db;
+
+    function setStatus(msg, ok) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = 'status ' + (ok ? 'ok' : 'err');
+    }
+
+    function fillExample() {
+      const format = document.getElementById('format').value;
+      const ta = document.getElementById('payload');
+      if (format === 'json') {
+        ta.value = JSON.stringify([
+          {
+            id: 'MORAM',
+            word: 'MORAM',
+            sort: 1,
+            description: 'Beseda MORAM ...',
+            exercise: 'Izgovorite besedo moram in se poslušajte ...',
+            videoUrl: ''
+          },
+          {
+            id: 'NE ZELIM',
+            word: 'NE ZELIM',
+            sort: 2,
+            description: 'Ko izgovorimo NE ŽELIM ...',
+            exercise: 'Napišite vse, kar v svojem življenju ne želite ...'
+          }
+        ], null, 2);
+      } else {
+        ta.value = [
+          'id\tword\tsort\tdescription\texercise\tvideoUrl',
+          'MORAM\tMORAM\t1\tBeseda MORAM ...\tIzgovorite besedo moram in se poslušajte ...\t',
+          'NE ZELIM\tNE ZELIM\t2\tKo izgovorimo NE ŽELIM ...\tNapišite vse, kar v svojem življenju ne želite ...\t'
+        ].join('\n');
+      }
+    }
+
+    function parseJsonInput(raw, defaultSortStart) {
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) throw new Error('JSON mora biti array.');
+      return arr.map((it, idx) => {
+        const id = String(it.id || it.word || '').trim();
+        if (!id) throw new Error('Vsak zapis mora imeti id/word.');
+        const word = String(it.word || id).trim();
+        return {
+          id,
+          word,
+          description: String(it.description || ''),
+          exercise: String(it.exercise || ''),
+          sort: Number.isFinite(Number(it.sort)) ? Number(it.sort) : (defaultSortStart + idx),
+          videoUrl: it.videoUrl ? String(it.videoUrl) : ''
+        };
+      });
+    }
+
+    function parseTsvInput(raw, defaultSortStart) {
+      const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+      if (lines.length < 2) throw new Error('TSV potrebuje header + vsaj 1 vrstico.');
+      const header = lines[0].split('\t').map(h => h.trim().toLowerCase());
+      const ix = {
+        id: header.indexOf('id'),
+        word: header.indexOf('word'),
+        sort: header.indexOf('sort'),
+        description: header.indexOf('description'),
+        exercise: header.indexOf('exercise'),
+        videourl: header.indexOf('videourl')
+      };
+      return lines.slice(1).map((line, idx) => {
+        const cols = line.split('\t');
+        const id = String(cols[ix.id] || cols[ix.word] || '').trim();
+        if (!id) throw new Error('TSV vrstica brez id/word.');
+        const word = ix.word >= 0 ? String(cols[ix.word] || id).trim() : id;
+        const sortRaw = ix.sort >= 0 ? cols[ix.sort] : '';
+        return {
+          id,
+          word,
+          description: ix.description >= 0 ? String(cols[ix.description] || '') : '',
+          exercise: ix.exercise >= 0 ? String(cols[ix.exercise] || '') : '',
+          sort: Number.isFinite(Number(sortRaw)) ? Number(sortRaw) : (defaultSortStart + idx),
+          videoUrl: ix.videourl >= 0 ? String(cols[ix.videourl] || '') : ''
+        };
+      });
+    }
+
+    async function assertAdmin() {
+      const user = auth.currentUser;
+      if (!user) throw new Error('Nisi prijavljena.');
+      const doc = await db.collection('users').doc(user.uid).get();
+      if (!doc.exists) throw new Error('Uporabniški dokument ne obstaja.');
+      const role = (doc.data().role || '').toLowerCase();
+      if (role !== 'admin') throw new Error('Dostop dovoljen samo za admin.');
+    }
+
+    async function runImport() {
+      try {
+        setStatus('Uvoz se pripravlja ...', true);
+        await assertAdmin();
+
+        const format = document.getElementById('format').value;
+        const mergeMode = document.getElementById('mergeMode').value;
+        const defaultSortStart = Number(document.getElementById('defaultSortStart').value || 1);
+        const raw = document.getElementById('payload').value.trim();
+        if (!raw) throw new Error('Vnesi podatke za uvoz.');
+
+        const rows = format === 'json'
+          ? parseJsonInput(raw, defaultSortStart)
+          : parseTsvInput(raw, defaultSortStart);
+
+        const batch = db.batch();
+        rows.forEach((row) => {
+          const ref = db.collection('moc_besede_words').doc(row.id);
+          const data = {
+            word: row.word || row.id,
+            description: row.description,
+            exercise: row.exercise,
+            sort: row.sort
+          };
+          if (row.videoUrl) data.videoUrl = row.videoUrl;
+
+          if (mergeMode === 'merge') {
+            batch.set(ref, data, { merge: true });
+          } else {
+            batch.set(ref, data);
+          }
+        });
+
+        await batch.commit();
+        setStatus(`Uspešno uvoženo: ${rows.length} zapisov v moc_besede_words.`, true);
+      } catch (e) {
+        setStatus(`Napaka pri uvozu: ${e.message || e}`, false);
+      }
+    }
+
+    (async function init() {
+      try {
+        const response = await fetch('/api/firebase-config');
+        if (!response.ok) throw new Error('Ni mogoče naložiti Firebase config.');
+        const firebaseConfig = await response.json();
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+
+        auth.onAuthStateChanged(async (user) => {
+          if (!user) {
+            setStatus('Za uporabo te strani se prijavi.', false);
+            return;
+          }
+          try {
+            await assertAdmin();
+            setStatus('Prijavljena kot admin. Pripravljeno za uvoz.', true);
+          } catch (e) {
+            setStatus(e.message || 'Nimaš admin dostopa.', false);
+          }
+        });
+      } catch (e) {
+        setStatus(`Init napaka: ${e.message || e}`, false);
+      }
+    })();
+  </script>
+</body>
+</html>
