@@ -757,11 +757,18 @@ async function loadClassroom(container) {
         'Moj jutranji obred in meditacija',
         'Vadba za lahkotnost, prožnost in vitalnost',
         'Meditativni ples za sproščanje',
-        // Webinar (not a course) - remove from classroom grid
-        'Moja moč je v meni'
+        // Webinarji (niso tečaji) – ostanejo le pod »Webinarji«
+        'Moja moč je v meni',
+        '25 Stopnic do srece',
+        '25 Stopnic do sreče'
     ];
-    
-    courses = courses.filter(course => !coursesToDelete.includes(course.title));
+
+    courses = courses.filter(course => {
+        if (coursesToDelete.includes(course.title)) return false;
+        const t = String(course.title || '').toLowerCase();
+        if (t.includes('stopnic')) return false;
+        return true;
+    });
     
     // Guests can see all courses; lock those they do not own
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -769,7 +776,10 @@ async function loadClassroom(container) {
         ? currentUser.purchasedCourses
         : (Array.isArray(currentUser.boughtCourses) ? currentUser.boughtCourses : []);
     
-    let html = '';
+    let html = `
+        <div class="classroom-courses-block">
+            <h3 style="font-family:'Playfair Display', serif; color: var(--dark-violet); margin: 0 0 12px;">Tečaji</h3>
+    `;
 
     const isGuest = currentUser.role === 'guest';
     const hasMocBesedeAccess = !isGuest || purchasedCourses.includes('moc-besede');
@@ -808,6 +818,7 @@ async function loadClassroom(container) {
         html += '</div>';
     }
 
+    html += `</div>`;
     // If only moc-besede exists, the page will still render the photo card above.
     content.innerHTML = html;
 }

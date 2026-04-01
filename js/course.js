@@ -887,7 +887,8 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
     // Check if current episode is watched
     const watched = await getWatchedEpisodes(course.id);
     const isWatched = watched.includes(episodeId);
-    const actionDone = await isEpisodeActionCompleted(course.id, episodeId);
+    const isWebinarCourse = String(course.id).startsWith('webinar-');
+    const actionDone = isWebinarCourse ? false : await isEpisodeActionCompleted(course.id, episodeId);
     const commentsHtml = await buildCommentsHtml(course, episode);
     const exerciseText = episode.exercise || `Izberite eno situacijo danes in namesto izraza "${episode.title}" uporabite bolj podporno besedo.`;
     
@@ -915,6 +916,7 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
 
         <div class="course-description">${escapeHtmlCourse(episode.description || 'Opis epizode bo kmalu na voljo.')}</div>
 
+        ${!isWebinarCourse ? `
         <div class="episode-exercise">
             <h4>Vaja (naredi takoj)</h4>
             <p>${escapeHtmlCourse(exerciseText)}</p>
@@ -923,6 +925,7 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
                 Označi, da si naredila vajo
             </label>
         </div>
+        ` : ''}
 
         <div class="episode-comments">
             <h4>Moj komentar</h4>
