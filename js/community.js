@@ -1936,7 +1936,6 @@ async function loadLifeWheel(container) {
                 <canvas id="lifeWheelCanvas" class="life-wheel-canvas" width="430" height="430"></canvas>
             </div>
             <div class="life-wheel-actions" id="lifeWheelActions">
-                <button type="button" onclick="lifeWheelShareFB()">Deli na Facebook</button>
                 <button type="button" onclick="lifeWheelSavePDF()">Shrani kot PDF</button>
                 <button type="button" onclick="lifeWheelDownloadImage()">Prenesi sliko</button>
                 <button type="button" onclick="lifeWheelReset()">Naredi znova</button>
@@ -2082,12 +2081,6 @@ async function loadLifeWheel(container) {
         await persistScores();
         updateUI();
         drawWheel();
-    };
-
-    window.lifeWheelShareFB = function() {
-        const shareUrl = 'https://jaz-zenska.com';
-        const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-        window.open(fbUrl, '_blank', 'width=600,height=400');
     };
 
     window.lifeWheelSavePDF = function() {
