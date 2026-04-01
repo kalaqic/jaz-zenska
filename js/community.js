@@ -2159,7 +2159,7 @@ async function loadLifeWheel(container) {
                 <p>Shrani svoj zapis in ga imej pri sebi na našem srečanju v živo, ki ga bomo imele v sredo, 8. aprila ob 20. uri zvečer preko Zooma. Povabilo na Zoom boš pravočasno prejela preko e-maila.</p>
             </div>
             <div class="life-wheel-sub">Oceni 8 področij in shrani svoj rezultat.</div>
-            <h4 class="life-wheel-current life-wheel-current-picking" id="lifeWheelCurrentArea">ZDRAVJE</h4>
+            <h4 class="life-wheel-current" id="lifeWheelCurrentArea">ZDRAVJE</h4>
             <div class="life-wheel-hint" id="lifeWheelSubtitle">Kako bi ocenila to področje?</div>
             <div class="life-wheel-nav" id="lifeWheelNav">
                 <button type="button" class="life-wheel-back" id="lifeWheelBackBtn" onclick="lifeWheelBack()" aria-label="Nazaj na prejšnje področje">← Nazaj</button>
@@ -2236,9 +2236,16 @@ async function loadLifeWheel(container) {
     const centerY = canvas.height / 2;
     const maxRadius = 165;
 
+    function labelHighlightIndex(animatedIndex = null) {
+        if (currentIndex >= areas.length) return -1;
+        if (animatedIndex !== null && animatedIndex !== undefined) return animatedIndex;
+        return currentIndex;
+    }
+
     function drawWheel(animatedIndex = null, progress = 1) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const angleStep = (2 * Math.PI) / areas.length;
+        const hi = labelHighlightIndex(animatedIndex);
         for (let i = 1; i <= 10; i++) {
             ctx.beginPath();
             ctx.arc(centerX, centerY, (i / 10) * maxRadius, 0, 2 * Math.PI);
@@ -2273,10 +2280,20 @@ async function loadLifeWheel(container) {
             const labelRadius = maxRadius + 20;
             const x = centerX + Math.cos(midAngle) * labelRadius;
             const y = centerY + Math.sin(midAngle) * labelRadius;
-            ctx.fillStyle = '#333';
             ctx.font = 'bold 13px Montserrat, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(area, x, y);
+            if (i === hi) {
+                ctx.lineJoin = 'round';
+                ctx.miterLimit = 2;
+                ctx.strokeStyle = '#7a5a08';
+                ctx.lineWidth = 3;
+                ctx.strokeText(area, x, y);
+                ctx.fillStyle = '#f0c420';
+                ctx.fillText(area, x, y);
+            } else {
+                ctx.fillStyle = '#333';
+                ctx.fillText(area, x, y);
+            }
         });
     }
 
@@ -2293,7 +2310,7 @@ async function loadLifeWheel(container) {
         }
     }
 
-    function animateSlice(index) {
+    function animateSlice(index, onComplete) {
         let start = 0;
         const duration = 400;
         function animate(timestamp) {
@@ -2301,6 +2318,7 @@ async function loadLifeWheel(container) {
             const progress = Math.min((timestamp - start) / duration, 1);
             drawWheel(index, progress);
             if (progress < 1) requestAnimationFrame(animate);
+            else if (typeof onComplete === 'function') onComplete();
             else drawWheel();
         }
         requestAnimationFrame(animate);
@@ -2309,10 +2327,10 @@ async function loadLifeWheel(container) {
     function finish() {
         numbersDiv.style.display = 'none';
         if (navEl) navEl.style.display = 'none';
-        currentAreaEl.classList.remove('life-wheel-current-picking');
         currentAreaEl.textContent = 'Tvoje kolo življenja je pripravljeno!';
         subtitleEl.textContent = 'Lahko shraniš sliko ali narediš kolo znova.';
         actionsEl.style.display = 'flex';
+        drawWheel();
     }
 
     function updateUI() {
@@ -2320,7 +2338,6 @@ async function loadLifeWheel(container) {
             finish();
             return;
         }
-        currentAreaEl.classList.add('life-wheel-current-picking');
         currentAreaEl.textContent = (areas[currentIndex] || '').toUpperCase();
         if (backBtn) backBtn.disabled = history.length <= 1;
         if (skipBtn) skipBtn.disabled = nextUnfilledFrom(currentIndex) === null;
@@ -2329,17 +2346,20 @@ async function loadLifeWheel(container) {
     window.lifeWheelSelectScore = async function(value) {
         if (currentIndex >= areas.length) return;
         scores[currentIndex] = value;
-        animateSlice(currentIndex);
-        const next = nextUnfilledFrom(currentIndex);
-        if (next === null) {
-            currentIndex = areas.length;
-            history = [];
-        } else {
-            currentIndex = next;
-            history.push(next);
-        }
+        const answeredIdx = currentIndex;
         await persistScores();
-        updateUI();
+        animateSlice(answeredIdx, () => {
+            const next = nextUnfilledFrom(answeredIdx);
+            if (next === null) {
+                currentIndex = areas.length;
+                history = [];
+            } else {
+                currentIndex = next;
+                history.push(next);
+            }
+            updateUI();
+            if (currentIndex < areas.length) drawWheel();
+        });
     };
 
     window.lifeWheelBack = async function() {
@@ -2371,7 +2391,6 @@ async function loadLifeWheel(container) {
         if (navEl) navEl.style.display = 'flex';
         actionsEl.style.display = 'none';
         subtitleEl.textContent = 'Kako bi ocenila to področje?';
-        currentAreaEl.classList.add('life-wheel-current-picking');
         await persistScores();
         updateUI();
         drawWheel();
