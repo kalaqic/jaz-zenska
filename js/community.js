@@ -914,6 +914,7 @@ function getGuestLockedHtml() {
 }
 
 // ===== WEBINARS SECTION =====
+// 25 Stopnic do sreče – uradni Vimeo replay (iframe src kot na vimeo embed strani)
 const STOPNIC_WEBINAR_VIMEO_URL = 'https://player.vimeo.com/video/1179302920?badge=0&autopause=0&player_id=0&app_id=58479';
 
 /** Ensure 25 Stopnic webinar exists and has Vimeo replay (same flow as course player for «Moja moč je v meni»). */

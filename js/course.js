@@ -335,6 +335,7 @@ function getWebinarId() {
     return params.get('webinar');
 }
 
+// Morata se ujemati s STOPNIC_WEBINAR_VIMEO_URL v community.js (Vimeo iframe src)
 const STOPNIC_WEBINAR_VIMEO_FALLBACK = 'https://player.vimeo.com/video/1179302920?badge=0&autopause=0&player_id=0&app_id=58479';
 
 function patchStopnicWebinarVideoUrls(webinars) {
@@ -900,11 +901,12 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
             ${episode.videoUrl ? `
                 <iframe
                     src="${episode.videoUrl}"
+                    title="${escapeHtmlCourse(episode.title || 'Video')}"
                     frameborder="0"
                     allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                     referrerpolicy="strict-origin-when-cross-origin"
                     allowfullscreen
-                    style="width: 100%; height: 100%;"
+                    style="position:absolute;top:0;left:0;width:100%;height:100%;"
                 ></iframe>
             ` : 'Video bo kmalu na voljo'}
         </div>
