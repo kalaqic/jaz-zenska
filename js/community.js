@@ -2431,33 +2431,42 @@ async function loadLifeWheel(container) {
 
     window.lifeWheelSavePDF = function() {
         const wheelCanvas = document.getElementById('lifeWheelCanvas');
-        const JsPDF = window.jspdf && window.jspdf.jsPDF;
-        if (!wheelCanvas || !JsPDF) {
+        const JsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+        if (!wheelCanvas) {
             return;
         }
-        const imgData = wheelCanvas.toDataURL('image/png');
-        const pdf = new JsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-        const pageW = pdf.internal.pageSize.getWidth();
-        const pageH = pdf.internal.pageSize.getHeight();
-        const margin = 18;
-        const maxW = pageW - 2 * margin;
-        const maxH = pageH - 2 * margin;
-        let imgW = wheelCanvas.width;
-        let imgH = wheelCanvas.height;
+        if (typeof JsPDF !== 'function') {
+            window.alert('Knjižnica za PDF se ni naložila. Osveži stran in poskusi znova.');
+            return;
+        }
         try {
-            const props = pdf.getImageProperties(imgData);
-            if (props && props.width && props.height) {
-                imgW = props.width;
-                imgH = props.height;
-            }
-        } catch (e) { /* use canvas dimensions */ }
-        const scale = Math.min(maxW / imgW, maxH / imgH);
-        const dispW = imgW * scale;
-        const dispH = imgH * scale;
-        const x = (pageW - dispW) / 2;
-        const y = (pageH - dispH) / 2;
-        pdf.addImage(imgData, 'PNG', x, y, dispW, dispH);
-        pdf.save('kolo-zivljenja.pdf');
+            const imgData = wheelCanvas.toDataURL('image/png');
+            const pdf = new JsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+            const pageW = pdf.internal.pageSize.getWidth();
+            const pageH = pdf.internal.pageSize.getHeight();
+            const margin = 18;
+            const maxW = pageW - 2 * margin;
+            const maxH = pageH - 2 * margin;
+            let imgW = wheelCanvas.width;
+            let imgH = wheelCanvas.height;
+            try {
+                const props = pdf.getImageProperties(imgData);
+                if (props && props.width && props.height) {
+                    imgW = props.width;
+                    imgH = props.height;
+                }
+            } catch (e) { /* use canvas dimensions */ }
+            const scale = Math.min(maxW / imgW, maxH / imgH);
+            const dispW = imgW * scale;
+            const dispH = imgH * scale;
+            const x = (pageW - dispW) / 2;
+            const y = (pageH - dispH) / 2;
+            pdf.addImage(imgData, 'PNG', x, y, dispW, dispH);
+            pdf.save('kolo-zivljenja.pdf');
+        } catch (err) {
+            console.error('lifeWheelSavePDF:', err);
+            window.alert('PDF se ni uspelo ustvariti. Poskusi znova ali uporabi »Prenesi sliko«.');
+        }
     };
 
     window.lifeWheelDownloadImage = function() {
