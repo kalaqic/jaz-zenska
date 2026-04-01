@@ -2143,24 +2143,10 @@ async function loadCoursesAndWebinars(container) {
 function renderExtraOffer(container) {
     if (!container) return;
     container.innerHTML = `
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
-            <div class="guest-locked-block" style="margin:0;">
-                <div class="guest-locked-inner">
-                    <h3 class="guest-locked-title">Pohodi</h3>
-                    <p class="guest-locked-lead">Aktualna ponudba pohodov in doživetij.</p>
-                    <div class="guest-locked-buttons">
-                        <a href="pohod.html" class="guest-locked-btn guest-locked-btn-primary">Odpri ponudbo</a>
-                    </div>
-                </div>
-            </div>
-            <div class="guest-locked-block" style="margin:0;">
-                <div class="guest-locked-inner">
-                    <h3 class="guest-locked-title">Pohod na Trško goro</h3>
-                    <a href="pohod.html" style="display:block;">
-                        <img src="images/aktualen dogodek 2.webp" alt="Pohod na Trško goro" style="width:100%; border-radius:14px; display:block;">
-                    </a>
-                </div>
-            </div>
+        <div style="display:flex; justify-content:center;">
+            <a href="pohod.html" style="display:block; max-width:420px; width:100%;">
+                <img src="images/pohod.webp" alt="Pohod na Trško goro" style="width:100%; border-radius:16px; display:block;">
+            </a>
         </div>
     `;
 }
