@@ -2159,8 +2159,12 @@ async function loadLifeWheel(container) {
                 <p>Shrani svoj zapis in ga imej pri sebi na našem srečanju v živo, ki ga bomo imele v sredo, 8. aprila ob 20. uri zvečer preko Zooma. Povabilo na Zoom boš pravočasno prejela preko e-maila.</p>
             </div>
             <div class="life-wheel-sub">Oceni 8 področij in shrani svoj rezultat.</div>
-            <h4 class="life-wheel-current" id="lifeWheelCurrentArea">ZDRAVJE</h4>
+            <h4 class="life-wheel-current life-wheel-current-picking" id="lifeWheelCurrentArea">ZDRAVJE</h4>
             <div class="life-wheel-hint" id="lifeWheelSubtitle">Kako bi ocenila to področje?</div>
+            <div class="life-wheel-nav" id="lifeWheelNav">
+                <button type="button" class="life-wheel-back" id="lifeWheelBackBtn" onclick="lifeWheelBack()" aria-label="Nazaj na prejšnje področje">← Nazaj</button>
+                <button type="button" class="life-wheel-skip" id="lifeWheelSkipBtn" onclick="lifeWheelSkip()">Preskoči (kasneje)</button>
+            </div>
             <div class="life-wheel-numbers" id="lifeWheelNumbers"></div>
             <div id="lifeWheelCapture" class="life-wheel-canvas-wrap">
                 <canvas id="lifeWheelCanvas" class="life-wheel-canvas" width="430" height="430"></canvas>
@@ -2175,13 +2179,6 @@ async function loadLifeWheel(container) {
 
     const areas = ['Zdravje', 'Kariera', 'Ljubezen', 'Duhovnost', 'Družina', 'Denar', 'Zabava', 'Prijatelji'];
     const colors = ['#ff9aa2', '#ffb7b2', '#ffdac1', '#e2f0cb', '#b5ead7', '#c7ceea', '#f6c1ff', '#ffd6e0'];
-
-    const canvas = document.getElementById('lifeWheelCanvas');
-    const numbersDiv = document.getElementById('lifeWheelNumbers');
-    const currentAreaEl = document.getElementById('lifeWheelCurrentArea');
-    const subtitleEl = document.getElementById('lifeWheelSubtitle');
-    const actionsEl = document.getElementById('lifeWheelActions');
-    if (!canvas || !numbersDiv || !currentAreaEl || !subtitleEl || !actionsEl) return;
 
     let savedScores = [];
     try {
@@ -2200,8 +2197,39 @@ async function loadLifeWheel(container) {
     }
 
     const scores = Array.isArray(savedScores) && savedScores.length === areas.length ? [...savedScores] : new Array(areas.length).fill(0);
-    let currentIndex = scores.findIndex(v => !v || v < 1);
-    if (currentIndex === -1) currentIndex = areas.length;
+
+    function allScoresFilled() {
+        return scores.every(v => v >= 1 && v <= 10);
+    }
+
+    function nextUnfilledFrom(cur) {
+        for (let i = cur + 1; i < areas.length; i++) {
+            if (!scores[i] || scores[i] < 1) return i;
+        }
+        for (let i = 0; i < cur; i++) {
+            if (!scores[i] || scores[i] < 1) return i;
+        }
+        return null;
+    }
+
+    let currentIndex;
+    let history = [];
+    if (allScoresFilled()) {
+        currentIndex = areas.length;
+    } else {
+        currentIndex = scores.findIndex(v => !v || v < 1);
+        for (let i = 0; i <= currentIndex; i++) history.push(i);
+    }
+
+    const canvas = document.getElementById('lifeWheelCanvas');
+    const numbersDiv = document.getElementById('lifeWheelNumbers');
+    const currentAreaEl = document.getElementById('lifeWheelCurrentArea');
+    const subtitleEl = document.getElementById('lifeWheelSubtitle');
+    const actionsEl = document.getElementById('lifeWheelActions');
+    const navEl = document.getElementById('lifeWheelNav');
+    const backBtn = document.getElementById('lifeWheelBackBtn');
+    const skipBtn = document.getElementById('lifeWheelSkipBtn');
+    if (!canvas || !numbersDiv || !currentAreaEl || !subtitleEl || !actionsEl) return;
 
     const ctx = canvas.getContext('2d');
     const centerX = canvas.width / 2;
@@ -2280,6 +2308,8 @@ async function loadLifeWheel(container) {
 
     function finish() {
         numbersDiv.style.display = 'none';
+        if (navEl) navEl.style.display = 'none';
+        currentAreaEl.classList.remove('life-wheel-current-picking');
         currentAreaEl.textContent = 'Tvoje kolo življenja je pripravljeno!';
         subtitleEl.textContent = 'Lahko shraniš sliko ali narediš kolo znova.';
         actionsEl.style.display = 'flex';
@@ -2290,24 +2320,58 @@ async function loadLifeWheel(container) {
             finish();
             return;
         }
+        currentAreaEl.classList.add('life-wheel-current-picking');
         currentAreaEl.textContent = (areas[currentIndex] || '').toUpperCase();
+        if (backBtn) backBtn.disabled = history.length <= 1;
+        if (skipBtn) skipBtn.disabled = nextUnfilledFrom(currentIndex) === null;
     }
 
     window.lifeWheelSelectScore = async function(value) {
         if (currentIndex >= areas.length) return;
         scores[currentIndex] = value;
         animateSlice(currentIndex);
-        currentIndex += 1;
+        const next = nextUnfilledFrom(currentIndex);
+        if (next === null) {
+            currentIndex = areas.length;
+            history = [];
+        } else {
+            currentIndex = next;
+            history.push(next);
+        }
         await persistScores();
+        updateUI();
+    };
+
+    window.lifeWheelBack = async function() {
+        if (currentIndex >= areas.length || history.length <= 1) return;
+        history.pop();
+        currentIndex = history[history.length - 1];
+        scores[currentIndex] = 0;
+        await persistScores();
+        drawWheel();
+        updateUI();
+    };
+
+    window.lifeWheelSkip = async function() {
+        if (currentIndex >= areas.length) return;
+        const next = nextUnfilledFrom(currentIndex);
+        if (next === null) return;
+        currentIndex = next;
+        history.push(next);
+        await persistScores();
+        drawWheel();
         updateUI();
     };
 
     window.lifeWheelReset = async function() {
         for (let i = 0; i < scores.length; i++) scores[i] = 0;
         currentIndex = 0;
+        history = [0];
         numbersDiv.style.display = 'flex';
+        if (navEl) navEl.style.display = 'flex';
         actionsEl.style.display = 'none';
         subtitleEl.textContent = 'Kako bi ocenila to področje?';
+        currentAreaEl.classList.add('life-wheel-current-picking');
         await persistScores();
         updateUI();
         drawWheel();
