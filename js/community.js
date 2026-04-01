@@ -82,7 +82,7 @@ async function handleLogout() {
 
 // Track if dashboard is initialized to prevent duplicate initialization
 let dashboardInitialized = false;
-let currentSidebarTab = 'classroom';
+let currentSidebarTab = 'active-work';
 
 function updateMobileDrawerBodyLock() {
     try {
@@ -190,11 +190,6 @@ function initDashboard() {
 
             document.querySelectorAll('[data-sidebar].sidebar-item').forEach(x => x.classList.remove('active'));
             this.classList.add('active');
-
-            if (tab === 'calendar') {
-                openFullCalendarModal();
-                return;
-            }
 
             currentSidebarTab = tab;
             switchSection('profile');
@@ -1877,32 +1872,126 @@ async function loadProfile() {
     const titleEl = document.querySelector('#profile h2');
     if (titleEl) {
         const titleMap = {
-            classroom: 'Tečaji',
-            webinars: 'Webinarji',
-            questionnaire: 'Vprašalnik',
+            'active-work': 'Aktivno delo',
+            'courses-webinars': 'Tečaji in webinarji',
+            'extra-offer': 'Dodatna ponudba',
             profil: 'Nastavitve'
         };
         titleEl.textContent = titleMap[currentSidebarTab] || 'Spletna učilnica';
     }
 
-    if (currentSidebarTab === 'classroom') {
-        loadClassroom(content);
+    if (currentSidebarTab === 'active-work') {
+        renderActiveWork(content);
         return;
     }
-    if (currentSidebarTab === 'webinars') {
-        loadWebinars(content);
+    if (currentSidebarTab === 'courses-webinars') {
+        await loadCoursesAndWebinars(content);
         return;
     }
     if (currentSidebarTab === 'questionnaire') {
         loadQuestionnaire(content);
         return;
     }
+    if (currentSidebarTab === 'extra-offer') {
+        renderExtraOffer(content);
+        return;
+    }
     if (currentSidebarTab === 'profil') {
         renderProfileForm(content);
         return;
     }
-    loadClassroom(content);
+    renderActiveWork(content);
 }
+
+function renderActiveWork(container) {
+    if (!container) return;
+    container.innerHTML = `
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+            <div class="guest-locked-block" style="margin:0;">
+                <div class="guest-locked-inner">
+                    <h3 class="guest-locked-title">Vprašalnik</h3>
+                    <p class="guest-locked-lead">Odpri vprašalnik in spremljaj svoj napredek skozi delo na sebi.</p>
+                    <div class="guest-locked-buttons">
+                        <button type="button" class="guest-locked-btn guest-locked-btn-primary" onclick="openSidebarTab('questionnaire')">Odpri vprašalnik</button>
+                    </div>
+                </div>
+            </div>
+            <div class="guest-locked-block" style="margin:0;">
+                <div class="guest-locked-inner">
+                    <h3 class="guest-locked-title">Kolo življenja</h3>
+                    <p class="guest-locked-lead">Ta modul bomo dodali kmalu. Tukaj boš lahko ocenjevala ključna življenjska področja.</p>
+                    <div class="guest-locked-buttons">
+                        <button type="button" class="guest-locked-btn guest-locked-btn-secondary" disabled style="opacity:0.7; cursor:not-allowed;">Kmalu na voljo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+async function loadCoursesAndWebinars(container) {
+    if (!container) return;
+    await loadClassroom(container);
+    const webinars = JSON.parse(localStorage.getItem('webinars') || '[]') || [];
+    const user = getCurrentUser() || {};
+    const role = user.role || 'member';
+    const hasAccess = role !== 'guest';
+
+    let webinarsHtml = `
+        <div style="margin-top:24px;">
+            <h3 style="font-family:'Playfair Display', serif; color: var(--dark-violet); margin-bottom:12px;">Webinarji</h3>
+            <div class="webinars-grid">
+    `;
+    if (!webinars.length) {
+        webinarsHtml += `<div class="webinar-card" style="cursor:default;"><div class="webinar-title">Ni webinarjev</div></div>`;
+    } else {
+        webinarsHtml += webinars.map(w => `
+            <div class="webinar-card ${hasAccess ? '' : 'locked'}" onclick="openWebinar('${w.id}', ${hasAccess})">
+                <div class="webinar-title">${escapeHtml(w.title || 'Webinar')}</div>
+                <div class="webinar-date">${escapeHtml(w.date || '')}</div>
+                <div class="webinar-description">${escapeHtml(w.description || 'Posnetek webinarja')}</div>
+                ${hasAccess ? '' : '<div class="webinar-lock-note">Nimate dostopa do tega webinarja</div>'}
+            </div>
+        `).join('');
+    }
+    webinarsHtml += `</div></div>`;
+    container.innerHTML += webinarsHtml;
+}
+
+function renderExtraOffer(container) {
+    if (!container) return;
+    container.innerHTML = `
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+            <div class="guest-locked-block" style="margin:0;">
+                <div class="guest-locked-inner">
+                    <h3 class="guest-locked-title">Pohodi</h3>
+                    <p class="guest-locked-lead">Aktualna ponudba pohodov in doživetij.</p>
+                    <div class="guest-locked-buttons">
+                        <a href="pohod.html" class="guest-locked-btn guest-locked-btn-primary">Odpri ponudbo</a>
+                    </div>
+                </div>
+            </div>
+            <div class="guest-locked-block" style="margin:0;">
+                <div class="guest-locked-inner">
+                    <h3 class="guest-locked-title">Pohod na Trško goro</h3>
+                    <p class="guest-locked-lead">Pridruži se dogodku in preveri vse podrobnosti prijave.</p>
+                    <div class="guest-locked-buttons">
+                        <a href="pohod.html" class="guest-locked-btn guest-locked-btn-primary">Več informacij</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+window.openSidebarTab = function(tab) {
+    currentSidebarTab = tab;
+    document.querySelectorAll('[data-sidebar].sidebar-item').forEach(x => {
+        x.classList.toggle('active', x.getAttribute('data-sidebar') === tab);
+    });
+    switchSection('profile');
+    setLeftMenuOpen(false);
+};
 
 async function renderProfileForm(container) {
     if (!container) return;
