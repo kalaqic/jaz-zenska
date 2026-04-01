@@ -395,6 +395,41 @@
             letter-spacing: 0.02em;
         }
 
+        /* Dodatna ponudba (pohod) + Webinarji: klikabilna slika, levo, obroba */
+        .extra-offer-image-row {
+            display: flex;
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        .extra-offer-webinars-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .extra-offer-image-link {
+            display: block;
+            max-width: 420px;
+            width: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .extra-offer-image-link img {
+            width: 100%;
+            border-radius: 16px;
+            border: 2px solid rgba(100, 56, 67, 0.25);
+            display: block;
+        }
+
+        .extra-offer-image-link.locked img {
+            filter: grayscale(100%);
+            opacity: 0.72;
+        }
+
         .right-resume-card {
             display: block;
             padding: 12px 12px;
@@ -2004,6 +2039,33 @@
             color: var(--dark-violet);
             font-size: 24px;
             margin: 0 0 6px;
+        }
+
+        .life-wheel-intro {
+            color: var(--text-dark);
+            font-size: 15px;
+            line-height: 1.75;
+            margin: 0 0 18px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(100, 56, 67, 0.1);
+        }
+
+        .life-wheel-intro-lead {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--dark-violet);
+            letter-spacing: 0.03em;
+            margin: 0 0 14px;
+            line-height: 1.35;
+        }
+
+        .life-wheel-intro p {
+            margin: 0 0 14px;
+        }
+
+        .life-wheel-intro p:last-child {
+            margin-bottom: 0;
         }
 
         .life-wheel-sub {

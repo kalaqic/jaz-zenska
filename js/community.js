@@ -1029,20 +1029,19 @@ async function loadWebinars(container) {
     if (webinars.length === 0) {
         html = '<p style="color: var(--text-light); text-align: center; padding: 40px;">Trenutno ni na voljo nobenih webinarjev.</p>';
     } else {
-        html = '<div class="webinars-grid">';
+        html = '<div class="extra-offer-webinars-stack">';
         webinars.forEach(webinar => {
-            const isStopnic = webinar.title === '25 Stopnic do srece' || webinar.title === '25 Stopnic do sreče';
+            const isStopnic = String(webinar.title || '').toLowerCase().includes('stopnic');
             const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
             const hasAccess = !isGuest;
-            const safeId = String(webinar.id).replace(/'/g, "\\'");
-            const cardOnclick = `openWebinar('${safeId}', ${hasAccess})`;
+            const safeId = encodeURIComponent(String(webinar.id));
+            const href = hasAccess ? `course.html?webinar=${safeId}` : 'jaz-zenska.html';
+            const lockedClass = hasAccess ? '' : ' locked';
             html += `
-                <div class="webinar-card ${hasAccess ? '' : 'locked'}" onclick="${cardOnclick}">
-                    <img src="${cardImage}" alt="${escapeHtml(webinar.title)}" class="webinar-card-image">
-                    <div class="webinar-title">${webinar.title}</div>
-                    <div class="webinar-date">${webinar.date || ''}</div>
-                    <div class="webinar-description">${webinar.description || ''}</div>
-                    ${!hasAccess ? '<div class="webinar-lock-note">Nimate dostopa do webinarja</div>' : ''}
+                <div class="extra-offer-image-row">
+                    <a href="${href}" class="extra-offer-image-link${lockedClass}">
+                        <img src="${cardImage}" alt="${escapeHtml(webinar.title)}">
+                    </a>
                 </div>
             `;
         });
@@ -2151,6 +2150,14 @@ async function loadLifeWheel(container) {
     content.innerHTML = `
         <div class="life-wheel-wrap">
             <h3 class="life-wheel-title">Kolo življenja</h3>
+            <div class="life-wheel-intro">
+                <p class="life-wheel-intro-lead">KOLO ŽIVLJENJA Jaz ženska</p>
+                <p>Kolo življenja je preprosto, a zelo učinkovito orodje za osebni razvoj, s katerim oceniš, kako uravnoteženo je tvoje življenje na različnih področjih.</p>
+                <p>Vabim te, da se umiriš, sprostiš, globoko vdihneš in izdihneš in nato narišeš svoje kolo življenja.</p>
+                <p>Vsako področje označi od 1 do 10, odvisno od tega, kako ocenjuješ svoje stanje na določenem področju. Si zadovoljna, bi kaj spremenila, meniš, da je še prostora za tvojo rast, imaš izzive in težave na tem področju … Postavi si čim več vprašanj, iskreno prisluhni svojemu občutku in označi v krogu, kje se trenutno nahajaš. Vse je prav in v redu. Kolo življenja izpolnjujemo, da vidimo kje smo, kako je naše življenje usklajeno in kje so priložnosti za rast in spremembo. Pokaže nam, kje se trenutno nahajamo in nam pomaga videti širšo sliko našega življenja.</p>
+                <p>Sproščeno, lahkotno, iskreno izpolni svoje kolo življenja in poglej, kje je največje neskladje, kje so še priložnosti za rast, kaj bi želela spremeniti. Zapiši si misli, ki se ti ob tem porajajo; piši vse, brez da vključiš um, samo tisto, kar se v tebi poraja, brez razmišljanja in analiziranja.</p>
+                <p>Shrani svoj zapis in ga imej pri sebi na našem srečanju v živo, ki ga bomo imele v sredo, 8. aprila ob 20. uri zvečer preko Zooma. Povabilo na Zoom boš pravočasno prejela preko e-maila.</p>
+            </div>
             <div class="life-wheel-sub">Oceni 8 področij in shrani svoj rezultat.</div>
             <h4 class="life-wheel-current" id="lifeWheelCurrentArea">ZDRAVJE</h4>
             <div class="life-wheel-hint" id="lifeWheelSubtitle">Kako bi ocenila to področje?</div>
@@ -2345,18 +2352,23 @@ async function loadCoursesAndWebinars(container) {
 
     let webinarsHtml = `
         <div style="margin-top:24px;">
-            <h3 style="font-family:'Playfair Display', serif; color: var(--dark-violet); margin-bottom:12px;">Webinarji</h3>
-            <div class="webinars-grid">
+            <h3 class="extra-offer-subtitle">Webinarji</h3>
+            <div class="extra-offer-webinars-stack">
     `;
     if (!webinars.length) {
-        webinarsHtml += `<div class="webinar-card" style="cursor:default;"><div class="webinar-title">Ni webinarjev</div></div>`;
+        webinarsHtml += `<p style="color:var(--text-light);margin:0;">Ni webinarjev</p>`;
     } else {
         webinarsHtml += webinars.map(w => {
             const isStopnic = String(w.title || '').toLowerCase().includes('stopnic');
             const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
+            const wid = encodeURIComponent(String(w.id));
+            const href = hasAccess ? `course.html?webinar=${wid}` : 'jaz-zenska.html';
+            const lockedClass = hasAccess ? '' : ' locked';
             return `
-                <div class="webinar-card ${hasAccess ? '' : 'locked'}" onclick="openWebinar('${w.id}', ${hasAccess})">
-                    <img src="${cardImage}" alt="${escapeHtml(w.title || 'Webinar')}" class="webinar-card-image">
+                <div class="extra-offer-image-row">
+                    <a href="${href}" class="extra-offer-image-link${lockedClass}">
+                        <img src="${cardImage}" alt="${escapeHtml(w.title || 'Webinar')}">
+                    </a>
                 </div>
             `;
         }).join('');
@@ -2369,9 +2381,9 @@ function renderExtraOffer(container) {
     if (!container) return;
     container.innerHTML = `
         <h3 class="extra-offer-subtitle">Pohodi</h3>
-        <div style="display:flex; justify-content:flex-start;">
-            <a href="pohod.html" style="display:block; max-width:420px; width:100%;">
-                <img src="images/pohod.webp" alt="100 žensk na Trško goro" style="width:100%; border-radius:16px; border:2px solid rgba(100, 56, 67, 0.25); display:block;">
+        <div class="extra-offer-image-row">
+            <a href="pohod.html" class="extra-offer-image-link">
+                <img src="images/pohod.webp" alt="100 žensk na Trško goro">
             </a>
         </div>
     `;
