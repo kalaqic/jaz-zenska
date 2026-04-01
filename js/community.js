@@ -1935,7 +1935,7 @@ async function renderProfileForm(container) {
             answersHtml += `<div style="margin-bottom: 16px;"><strong style="color: var(--dark-violet); font-size: 14px;">${escapeHtml(q)}</strong><p style="margin-top: 4px; color: var(--text-dark); font-size: 14px; white-space: pre-wrap;">${escapeHtml(preview)}</p></div>`;
         });
         answersHtml += `
-            <button type="button" onclick="showProfileTab(\'questionnaire\')" style="
+            <button type="button" onclick="openQuestionnaireFromSettings()" style="
                 margin-top: 20px;
                 background: var(--main-white);
                 color: var(--dark-violet);
@@ -2072,6 +2072,14 @@ window.showProfileTab = function(tab) {
         loadQuestionnaire(container);
         return;
     }
+};
+
+window.openQuestionnaireFromSettings = function() {
+    currentSidebarTab = 'questionnaire';
+    document.querySelectorAll('[data-sidebar].sidebar-item').forEach(x => {
+        x.classList.toggle('active', x.getAttribute('data-sidebar') === 'questionnaire');
+    });
+    switchSection('profile');
 };
 
 async function saveProfile() {

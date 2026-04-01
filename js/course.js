@@ -240,7 +240,8 @@ function buildMocBesedeEpisodes(existingEpisodes = []) {
 
 async function buildMocBesedeEpisodesFromFirestore() {
     try {
-        if (typeof db === 'undefined' || !db) return null;
+        const ready = await waitForFirestoreReady();
+        if (!ready) return null;
 
         const snap = await db.collection('moc_besede_words').get();
         if (snap.empty) return null;
@@ -342,6 +343,15 @@ function getActiveContentId() {
     return webinarId ? `webinar-${webinarId}` : null;
 }
 
+async function waitForFirestoreReady(maxMs = 5000) {
+    const start = Date.now();
+    while (Date.now() - start < maxMs) {
+        if (typeof db !== 'undefined' && db) return true;
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    return typeof db !== 'undefined' && !!db;
+}
+
 // Load course
 async function loadCourse() {
     const courseId = getCourseId();
@@ -352,6 +362,9 @@ async function loadCourse() {
         window.location.href = 'dashboard.html';
         return;
     }
+
+    // Firebase init runs asynchronously in course.html; wait a bit so Firestore reads don't fallback too early.
+    await waitForFirestoreReady();
     
     let course = null;
 
