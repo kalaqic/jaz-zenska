@@ -1,5 +1,4 @@
 // Course Detail Page JavaScript
-const MOC_BESSEDE_INTRO_VIDEO_URL = 'https://player.vimeo.com/video/1176831636?badge=0&autopause=0&player_id=0&app_id=58479';
 const MOC_BESSEDE_WORDS = [
     'MORAM',
     'NE ZELIM',
@@ -209,6 +208,16 @@ function escapeHtmlCourse(text) {
         .replace(/'/g, '&#39;');
 }
 
+function showCourseLoader() {
+    const overlay = document.getElementById('courseLoadingOverlay');
+    if (overlay) overlay.classList.add('show');
+}
+
+function hideCourseLoader() {
+    const overlay = document.getElementById('courseLoadingOverlay');
+    if (overlay) overlay.classList.remove('show');
+}
+
 function buildMocBesedeEpisodes(existingEpisodes = []) {
     const byTitle = new Map((existingEpisodes || []).map(ep => [String(ep.title || '').trim(), ep]));
 
@@ -217,7 +226,7 @@ function buildMocBesedeEpisodes(existingEpisodes = []) {
             id: '1',
             title: 'Uvod',
             description: 'Uvod v delavnico Moč besede.',
-            videoUrl: MOC_BESSEDE_INTRO_VIDEO_URL,
+            videoUrl: '',
             duration: ''
         }
     ];
@@ -263,20 +272,10 @@ async function buildMocBesedeEpisodesFromFirestore() {
             return a.title.localeCompare(b.title, 'sl');
         });
 
-        const episodes = [
-            {
-                id: '1',
-                title: 'Uvod',
-                description: 'Uvod v delavnico Moč besede.',
-                exercise: '',
-                videoUrl: MOC_BESSEDE_INTRO_VIDEO_URL,
-                duration: ''
-            }
-        ];
-
+        const episodes = [];
         docs.forEach((item, idx) => {
             episodes.push({
-                id: String(idx + 2),
+                id: String(idx + 1),
                 title: item.title,
                 description: item.description || `Epizoda o besedi: ${item.title}`,
                 exercise: item.exercise || `Zapišite 3 stavke, kjer besedo "${item.title}" zavestno zamenjate z bolj podporno in ljubečo različico.`,
@@ -1109,7 +1108,10 @@ function showCongratulationsPopup() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    loadCourse();
+    showCourseLoader();
+    loadCourse().finally(() => {
+        hideCourseLoader();
+    });
     syncEpisodesPanelForViewport();
     window.addEventListener('resize', syncEpisodesPanelForViewport);
 });

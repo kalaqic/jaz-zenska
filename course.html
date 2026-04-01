@@ -87,6 +87,38 @@
             margin: 0 auto;
             padding: 0 20px 30px;
         }
+
+        .course-loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(248, 241, 237, 0.88);
+            backdrop-filter: blur(2px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .course-loading-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .course-loading-spinner {
+            width: 52px;
+            height: 52px;
+            border: 4px solid rgba(100, 56, 67, 0.18);
+            border-top-color: var(--dark-violet);
+            border-radius: 50%;
+            animation: courseSpin 0.9s linear infinite;
+        }
+
+        @keyframes courseSpin {
+            to { transform: rotate(360deg); }
+        }
         
         .course-detail-container {
             display: grid;
@@ -582,6 +614,9 @@
     </style>
 </head>
 <body>
+    <div id="courseLoadingOverlay" class="course-loading-overlay show" aria-hidden="true">
+        <div class="course-loading-spinner" role="status" aria-label="Nalaganje"></div>
+    </div>
     <div class="course-container">
         <div class="course-header">
             <a href="dashboard.html" class="back-btn">← Nazaj na učilnico</a>
