@@ -2283,12 +2283,7 @@ async function loadLifeWheel(container) {
             ctx.font = 'bold 13px Montserrat, sans-serif';
             ctx.textAlign = 'center';
             if (i === hi) {
-                ctx.lineJoin = 'round';
-                ctx.miterLimit = 2;
-                ctx.strokeStyle = '#7a5a08';
-                ctx.lineWidth = 3;
-                ctx.strokeText(area, x, y);
-                ctx.fillStyle = '#f0c420';
+                ctx.fillStyle = colors[i];
                 ctx.fillText(area, x, y);
             } else {
                 ctx.fillStyle = '#333';
