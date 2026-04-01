@@ -2430,7 +2430,34 @@ async function loadLifeWheel(container) {
     };
 
     window.lifeWheelSavePDF = function() {
-        window.print();
+        const wheelCanvas = document.getElementById('lifeWheelCanvas');
+        const JsPDF = window.jspdf && window.jspdf.jsPDF;
+        if (!wheelCanvas || !JsPDF) {
+            return;
+        }
+        const imgData = wheelCanvas.toDataURL('image/png');
+        const pdf = new JsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+        const margin = 18;
+        const maxW = pageW - 2 * margin;
+        const maxH = pageH - 2 * margin;
+        let imgW = wheelCanvas.width;
+        let imgH = wheelCanvas.height;
+        try {
+            const props = pdf.getImageProperties(imgData);
+            if (props && props.width && props.height) {
+                imgW = props.width;
+                imgH = props.height;
+            }
+        } catch (e) { /* use canvas dimensions */ }
+        const scale = Math.min(maxW / imgW, maxH / imgH);
+        const dispW = imgW * scale;
+        const dispH = imgH * scale;
+        const x = (pageW - dispW) / 2;
+        const y = (pageH - dispH) / 2;
+        pdf.addImage(imgData, 'PNG', x, y, dispW, dispH);
+        pdf.save('kolo-zivljenja.pdf');
     };
 
     window.lifeWheelDownloadImage = function() {
