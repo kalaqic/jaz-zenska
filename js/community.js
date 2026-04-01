@@ -2143,9 +2143,9 @@ async function loadCoursesAndWebinars(container) {
 function renderExtraOffer(container) {
     if (!container) return;
     container.innerHTML = `
-        <div style="display:flex; justify-content:center;">
+        <div style="display:flex; justify-content:flex-start;">
             <a href="pohod.html" style="display:block; max-width:420px; width:100%;">
-                <img src="images/pohod.webp" alt="Pohod na Trško goro" style="width:100%; border-radius:16px; display:block;">
+                <img src="images/pohod.webp" alt="Pohod na Trško goro" style="width:100%; border-radius:16px; border:2px solid rgba(100, 56, 67, 0.25); display:block;">
             </a>
         </div>
     `;
