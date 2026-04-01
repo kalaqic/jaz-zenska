@@ -377,8 +377,9 @@ function renderRightPanel() {
             ` : upcomingEvents.map(evt => {
                 const d = new Date(evt._dt);
                 const dateStr = toLocalDateStringCal(d);
+                const evtIdJs = evt.id != null && evt.id !== '' ? JSON.stringify(String(evt.id)) : 'null';
                 return `
-                    <div class="right-list-item" onclick="showDayEvents('${dateStr}')">
+                    <div class="right-list-item" onclick="openCalendarForDay('${dateStr}', ${evtIdJs})">
                         <div class="right-list-item-title">${escapeHtml(evt.title || 'Dogodek')}</div>
                         <div class="right-list-item-meta">🗓 ${escapeHtml(d.toLocaleDateString('sl-SI', { year:'numeric', month:'long', day:'numeric' }))}</div>
                     </div>
@@ -479,7 +480,25 @@ window.openFullCalendarModal = function() {
     if (!modal) return;
     modal.classList.add('show');
     document.body.style.overflow = 'hidden';
-    loadCalendar();
+    void loadCalendar();
+};
+
+/**
+ * Odpri celoten koledar na pravem mesecu in pokaži dogodek (ali vse dogodke tistega dne).
+ * @param {string} dateStr - YYYY-MM-DD
+ * @param {string|null|undefined} eventId - če je podan, modal pokaže ta dogodek (če obstaja na ta dan)
+ */
+window.openCalendarForDay = async function(dateStr, eventId) {
+    const full = document.getElementById('fullCalendarModal');
+    if (!full) return;
+    const parts = String(dateStr || '').split('-').map(Number);
+    if (parts.length === 3 && !parts.some(n => Number.isNaN(n))) {
+        currentCalendarDate = new Date(parts[0], parts[1] - 1, 1);
+    }
+    full.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    await loadCalendar();
+    await showDayEvents(dateStr, eventId);
 };
 
 window.closeFullCalendarModal = function() {
@@ -1536,7 +1555,7 @@ function changeCalendarMonth(direction) {
     loadCalendar();
 }
 
-async function showDayEvents(dateStr) {
+async function showDayEvents(dateStr, focusEventId) {
     let events = [];
     
     // Try to load from Firestore first
@@ -1579,10 +1598,15 @@ async function showDayEvents(dateStr) {
         return y + '-' + m + '-' + day;
     }
     
-    const dayEvents = events.filter(e => {
+    let dayEvents = events.filter(e => {
         const ed = new Date(e.date);
         return toLocalDateString(ed) === dateStr;
     });
+
+    if (focusEventId != null && focusEventId !== '') {
+        const focused = dayEvents.filter(e => String(e.id) === String(focusEventId));
+        if (focused.length) dayEvents = focused;
+    }
     
     const modal = document.getElementById('eventModal');
     const modalContent = document.getElementById('eventModalContent');
@@ -1625,8 +1649,9 @@ async function showDayEvents(dateStr) {
                     eventImage = `<img src="${event.image}" alt="" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px 12px 0 0; margin: -20px -20px 16px -20px; display: block;">`;
                 }
                 const safeExtUrl = event.externalUrl ? String(event.externalUrl).replace(/"/g, '') : '';
+                const isFocused = focusEventId != null && focusEventId !== '' && String(event.id) === String(focusEventId);
                 return `
-                    <div style="
+                    <div ${isFocused ? 'id="calendar-event-focus"' : ''} style="
                         background: var(--main-white);
                         padding: 20px;
                         border-radius: 15px;
@@ -1686,10 +1711,18 @@ async function showDayEvents(dateStr) {
     }
     
     modal.classList.add('show');
+
+    if (focusEventId != null && focusEventId !== '') {
+        requestAnimationFrame(() => {
+            const el = document.getElementById('calendar-event-focus');
+            if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        });
+    }
 }
 
 function closeEventModal() {
-    document.getElementById('eventModal').classList.remove('show');
+    const el = document.getElementById('eventModal');
+    if (el) el.classList.remove('show');
 }
 
 // Close modal when clicking outside
@@ -2283,6 +2316,11 @@ async function loadLifeWheel(container) {
             ctx.font = 'bold 13px Montserrat, sans-serif';
             ctx.textAlign = 'center';
             if (i === hi) {
+                ctx.lineJoin = 'round';
+                ctx.miterLimit = 2;
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2.5;
+                ctx.strokeText(area, x, y);
                 ctx.fillStyle = colors[i];
                 ctx.fillText(area, x, y);
             } else {
