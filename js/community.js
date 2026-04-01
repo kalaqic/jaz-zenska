@@ -212,6 +212,126 @@ function initDashboard() {
     waitForFirebaseAndCheckWelcome();
 }
 
+function userHasCourseAccessForResume(courseId, user) {
+    if (!user || !user.userId) return false;
+    if (user.role !== 'guest') return true;
+    if (String(courseId).startsWith('webinar-')) return false;
+    const purchased = Array.isArray(user.purchasedCourses) ? user.purchasedCourses : [];
+    return purchased.includes(courseId);
+}
+
+function buildCourseResumeUrl(courseId, episodeId) {
+    const e = encodeURIComponent(String(episodeId));
+    if (String(courseId).startsWith('webinar-')) {
+        const wid = String(courseId).replace(/^webinar-/, '');
+        return `course.html?webinar=${encodeURIComponent(wid)}&episode=${e}`;
+    }
+    return `course.html?id=${encodeURIComponent(courseId)}&episode=${e}`;
+}
+
+async function renderResumeInRightPanel(statsEl, user) {
+    if (!statsEl) return;
+    statsEl.innerHTML = '<p class="right-resume-placeholder" style="margin:0; color:var(--text-light); font-size:13px;">Nalaganje …</p>';
+
+    let resume = null;
+    let resumeTs = 0;
+    try {
+        const localRaw = localStorage.getItem('courseLastResume');
+        if (localRaw) {
+            const local = JSON.parse(localRaw);
+            if (local && local.courseId && local.episodeId) {
+                resume = { courseId: local.courseId, episodeId: String(local.episodeId) };
+                resumeTs = Number(local.ts) || 0;
+            }
+        }
+    } catch (e) {
+        /* ignore */
+    }
+
+    if (user && user.userId && typeof db !== 'undefined') {
+        try {
+            const snap = await db.collection('users').doc(user.userId).get();
+            if (snap.exists) {
+                const cloud = snap.data().lastCourseResume;
+                if (cloud && cloud.courseId && cloud.episodeId) {
+                    const t = cloud.updatedAt && typeof cloud.updatedAt.toMillis === 'function'
+                        ? cloud.updatedAt.toMillis()
+                        : 0;
+                    if (t >= resumeTs) {
+                        resume = { courseId: cloud.courseId, episodeId: String(cloud.episodeId) };
+                        resumeTs = t;
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('renderResumeInRightPanel', e);
+        }
+    }
+
+    if (!resume) {
+        statsEl.innerHTML = `
+            <div class="right-resume-empty">
+                <p style="margin:0; color:var(--text-light); font-size:13px; line-height:1.55;">
+                    Ko začneš z ogledom tečaja, se ti tukaj prikaže zadnja epizoda, pri kateri si ostala.
+                </p>
+            </div>`;
+        return;
+    }
+
+    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+    const course = courses.find(c => c.id === resume.courseId);
+
+    let courseTitle = course && course.title ? course.title : '';
+    if (!courseTitle) {
+        if (resume.courseId === 'moc-besede') {
+            courseTitle = 'Moč besede';
+        } else if (String(resume.courseId).startsWith('webinar-')) {
+            const wid = String(resume.courseId).replace(/^webinar-/, '');
+            const webinars = JSON.parse(localStorage.getItem('webinars') || '[]') || [];
+            const w = webinars.find(x => String(x.id) === String(wid));
+            courseTitle = w ? (w.title || 'Webinar') : 'Webinar';
+        } else {
+            courseTitle = 'Tečaj';
+        }
+    }
+
+    let episodeTitle = '';
+    if (course && Array.isArray(course.episodes)) {
+        const ep = course.episodes.find(e => String(e.id) === String(resume.episodeId));
+        if (ep) episodeTitle = (ep.title || '').trim();
+    }
+    if (!episodeTitle) {
+        episodeTitle = 'Zadnja epizoda';
+    }
+
+    const epIndex = course && Array.isArray(course.episodes)
+        ? course.episodes.findIndex(e => String(e.id) === String(resume.episodeId))
+        : -1;
+    const epLabel = epIndex >= 0 ? `Epizoda ${epIndex + 1}` : '';
+
+    const hasAccess = userHasCourseAccessForResume(resume.courseId, user);
+    const url = buildCourseResumeUrl(resume.courseId, resume.episodeId);
+
+    if (!hasAccess) {
+        statsEl.innerHTML = `
+            <div class="right-resume-card right-resume-locked">
+                <div style="font-weight:800; color:var(--dark-violet); font-size:14px; font-family:'Playfair Display',serif;">${escapeHtml(courseTitle)}</div>
+                <div style="color:var(--text-light); font-size:12px; margin-top:6px; line-height:1.45;">${escapeHtml(episodeTitle)}${epLabel ? ` · ${escapeHtml(epLabel)}` : ''}</div>
+                <p style="margin:10px 0 0; font-size:12px; color:var(--text-light);">Za nadaljevanje potrebuješ dostop.</p>
+                <a href="jaz-zenska.html" class="right-resume-btn">Več o dostopu</a>
+            </div>`;
+        return;
+    }
+
+    statsEl.innerHTML = `
+        <a href="${url}" class="right-resume-card">
+            <div style="font-weight:800; color:var(--dark-violet); font-size:14px; font-family:'Playfair Display',serif;">${escapeHtml(courseTitle)}</div>
+            <div style="color:var(--text-dark); font-size:13px; margin-top:8px; line-height:1.45;">${escapeHtml(episodeTitle)}</div>
+            ${epLabel ? `<div style="color:var(--text-light); font-size:11px; margin-top:4px;">${escapeHtml(epLabel)}</div>` : ''}
+            <div style="margin-top:10px; font-size:12px; font-weight:700; color:var(--mid-violet);">Nadaljuj poslušanje →</div>
+        </a>`;
+}
+
 function renderRightPanel() {
     const upcomingEl = document.getElementById('rightUpcoming');
     const statsEl = document.getElementById('rightStats');
@@ -219,34 +339,13 @@ function renderRightPanel() {
 
     const user = getCurrentUser() || {};
     const currentUser = user || {};
-
-    // Stats (lightweight)
-    const purchasedCourses = Array.isArray(currentUser.purchasedCourses) ? currentUser.purchasedCourses : [];
     const role = currentUser.role || 'member';
 
-    const coursesOwnedCount = purchasedCourses.length;
-    const webinarsCount = (JSON.parse(localStorage.getItem('webinars') || '[]') || []).length;
-
-    statsEl.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:10px;">
-            <div style="font-family:'Playfair Display', serif; font-weight:800; color: var(--dark-violet); font-size:18px;">Stats</div>
-            <div style="display:flex; justify-content:space-between; gap:12px;">
-                <span style="color: var(--text-light); font-weight:700; font-size:12px; letter-spacing:0.02em;">Vloga</span>
-                <span style="color: var(--dark-violet); font-weight:800; font-size:12px;">${escapeHtml(role)}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; gap:12px;">
-                <span style="color: var(--text-light); font-weight:700; font-size:12px; letter-spacing:0.02em;">Tečaji</span>
-                <span style="color: var(--dark-violet); font-weight:800; font-size:12px;">${coursesOwnedCount}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; gap:12px;">
-                <span style="color: var(--text-light); font-weight:700; font-size:12px; letter-spacing:0.02em;">Webinarji</span>
-                <span style="color: var(--dark-violet); font-weight:800; font-size:12px;">${webinarsCount}</span>
-            </div>
-        </div>
-    `;
+    void renderResumeInRightPanel(statsEl, currentUser);
 
     // Upcoming events (from events cache)
-    const events = JSON.parse(localStorage.getItem('events') || '[]') || [];
+    const rawEvents = JSON.parse(localStorage.getItem('events') || '[]') || [];
+    const events = mergeCanonicalEvents(rawEvents);
     const toLocalDateStringCal = (d) => {
         const y = d.getFullYear();
         const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -318,8 +417,11 @@ async function loadMiniWeekCalendar() {
                     return {
                         id: doc.id,
                         title: data.title,
+                        description: data.description,
                         date: data.date ? (data.date.toDate ? data.date.toDate().toISOString() : data.date) : new Date().toISOString(),
-                        type: data.type
+                        time: data.time,
+                        type: data.type,
+                        location: data.location
                     };
                 });
                 localStorage.setItem('events', JSON.stringify(events));
@@ -332,6 +434,8 @@ async function loadMiniWeekCalendar() {
     if (events.length === 0) {
         events = JSON.parse(localStorage.getItem('events') || '[]');
     }
+
+    events = mergeCanonicalEvents(events);
 
     const now = new Date();
     const day = now.getDay(); // 0-6, Sunday 0
@@ -799,6 +903,54 @@ function getGuestLockedHtml() {
 }
 
 // ===== WEBINARS SECTION =====
+const STOPNIC_WEBINAR_VIMEO_URL = 'https://player.vimeo.com/video/1179302920?badge=0&autopause=0&player_id=0&app_id=58479';
+
+/** Ensure 25 Stopnic webinar exists and has Vimeo replay (same flow as course player for «Moja moč je v meni»). */
+function applyStopnicWebinarDefaults(webinars) {
+    let list = Array.isArray(webinars) ? webinars.map(w => ({ ...w })) : [];
+    list = list.map(w => {
+        const t = String(w.title || '');
+        if (t === '25 Stopnic do srece' || t === '25 Stopnic do sreče') {
+            return {
+                ...w,
+                videoId: w.videoId || '1179302920',
+                videoUrl: w.videoUrl || STOPNIC_WEBINAR_VIMEO_URL
+            };
+        }
+        return w;
+    });
+    const hasStopnic = list.some(w => {
+        const t = String(w.title || '');
+        return t === '25 Stopnic do srece' || t === '25 Stopnic do sreče';
+    });
+    if (!hasStopnic) {
+        list.unshift({
+            id: '2',
+            title: '25 Stopnic do srece',
+            date: '9. marca 2026',
+            description: 'Webinar 25 stopnic do sreče — posnetek.',
+            videoId: '1179302920',
+            videoUrl: STOPNIC_WEBINAR_VIMEO_URL
+        });
+    }
+    return list;
+}
+
+function getStopnicWebinarReplayUrl() {
+    try {
+        let webinars = JSON.parse(localStorage.getItem('webinars') || '[]');
+        webinars = applyStopnicWebinarDefaults(webinars);
+        const row = webinars.find(w => {
+            const t = String(w.title || '');
+            return t === '25 Stopnic do srece' || t === '25 Stopnic do sreče';
+        });
+        const id = row ? row.id : '2';
+        return `course.html?webinar=${encodeURIComponent(id)}`;
+    } catch (e) {
+        return 'course.html?webinar=2';
+    }
+}
+
 async function loadWebinars(container) {
     const content = container || document.getElementById('webinarsContent');
     if (!content) return;
@@ -822,8 +974,8 @@ async function loadWebinars(container) {
                 title: '25 Stopnic do srece',
                 date: '9. marca 2026',
                 description: 'Webinar 25 stopnic do sreče.',
-                videoId: '',
-                videoUrl: ''
+                videoId: '1179302920',
+                videoUrl: STOPNIC_WEBINAR_VIMEO_URL
             }
         ];
         localStorage.setItem('webinars', JSON.stringify(defaultWebinars));
@@ -856,11 +1008,9 @@ async function loadWebinars(container) {
     } catch (error) {
         console.error('Error loading webinars from Firestore:', error);
     }
-    
-    const stopnicWebinar = { id: '2', title: '25 Stopnic do srece', date: '9. marca 2026', description: 'Webinar 25 stopnic do sreče.', videoId: '', videoUrl: '' };
-    if (!webinars.some(w => w.title === '25 Stopnic do srece')) {
-        webinars.unshift(stopnicWebinar);
-    }
+
+    webinars = applyStopnicWebinarDefaults(webinars);
+    localStorage.setItem('webinars', JSON.stringify(webinars));
     
     let html = '';
     
@@ -869,12 +1019,11 @@ async function loadWebinars(container) {
     } else {
         html = '<div class="webinars-grid">';
         webinars.forEach(webinar => {
-            const isStopnic = webinar.title === '25 Stopnic do srece';
+            const isStopnic = webinar.title === '25 Stopnic do srece' || webinar.title === '25 Stopnic do sreče';
             const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
             const hasAccess = !isGuest;
-            const cardOnclick = isStopnic
-                ? `showStopnicWebinarPopup(${hasAccess})`
-                : `openWebinar('${webinar.id}', ${hasAccess})`;
+            const safeId = String(webinar.id).replace(/'/g, "\\'");
+            const cardOnclick = `openWebinar('${safeId}', ${hasAccess})`;
             html += `
                 <div class="webinar-card ${hasAccess ? '' : 'locked'}" onclick="${cardOnclick}">
                     <img src="${cardImage}" alt="${escapeHtml(webinar.title)}" class="webinar-card-image">
@@ -896,11 +1045,7 @@ function showStopnicWebinarPopup(hasAccess = true) {
         window.location.href = 'jaz-zenska.html';
         return;
     }
-    const modal = document.getElementById('stopnicWebinarModal');
-    if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    window.location.href = getStopnicWebinarReplayUrl();
 }
 
 function closeStopnicWebinarPopup() {
@@ -917,8 +1062,10 @@ function openWebinar(webinarId, hasAccess = true) {
         return;
     }
     
-    const webinars = JSON.parse(localStorage.getItem('webinars') || '[]');
-    const webinar = webinars.find(w => w.id === webinarId);
+    let webinars = JSON.parse(localStorage.getItem('webinars') || '[]');
+    webinars = applyStopnicWebinarDefaults(webinars);
+    localStorage.setItem('webinars', JSON.stringify(webinars));
+    const webinar = webinars.find(w => String(w.id) === String(webinarId));
     
     if (!webinar) {
         console.error('Webinar not found:', webinarId);
@@ -1126,6 +1273,73 @@ window.completeWelcome = async function() {
 // ===== CALENDAR SECTION =====
 let currentCalendarDate = new Date();
 
+const CANONICAL_STOPNIC_ID = 'stopnic-webinar-2026';
+const CANONICAL_POHOD_ID = 'pohod-100-zensk-trska-2026';
+
+function dashboardEventsToLocalDateString(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+}
+
+function getCanonicalPohodEvent() {
+    return {
+        id: CANONICAL_POHOD_ID,
+        title: 'Pohod 100 žensk na Trško goro',
+        description: 'Vabim te, da se nam pridružiš na pohodu 100 žensk na Trško Goro. Zbor ob 8:00 v Sevnu ob vznožju Trške gore.\n\nTrška Gora je veliko več kot vinorodno področje – zelena oaza nad reko Krko, posejana z vinogradi in zidanicami, na vrhu pa Marijina cerkev in mogočne lipe. Spust v dolino bo lahkoten ob druženju; pohod vodi Marjanca Trščinar Antić.',
+        date: new Date(2026, 2, 23, 8, 0).toISOString(),
+        time: '08:00',
+        type: 'real-life',
+        location: 'Sevno – ob vznožju Trške gore (zbir ob 8:00)',
+        externalUrl: 'pohod.html',
+        externalLabel: 'Rezerviraj svoje mesto',
+        image: 'images/pohod.webp',
+        canonical: true
+    };
+}
+
+/** Merge Firestore/local events with built-in calendar items so dashboard + koledar stay in sync. */
+function mergeCanonicalEvents(events) {
+    let list = Array.isArray(events) ? events.map(e => ({ ...e })) : [];
+
+    list = list.filter(e => dashboardEventsToLocalDateString(new Date(e.date)) !== '2026-02-06');
+
+    list = list.filter(e => !(
+        e.title === '25 Stopnic do sreče'
+        && e.date
+        && (String(e.date).startsWith('2026-03-05') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 5))
+    ));
+
+    const hasStopnic = list.some(e =>
+        e.title === '25 Stopnic do sreče'
+        && e.date
+        && (String(e.date).startsWith('2026-03-09') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 9))
+    );
+    if (!hasStopnic) {
+        list.push({
+            id: CANONICAL_STOPNIC_ID,
+            title: '25 Stopnic do sreče',
+            description: 'Brezplačni webinar 25 stopnic do sreče. Začetek ob 19:00. Povezava za Zoom bo dodana pravočasno.',
+            date: '2026-03-09T10:00:00.000Z',
+            time: '19:00',
+            type: 'webinar',
+            location: 'https://www.jazzenska.com/sreca',
+            canonical: true
+        });
+    }
+
+    const hasPohod = list.some(e =>
+        e.id === CANONICAL_POHOD_ID
+        || (e.title && String(e.title).toLowerCase().includes('tršk') && dashboardEventsToLocalDateString(new Date(e.date)) === '2026-03-23')
+    );
+    if (!hasPohod) {
+        list.push(getCanonicalPohodEvent());
+    }
+
+    return list;
+}
+
 async function loadCalendar() {
     const content = document.getElementById('calendarContent');
     let events = [];
@@ -1166,34 +1380,9 @@ async function loadCalendar() {
         events = JSON.parse(localStorage.getItem('events') || '[]');
         console.log('Loaded events from localStorage');
     }
-    
-    // Exclude events on 6 Feb (user requested removal)
-    function toLocalDateStringCal(d) {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return y + '-' + m + '-' + day;
-    }
-    events = events.filter(e => toLocalDateStringCal(new Date(e.date)) !== '2026-02-06');
-    
-    // Remove "25 Stopnic do sreče" from 5.3 – webinar is on 9.3 (Monday) only
-    events = events.filter(e => !(e.title === '25 Stopnic do sreče' && (e.date && (e.date.startsWith('2026-03-05') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 5)))));
-    
-    // Ensure "25 Stopnic do sreče" webinar on 9 March (Monday) is always present
-    const stopnicDate = '2026-03-09T10:00:00.000Z';
-    const hasStopnic = events.some(e => e.title === '25 Stopnic do sreče' && (e.date && (e.date.startsWith('2026-03-09') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 9))));
-    if (!hasStopnic) {
-        events.push({
-            id: 'stopnic-webinar-2026',
-            title: '25 Stopnic do sreče',
-            description: 'Brezplačni webinar 25 stopnic do sreče. Začetek ob 19:00. Povezava za Zoom bo dodana pravočasno.',
-            date: stopnicDate,
-            time: '19:00',
-            type: 'webinar',
-            location: 'https://www.jazzenska.com/sreca'
-        });
-    }
-    
+
+    events = mergeCanonicalEvents(events);
+
     let html = '';
     // Calendar header
     const monthNames = ['Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij', 'Avgust', 'September', 'Oktober', 'November', 'December'];
@@ -1359,34 +1548,14 @@ async function showDayEvents(dateStr) {
     if (events.length === 0) {
         events = JSON.parse(localStorage.getItem('events') || '[]');
     }
+
+    events = mergeCanonicalEvents(events);
     
     function toLocalDateString(d) {
         const y = d.getFullYear();
         const m = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
         return y + '-' + m + '-' + day;
-    }
-    
-    // Exclude events on 6 Feb (user requested removal)
-    events = events.filter(e => toLocalDateString(new Date(e.date)) !== '2026-02-06');
-    
-    // Remove "25 Stopnic do sreče" on 5.3 – only 9.3 (Monday) is correct
-    events = events.filter(e => !(e.title === '25 Stopnic do sreče' && (e.date && (String(e.date).startsWith('2026-03-05') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 5)))));
-    
-    // Ensure "25 Stopnic do sreče" on 9 March (Monday) is available when opening that day
-    if (dateStr === '2026-03-09') {
-        const hasStopnic = events.some(e => e.title === '25 Stopnic do sreče');
-        if (!hasStopnic) {
-            events.push({
-                id: 'stopnic-webinar-2026',
-                title: '25 Stopnic do sreče',
-                description: 'Brezplačni webinar 25 stopnic do sreče. Začetek ob 19:00. Povezava za Zoom bo dodana pravočasno.',
-                date: '2026-03-09T10:00:00.000Z',
-                time: '19:00',
-                type: 'webinar',
-                location: 'https://www.jazzenska.com/sreca'
-            });
-        }
     }
     
     const dayEvents = events.filter(e => {
@@ -1424,7 +1593,17 @@ async function showDayEvents(dateStr) {
                 }
                 const isPast = eventDateTime < now;
                 const actionLabel = (isStopnic && isPast) ? 'Ogled replaya' : 'Pridruži se';
-                const eventImage = isStopnic ? '<img src="images/aktualen dogodek 2.webp" alt="25 Stopnic do sreče" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px 12px 0 0; margin: -20px -20px 16px -20px; display: block;">' : '';
+                const stopnicReplayHref = getStopnicWebinarReplayUrl();
+                const webinarActionHref = isStopnic
+                    ? (isPast ? stopnicReplayHref : ensureAbsoluteUrl(event.location))
+                    : ensureAbsoluteUrl(event.location);
+                let eventImage = '';
+                if (isStopnic) {
+                    eventImage = '<img src="images/aktualen dogodek 2.webp" alt="25 Stopnic do sreče" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px 12px 0 0; margin: -20px -20px 16px -20px; display: block;">';
+                } else if (event.image) {
+                    eventImage = `<img src="${event.image}" alt="" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px 12px 0 0; margin: -20px -20px 16px -20px; display: block;">`;
+                }
+                const safeExtUrl = event.externalUrl ? String(event.externalUrl).replace(/"/g, '') : '';
                 return `
                     <div style="
                         background: var(--main-white);
@@ -1435,21 +1614,37 @@ async function showDayEvents(dateStr) {
                         overflow: hidden;
                     ">
                         ${eventImage}
-                        <h4 style="font-family: 'Playfair Display', serif; font-size: 20px; color: var(--dark-violet); margin-bottom: 10px;">${event.title}</h4>
-                        <p style="color: var(--text-dark); line-height: 1.6; margin-bottom: 10px; white-space: pre-wrap;">${event.description || ''}</p>
+                        <h4 style="font-family: 'Playfair Display', serif; font-size: 20px; color: var(--dark-violet); margin-bottom: 10px;">${escapeHtml(event.title || '')}</h4>
+                        <p style="color: var(--text-dark); line-height: 1.6; margin-bottom: 10px; white-space: pre-wrap;">${escapeHtml(event.description || '')}</p>
                         <div style="margin-bottom: 10px;">
                             ${event.type === 'real-life' ? '<span style="background: var(--main-white); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: var(--dark-violet);">Dogodek v živo</span>' : ''}
                             ${event.type === 'webinar' ? '<span style="background: var(--main-white); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: var(--dark-violet);">Webinar</span>' : ''}
                             ${event.type === 'zoom' ? '<span style="background: var(--main-white); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: var(--dark-violet);">Zoom klic</span>' : ''}
                         </div>
                         <div style="font-size: 14px; color: var(--text-light); margin-bottom: 12px;">
-                            <div style="margin-bottom: 4px;">🕐 ${event.time}</div>
+                            ${event.time ? `<div style="margin-bottom: 4px;">🕐 ${escapeHtml(event.time)}</div>` : ''}
                             <div>📅 ${eventDate.toLocaleDateString('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                         </div>
-                        ${event.type === 'real-life' ? `<div style="font-size: 14px; color: var(--text-light); margin-bottom: 12px;">📍 ${event.location}</div>` : ''}
+                        ${event.type === 'real-life' && event.location ? `<div style="font-size: 14px; color: var(--text-light); margin-bottom: 12px;">📍 ${escapeHtml(event.location)}</div>` : ''}
+                        ${safeExtUrl ? `
+                        <div style="margin-top: 12px;">
+                            <a href="${safeExtUrl}" style="
+                                background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+                                color: var(--white);
+                                padding: 10px 24px;
+                                border-radius: 20px;
+                                font-size: 14px;
+                                font-weight: 600;
+                                text-decoration: none;
+                                display: inline-block;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(100, 56, 67, 0.3);
+                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(100, 56, 67, 0.3)'">${escapeHtml(event.externalLabel || 'Odpri')}</a>
+                        </div>
+                        ` : ''}
                         ${event.type === 'webinar' || event.type === 'zoom' ? `
                         <div style="margin-top: 12px;">
-                            <a href="${ensureAbsoluteUrl(event.location)}" target="_blank" rel="noopener noreferrer" style="
+                            <a href="${webinarActionHref}" ${isStopnic && isPast ? '' : 'target="_blank" rel="noopener noreferrer"'} style="
                                 background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
                                 color: var(--white);
                                 padding: 10px 24px;
@@ -1685,6 +1880,8 @@ async function showAllEventsModal() {
     if (events.length === 0) {
         events = JSON.parse(localStorage.getItem('events') || '[]');
     }
+
+    events = mergeCanonicalEvents(events);
     
     const eventsList = document.getElementById('allEventsList');
     
@@ -1728,6 +1925,9 @@ async function showAllEventsModal() {
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        ${event.canonical ? `
+                            <span style="font-size: 13px; color: var(--text-light); padding: 8px 12px;">Fiksni dogodek (uredi v kodi)</span>
+                        ` : `
                         <button onclick="editEvent('${event.id}')" style="
                             background: var(--main-white);
                             color: var(--dark-violet);
@@ -1750,6 +1950,7 @@ async function showAllEventsModal() {
                             cursor: pointer;
                             transition: all 0.3s ease;
                         ">🗑️ Izbriši</button>
+                        `}
                     </div>
                 </div>
             `;
@@ -2113,7 +2314,9 @@ async function loadLifeWheel(container) {
 async function loadCoursesAndWebinars(container) {
     if (!container) return;
     await loadClassroom(container);
-    const webinars = JSON.parse(localStorage.getItem('webinars') || '[]') || [];
+    let webinars = JSON.parse(localStorage.getItem('webinars') || '[]') || [];
+    webinars = applyStopnicWebinarDefaults(webinars);
+    localStorage.setItem('webinars', JSON.stringify(webinars));
     const user = getCurrentUser() || {};
     const role = user.role || 'member';
     const hasAccess = role !== 'guest';
@@ -2143,9 +2346,10 @@ async function loadCoursesAndWebinars(container) {
 function renderExtraOffer(container) {
     if (!container) return;
     container.innerHTML = `
+        <h3 class="extra-offer-subtitle">Pohodi</h3>
         <div style="display:flex; justify-content:flex-start;">
             <a href="pohod.html" style="display:block; max-width:420px; width:100%;">
-                <img src="images/pohod.webp" alt="Pohod na Trško goro" style="width:100%; border-radius:16px; border:2px solid rgba(100, 56, 67, 0.25); display:block;">
+                <img src="images/pohod.webp" alt="100 žensk na Trško goro" style="width:100%; border-radius:16px; border:2px solid rgba(100, 56, 67, 0.25); display:block;">
             </a>
         </div>
     `;

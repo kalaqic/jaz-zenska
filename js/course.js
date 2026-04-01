@@ -335,11 +335,84 @@ function getWebinarId() {
     return params.get('webinar');
 }
 
+const STOPNIC_WEBINAR_VIMEO_FALLBACK = 'https://player.vimeo.com/video/1179302920?badge=0&autopause=0&player_id=0&app_id=58479';
+
+function patchStopnicWebinarVideoUrls(webinars) {
+    const list = Array.isArray(webinars) ? webinars.map(w => ({ ...w })) : [];
+    return list.map(w => {
+        const t = String(w.title || '');
+        if (t === '25 Stopnic do srece' || t === '25 Stopnic do sreče') {
+            return {
+                ...w,
+                videoId: w.videoId || '1179302920',
+                videoUrl: w.videoUrl || STOPNIC_WEBINAR_VIMEO_FALLBACK
+            };
+        }
+        return w;
+    });
+}
+
 function getActiveContentId() {
     const courseId = getCourseId();
     if (courseId) return courseId;
     const webinarId = getWebinarId();
     return webinarId ? `webinar-${webinarId}` : null;
+}
+
+function getEpisodeQueryFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('episode');
+}
+
+async function resolveInitialEpisodeId(course) {
+    const fromUrl = getEpisodeQueryFromUrl();
+    if (fromUrl && course.episodes?.some(e => String(e.id) === String(fromUrl))) {
+        return String(fromUrl);
+    }
+
+    const user = getCurrentUser();
+    if (user && user.userId && typeof db !== 'undefined') {
+        try {
+            const snap = await db.collection('users').doc(user.userId).get();
+            const cloud = snap.exists && snap.data().lastCourseResume;
+            if (cloud && cloud.courseId === course.id && cloud.episodeId) {
+                const eid = String(cloud.episodeId);
+                if (course.episodes.some(ep => String(ep.id) === eid)) return eid;
+            }
+        } catch (e) {
+            /* ignore */
+        }
+    }
+
+    try {
+        const resume = JSON.parse(localStorage.getItem('courseLastResume') || 'null');
+        if (resume && resume.courseId === course.id && resume.episodeId) {
+            const eid = String(resume.episodeId);
+            if (course.episodes.some(ep => String(ep.id) === eid)) return eid;
+        }
+    } catch (e) {
+        /* ignore */
+    }
+
+    return course.episodes?.[0]?.id != null ? String(course.episodes[0].id) : null;
+}
+
+async function persistLastCourseResume(courseId, episodeId) {
+    try {
+        const payload = { courseId, episodeId: String(episodeId), ts: Date.now() };
+        localStorage.setItem('courseLastResume', JSON.stringify(payload));
+        const user = getCurrentUser();
+        if (!user || !user.userId || typeof db === 'undefined') return;
+        await db.collection('users').doc(user.userId).set({
+            lastCourseResume: {
+                courseId,
+                episodeId: String(episodeId),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }
+        }, { merge: true });
+    } catch (e) {
+        console.warn('persistLastCourseResume', e);
+    }
 }
 
 async function waitForFirestoreReady(maxMs = 5000) {
@@ -392,7 +465,16 @@ async function loadCourse() {
             console.error('Error loading webinars from Firestore:', error);
         }
 
-        const webinar = webinars.find(w => String(w.id) === String(webinarId));
+        webinars = patchStopnicWebinarVideoUrls(webinars);
+        localStorage.setItem('webinars', JSON.stringify(webinars));
+
+        let webinar = webinars.find(w => String(w.id) === String(webinarId));
+        if (!webinar && String(webinarId) === '2') {
+            webinar = webinars.find(w => {
+                const t = String(w.title || '');
+                return t === '25 Stopnic do srece' || t === '25 Stopnic do sreče';
+            });
+        }
         if (webinar) {
             course = {
                 id: `webinar-${webinar.id}`,
@@ -536,14 +618,16 @@ async function loadCourse() {
     }
     
     // Load episodes
-    loadEpisodes(course);
+    await loadEpisodes(course);
     
     // Update progress
-    updateCourseProgress(course.id);
+    await updateCourseProgress(course.id);
     
-    // Load first episode content
     if (course.episodes && course.episodes.length > 0) {
-        loadEpisodeContent(course.episodes[0].id, course);
+        const initialId = await resolveInitialEpisodeId(course);
+        if (initialId) {
+            await loadEpisodeContent(initialId, course);
+        }
     }
 }
 
@@ -857,6 +941,8 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
             `}
         </div>
     `;
+
+    void persistLastCourseResume(course.id, episodeId);
 
     // Keep episode list collapsed on mobile after selection
     if (isMobileViewport()) {

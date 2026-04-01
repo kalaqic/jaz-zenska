@@ -386,6 +386,48 @@
             font-weight: 800;
         }
 
+        .extra-offer-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: var(--dark-violet);
+            margin: 0 0 16px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .right-resume-card {
+            display: block;
+            padding: 12px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(100, 56, 67, 0.12);
+            background: rgba(255, 255, 255, 0.78);
+            text-decoration: none;
+            color: inherit;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        a.right-resume-card:hover {
+            box-shadow: 0 6px 18px rgba(100, 56, 67, 0.12);
+            border-color: rgba(100, 56, 67, 0.22);
+        }
+
+        .right-resume-locked {
+            cursor: default;
+            opacity: 0.92;
+        }
+
+        .right-resume-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--dark-violet);
+            color: #fff !important;
+            text-decoration: none !important;
+        }
+
         .right-list {
             display: flex;
             flex-direction: column;
@@ -1423,8 +1465,8 @@
         /* Webinar Cards */
         .webinars-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
         }
         
         .webinar-card {
@@ -1472,8 +1514,10 @@
         .webinar-card-image {
             width: calc(100% + 44px);
             max-width: none;
-            height: 156px;
+            aspect-ratio: 16 / 9;
+            height: auto;
             object-fit: cover;
+            object-position: center;
             border-radius: 20px 20px 0 0;
             margin: -22px -22px 16px -22px;
             display: block;
@@ -2118,7 +2162,7 @@
 
                                 <div class="right-divider"></div>
 
-                                <h4 class="right-block-title">Aktivnost</h4>
+                                <h4 class="right-block-title">Kje si ostala</h4>
                                 <div id="rightStats"></div>
                             </div>
                         </div>
@@ -2194,7 +2238,7 @@
         </div>
     </div>
 
-    <!-- 25 Stopnic do sreče – upcoming webinar popup -->
+    <!-- 25 Stopnic do sreče – optional legacy popup (ogled v učilnici kot Moja moč je v meni) -->
     <div id="stopnicWebinarModal" class="webinar-modal">
         <div class="webinar-modal-content" style="max-width: 480px;">
             <div class="webinar-modal-header">
@@ -2203,9 +2247,9 @@
             </div>
             <div class="webinar-modal-body" style="padding: 24px;">
                 <p style="color: var(--text-dark); font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-                    Ta webinar je načrtovan za <strong>9. marec</strong>. Še vedno se mu lahko pridružite!
+                    Posnetek webinarja je na voljo v spletni učilnici — enak predvajalnik kot pri »Moja moč je v meni«.
                 </p>
-                <a href="https://www.jazzenska.com/sreca" target="_blank" rel="noopener noreferrer" style="
+                <a href="course.html?webinar=2" style="
                     display: inline-block;
                     background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
                     color: var(--white);
@@ -2216,7 +2260,15 @@
                     text-decoration: none;
                     transition: all 0.3s ease;
                     box-shadow: 0 4px 15px rgba(100, 56, 67, 0.3);
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(100, 56, 67, 0.3)'">Pridruži se</a>
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(100, 56, 67, 0.4)'" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(100, 56, 67, 0.3)'">Ogled posnetka</a>
+                <a href="https://www.jazzenska.com/sreca" target="_blank" rel="noopener noreferrer" style="
+                    display: inline-block;
+                    margin-left: 12px;
+                    color: var(--mid-violet);
+                    font-size: 15px;
+                    font-weight: 600;
+                    text-decoration: underline;
+                ">Stran sreča</a>
             </div>
         </div>
     </div>
