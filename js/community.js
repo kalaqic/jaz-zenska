@@ -1286,7 +1286,8 @@ window.completeWelcome = async function() {
 let currentCalendarDate = new Date();
 
 const CANONICAL_STOPNIC_ID = 'stopnic-webinar-2026';
-const CANONICAL_POHOD_ID = 'pohod-100-zensk-trska-2026';
+const CANONICAL_POHOD_ID = 'pohod-100-zensk-trska-2026-05';
+const LEGACY_POHOD_EVENT_ID = 'pohod-100-zensk-trska-2026';
 
 function dashboardEventsToLocalDateString(d) {
     const y = d.getFullYear();
@@ -1300,7 +1301,7 @@ function getCanonicalPohodEvent() {
         id: CANONICAL_POHOD_ID,
         title: 'Pohod 100 žensk na Trško goro',
         description: 'Vabim te, da se nam pridružiš na pohodu 100 žensk na Trško Goro. Zbor ob 8:00 v Sevnu ob vznožju Trške gore.\n\nTrška Gora je veliko več kot vinorodno področje – zelena oaza nad reko Krko, posejana z vinogradi in zidanicami, na vrhu pa Marijina cerkev in mogočne lipe. Spust v dolino bo lahkoten ob druženju; pohod vodi Marjanca Trščinar Antić.',
-        date: new Date(2026, 2, 23, 8, 0).toISOString(),
+        date: new Date(2026, 4, 23, 8, 0).toISOString(),
         time: '08:00',
         type: 'real-life',
         location: 'Sevno – ob vznožju Trške gore (zbir ob 8:00)',
@@ -1341,9 +1342,18 @@ function mergeCanonicalEvents(events) {
         });
     }
 
+    // Remove zastarel 23. marec (zdaj je 23. maj); sicer bi ostal duplikat z napačnim dnem
+    list = list.filter(e => {
+        if (e.id === LEGACY_POHOD_EVENT_ID) return false;
+        const t = String(e.title || '').toLowerCase();
+        const ds = dashboardEventsToLocalDateString(new Date(e.date));
+        if (t.includes('tršk') && ds === '2026-03-23') return false;
+        return true;
+    });
+
     const hasPohod = list.some(e =>
         e.id === CANONICAL_POHOD_ID
-        || (e.title && String(e.title).toLowerCase().includes('tršk') && dashboardEventsToLocalDateString(new Date(e.date)) === '2026-03-23')
+        || (e.title && String(e.title).toLowerCase().includes('tršk') && dashboardEventsToLocalDateString(new Date(e.date)) === '2026-05-23')
     );
     if (!hasPohod) {
         list.push(getCanonicalPohodEvent());

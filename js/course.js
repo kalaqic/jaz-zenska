@@ -301,22 +301,22 @@ function initCourseData() {
             if (course.id === 'moc-besede') {
                 course.episodes = buildMocBesedeEpisodes(course.episodes || []);
             } else {
-                course.episodes = [
-                    {
-                        id: '1',
-                        title: 'Uvod v tečaj',
-                        description: 'Spoznajte osnove in začnite svojo pot.',
-                        videoUrl: '',
-                        duration: '10 min'
-                    },
-                    {
-                        id: '2',
-                        title: 'Glavna vsebina',
-                        description: 'Poglobljeno delo z vsebino tečaja.',
-                        videoUrl: '',
-                        duration: '20 min'
-                    }
-                ];
+            course.episodes = [
+                {
+                    id: '1',
+                    title: 'Uvod v tečaj',
+                    description: 'Spoznajte osnove in začnite svojo pot.',
+                    videoUrl: '',
+                    duration: '10 min'
+                },
+                {
+                    id: '2',
+                    title: 'Glavna vsebina',
+                    description: 'Poglobljeno delo z vsebino tečaja.',
+                    videoUrl: '',
+                    duration: '20 min'
+                }
+            ];
             }
         }
     });
@@ -440,7 +440,7 @@ async function loadCourse() {
     await waitForFirestoreReady();
     
     let course = null;
-
+    
     if (isWebinar) {
         let webinars = JSON.parse(localStorage.getItem('webinars') || '[]');
 
@@ -502,43 +502,43 @@ async function loadCourse() {
             localStorage.setItem('courses', JSON.stringify(courses));
         }
     } else {
-        // Try to load from Firestore first
-        try {
-            if (typeof db !== 'undefined') {
-                const courseDoc = await db.collection('courses').doc(courseId).get();
+    // Try to load from Firestore first
+    try {
+        if (typeof db !== 'undefined') {
+            const courseDoc = await db.collection('courses').doc(courseId).get();
+            
+            if (courseDoc.exists) {
+                const data = courseDoc.data();
+                course = {
+                    id: courseDoc.id,
+                    title: data.title,
+                    description: data.description,
+                    episodes: data.episodes || [],
+                    progress: data.progress || 0,
+                    completed: data.completed || false
+                };
                 
-                if (courseDoc.exists) {
-                    const data = courseDoc.data();
-                    course = {
-                        id: courseDoc.id,
-                        title: data.title,
-                        description: data.description,
-                        episodes: data.episodes || [],
-                        progress: data.progress || 0,
-                        completed: data.completed || false
-                    };
-                    
-                    // Update localStorage cache
-                    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
-                    const courseIndex = courses.findIndex(c => c.id === courseId);
-                    if (courseIndex !== -1) {
-                        courses[courseIndex] = course;
-                    } else {
-                        courses.push(course);
-                    }
-                    localStorage.setItem('courses', JSON.stringify(courses));
-                    console.log('Loaded course from Firestore');
+                // Update localStorage cache
+                const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+                const courseIndex = courses.findIndex(c => c.id === courseId);
+                if (courseIndex !== -1) {
+                    courses[courseIndex] = course;
+                } else {
+                    courses.push(course);
                 }
+                localStorage.setItem('courses', JSON.stringify(courses));
+                console.log('Loaded course from Firestore');
             }
-        } catch (error) {
-            console.error('Error loading course from Firestore:', error);
         }
-        
-        // Fallback to localStorage
-        if (!course) {
-            initCourseData();
-            const courses = JSON.parse(localStorage.getItem('courses') || '[]');
-            course = courses.find(c => c.id === courseId);
+    } catch (error) {
+        console.error('Error loading course from Firestore:', error);
+    }
+    
+    // Fallback to localStorage
+    if (!course) {
+        initCourseData();
+        const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+        course = courses.find(c => c.id === courseId);
         }
     }
     
@@ -560,7 +560,7 @@ async function loadCourse() {
         else coursesCache.push(course);
         localStorage.setItem('courses', JSON.stringify(coursesCache));
     }
-
+    
     if (!course) {
         window.location.href = 'dashboard.html';
         return;
