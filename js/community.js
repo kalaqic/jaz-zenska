@@ -430,12 +430,9 @@ async function waitForFirebaseAndCheckWelcome() {
             checkWelcomeStatus();
         } else if (attempts >= maxAttempts) {
             clearInterval(checkInterval);
-            // Firebase not available, use localStorage fallback
-            const user = getCurrentUser();
-            if (user && !user.welcomed) {
-                console.log('Firebase not available, checking localStorage only');
-                checkWelcomeStatus();
-            }
+            // Firebase not available: do not use cached/local welcomed flag.
+            // We intentionally skip showing welcome modal until Firestore is available.
+            console.warn('Firebase not available, skipping welcome modal check');
         }
     }, 100);
 }
@@ -1001,14 +998,8 @@ async function checkWelcomeStatus() {
     
     welcomeCheckPerformed = true;
     
-    // Quick check localStorage first (for performance)
-    const cachedWelcomed = user.welcomed === true;
-    if (cachedWelcomed) {
-        console.log('✅ User already welcomed (from cache), skipping modal');
-        return;
-    }
-    
     let welcomed = false;
+    let checkedFromFirestore = false;
     
     // Try to get welcomed status from Firestore (source of truth)
     try {
@@ -1021,28 +1012,27 @@ async function checkWelcomeStatus() {
                 // Check if welcomed field exists and is true
                 // If field doesn't exist or is false, show welcome
                 welcomed = userData.welcomed === true;
+                checkedFromFirestore = true;
                 console.log('📊 Firestore welcomed status:', welcomed);
-                
-                // Update localStorage cache with latest welcomed status
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                currentUser.welcomed = welcomed;
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
             } else {
                 // User document doesn't exist yet - show welcome
                 console.log('⚠️ User document not found in Firestore, showing welcome');
                 welcomed = false;
+                checkedFromFirestore = true;
             }
         } else {
-            console.log('⚠️ Firestore not available, using localStorage');
-            // Firestore not available - fallback to localStorage
-            welcomed = user.welcomed === true;
+            console.log('⚠️ Firestore not available, skipping welcome check');
         }
     } catch (error) {
         console.error('❌ Error checking welcome status:', error);
-        // Fallback to localStorage if Firestore check fails
-        welcomed = user.welcomed === true;
+        checkedFromFirestore = false;
     }
-    
+
+    if (!checkedFromFirestore) {
+        console.warn('Welcome status not confirmed from Firestore; modal not shown');
+        return;
+    }
+
     // Only show welcome modal if user hasn't been welcomed yet
     if (!welcomed) {
         console.log('🎉 Showing welcome modal');
@@ -1112,11 +1102,6 @@ window.completeWelcome = async function() {
                 welcomed: true
             });
         }
-        
-        // Update localStorage
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        currentUser.welcomed = true;
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
         
         // Close modal and go to profile → questionnaire tab
         const modal = document.getElementById('welcomeModal');
@@ -1875,6 +1860,7 @@ async function loadProfile() {
             'active-work': 'Aktivno delo',
             'courses-webinars': 'Tečaji in webinarji',
             'extra-offer': 'Dodatna ponudba',
+            'life-wheel': 'Kolo življenja',
             profil: 'Nastavitve'
         };
         titleEl.textContent = titleMap[currentSidebarTab] || 'Spletna učilnica';
@@ -1892,6 +1878,10 @@ async function loadProfile() {
         loadQuestionnaire(content);
         return;
     }
+    if (currentSidebarTab === 'life-wheel') {
+        await loadLifeWheel(content);
+        return;
+    }
     if (currentSidebarTab === 'extra-offer') {
         renderExtraOffer(content);
         return;
@@ -1906,22 +1896,7 @@ async function loadProfile() {
 function renderActiveWork(container) {
     if (!container) return;
     container.innerHTML = `
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
-            <div class="life-wheel-wrap">
-                <h3 class="life-wheel-title">Kolo življenja</h3>
-                <div class="life-wheel-sub">Oceni 8 področij in poglej svojo trenutno sliko življenja.</div>
-                <h4 class="life-wheel-current" id="lifeWheelCurrentArea">ZDRAVJE</h4>
-                <div class="life-wheel-hint" id="lifeWheelSubtitle">Kako bi ocenila to področje?</div>
-                <div class="life-wheel-numbers" id="lifeWheelNumbers"></div>
-                <div id="lifeWheelCapture" class="life-wheel-canvas-wrap">
-                    <canvas id="lifeWheelCanvas" class="life-wheel-canvas" width="430" height="430"></canvas>
-                </div>
-                <div class="life-wheel-actions" id="lifeWheelActions">
-                    <button type="button" onclick="lifeWheelShareFB()">Deli na Facebook</button>
-                    <button type="button" onclick="lifeWheelSavePDF()">Shrani kot PDF</button>
-                    <button type="button" onclick="lifeWheelDownloadImage()">Prenesi sliko</button>
-                </div>
-            </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
             <div class="guest-locked-block" style="margin:0;">
                 <div class="guest-locked-inner">
                     <h3 class="guest-locked-title">Vprašalnik</h3>
@@ -1931,12 +1906,47 @@ function renderActiveWork(container) {
                     </div>
                 </div>
             </div>
+            <div class="guest-locked-block" style="margin:0;">
+                <div class="guest-locked-inner">
+                    <h3 class="guest-locked-title">Kolo življenja</h3>
+                    <p class="guest-locked-lead">Oceni 8 področij življenja in shrani svoj trenutni vpogled.</p>
+                    <div class="guest-locked-buttons">
+                        <button type="button" class="guest-locked-btn guest-locked-btn-primary" onclick="openSidebarTab('life-wheel')">Odpri kolo življenja</button>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
-    initLifeWheel();
 }
 
-function initLifeWheel() {
+async function loadLifeWheel(container) {
+    const user = getCurrentUser();
+    if (!user) return;
+    const content = container || document.getElementById('profileContent');
+    if (!content) return;
+
+    content.innerHTML = `
+        <div class="life-wheel-wrap">
+            <h3 class="life-wheel-title">Kolo življenja</h3>
+            <div class="life-wheel-sub">Oceni 8 področij in shrani svoj rezultat.</div>
+            <h4 class="life-wheel-current" id="lifeWheelCurrentArea">ZDRAVJE</h4>
+            <div class="life-wheel-hint" id="lifeWheelSubtitle">Kako bi ocenila to področje?</div>
+            <div class="life-wheel-numbers" id="lifeWheelNumbers"></div>
+            <div id="lifeWheelCapture" class="life-wheel-canvas-wrap">
+                <canvas id="lifeWheelCanvas" class="life-wheel-canvas" width="430" height="430"></canvas>
+            </div>
+            <div class="life-wheel-actions" id="lifeWheelActions">
+                <button type="button" onclick="lifeWheelShareFB()">Deli na Facebook</button>
+                <button type="button" onclick="lifeWheelSavePDF()">Shrani kot PDF</button>
+                <button type="button" onclick="lifeWheelDownloadImage()">Prenesi sliko</button>
+                <button type="button" onclick="lifeWheelReset()">Naredi znova</button>
+            </div>
+        </div>
+    `;
+
+    const areas = ['Zdravje', 'Kariera', 'Ljubezen', 'Duhovnost', 'Družina', 'Denar', 'Zabava', 'Prijatelji'];
+    const colors = ['#ff9aa2', '#ffb7b2', '#ffdac1', '#e2f0cb', '#b5ead7', '#c7ceea', '#f6c1ff', '#ffd6e0'];
+
     const canvas = document.getElementById('lifeWheelCanvas');
     const numbersDiv = document.getElementById('lifeWheelNumbers');
     const currentAreaEl = document.getElementById('lifeWheelCurrentArea');
@@ -1944,10 +1954,25 @@ function initLifeWheel() {
     const actionsEl = document.getElementById('lifeWheelActions');
     if (!canvas || !numbersDiv || !currentAreaEl || !subtitleEl || !actionsEl) return;
 
-    const areas = ['Zdravje', 'Kariera', 'Ljubezen', 'Duhovnost', 'Družina', 'Denar', 'Zabava', 'Prijatelji'];
-    const colors = ['#ff9aa2', '#ffb7b2', '#ffdac1', '#e2f0cb', '#b5ead7', '#c7ceea', '#f6c1ff', '#ffd6e0'];
-    const scores = [];
-    let currentIndex = 0;
+    let savedScores = [];
+    try {
+        if (typeof db !== 'undefined' && user.userId) {
+            const userDoc = await db.collection('users').doc(user.userId).get();
+            if (userDoc.exists) {
+                const data = userDoc.data() || {};
+                const fromDb = data.lifeWheelScores;
+                if (Array.isArray(fromDb) && fromDb.length === areas.length) {
+                    savedScores = fromDb.map(v => Number(v) || 0);
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Error loading life wheel scores:', e);
+    }
+
+    const scores = Array.isArray(savedScores) && savedScores.length === areas.length ? [...savedScores] : new Array(areas.length).fill(0);
+    let currentIndex = scores.findIndex(v => !v || v < 1);
+    if (currentIndex === -1) currentIndex = areas.length;
 
     const ctx = canvas.getContext('2d');
     const centerX = canvas.width / 2;
@@ -1957,14 +1982,12 @@ function initLifeWheel() {
     function drawWheel(animatedIndex = null, progress = 1) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const angleStep = (2 * Math.PI) / areas.length;
-
         for (let i = 1; i <= 10; i++) {
             ctx.beginPath();
             ctx.arc(centerX, centerY, (i / 10) * maxRadius, 0, 2 * Math.PI);
             ctx.strokeStyle = '#eee';
             ctx.stroke();
         }
-
         for (let i = 0; i < areas.length; i++) {
             const angle = i * angleStep - Math.PI / 2;
             const x = centerX + Math.cos(angle) * maxRadius;
@@ -1975,14 +1998,12 @@ function initLifeWheel() {
             ctx.strokeStyle = '#ddd';
             ctx.stroke();
         }
-
         areas.forEach((area, i) => {
             const startAngle = i * angleStep - Math.PI / 2;
             const endAngle = startAngle + angleStep;
             let value = scores[i] || 0;
             if (i === animatedIndex) value *= progress;
             const radius = (value / 10) * maxRadius;
-
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.arc(centerX, centerY, radius, startAngle, endAngle);
@@ -1991,7 +2012,6 @@ function initLifeWheel() {
             ctx.globalAlpha = 0.9;
             ctx.fill();
             ctx.globalAlpha = 1;
-
             const midAngle = startAngle + angleStep / 2;
             const labelRadius = maxRadius + 20;
             const x = centerX + Math.cos(midAngle) * labelRadius;
@@ -2001,6 +2021,19 @@ function initLifeWheel() {
             ctx.textAlign = 'center';
             ctx.fillText(area, x, y);
         });
+    }
+
+    async function persistScores() {
+        try {
+            if (typeof db !== 'undefined' && user.userId) {
+                await db.collection('users').doc(user.userId).set({
+                    lifeWheelScores: scores,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+            }
+        } catch (e) {
+            console.error('Error saving life wheel scores:', e);
+        }
     }
 
     function animateSlice(index) {
@@ -2019,20 +2052,36 @@ function initLifeWheel() {
     function finish() {
         numbersDiv.style.display = 'none';
         currentAreaEl.textContent = 'Tvoje kolo življenja je pripravljeno!';
-        subtitleEl.textContent = 'Deli svoje kolo in navdihni tudi druge.';
+        subtitleEl.textContent = 'Lahko shraniš sliko ali narediš kolo znova.';
         actionsEl.style.display = 'flex';
     }
 
     function updateUI() {
+        if (currentIndex >= areas.length) {
+            finish();
+            return;
+        }
         currentAreaEl.textContent = (areas[currentIndex] || '').toUpperCase();
     }
 
-    window.lifeWheelSelectScore = function(value) {
+    window.lifeWheelSelectScore = async function(value) {
+        if (currentIndex >= areas.length) return;
         scores[currentIndex] = value;
         animateSlice(currentIndex);
         currentIndex += 1;
-        if (currentIndex >= areas.length) finish();
-        else updateUI();
+        await persistScores();
+        updateUI();
+    };
+
+    window.lifeWheelReset = async function() {
+        for (let i = 0; i < scores.length; i++) scores[i] = 0;
+        currentIndex = 0;
+        numbersDiv.style.display = 'flex';
+        actionsEl.style.display = 'none';
+        subtitleEl.textContent = 'Kako bi ocenila to področje?';
+        await persistScores();
+        updateUI();
+        drawWheel();
     };
 
     window.lifeWheelShareFB = function() {
@@ -2064,9 +2113,8 @@ function initLifeWheel() {
         btn.onclick = () => window.lifeWheelSelectScore(i);
         numbersDiv.appendChild(btn);
     }
-
-    updateUI();
     drawWheel();
+    updateUI();
 }
 
 async function loadCoursesAndWebinars(container) {
@@ -2085,14 +2133,15 @@ async function loadCoursesAndWebinars(container) {
     if (!webinars.length) {
         webinarsHtml += `<div class="webinar-card" style="cursor:default;"><div class="webinar-title">Ni webinarjev</div></div>`;
     } else {
-        webinarsHtml += webinars.map(w => `
-            <div class="webinar-card ${hasAccess ? '' : 'locked'}" onclick="openWebinar('${w.id}', ${hasAccess})">
-                <div class="webinar-title">${escapeHtml(w.title || 'Webinar')}</div>
-                <div class="webinar-date">${escapeHtml(w.date || '')}</div>
-                <div class="webinar-description">${escapeHtml(w.description || 'Posnetek webinarja')}</div>
-                ${hasAccess ? '' : '<div class="webinar-lock-note">Nimate dostopa do tega webinarja</div>'}
-            </div>
-        `).join('');
+        webinarsHtml += webinars.map(w => {
+            const isStopnic = String(w.title || '').toLowerCase().includes('stopnic');
+            const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
+            return `
+                <div class="webinar-card ${hasAccess ? '' : 'locked'}" onclick="openWebinar('${w.id}', ${hasAccess})">
+                    <img src="${cardImage}" alt="${escapeHtml(w.title || 'Webinar')}" class="webinar-card-image">
+                </div>
+            `;
+        }).join('');
     }
     webinarsHtml += `</div></div>`;
     container.innerHTML += webinarsHtml;
@@ -2114,10 +2163,9 @@ function renderExtraOffer(container) {
             <div class="guest-locked-block" style="margin:0;">
                 <div class="guest-locked-inner">
                     <h3 class="guest-locked-title">Pohod na Trško goro</h3>
-                    <p class="guest-locked-lead">Pridruži se dogodku in preveri vse podrobnosti prijave.</p>
-                    <div class="guest-locked-buttons">
-                        <a href="pohod.html" class="guest-locked-btn guest-locked-btn-primary">Več informacij</a>
-                    </div>
+                    <a href="pohod.html" style="display:block;">
+                        <img src="images/aktualen dogodek 2.webp" alt="Pohod na Trško goro" style="width:100%; border-radius:14px; display:block;">
+                    </a>
                 </div>
             </div>
         </div>
