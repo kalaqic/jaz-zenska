@@ -1906,7 +1906,22 @@ async function loadProfile() {
 function renderActiveWork(container) {
     if (!container) return;
     container.innerHTML = `
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+            <div class="life-wheel-wrap">
+                <h3 class="life-wheel-title">Kolo življenja</h3>
+                <div class="life-wheel-sub">Oceni 8 področij in poglej svojo trenutno sliko življenja.</div>
+                <h4 class="life-wheel-current" id="lifeWheelCurrentArea">ZDRAVJE</h4>
+                <div class="life-wheel-hint" id="lifeWheelSubtitle">Kako bi ocenila to področje?</div>
+                <div class="life-wheel-numbers" id="lifeWheelNumbers"></div>
+                <div id="lifeWheelCapture" class="life-wheel-canvas-wrap">
+                    <canvas id="lifeWheelCanvas" class="life-wheel-canvas" width="430" height="430"></canvas>
+                </div>
+                <div class="life-wheel-actions" id="lifeWheelActions">
+                    <button type="button" onclick="lifeWheelShareFB()">Deli na Facebook</button>
+                    <button type="button" onclick="lifeWheelSavePDF()">Shrani kot PDF</button>
+                    <button type="button" onclick="lifeWheelDownloadImage()">Prenesi sliko</button>
+                </div>
+            </div>
             <div class="guest-locked-block" style="margin:0;">
                 <div class="guest-locked-inner">
                     <h3 class="guest-locked-title">Vprašalnik</h3>
@@ -1916,17 +1931,142 @@ function renderActiveWork(container) {
                     </div>
                 </div>
             </div>
-            <div class="guest-locked-block" style="margin:0;">
-                <div class="guest-locked-inner">
-                    <h3 class="guest-locked-title">Kolo življenja</h3>
-                    <p class="guest-locked-lead">Ta modul bomo dodali kmalu. Tukaj boš lahko ocenjevala ključna življenjska področja.</p>
-                    <div class="guest-locked-buttons">
-                        <button type="button" class="guest-locked-btn guest-locked-btn-secondary" disabled style="opacity:0.7; cursor:not-allowed;">Kmalu na voljo</button>
-                    </div>
-                </div>
-            </div>
         </div>
     `;
+    initLifeWheel();
+}
+
+function initLifeWheel() {
+    const canvas = document.getElementById('lifeWheelCanvas');
+    const numbersDiv = document.getElementById('lifeWheelNumbers');
+    const currentAreaEl = document.getElementById('lifeWheelCurrentArea');
+    const subtitleEl = document.getElementById('lifeWheelSubtitle');
+    const actionsEl = document.getElementById('lifeWheelActions');
+    if (!canvas || !numbersDiv || !currentAreaEl || !subtitleEl || !actionsEl) return;
+
+    const areas = ['Zdravje', 'Kariera', 'Ljubezen', 'Duhovnost', 'Družina', 'Denar', 'Zabava', 'Prijatelji'];
+    const colors = ['#ff9aa2', '#ffb7b2', '#ffdac1', '#e2f0cb', '#b5ead7', '#c7ceea', '#f6c1ff', '#ffd6e0'];
+    const scores = [];
+    let currentIndex = 0;
+
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const maxRadius = 165;
+
+    function drawWheel(animatedIndex = null, progress = 1) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const angleStep = (2 * Math.PI) / areas.length;
+
+        for (let i = 1; i <= 10; i++) {
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, (i / 10) * maxRadius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#eee';
+            ctx.stroke();
+        }
+
+        for (let i = 0; i < areas.length; i++) {
+            const angle = i * angleStep - Math.PI / 2;
+            const x = centerX + Math.cos(angle) * maxRadius;
+            const y = centerY + Math.sin(angle) * maxRadius;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = '#ddd';
+            ctx.stroke();
+        }
+
+        areas.forEach((area, i) => {
+            const startAngle = i * angleStep - Math.PI / 2;
+            const endAngle = startAngle + angleStep;
+            let value = scores[i] || 0;
+            if (i === animatedIndex) value *= progress;
+            const radius = (value / 10) * maxRadius;
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = colors[i];
+            ctx.globalAlpha = 0.9;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+
+            const midAngle = startAngle + angleStep / 2;
+            const labelRadius = maxRadius + 20;
+            const x = centerX + Math.cos(midAngle) * labelRadius;
+            const y = centerY + Math.sin(midAngle) * labelRadius;
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 13px Montserrat, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(area, x, y);
+        });
+    }
+
+    function animateSlice(index) {
+        let start = 0;
+        const duration = 400;
+        function animate(timestamp) {
+            if (!start) start = timestamp;
+            const progress = Math.min((timestamp - start) / duration, 1);
+            drawWheel(index, progress);
+            if (progress < 1) requestAnimationFrame(animate);
+            else drawWheel();
+        }
+        requestAnimationFrame(animate);
+    }
+
+    function finish() {
+        numbersDiv.style.display = 'none';
+        currentAreaEl.textContent = 'Tvoje kolo življenja je pripravljeno!';
+        subtitleEl.textContent = 'Deli svoje kolo in navdihni tudi druge.';
+        actionsEl.style.display = 'flex';
+    }
+
+    function updateUI() {
+        currentAreaEl.textContent = (areas[currentIndex] || '').toUpperCase();
+    }
+
+    window.lifeWheelSelectScore = function(value) {
+        scores[currentIndex] = value;
+        animateSlice(currentIndex);
+        currentIndex += 1;
+        if (currentIndex >= areas.length) finish();
+        else updateUI();
+    };
+
+    window.lifeWheelShareFB = function() {
+        const shareUrl = 'https://jaz-zenska.com';
+        const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+        window.open(fbUrl, '_blank', 'width=600,height=400');
+    };
+
+    window.lifeWheelSavePDF = function() {
+        window.print();
+    };
+
+    window.lifeWheelDownloadImage = function() {
+        const capture = document.getElementById('lifeWheelCapture');
+        if (!capture || typeof html2canvas === 'undefined') return;
+        html2canvas(capture).then(c => {
+            const link = document.createElement('a');
+            link.download = 'kolo-zivljenja.png';
+            link.href = c.toDataURL();
+            link.click();
+        });
+    };
+
+    numbersDiv.innerHTML = '';
+    for (let i = 1; i <= 10; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = String(i);
+        btn.onclick = () => window.lifeWheelSelectScore(i);
+        numbersDiv.appendChild(btn);
+    }
+
+    updateUI();
+    drawWheel();
 }
 
 async function loadCoursesAndWebinars(container) {

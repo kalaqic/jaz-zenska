@@ -1946,6 +1946,97 @@
             position: relative;
             z-index: 1;
         }
+
+        .life-wheel-wrap {
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(100, 56, 67, 0.12);
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        .life-wheel-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--dark-violet);
+            font-size: 24px;
+            margin: 0 0 6px;
+        }
+
+        .life-wheel-sub {
+            color: var(--text-light);
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .life-wheel-current {
+            font-family: 'Playfair Display', serif;
+            color: var(--dark-violet);
+            font-size: 20px;
+            margin: 8px 0 6px;
+        }
+
+        .life-wheel-hint {
+            color: var(--text-light);
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .life-wheel-numbers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .life-wheel-numbers button {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(100, 56, 67, 0.2);
+            background: #fff;
+            color: var(--dark-violet);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .life-wheel-numbers button:hover {
+            border-color: var(--mid-violet);
+            background: rgba(255, 246, 249, 0.9);
+            transform: translateY(-1px);
+        }
+
+        .life-wheel-canvas-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .life-wheel-canvas {
+            width: min(100%, 430px);
+            aspect-ratio: 1 / 1;
+            max-width: 430px;
+            height: auto;
+        }
+
+        .life-wheel-actions {
+            display: none;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .life-wheel-actions button {
+            border: none;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--white);
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+        }
         
         #profileTabContent {
             position: relative;
@@ -2360,6 +2451,7 @@
             });
         });
     </script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="js/community.js"></script>
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script>if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:'Skupnost - Moj račun'});</script>
