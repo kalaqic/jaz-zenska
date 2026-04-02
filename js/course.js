@@ -66,8 +66,7 @@ Kje to čutite in kako!
 Sprostite se in nekajkrat globoko vdihnite v ta občutek, nato pa pomislite, kako lahko drugače poveste.
 
 Čez dan bodite pozorni na besedico moram, zapišite si stavke, ki vključujejo besedico moram in jih preoblikujte z drugimi, bolj spodbudnimi besedami.
-
-Moji zapiski:`
+`
 );
 
 setMocMeta(
