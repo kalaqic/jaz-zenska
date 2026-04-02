@@ -364,7 +364,7 @@ module.exports = async function handler(req, res) {
             }
 
             try {
-                const resetUrl = process.env.SITE_URL ? `${process.env.SITE_URL.replace(/\/$/, '')}/login.html?mode=resetPassword` : 'https://jaz-zenska.vercel.app/login.html?mode=resetPassword';
+                const resetUrl = process.env.SITE_URL ? `${process.env.SITE_URL.replace(/\/$/, '')}//login?mode=resetPassword` : 'https://jaz-zenska.vercel.app//login?mode=resetPassword';
                 await auth.generatePasswordResetLink(customerEmail, { url: resetUrl, handleCodeInApp: false });
                 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
                 if (FIREBASE_API_KEY) {
@@ -530,7 +530,7 @@ module.exports = async function handler(req, res) {
                 try {
                     // Use authorized domain for continueUrl
                     // Domain 'jaz-zenska.vercel.app' is added to Firebase authorized domains
-                    const resetUrl = 'https://jaz-zenska.vercel.app/login.html?mode=resetPassword';
+                    const resetUrl = 'https://jaz-zenska.vercel.app//login?mode=resetPassword';
                     const actionCodeSettings = {
                         url: resetUrl,
                         handleCodeInApp: false,
@@ -807,7 +807,7 @@ module.exports = async function handler(req, res) {
                 
                 // Step 6: Send password reset email
                 try {
-                    const resetUrl = 'https://jaz-zenska.vercel.app/login.html?mode=resetPassword';
+                    const resetUrl = 'https://jaz-zenska.vercel.app//login?mode=resetPassword';
                     const actionCodeSettings = {
                         url: resetUrl,
                         handleCodeInApp: false,

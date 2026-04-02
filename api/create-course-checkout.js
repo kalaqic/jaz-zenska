@@ -70,8 +70,8 @@ module.exports = async function handler(req, res) {
                 },
             ],
             customer_email: email.trim(),
-            success_url: `${baseUrl}/course-checkout-success.html?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${baseUrl}/spletna-trgovina.html`,
+            success_url: `${baseUrl}/course-checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${baseUrl}//spletna-trgovina`,
             metadata: {
                 type: 'course',
                 course_id: courseId,

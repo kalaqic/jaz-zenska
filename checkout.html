@@ -539,7 +539,7 @@
                             </p>
                             <p style="font-size: 16px; color: #666; margin-bottom: 30px;">
                                 <strong>Vaša Vercel URL:</strong><br>
-                                <code style="background: #f0f0f0; padding: 10px 20px; border-radius: 8px; display: inline-block; margin-top: 10px; font-size: 14px;">https://your-domain.vercel.app/checkout.html</code>
+                                <code style="background: #f0f0f0; padding: 10px 20px; border-radius: 8px; display: inline-block; margin-top: 10px; font-size: 14px;">https://your-domain.vercel.app//checkout</code>
                             </p>
                             <p style="font-size: 14px; color: #99627A;">
                                 Ako testirate lokalno, koristite: <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px;">npm run dev</code>
@@ -571,7 +571,7 @@
                 // If bank transfer, redirect to bank transfer form
                 if (selectedPaymentMethod === 'bank') {
                     if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout', { content_name: 'Skupnost JAZ ŽENSKA', value: 119, currency: 'EUR' });
-                    window.location.href = 'bank-transfer.html';
+                    window.location.href = '/bank-transfer';
                     return;
                 }
                 

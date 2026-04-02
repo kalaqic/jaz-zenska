@@ -166,8 +166,8 @@ module.exports = async function handler(req, res) {
                     quantity: 1,
                 },
             ],
-            success_url: `${baseUrl}/pohod-hvala.html?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${baseUrl}/pohod-checkout.html`,
+            success_url: `${baseUrl}//pohod-hvala?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${baseUrl}/pohod-/checkout`,
             billing_address_collection: 'required',
             customer_creation: 'always',
             metadata: {

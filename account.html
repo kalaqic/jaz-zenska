@@ -149,7 +149,7 @@
     <script>
         function loadUserData(user) {
             if (!user) {
-                window.location.href = 'login.html';
+                window.location.href = '/login';
                 return;
             }
             
@@ -205,7 +205,7 @@
             localStorage.removeItem('userToken');
             localStorage.removeItem('authToken');
             
-            window.location.href = 'login.html';
+            window.location.href = '/login';
         }
         
         // Check auth state on page load - wait for Firebase initialization
@@ -220,7 +220,7 @@
                         // Try to get user data from API as fallback
                         loadUserDataFallback();
                     } else {
-                        window.location.href = 'login.html';
+                        window.location.href = '/login';
                     }
                 }
             });
@@ -229,7 +229,7 @@
         async function loadUserDataFallback() {
             const email = localStorage.getItem('userEmail');
             if (!email) {
-                window.location.href = 'login.html';
+                window.location.href = '/login';
                 return;
             }
             

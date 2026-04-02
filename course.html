@@ -647,7 +647,7 @@
     </div>
     <div class="course-container">
         <div class="course-header">
-            <a href="dashboard.html" class="back-btn">← Nazaj na učilnico</a>
+            <a href="/dashboard" class="back-btn">← Nazaj na učilnico</a>
             <div id="courseHeaderTitle" style="font-family: 'Priestacy', cursive; font-size: 28px; color: var(--white); font-weight: normal; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);">Nalaganje...</div>
         </div>
         
@@ -706,12 +706,12 @@
                 // Check auth state
                 auth.onAuthStateChanged(async (user) => {
                     if (!user) {
-                        window.location.href = 'login.html';
+                        window.location.href = '/login';
                     }
                 });
             } catch (error) {
                 console.error('Error initializing Firebase:', error);
-                window.location.href = 'login.html';
+                window.location.href = '/login';
             }
         }
 
@@ -722,7 +722,7 @@
         function getCurrentUser() {
             const userStr = localStorage.getItem('currentUser');
             if (!userStr) {
-                window.location.href = 'login.html';
+                window.location.href = '/login';
                 return null;
             }
             return JSON.parse(userStr);

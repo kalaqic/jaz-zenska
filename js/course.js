@@ -431,11 +431,11 @@ async function loadCourse() {
     const isWebinar = !!webinarId && !courseId;
 
     if (!courseId && !webinarId) {
-        window.location.href = 'dashboard.html';
+        window.location.href = '/dashboard';
         return;
     }
 
-    // Firebase init runs asynchronously in course.html; wait a bit so Firestore reads don't fallback too early.
+    // Firebase init runs asynchronously in /course; wait a bit so Firestore reads don't fallback too early.
     await waitForFirestoreReady();
     
     let course = null;
@@ -561,7 +561,7 @@ async function loadCourse() {
     }
     
     if (!course) {
-        window.location.href = 'dashboard.html';
+        window.location.href = '/dashboard';
         return;
     }
 
@@ -1211,7 +1211,7 @@ function showCongratulationsPopup() {
             <div class="congratulations-icon">🎉</div>
             <h2 class="congratulations-title">Čestitamo!</h2>
             <p class="congratulations-message">Uspešno ste zaključili ta tečaj!</p>
-            <a href="dashboard.html" class="congratulations-btn">Nazaj na domačo stran</a>
+            <a href="/dashboard" class="congratulations-btn">Nazaj na domačo stran</a>
         </div>
     `;
     document.body.appendChild(popup);
@@ -1259,10 +1259,10 @@ function showNoAccessPopupCoursePage() {
             <h3>Nimate dostopa do te vsebine</h3>
             <p>Kupite ta tečaj v spletni trgovini ali se pridružite celotni skupini za 119 € in dobite dostop do vsega!</p>
             <div class="no-access-course-btns">
-                <a href="spletna-trgovina.html" class="no-acc-btn no-acc-btn-primary">Kupi tečaj</a>
-                <a href="jaz-zenska.html" class="no-acc-btn no-acc-btn-secondary">Celotna skupina (119 €)</a>
+                <a href="/spletna-trgovina" class="no-acc-btn no-acc-btn-primary">Kupi tečaj</a>
+                <a href="/jaz-zenska" class="no-acc-btn no-acc-btn-secondary">Celotna skupina (119 €)</a>
             </div>
-            <a href="dashboard.html" class="no-acc-back">← Nazaj na učilnico</a>
+            <a href="/dashboard" class="no-acc-back">← Nazaj na učilnico</a>
         </div>
     `;
     const style = document.createElement('style');

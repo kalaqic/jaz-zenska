@@ -49,7 +49,7 @@ function getCurrentUser() {
             // Try to get from Firebase
             return null; // Will trigger redirect in initDashboard
         }
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return null;
     }
     return JSON.parse(userStr);
@@ -71,12 +71,12 @@ async function handleLogout() {
         // Clear localStorage
         localStorage.removeItem('currentUser');
         // Redirect to login
-        window.location.href = 'login.html';
+        window.location.href = '/login';
     } catch (error) {
         console.error('Error logging out:', error);
         // Clear localStorage anyway and redirect
         localStorage.removeItem('currentUser');
-        window.location.href = 'login.html';
+        window.location.href = '/login';
     }
 }
 
@@ -161,7 +161,7 @@ function initDashboard() {
         // Check localStorage as fallback
         const currentUser = localStorage.getItem('currentUser');
         if (!currentUser) {
-            window.location.href = 'login.html';
+            window.location.href = '/login';
             return;
         }
     }
@@ -170,7 +170,7 @@ function initDashboard() {
     
     const user = getCurrentUser();
     if (!user) {
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return;
     }
     
@@ -224,9 +224,9 @@ function buildCourseResumeUrl(courseId, episodeId) {
     const e = encodeURIComponent(String(episodeId));
     if (String(courseId).startsWith('webinar-')) {
         const wid = String(courseId).replace(/^webinar-/, '');
-        return `course.html?webinar=${encodeURIComponent(wid)}&episode=${e}`;
+        return `/course?webinar=${encodeURIComponent(wid)}&episode=${e}`;
     }
-    return `course.html?id=${encodeURIComponent(courseId)}&episode=${e}`;
+    return `/course?id=${encodeURIComponent(courseId)}&episode=${e}`;
 }
 
 async function renderResumeInRightPanel(statsEl, user) {
@@ -318,7 +318,7 @@ async function renderResumeInRightPanel(statsEl, user) {
                 <div style="font-weight:800; color:var(--dark-violet); font-size:14px; font-family:'Playfair Display',serif;">${escapeHtml(courseTitle)}</div>
                 <div style="color:var(--text-light); font-size:12px; margin-top:6px; line-height:1.45;">${escapeHtml(episodeTitle)}${epLabel ? ` · ${escapeHtml(epLabel)}` : ''}</div>
                 <p style="margin:10px 0 0; font-size:12px; color:var(--text-light);">Za nadaljevanje potrebuješ dostop.</p>
-                <a href="jaz-zenska.html" class="right-resume-btn">Več o dostopu</a>
+                <a href="/jaz-zenska" class="right-resume-btn">Več o dostopu</a>
             </div>`;
         return;
     }
@@ -843,8 +843,8 @@ async function loadClassroom(container) {
 }
 
 function getCourseBuyUrl(courseId) {
-    if (courseId === 'moc-besede') return 'o-tecaju.html';
-    return 'spletna-trgovina.html';
+    if (courseId === 'moc-besede') return '/o-tecaju';
+    return '/spletna-trgovina';
 }
 
 function openCourse(courseId, hasAccess = true) {
@@ -853,7 +853,7 @@ function openCourse(courseId, hasAccess = true) {
         window.location.href = getCourseBuyUrl(courseId);
         return;
     }
-    window.location.href = `course.html?id=${courseId}`;
+    window.location.href = `/course?id=${courseId}`;
 }
 
 function showNoAccessPopup() {
@@ -870,8 +870,8 @@ function showNoAccessPopup() {
             <h3 class="no-access-title">Nimate dostopa do te vsebine</h3>
             <p class="no-access-text">Kupite ta tečaj v spletni trgovini ali se pridružite celotni skupini za 119 € in dobite dostop do vsega!</p>
             <div class="no-access-buttons">
-                <a href="spletna-trgovina.html" class="no-access-btn no-access-btn-primary">Kupi tečaj</a>
-                <a href="jaz-zenska.html" class="no-access-btn no-access-btn-secondary">Celotna skupina (119 €)</a>
+                <a href="/spletna-trgovina" class="no-access-btn no-access-btn-primary">Kupi tečaj</a>
+                <a href="/jaz-zenska" class="no-access-btn no-access-btn-secondary">Celotna skupina (119 €)</a>
             </div>
             <button type="button" class="no-access-close" aria-label="Zapri">&times;</button>
         </div>
@@ -917,7 +917,7 @@ function getGuestLockedHtml() {
             <p style="margin: 0 0 12px; color: var(--text-dark); font-size: 16px; line-height: 1.6;">
                 Želite dostop do vseh tečajev?
             </p>
-            <a href="jaz-zenska.html" style="
+            <a href="/jaz-zenska" style="
                 display: inline-block;
                 background: linear-gradient(135deg, #99627A 0%, #643843 100%);
                 color: #fff;
@@ -976,9 +976,9 @@ function getStopnicWebinarReplayUrl() {
             return t === '25 Stopnic do srece' || t === '25 Stopnic do sreče';
         });
         const id = row ? row.id : '2';
-        return `course.html?webinar=${encodeURIComponent(id)}`;
+        return `/course?webinar=${encodeURIComponent(id)}`;
     } catch (e) {
-        return 'course.html?webinar=2';
+        return '/course?webinar=2';
     }
 }
 
@@ -1054,7 +1054,7 @@ async function loadWebinars(container) {
             const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
             const hasAccess = !isGuest;
             const safeId = encodeURIComponent(String(webinar.id));
-            const href = hasAccess ? `course.html?webinar=${safeId}` : 'jaz-zenska.html';
+            const href = hasAccess ? `/course?webinar=${safeId}` : '/jaz-zenska';
             const lockedClass = hasAccess ? '' : ' locked';
             html += `
                 <div class="extra-offer-image-row">
@@ -1072,7 +1072,7 @@ async function loadWebinars(container) {
 
 function showStopnicWebinarPopup(hasAccess = true) {
     if (!hasAccess) {
-        window.location.href = 'jaz-zenska.html';
+        window.location.href = '/jaz-zenska';
         return;
     }
     window.location.href = getStopnicWebinarReplayUrl();
@@ -1088,7 +1088,7 @@ function closeStopnicWebinarPopup() {
 
 function openWebinar(webinarId, hasAccess = true) {
     if (!hasAccess) {
-        window.location.href = 'jaz-zenska.html';
+        window.location.href = '/jaz-zenska';
         return;
     }
     
@@ -1103,7 +1103,7 @@ function openWebinar(webinarId, hasAccess = true) {
     }
     
     // Open in course-style layout (progress bar + episode list)
-    window.location.href = `course.html?webinar=${encodeURIComponent(webinar.id)}`;
+    window.location.href = `/course?webinar=${encodeURIComponent(webinar.id)}`;
 }
 
 function closeWebinarModal() {
@@ -1323,7 +1323,7 @@ function getCanonicalPohodEvent() {
         time: '08:00',
         type: 'real-life',
         location: 'Sevno – ob vznožju Trške gore (zbir ob 8:00)',
-        externalUrl: 'pohod.html',
+        externalUrl: '/pohod',
         externalLabel: 'Rezerviraj svoje mesto',
         image: 'images/pohod.webp',
         canonical: true
@@ -2514,7 +2514,7 @@ async function loadCoursesAndWebinars(container) {
             const isStopnic = String(w.title || '').toLowerCase().includes('stopnic');
             const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
             const wid = encodeURIComponent(String(w.id));
-            const href = hasAccess ? `course.html?webinar=${wid}` : 'jaz-zenska.html';
+            const href = hasAccess ? `/course?webinar=${wid}` : '/jaz-zenska';
             const lockedClass = hasAccess ? '' : ' locked';
             return `
                 <div class="extra-offer-image-row">
@@ -2534,7 +2534,7 @@ function renderExtraOffer(container) {
     container.innerHTML = `
         <h3 class="extra-offer-subtitle">Pohodi</h3>
         <div class="extra-offer-image-row">
-            <a href="pohod.html" class="extra-offer-image-link">
+            <a href="/pohod" class="extra-offer-image-link">
                 <img src="images/pohod.webp" alt="100 žensk na Trško goro">
             </a>
         </div>
@@ -2708,7 +2708,7 @@ window.showProfileTab = function(tab) {
                         <h3 class="guest-locked-title">Vprašalnik je del članstva</h3>
                         <p class="guest-locked-lead">Ko se pridružiš skupini, dobiš dostop do celotnega vprašalnika, vseh webinarjev in vseh tečajev v učilnici.</p>
                         <div class="guest-locked-buttons">
-                            <a href="jaz-zenska.html" class="guest-locked-btn guest-locked-btn-primary">Odkleni dostop</a>
+                            <a href="/jaz-zenska" class="guest-locked-btn guest-locked-btn-primary">Odkleni dostop</a>
                         </div>
                     </div>
                 </div>
@@ -2808,16 +2808,16 @@ async function saveProfile() {
 
 // handleLogout is already defined above with Firebase integration
 
-// Initialize on page load (only if not already initialized by dashboard.html)
-// dashboard.html handles initialization after Firebase is ready
+// Initialize on page load (only if not already initialized by /dashboard)
+// /dashboard handles initialization after Firebase is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
-        // Only init if not already done by dashboard.html
+        // Only init if not already done by /dashboard
         if (!window.dashboardInitialized) {
             initDashboard();
         }
     });
 } else {
-    // DOM already loaded, but check if dashboard.html will handle it
-    // dashboard.html handles initialization after Firebase is ready
+    // DOM already loaded, but check if /dashboard will handle it
+    // /dashboard handles initialization after Firebase is ready
 }
