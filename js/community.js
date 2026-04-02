@@ -2196,7 +2196,7 @@ async function loadLifeWheel(container) {
             <div class="life-wheel-hint" id="lifeWheelSubtitle">Kako bi ocenila to področje?</div>
             <div class="life-wheel-nav" id="lifeWheelNav">
                 <button type="button" class="life-wheel-back" id="lifeWheelBackBtn" onclick="lifeWheelBack()" aria-label="Nazaj na prejšnje področje">← Nazaj</button>
-                <button type="button" class="life-wheel-skip" id="lifeWheelSkipBtn" onclick="lifeWheelSkip()">Preskoči (kasneje)</button>
+                <button type="button" class="life-wheel-skip" id="lifeWheelSkipBtn" onclick="lifeWheelSkip()">Naprej</button>
             </div>
             <div class="life-wheel-numbers" id="lifeWheelNumbers"></div>
             <div id="lifeWheelCapture" class="life-wheel-canvas-wrap">
