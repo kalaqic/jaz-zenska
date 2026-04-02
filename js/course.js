@@ -889,7 +889,8 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
     const watched = await getWatchedEpisodes(course.id);
     const isWatched = watched.includes(episodeId);
     const isWebinarCourse = String(course.id).startsWith('webinar-');
-    const actionDone = isWebinarCourse ? false : await isEpisodeActionCompleted(course.id, episodeId);
+    const savedExerciseNote = isWebinarCourse ? '' : await getEpisodeExerciseNote(course.id, episodeId);
+    const actionDone = !!String(savedExerciseNote || '').trim();
     const commentsHtml = await buildCommentsHtml(course, episode);
     const exerciseText = episode.exercise || `Izberite eno situacijo danes in namesto izraza "${episode.title}" uporabite bolj podporno besedo.`;
     
@@ -920,12 +921,14 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
 
         ${!isWebinarCourse ? `
         <div class="episode-exercise">
-            <h4>Vaja (naredi takoj)</h4>
+            <h4>Vaja:</h4>
             <p>${escapeHtmlCourse(exerciseText)}</p>
-            <label class="exercise-check">
-                <input type="checkbox" ${actionDone ? 'checked' : ''} onchange="toggleActionDone('${course.id}', '${episode.id}', this.checked)">
-                Označi, da si naredila vajo
-            </label>
+            <label class="exercise-note-label" for="exerciseNoteInput">Moji zapiski</label>
+            <textarea id="exerciseNoteInput" class="exercise-note-input" rows="5" placeholder="Sem napiši svoje zapiske o tej vaji...">${escapeHtmlCourse(savedExerciseNote)}</textarea>
+            <button type="button" class="save-exercise-note-btn" onclick="saveEpisodeExerciseNote('${course.id}', '${episode.id}')">Shrani svoje zapiske</button>
+            <div id="exerciseNoteStatus" class="exercise-note-status ${actionDone ? 'done' : ''}">
+                ${actionDone ? 'Vaja je označena kot narejena.' : 'Ko shraniš zapiske, se vaja označi kot narejena.'}
+            </div>
         </div>
         ` : ''}
 
@@ -986,58 +989,83 @@ function goToAdjacentEpisode(direction) {
     loadEpisodeContent(String(targetEpisode.id), course, targetEl || null);
 }
 
-async function getCompletedActions(courseId) {
+async function getExerciseNotes(courseId) {
     const user = getCurrentUser();
     if (!user || !user.userId) {
-        const local = JSON.parse(localStorage.getItem('completedActions') || '{}');
-        return (local[courseId] || []).map(id => String(id));
+        const local = JSON.parse(localStorage.getItem('exerciseNotes') || '{}');
+        const notes = local[courseId] || {};
+        return notes && typeof notes === 'object' ? notes : {};
     }
     try {
         if (typeof db !== 'undefined') {
             const progressDoc = await db.collection('userProgress').doc(`${user.userId}_${courseId}`).get();
             if (progressDoc.exists) {
-                const completedActions = (progressDoc.data().completedActions || []).map(id => String(id));
-                const local = JSON.parse(localStorage.getItem('completedActions') || '{}');
-                local[courseId] = completedActions;
-                localStorage.setItem('completedActions', JSON.stringify(local));
-                return completedActions;
+                const notesRaw = progressDoc.data().exerciseNotes || {};
+                const notes = {};
+                Object.keys(notesRaw || {}).forEach(k => {
+                    notes[String(k)] = String(notesRaw[k] || '');
+                });
+                const local = JSON.parse(localStorage.getItem('exerciseNotes') || '{}');
+                local[courseId] = notes;
+                localStorage.setItem('exerciseNotes', JSON.stringify(local));
+                return notes;
             }
         }
     } catch (e) {
-        console.error('Error loading completed actions:', e);
+        console.error('Error loading exercise notes:', e);
     }
-    const local = JSON.parse(localStorage.getItem('completedActions') || '{}');
-    return (local[courseId] || []).map(id => String(id));
+    const local = JSON.parse(localStorage.getItem('exerciseNotes') || '{}');
+    const notes = local[courseId] || {};
+    return notes && typeof notes === 'object' ? notes : {};
 }
 
-async function isEpisodeActionCompleted(courseId, episodeId) {
-    const completed = await getCompletedActions(courseId);
-    return completed.includes(String(episodeId));
+async function getEpisodeExerciseNote(courseId, episodeId) {
+    const notes = await getExerciseNotes(courseId);
+    return String(notes[String(episodeId)] || '');
 }
 
-window.toggleActionDone = async function(courseId, episodeId, done) {
+window.saveEpisodeExerciseNote = async function(courseId, episodeId) {
     const user = getCurrentUser();
     const normalized = String(episodeId);
-    const completed = await getCompletedActions(courseId);
-    let next = [...completed];
-    if (done && !next.includes(normalized)) next.push(normalized);
-    if (!done) next = next.filter(id => id !== normalized);
+    const input = document.getElementById('exerciseNoteInput');
+    const status = document.getElementById('exerciseNoteStatus');
+    if (!input) return;
+    const noteValue = String(input.value || '');
 
-    const local = JSON.parse(localStorage.getItem('completedActions') || '{}');
+    const current = await getExerciseNotes(courseId);
+    const next = { ...(current || {}) };
+    if (noteValue.trim()) {
+        next[normalized] = noteValue;
+    } else {
+        delete next[normalized];
+    }
+
+    const local = JSON.parse(localStorage.getItem('exerciseNotes') || '{}');
     local[courseId] = next;
-    localStorage.setItem('completedActions', JSON.stringify(local));
+    localStorage.setItem('exerciseNotes', JSON.stringify(local));
 
     try {
         if (user && user.userId && typeof db !== 'undefined') {
             await db.collection('userProgress').doc(`${user.userId}_${courseId}`).set({
                 userId: user.userId,
                 courseId: courseId,
-                completedActions: next,
+                exerciseNotes: next,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
         }
+        if (status) {
+            if (noteValue.trim()) {
+                status.textContent = 'Vaja je označena kot narejena.';
+                status.classList.add('done');
+            } else {
+                status.textContent = 'Zapiski so prazni. Vaja ni označena kot narejena.';
+                status.classList.remove('done');
+            }
+        }
+        alert('Zapiski so shranjeni.');
     } catch (e) {
-        console.error('Error saving completed action:', e);
+        console.error('Error saving exercise note:', e);
+        alert('Pri shranjevanju zapiskov je prišlo do napake.');
     }
 };
 

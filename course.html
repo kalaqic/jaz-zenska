@@ -375,19 +375,47 @@
             white-space: pre-wrap;
         }
 
-        .exercise-check {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+        .exercise-note-label {
+            display: block;
+            margin: 8px 0 8px;
             color: var(--dark-violet);
-            font-weight: 600;
+            font-weight: 700;
             font-size: 14px;
         }
 
-        .exercise-check input {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--mid-violet);
+        .exercise-note-input {
+            width: 100%;
+            border: 1px solid rgba(100, 56, 67, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            resize: vertical;
+            box-sizing: border-box;
+            min-height: 120px;
+            background: #fff;
+        }
+
+        .save-exercise-note-btn {
+            margin-top: 10px;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .exercise-note-status {
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .exercise-note-status.done {
+            color: #2e7d32;
         }
 
         .episode-comment-input {
