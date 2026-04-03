@@ -940,24 +940,22 @@ const STOPNIC_WEBINAR_VIMEO_URL = 'https://player.vimeo.com/video/1179302920?bad
 function applyStopnicWebinarDefaults(webinars) {
     let list = Array.isArray(webinars) ? webinars.map(w => ({ ...w })) : [];
     list = list.map(w => {
-        const t = String(w.title || '');
-        if (t === '25 Stopnic do srece' || t === '25 Stopnic do sreče') {
+        const t = String(w.title || '').trim();
+        if (t === '25 Stopnic do sreče' || t === '25 Stopnic do srece') {
             return {
                 ...w,
+                title: '25 Stopnic do sreče',
                 videoId: w.videoId || '1179302920',
                 videoUrl: w.videoUrl || STOPNIC_WEBINAR_VIMEO_URL
             };
         }
         return w;
     });
-    const hasStopnic = list.some(w => {
-        const t = String(w.title || '');
-        return t === '25 Stopnic do srece' || t === '25 Stopnic do sreče';
-    });
+    const hasStopnic = list.some(w => String(w.title || '').trim() === '25 Stopnic do sreče');
     if (!hasStopnic) {
         list.unshift({
             id: '2',
-            title: '25 Stopnic do srece',
+            title: '25 Stopnic do sreče',
             date: '9. marca 2026',
             description: 'Webinar 25 stopnic do sreče — posnetek.',
             videoId: '1179302920',
@@ -972,8 +970,8 @@ function getStopnicWebinarReplayUrl() {
         let webinars = JSON.parse(localStorage.getItem('webinars') || '[]');
         webinars = applyStopnicWebinarDefaults(webinars);
         const row = webinars.find(w => {
-            const t = String(w.title || '');
-            return t === '25 Stopnic do srece' || t === '25 Stopnic do sreče';
+            const t = String(w.title || '').trim();
+            return t === '25 Stopnic do sreče' || t === '25 Stopnic do srece';
         });
         const id = row ? row.id : '2';
         return `/course?webinar=${encodeURIComponent(id)}`;
@@ -1002,7 +1000,7 @@ async function loadWebinars(container) {
             },
             {
                 id: '2',
-                title: '25 Stopnic do srece',
+                title: '25 Stopnic do sreče',
                 date: '9. marca 2026',
                 description: 'Webinar 25 stopnic do sreče.',
                 videoId: '1179302920',
@@ -1337,13 +1335,13 @@ function mergeCanonicalEvents(events) {
     list = list.filter(e => dashboardEventsToLocalDateString(new Date(e.date)) !== '2026-02-06');
 
     list = list.filter(e => !(
-        e.title === '25 Stopnic do sreče'
+        (e.title === '25 Stopnic do sreče' || e.title === '25 Stopnic do srece')
         && e.date
         && (String(e.date).startsWith('2026-03-05') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 5))
     ));
 
     const hasStopnic = list.some(e =>
-        e.title === '25 Stopnic do sreče'
+        (e.title === '25 Stopnic do sreče' || e.title === '25 Stopnic do srece')
         && e.date
         && (String(e.date).startsWith('2026-03-09') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 9))
     );

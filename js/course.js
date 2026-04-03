@@ -45,10 +45,18 @@ const KAJ_JE_NAROBE_S_TABO_VIMEO_URL =
     'https://player.vimeo.com/video/1179915602?badge=0&autopause=0&player_id=0&app_id=58479';
 const IZGOVOR_VIMEO_URL =
     'https://player.vimeo.com/video/1179916794?badge=0&autopause=0&player_id=0&app_id=58479';
+const PRETJERAVANJE_VIMEO_URL =
+    'https://player.vimeo.com/video/1179924385?badge=0&autopause=0&player_id=0&app_id=58479';
+const NI_POSTENO_VIMEO_URL =
+    'https://player.vimeo.com/video/1179927314?badge=0&autopause=0&player_id=0&app_id=58479';
 const MOC_BESEDE_WORD_VIDEO_URLS = new Map([
     [normalizeWordKey('RAZLAGA'), 'https://player.vimeo.com/video/1179913002?badge=0&autopause=0&player_id=0&app_id=58479'],
     [normalizeWordKey('IZGOVOR'), IZGOVOR_VIMEO_URL],
     [normalizeWordKey('IZGOVORI'), IZGOVOR_VIMEO_URL],
+    [normalizeWordKey('PRETJERAVANJE'), PRETJERAVANJE_VIMEO_URL],
+    [normalizeWordKey('PRETERIVANJE'), PRETJERAVANJE_VIMEO_URL],
+    [normalizeWordKey('NI POŠTENO'), NI_POSTENO_VIMEO_URL],
+    [normalizeWordKey('NI POSTENO'), NI_POSTENO_VIMEO_URL],
     [normalizeWordKey('KAJ JE NAROBE S TABO'), KAJ_JE_NAROBE_S_TABO_VIMEO_URL],
     [normalizeWordKey('KAJ JE NAROBE STABO'), KAJ_JE_NAROBE_S_TABO_VIMEO_URL],
     [normalizeWordKey('ISKRENO UPORABLJANJE DA/NE'), ISKRENO_VIMEO_URL],
@@ -378,10 +386,11 @@ const STOPNIC_WEBINAR_VIMEO_FALLBACK = 'https://player.vimeo.com/video/117930292
 function patchStopnicWebinarVideoUrls(webinars) {
     const list = Array.isArray(webinars) ? webinars.map(w => ({ ...w })) : [];
     return list.map(w => {
-        const t = String(w.title || '');
-        if (t === '25 Stopnic do srece' || t === '25 Stopnic do sreče') {
+        const t = String(w.title || '').trim();
+        if (t === '25 Stopnic do sreče' || t === '25 Stopnic do srece') {
             return {
                 ...w,
+                title: '25 Stopnic do sreče',
                 videoId: w.videoId || '1179302920',
                 videoUrl: w.videoUrl || STOPNIC_WEBINAR_VIMEO_FALLBACK
             };
@@ -509,8 +518,8 @@ async function loadCourse() {
         let webinar = webinars.find(w => String(w.id) === String(webinarId));
         if (!webinar && String(webinarId) === '2') {
             webinar = webinars.find(w => {
-                const t = String(w.title || '');
-                return t === '25 Stopnic do srece' || t === '25 Stopnic do sreče';
+                const t = String(w.title || '').trim();
+                return t === '25 Stopnic do sreče' || t === '25 Stopnic do srece';
             });
         }
         if (webinar) {
