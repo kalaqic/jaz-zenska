@@ -38,6 +38,29 @@ function normalizeWordKey(s) {
         .replace(/[\u0300-\u036f]/g, '');
 }
 
+/** Default Vimeo URLs per word episode (title matches MOC_BESSEDE_WORDS after normalization). */
+const MOC_BESEDE_WORD_VIDEO_URLS = new Map([
+    [normalizeWordKey('RAZLAGA'), 'https://player.vimeo.com/video/1179913002?badge=0&autopause=0&player_id=0&app_id=58479'],
+    [
+        normalizeWordKey(
+            'ISKRENO UPORABLJANJE DA/NE (Govorimo da/ne zaradi občutka obveznosti, ker nam je nerodno, se počutimo kot da smo dolžni ali nam nekdo bo zameril)'
+        ),
+        'https://player.vimeo.com/video/1179913461?badge=0&autopause=0&player_id=0&app_id=58479'
+    ]
+]);
+
+function applyMocBesedeDefaultVideoUrls(episodes) {
+    if (!Array.isArray(episodes)) return;
+    episodes.forEach(ep => {
+        const title = String(ep.title || '').trim();
+        if (!title) return;
+        const mapped = MOC_BESEDE_WORD_VIDEO_URLS.get(normalizeWordKey(title));
+        if (mapped && !String(ep.videoUrl || '').trim()) {
+            ep.videoUrl = mapped;
+        }
+    });
+}
+
 const MOC_BESSEDE_META = new Map();
 
 function setMocMeta(wordKey, description, exercise) {
@@ -235,12 +258,14 @@ function buildMocBesedeEpisodes(existingEpisodes = []) {
     MOC_BESSEDE_WORDS.forEach((word, idx) => {
         const existing = byTitle.get(word);
         const meta = MOC_BESSEDE_META.get(normalizeWordKey(word));
+        const fromExisting = existing && existing.videoUrl ? String(existing.videoUrl).trim() : '';
+        const fromMap = MOC_BESEDE_WORD_VIDEO_URLS.get(normalizeWordKey(word)) || '';
         episodes.push({
             id: String(idx + 2),
             title: word,
             description: meta?.description || `Epizoda o besedi: ${word}`,
             exercise: meta?.exercise || `Zapišite 3 stavke, kjer besedo "${word}" zavestno zamenjate z bolj podporno in ljubečo različico.`,
-            videoUrl: existing && existing.videoUrl ? String(existing.videoUrl) : '',
+            videoUrl: fromExisting || fromMap,
             duration: existing && existing.duration ? String(existing.duration) : ''
         });
     });
@@ -577,6 +602,7 @@ async function loadCourse() {
         if (uvodEpisode && !String(uvodEpisode.videoUrl || '').trim()) {
             uvodEpisode.videoUrl = MOC_BESEDE_UVOD_VIDEO_URL;
         }
+        applyMocBesedeDefaultVideoUrls(course.episodes);
         // keep local cache in sync with canonical episode list
         const cachedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
         const idx = cachedCourses.findIndex(c => c.id === 'moc-besede');
@@ -914,7 +940,7 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
                     allowfullscreen
                     style="position:absolute;top:0;left:0;width:100%;height:100%;"
                 ></iframe>
-            ` : 'Video bo kmalu na voljo'}
+            ` : '<p class="course-video-placeholder">Ta video je zaseben.</p>'}
         </div>
 
         <div class="episode-nav-bar">
