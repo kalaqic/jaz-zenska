@@ -23,7 +23,7 @@ const MOC_BESSEDE_WORDS = [
     'ISKRENO UPORABLJANJE DA/NE (Govorimo da/ne zaradi občutka obveznosti, ker nam je nerodno, se počutimo kot da smo dolžni ali nam nekdo bo zameril)',
     'KAJ JE NAROBE S TABO',
     'IZGOVOR',
-    'PRETJERAVANJE',
+    'PRETERIVANJE',
     'NI POŠTENO',
     'NE OBUPAJ, NE ODNEHAJ, NE ZBOLI (Ne uporabljajte besedo zvezo česar ne želite)',
     'UPORABLJAJTE RESNICO'
@@ -45,7 +45,7 @@ const KAJ_JE_NAROBE_S_TABO_VIMEO_URL =
     'https://player.vimeo.com/video/1179915602?badge=0&autopause=0&player_id=0&app_id=58479';
 const IZGOVOR_VIMEO_URL =
     'https://player.vimeo.com/video/1179916794?badge=0&autopause=0&player_id=0&app_id=58479';
-const PRETERAVANJE_VIMEO_URL =
+const PRETERIVANJE_VIMEO_URL =
     'https://player.vimeo.com/video/1179924385?badge=0&autopause=0&player_id=0&app_id=58479';
 const NI_POSTENO_VIMEO_URL =
     'https://player.vimeo.com/video/1179927314?badge=0&autopause=0&player_id=0&app_id=58479';
@@ -55,8 +55,10 @@ const MOC_BESEDE_WORD_VIDEO_URLS = new Map([
     [normalizeWordKey('RAZLAGA'), 'https://player.vimeo.com/video/1179913002?badge=0&autopause=0&player_id=0&app_id=58479'],
     [normalizeWordKey('IZGOVOR'), IZGOVOR_VIMEO_URL],
     [normalizeWordKey('IZGOVORI'), IZGOVOR_VIMEO_URL],
-    [normalizeWordKey('PRETJERAVANJE'), PRETJERAVANJE_VIMEO_URL],
-    [normalizeWordKey('PRETERIVANJE'), PRETJERAVANJE_VIMEO_URL],
+    [normalizeWordKey('PRETERIVANJE'), PRETERIVANJE_VIMEO_URL],
+    [normalizeWordKey('PRETERAVANJE'), PRETERIVANJE_VIMEO_URL],
+    [normalizeWordKey('PRETJERAVANJE'), PRETERIVANJE_VIMEO_URL],
+    [normalizeWordKey('PRETIRAVANJE'), PRETERIVANJE_VIMEO_URL],
     [normalizeWordKey('NI POŠTENO'), NI_POSTENO_VIMEO_URL],
     [normalizeWordKey('NI POSTENO'), NI_POSTENO_VIMEO_URL],
     [normalizeWordKey('KAJ JE NAROBE S TABO'), KAJ_JE_NAROBE_S_TABO_VIMEO_URL],
