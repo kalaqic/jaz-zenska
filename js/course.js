@@ -29,6 +29,8 @@ const MOC_BESSEDE_WORDS = [
     'UPORABLJAJTE RESNICO'
 ];
 
+const MOC_BESEDE_UVOD_VIDEO_URL = 'https://player.vimeo.com/video/1179910844?badge=0&autopause=0&player_id=0&app_id=58479';
+
 function normalizeWordKey(s) {
     return String(s || '')
         .toUpperCase()
@@ -225,7 +227,7 @@ function buildMocBesedeEpisodes(existingEpisodes = []) {
             id: '1',
             title: 'Uvod',
             description: 'Uvod v delavnico Moč besede.',
-            videoUrl: '',
+            videoUrl: MOC_BESEDE_UVOD_VIDEO_URL,
             duration: ''
         }
     ];
@@ -571,6 +573,10 @@ async function loadCourse() {
         course.episodes = firestoreEpisodes && firestoreEpisodes.length > 1
             ? firestoreEpisodes
             : buildMocBesedeEpisodes(course.episodes || []);
+        const uvodEpisode = (course.episodes || []).find(ep => String(ep.title || '').trim().toLowerCase() === 'uvod');
+        if (uvodEpisode && !String(uvodEpisode.videoUrl || '').trim()) {
+            uvodEpisode.videoUrl = MOC_BESEDE_UVOD_VIDEO_URL;
+        }
         // keep local cache in sync with canonical episode list
         const cachedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
         const idx = cachedCourses.findIndex(c => c.id === 'moc-besede');
