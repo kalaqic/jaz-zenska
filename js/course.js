@@ -39,13 +39,21 @@ function normalizeWordKey(s) {
 }
 
 /** Default Vimeo URLs per word episode (title matches MOC_BESSEDE_WORDS after normalization). */
+const ISKRENO_VIMEO_URL =
+    'https://player.vimeo.com/video/1179913461?badge=0&autopause=0&player_id=0&app_id=58479';
+const KAJ_JE_NAROBE_S_TABO_VIMEO_URL =
+    'https://player.vimeo.com/video/1179915602?badge=0&autopause=0&player_id=0&app_id=58479';
 const MOC_BESEDE_WORD_VIDEO_URLS = new Map([
     [normalizeWordKey('RAZLAGA'), 'https://player.vimeo.com/video/1179913002?badge=0&autopause=0&player_id=0&app_id=58479'],
+    [normalizeWordKey('KAJ JE NAROBE S TABO'), KAJ_JE_NAROBE_S_TABO_VIMEO_URL],
+    [normalizeWordKey('KAJ JE NAROBE STABO'), KAJ_JE_NAROBE_S_TABO_VIMEO_URL],
+    // Firestore `word` is often the short title; canonical list uses the long parenthetical.
+    [normalizeWordKey('ISKRENO UPORABLJANJE DA/NE'), ISKRENO_VIMEO_URL],
     [
         normalizeWordKey(
             'ISKRENO UPORABLJANJE DA/NE (Govorimo da/ne zaradi občutka obveznosti, ker nam je nerodno, se počutimo kot da smo dolžni ali nam nekdo bo zameril)'
         ),
-        'https://player.vimeo.com/video/1179913461?badge=0&autopause=0&player_id=0&app_id=58479'
+        ISKRENO_VIMEO_URL
     ]
 ]);
 
