@@ -45,10 +45,12 @@ const KAJ_JE_NAROBE_S_TABO_VIMEO_URL =
     'https://player.vimeo.com/video/1179915602?badge=0&autopause=0&player_id=0&app_id=58479';
 const IZGOVOR_VIMEO_URL =
     'https://player.vimeo.com/video/1179916794?badge=0&autopause=0&player_id=0&app_id=58479';
-const PRETJERAVANJE_VIMEO_URL =
+const PRETERAVANJE_VIMEO_URL =
     'https://player.vimeo.com/video/1179924385?badge=0&autopause=0&player_id=0&app_id=58479';
 const NI_POSTENO_VIMEO_URL =
     'https://player.vimeo.com/video/1179927314?badge=0&autopause=0&player_id=0&app_id=58479';
+const NE_OBUPAJ_ODNEHAJ_ZBOLI_VIMEO_URL =
+    'https://player.vimeo.com/video/1179928653?badge=0&autopause=0&player_id=0&app_id=58479';
 const MOC_BESEDE_WORD_VIDEO_URLS = new Map([
     [normalizeWordKey('RAZLAGA'), 'https://player.vimeo.com/video/1179913002?badge=0&autopause=0&player_id=0&app_id=58479'],
     [normalizeWordKey('IZGOVOR'), IZGOVOR_VIMEO_URL],
@@ -65,6 +67,13 @@ const MOC_BESEDE_WORD_VIDEO_URLS = new Map([
             'ISKRENO UPORABLJANJE DA/NE (Govorimo da/ne zaradi občutka obveznosti, ker nam je nerodno, se počutimo kot da smo dolžni ali nam nekdo bo zameril)'
         ),
         ISKRENO_VIMEO_URL
+    ],
+    [normalizeWordKey('NE OBUPAJ, NE ODNEHAJ, NE ZBOLI'), NE_OBUPAJ_ODNEHAJ_ZBOLI_VIMEO_URL],
+    [
+        normalizeWordKey(
+            'NE OBUPAJ, NE ODNEHAJ, NE ZBOLI (Ne uporabljajte besedo zvezo česar ne želite)'
+        ),
+        NE_OBUPAJ_ODNEHAJ_ZBOLI_VIMEO_URL
     ]
 ]);
 
