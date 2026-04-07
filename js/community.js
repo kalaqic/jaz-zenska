@@ -497,8 +497,13 @@ window.openCalendarForDay = async function(dateStr, eventId) {
     }
     full.classList.add('show');
     document.body.style.overflow = 'hidden';
-    await loadCalendar();
-    await showDayEvents(dateStr, eventId);
+    try {
+        await loadCalendar();
+        await showDayEvents(dateStr, eventId);
+    } catch (error) {
+        console.error('openCalendarForDay failed:', error);
+        openFullCalendarModal();
+    }
 };
 
 window.closeFullCalendarModal = function() {
@@ -850,28 +855,26 @@ function getCourseBuyUrl(courseId) {
 function openCourse(courseId, hasAccess = true) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if (currentUser.role === 'guest' && !hasAccess) {
-        window.location.href = getCourseBuyUrl(courseId);
+        showGuestJoinPopup();
         return;
     }
     window.location.href = `/course?id=${courseId}`;
 }
 
-function showNoAccessPopup() {
-    const existing = document.getElementById('noAccessModal');
+function showGuestJoinPopup() {
+    const existing = document.getElementById('guestJoinModal');
     if (existing) {
         existing.classList.add('show');
         return;
     }
     const overlay = document.createElement('div');
-    overlay.id = 'noAccessModal';
+    overlay.id = 'guestJoinModal';
     overlay.className = 'no-access-modal';
     overlay.innerHTML = `
         <div class="no-access-modal-content">
-            <h3 class="no-access-title">Nimate dostopa do te vsebine</h3>
-            <p class="no-access-text">Kupite ta tečaj v spletni trgovini ali se pridružite celotni skupini za 119 € in dobite dostop do vsega!</p>
+            <h3 class="no-access-title">Dostop do vseh vsebin v spletni učilnici imajo samo članice skupnosti.</h3>
             <div class="no-access-buttons">
-                <a href="/spletna-trgovina" class="no-access-btn no-access-btn-primary">Kupi tečaj</a>
-                <a href="/jaz-zenska" class="no-access-btn no-access-btn-secondary">Celotna skupina (119 €)</a>
+                <a href="/jaz-zenska" class="no-access-btn no-access-btn-primary">Pridruži se</a>
             </div>
             <button type="button" class="no-access-close" aria-label="Zapri">&times;</button>
         </div>
@@ -887,13 +890,10 @@ function showNoAccessPopup() {
         .no-access-modal.show { display: flex; }
         .no-access-modal-content { background: var(--white); border-radius: 20px; padding: 40px; max-width: 440px; width: 100%; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         .no-access-title { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark-violet); margin: 0 0 16px; }
-        .no-access-text { color: var(--text-dark); font-size: 16px; line-height: 1.7; margin: 0 0 28px; }
         .no-access-buttons { display: flex; flex-direction: column; gap: 12px; }
         .no-access-btn { display: block; text-align: center; padding: 14px 24px; border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; }
         .no-access-btn-primary { background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; box-shadow: 0 6px 24px rgba(100,56,67,0.35); }
         .no-access-btn-primary:hover { transform: translateY(-2px); }
-        .no-access-btn-secondary { background: var(--main-white); color: var(--dark-violet); border: 2px solid var(--mid-violet); }
-        .no-access-btn-secondary:hover { background: rgba(153,98,122,0.1); }
         .no-access-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 28px; color: var(--text-light); cursor: pointer; line-height: 1; padding: 0; }
         .no-access-close:hover { color: var(--dark-violet); }
     `;
@@ -1086,7 +1086,7 @@ function closeStopnicWebinarPopup() {
 
 function openWebinar(webinarId, hasAccess = true) {
     if (!hasAccess) {
-        window.location.href = '/jaz-zenska';
+        showGuestJoinPopup();
         return;
     }
     
@@ -2148,23 +2148,25 @@ async function loadProfile() {
 
 function renderActiveWork(container) {
     if (!container) return;
+    const user = getCurrentUser() || {};
+    const isGuest = user.role === 'guest';
     container.innerHTML = `
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
-            <div class="guest-locked-block" style="margin:0;">
+            <div class="guest-locked-block" style="margin:0; border-top:4px solid ${isGuest ? '#c3c3c3' : '#d4af37'};">
                 <div class="guest-locked-inner">
                     <h3 class="guest-locked-title">Vprašalnik</h3>
                     <p class="guest-locked-lead">Odpri vprašalnik in spremljaj svoj napredek skozi delo na sebi.</p>
                     <div class="guest-locked-buttons">
-                        <button type="button" class="guest-locked-btn guest-locked-btn-primary" onclick="openSidebarTab('questionnaire')">Odpri vprašalnik</button>
+                        <button type="button" class="guest-locked-btn guest-locked-btn-primary" onclick="${isGuest ? 'showGuestJoinPopup()' : `openSidebarTab('questionnaire')`}" style="${isGuest ? 'background:#b5b5b5;border-color:#b5b5b5;cursor:not-allowed;' : ''}">Odpri vprašalnik</button>
                     </div>
                 </div>
             </div>
-            <div class="guest-locked-block" style="margin:0;">
+            <div class="guest-locked-block" style="margin:0; border-top:4px solid ${isGuest ? '#c3c3c3' : '#d4af37'};">
                 <div class="guest-locked-inner">
                     <h3 class="guest-locked-title">Kolo življenja</h3>
                     <p class="guest-locked-lead">Oceni 8 področij življenja in shrani svoj trenutni vpogled.</p>
                     <div class="guest-locked-buttons">
-                        <button type="button" class="guest-locked-btn guest-locked-btn-primary" onclick="openSidebarTab('life-wheel')">Odpri kolo življenja</button>
+                        <button type="button" class="guest-locked-btn guest-locked-btn-primary" onclick="${isGuest ? 'showGuestJoinPopup()' : `openSidebarTab('life-wheel')`}" style="${isGuest ? 'background:#b5b5b5;border-color:#b5b5b5;cursor:not-allowed;' : ''}">Odpri kolo življenja</button>
                     </div>
                 </div>
             </div>
@@ -2540,6 +2542,11 @@ function renderExtraOffer(container) {
 }
 
 window.openSidebarTab = function(tab) {
+    const user = getCurrentUser() || {};
+    if (user.role === 'guest' && (tab === 'questionnaire' || tab === 'life-wheel')) {
+        showGuestJoinPopup();
+        return;
+    }
     currentSidebarTab = tab;
     document.querySelectorAll('[data-sidebar].sidebar-item').forEach(x => {
         x.classList.toggle('active', x.getAttribute('data-sidebar') === tab);
