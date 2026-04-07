@@ -377,9 +377,9 @@ function renderRightPanel() {
             ` : upcomingEvents.map(evt => {
                 const d = new Date(evt._dt);
                 const dateStr = toLocalDateStringCal(d);
-                const evtIdJs = evt.id != null && evt.id !== '' ? JSON.stringify(String(evt.id)) : 'null';
+                const evtId = evt.id != null && evt.id !== '' ? String(evt.id) : '';
                 return `
-                    <div class="right-list-item" onclick="openCalendarForDay('${dateStr}', ${evtIdJs})">
+                    <div class="right-list-item js-open-calendar-day" data-date="${escapeHtml(dateStr)}" data-event-id="${escapeHtml(evtId)}">
                         <div class="right-list-item-title">${escapeHtml(evt.title || 'Dogodek')}</div>
                         <div class="right-list-item-meta">🗓 ${escapeHtml(d.toLocaleDateString('sl-SI', { year:'numeric', month:'long', day:'numeric' }))}</div>
                     </div>
@@ -402,6 +402,13 @@ function renderRightPanel() {
             `).join('')}
         </div>
     `;
+    upcomingEl.querySelectorAll('.js-open-calendar-day').forEach(el => {
+        el.addEventListener('click', () => {
+            const date = el.getAttribute('data-date') || '';
+            const eventId = el.getAttribute('data-event-id') || null;
+            if (date) window.openCalendarForDay(date, eventId);
+        });
+    });
 }
 
 async function loadMiniWeekCalendar() {
@@ -886,18 +893,58 @@ function showGuestJoinPopup() {
     });
     document.body.appendChild(overlay);
     document.body.appendChild(document.createElement('style')).textContent = `
-        .no-access-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 20000; align-items: center; justify-content: center; padding: 20px; }
+        .no-access-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); z-index: 20000; align-items: center; justify-content: center; padding: 20px; }
         .no-access-modal.show { display: flex; }
-        .no-access-modal-content { background: var(--white); border-radius: 20px; padding: 40px; max-width: 440px; width: 100%; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .no-access-title { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark-violet); margin: 0 0 16px; }
-        .no-access-buttons { display: flex; flex-direction: column; gap: 12px; }
-        .no-access-btn { display: block; text-align: center; padding: 14px 24px; border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; }
-        .no-access-btn-primary { background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; box-shadow: 0 6px 24px rgba(100,56,67,0.35); }
+        .no-access-modal-content { background: linear-gradient(160deg, #fff 0%, #fbf8fa 100%); border-radius: 22px; padding: 34px 30px 30px; max-width: 460px; width: 100%; position: relative; box-shadow: 0 24px 70px rgba(0,0,0,0.35); border: 1px solid rgba(153,98,122,0.22); }
+        .no-access-title { font-family: 'Playfair Display', serif; font-size: 25px; line-height: 1.35; color: var(--dark-violet); margin: 0 0 22px; text-align: center; }
+        .no-access-buttons { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+        .no-access-btn { display: block; text-align: center; padding: 14px 24px; border-radius: 50px; font-size: 16px; font-weight: 700; text-decoration: none; transition: all 0.3s ease; min-width: 180px; }
+        .no-access-btn-primary { background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; box-shadow: 0 8px 28px rgba(100,56,67,0.35); }
         .no-access-btn-primary:hover { transform: translateY(-2px); }
         .no-access-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 28px; color: var(--text-light); cursor: pointer; line-height: 1; padding: 0; }
         .no-access-close:hover { color: var(--dark-violet); }
     `;
     overlay.classList.add('show');
+}
+
+function ensureGuestLockedVisualOverrides() {
+    if (document.getElementById('guestLockedVisualOverrides')) return;
+    const style = document.createElement('style');
+    style.id = 'guestLockedVisualOverrides';
+    style.textContent = `
+        .guest-locked-muted::before {
+            background: linear-gradient(90deg, #c8c8c8 0%, #d9d9d9 100%) !important;
+        }
+        .guest-locked-muted {
+            border-color: rgba(180, 180, 180, 0.45) !important;
+            box-shadow: 0 14px 36px rgba(44, 34, 40, 0.06), 0 0 0 1px rgba(180, 180, 180, 0.25) !important;
+        }
+        .guest-locked-btn-disabled {
+            background: #b8b8b8 !important;
+            border: 1px solid #b8b8b8 !important;
+            color: #fff !important;
+            box-shadow: none !important;
+            transform: none !important;
+            cursor: not-allowed !important;
+            text-decoration: none !important;
+        }
+        .guest-locked-btn-disabled:hover {
+            background: #b8b8b8 !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+        a.extra-offer-image-link.locked {
+            cursor: not-allowed !important;
+            text-decoration: none !important;
+            outline: none !important;
+        }
+        a.extra-offer-image-link.locked img {
+            filter: grayscale(100%) !important;
+            opacity: 0.72 !important;
+            box-shadow: none !important;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // Locked content message for guests (calendar, webinars)
@@ -2150,23 +2197,24 @@ function renderActiveWork(container) {
     if (!container) return;
     const user = getCurrentUser() || {};
     const isGuest = user.role === 'guest';
+    ensureGuestLockedVisualOverrides();
     container.innerHTML = `
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
-            <div class="guest-locked-block" style="margin:0; border-top:4px solid ${isGuest ? '#c3c3c3' : '#d4af37'};">
+            <div class="guest-locked-block ${isGuest ? 'guest-locked-muted' : ''}" style="margin:0; border-top:4px solid ${isGuest ? '#c3c3c3' : '#d4af37'};">
                 <div class="guest-locked-inner">
                     <h3 class="guest-locked-title">Vprašalnik</h3>
                     <p class="guest-locked-lead">Odpri vprašalnik in spremljaj svoj napredek skozi delo na sebi.</p>
                     <div class="guest-locked-buttons">
-                        <button type="button" class="guest-locked-btn guest-locked-btn-primary" onclick="${isGuest ? 'showGuestJoinPopup()' : `openSidebarTab('questionnaire')`}" style="${isGuest ? 'background:#b5b5b5;border-color:#b5b5b5;cursor:not-allowed;' : ''}">Odpri vprašalnik</button>
+                        <button type="button" class="guest-locked-btn guest-locked-btn-primary ${isGuest ? 'guest-locked-btn-disabled' : ''}" onclick="${isGuest ? 'showGuestJoinPopup()' : `openSidebarTab('questionnaire')`}">Odpri vprašalnik</button>
                     </div>
                 </div>
             </div>
-            <div class="guest-locked-block" style="margin:0; border-top:4px solid ${isGuest ? '#c3c3c3' : '#d4af37'};">
+            <div class="guest-locked-block ${isGuest ? 'guest-locked-muted' : ''}" style="margin:0; border-top:4px solid ${isGuest ? '#c3c3c3' : '#d4af37'};">
                 <div class="guest-locked-inner">
                     <h3 class="guest-locked-title">Kolo življenja</h3>
                     <p class="guest-locked-lead">Oceni 8 področij življenja in shrani svoj trenutni vpogled.</p>
                     <div class="guest-locked-buttons">
-                        <button type="button" class="guest-locked-btn guest-locked-btn-primary" onclick="${isGuest ? 'showGuestJoinPopup()' : `openSidebarTab('life-wheel')`}" style="${isGuest ? 'background:#b5b5b5;border-color:#b5b5b5;cursor:not-allowed;' : ''}">Odpri kolo življenja</button>
+                        <button type="button" class="guest-locked-btn guest-locked-btn-primary ${isGuest ? 'guest-locked-btn-disabled' : ''}" onclick="${isGuest ? 'showGuestJoinPopup()' : `openSidebarTab('life-wheel')`}">Odpri kolo življenja</button>
                     </div>
                 </div>
             </div>
@@ -2494,6 +2542,7 @@ async function loadLifeWheel(container) {
 
 async function loadCoursesAndWebinars(container) {
     if (!container) return;
+    ensureGuestLockedVisualOverrides();
     await loadClassroom(container);
     let webinars = JSON.parse(localStorage.getItem('webinars') || '[]') || [];
     webinars = applyStopnicWebinarDefaults(webinars);
@@ -2514,11 +2563,11 @@ async function loadCoursesAndWebinars(container) {
             const isStopnic = String(w.title || '').toLowerCase().includes('stopnic');
             const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
             const wid = encodeURIComponent(String(w.id));
-            const href = hasAccess ? `/course?webinar=${wid}` : '/jaz-zenska';
+            const href = hasAccess ? `/course?webinar=${wid}` : '#';
             const lockedClass = hasAccess ? '' : ' locked';
             return `
                 <div class="extra-offer-image-row">
-                    <a href="${href}" class="extra-offer-image-link${lockedClass}">
+                    <a href="${href}" class="extra-offer-image-link${lockedClass}" ${hasAccess ? '' : 'onclick="event.preventDefault(); showGuestJoinPopup();"'}>
                         <img src="${cardImage}" alt="${escapeHtml(w.title || 'Webinar')}">
                     </a>
                 </div>
