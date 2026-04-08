@@ -646,6 +646,9 @@
                 <a href="/pohod" class="current-event-card current-event-image-link">
                     <img src="images/pohod.webp" alt="Pohod 100 Žensk na Trško Goro" class="current-event-image">
                 </a>
+                <a href="#" id="webinar-register-button" class="current-event-card current-event-image-link">
+                    <img src="images/webinar-moc-besede.png" alt="Brezplačen webinar Moč besede" class="current-event-image">
+                </a>
 
                 <article class="trg-product">
                     <span class="trg-product-badge">Tečaj</span>
@@ -1161,8 +1164,12 @@
     <div class="webinar-modal-overlay" id="webinarModal">
         <div class="webinar-modal-content">
             <button class="webinar-modal-close" id="webinarModalClose" aria-label="Zapri">&times;</button>
-            <h2 class="webinar-modal-title">Prijavi se na brezplačen webinar</h2>
-            <p class="webinar-modal-description">Vnesite vaš email naslov in se prijavite na brezplačni webinar <strong>Moja moč je v meni</strong>.</p>
+            <h2 class="webinar-modal-title">Prijavi se na brezplačen webinar Moč besede</h2>
+            <div class="webinar-modal-description">
+                <p>Ali verjameš, da naše misli in besede <b>vplivajo na naša dejanja</b>, naše počutje in naša čustva. <b>Besede imajo moč</b>, da spremenijo naše življenje in res ni vseeno katere beseda, kdaj in kako uporabljamo.</p> <br>
+                <p>Si želite v svoje življenje privabiti več lahkotnosti, miru, obilja, izboljšati svoje počutje, zdravje, energijo <b>in medsebojne odnose?</b></p> <br>
+                <p>Veliko lahko naredite <b>že s pravo izbiro besed</b> in prav o besedah se bomo pogovarjali na <b>brezplačnem webinarju</b>, na katerega vas vabim <b>v torek, 14. aprila ob 20 uri</b>.</p>
+            </div>
             <form class="webinar-modal-form" id="webinarSignupForm" data-form-start-time="">
                 <!-- Honeypot fields - hidden from users but bots will fill them -->
                 <input type="text" name="are_you_a_bot" id="webinar_are_you_a_bot" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
@@ -1183,9 +1190,7 @@
                     placeholder="Vaš email naslov" 
                     required
                 >
-                <button type="submit" class="webinar-modal-submit" id="webinarSubmitBtn">
-                    Prijavi se na brezplačen webinar
-                </button>
+                <button type="submit" class="webinar-modal-submit" id="webinarSubmitBtn">Prijava na webinar</button>
                 <div class="webinar-modal-message" id="webinarMessage"></div>
             </form>
             
@@ -1300,6 +1305,7 @@
             webinarThankYou.classList.remove('active');
             webinarNameInput.disabled = false;
             webinarEmailInput.disabled = false;
+            webinarSubmitBtn.textContent = 'Prijava na webinar';
         }
 
         // Close button
@@ -1354,6 +1360,7 @@
                         body: JSON.stringify({
                             email: email,
                             name: name,
+                            campaignId: 'moc-besede-webinar',
                             are_you_a_bot: (document.getElementById('webinar_are_you_a_bot')?.value || '').trim(),
                             website: (document.getElementById('webinar_website')?.value || '').trim(),
                             company: (document.getElementById('webinar_company')?.value || '').trim(),
@@ -1370,13 +1377,13 @@
                     } else {
                         showWebinarMessage(data.message || 'Napaka pri prijavi. Prosimo, poskusite znova.', 'error');
                         webinarSubmitBtn.disabled = false;
-                        webinarSubmitBtn.textContent = 'Prijavi se na brezplačen webinar';
+                        webinarSubmitBtn.textContent = 'Prijava na webinar';
                     }
                 } catch (error) {
                     console.error('Error:', error);
                     showWebinarMessage('Napaka pri povezavi. Prosimo, poskusite znova.', 'error');
                     webinarSubmitBtn.disabled = false;
-                    webinarSubmitBtn.textContent = 'Prijavi se na brezplačen webinar';
+                    webinarSubmitBtn.textContent = 'Prijava na webinar';
                 }
             });
         }

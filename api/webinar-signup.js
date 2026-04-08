@@ -53,8 +53,12 @@ module.exports = async function handler(req, res) {
         const normalizedEmail = String(email).trim().toLowerCase();
         const displayName = name ? String(name).trim() : normalizedEmail.split('@')[0];
 
-        // Single active webinar group: 25 Stopnic do sreče
-        const result = await addToMailerLite(normalizedEmail, displayName, [GROUPS.WEBINAR_25_STOPNIC]);
+        // Route by campaign; default remains 25 Stopnic for backward compatibility.
+        const campaign = String(campaignId || '').trim().toLowerCase();
+        const targetGroupId = campaign === 'moc-besede-webinar'
+            ? GROUPS.WEBINAR_MOC_BESEDE
+            : GROUPS.WEBINAR_25_STOPNIC;
+        const result = await addToMailerLite(normalizedEmail, displayName, [targetGroupId]);
 
         if (result.success) {
             return res.status(200).json({
