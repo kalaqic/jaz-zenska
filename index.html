@@ -1423,6 +1423,22 @@
                     openWebinarModal();
                 });
             });
+
+            // Deep-link support: /?openWebinarSignup=1#aktualno
+            const params = new URLSearchParams(window.location.search);
+            const shouldOpenSignup =
+                params.get('openWebinarSignup') === '1' ||
+                params.get('openWebinarSignup') === 'true' ||
+                params.get('webinarSignup') === 'moc-besede';
+            if (shouldOpenSignup) {
+                const aktualno = document.getElementById('aktualno');
+                if (aktualno) {
+                    aktualno.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                setTimeout(() => {
+                    openWebinarModal();
+                }, 350);
+            }
         });
     </script>
     <script>if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:'Domača stran'});</script>
