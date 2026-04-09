@@ -149,6 +149,30 @@
             cursor: not-allowed;
             transform: none;
         }
+        .course-checkout-btn-secondary {
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: transparent;
+            color: var(--luxe-violet);
+            padding: 18px 48px;
+            border: 2px solid rgba(100, 56, 67, 0.35);
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 12px;
+            text-decoration: none;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .course-checkout-btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(100, 56, 67, 0.12);
+            border-color: rgba(100, 56, 67, 0.55);
+        }
         .course-checkout-loading {
             display: none;
             text-align: center;
@@ -248,11 +272,10 @@
                     <input type="email" id="email" name="email" placeholder="vas@email.si" required autocomplete="email">
                 </div>
                 <div id="courseCheckoutError" class="course-checkout-error"></div>
-                <button type="submit" class="course-checkout-btn" id="courseCheckoutBtn">Plačaj 27 €</button>
+                <button type="submit" class="course-checkout-btn" id="courseCheckoutBtn">💳 Plačilo s kartico (27 €)</button>
+                <a href="/bank-transfer?product=moc-besede" class="course-checkout-btn-secondary">🏦 Bančno nakazilo (27 €)</a>
             </form>
             <div id="courseCheckoutLoading" class="course-checkout-loading">Priprava plačila...</div>
-            <p class="checkout-back" style="margin-top: 10px; margin-bottom: 8px;">ali</p>
-            <a href="/bank-transfer?product=moc-besede" class="checkout-back">Plačilo z bančnim nakazilom (27 €)</a><br>
             <a href="/spletna-trgovina" class="checkout-back">← Nazaj na trgovino</a>
         </div>
     </div>
