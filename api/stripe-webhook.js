@@ -682,6 +682,7 @@ module.exports = async function handler(req, res) {
 
                 const { email, firstName, lastName } = waitingPayment;
                 const isPohodBank = waitingPayment.product === 'pohod';
+                const isCourseBank = waitingPayment.product === 'moc-besede';
 
                 // —— Pohod bank transfer: add to POHOD group with event number, then remove from waiting ——
                 if (isPohodBank) {
@@ -741,6 +742,92 @@ module.exports = async function handler(req, res) {
                     }
                     await waitingPaymentRef.delete();
                     console.log('✅ Pohod bank transfer completed – event_number', eventNumber);
+                    return res.status(200).json({ received: true });
+                }
+
+                // —— Course bank transfer (Moč besede) ——
+                if (isCourseBank) {
+                    const courseId = process.env.SHOP_COURSE_ID || 'moc-besede';
+                    const customerEmail = email;
+                    const customerName = `${firstName} ${lastName}`.trim();
+
+                    await waitingPaymentRef.update({
+                        paymentStatus: 'paid',
+                        paidAt: admin.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    const auth = admin.auth();
+                    let user;
+                    try {
+                        user = await auth.getUserByEmail(customerEmail);
+                    } catch (err) {
+                        if (err.code === 'auth/user-not-found') {
+                            const tempPassword = Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12) + 'A1!';
+                            user = await auth.createUser({
+                                email: customerEmail,
+                                password: tempPassword,
+                                emailVerified: false,
+                                disabled: false
+                            });
+                        } else throw err;
+                    }
+
+                    const userDocRef = db.collection('users').doc(user.uid);
+                    const userDoc = await userDocRef.get();
+                    if (!userDoc.exists) {
+                        await userDocRef.set({
+                            email: customerEmail,
+                            name: customerName || customerEmail.split('@')[0],
+                            role: 'guest',
+                            purchasedCourses: [courseId],
+                            welcomed: false,
+                            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                            paymentMethod: 'bank_transfer'
+                        });
+                    } else {
+                        const data = userDoc.data() || {};
+                        const existing = data.purchasedCourses || [];
+                        const updates = {
+                            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                            paymentMethod: 'bank_transfer'
+                        };
+                        if (!existing.includes(courseId)) {
+                            updates.purchasedCourses = admin.firestore.FieldValue.arrayUnion(courseId);
+                        }
+                        if (data.role !== 'guest' && data.role !== 'member') {
+                            updates.role = 'guest';
+                        }
+                        await userDocRef.update(updates);
+                    }
+
+                    if (GROUPS.COURSE_BUYERS) {
+                        const result = await addToMailerLite(customerEmail, customerName, [GROUPS.COURSE_BUYERS]);
+                        if (result.success) console.log('✅ MailerLite: added to Course buyers group (bank)');
+                        else console.warn('⚠️ MailerLite course add (bank):', result.error);
+                    }
+
+                    try {
+                        const baseUrl = (process.env.SITE_URL || 'https://jaz-zenska.vercel.app').replace(/\/$/, '');
+                        const resetUrl = `${baseUrl}/login?mode=resetPassword`;
+                        await auth.generatePasswordResetLink(customerEmail, { url: resetUrl, handleCodeInApp: false });
+                        const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
+                        if (FIREBASE_API_KEY) {
+                            await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${FIREBASE_API_KEY}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    requestType: 'PASSWORD_RESET',
+                                    email: customerEmail,
+                                    continueUrl: resetUrl,
+                                }),
+                            });
+                        }
+                    } catch (emailErr) {
+                        console.error('❌ Course bank: password reset email failed:', emailErr.message);
+                    }
+
+                    await waitingPaymentRef.delete();
+                    console.log('✅ Moč besede bank transfer completed –', customerEmail, 'course_id', courseId);
                     return res.status(200).json({ received: true });
                 }
 
