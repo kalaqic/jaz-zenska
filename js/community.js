@@ -1350,6 +1350,7 @@ let currentCalendarDate = new Date();
 
 const CANONICAL_STOPNIC_ID = 'stopnic-webinar-2026';
 const CANONICAL_POHOD_ID = 'pohod-100-zensk-trska-2026-05';
+const CANONICAL_MOC_BESEDE_WEBINAR_ID = 'moc-besede-webinar-2026-04-14';
 const LEGACY_POHOD_EVENT_ID = 'pohod-100-zensk-trska-2026';
 
 function dashboardEventsToLocalDateString(d) {
@@ -1371,6 +1372,19 @@ function getCanonicalPohodEvent() {
         externalUrl: '/pohod',
         externalLabel: 'Rezerviraj svoje mesto',
         image: 'images/pohod.webp',
+        canonical: true
+    };
+}
+
+function getCanonicalMocBesedeWebinarEvent() {
+    return {
+        id: CANONICAL_MOC_BESEDE_WEBINAR_ID,
+        title: 'Webinar Moč besede',
+        description: 'Ali verjameš, da naše misli in besede vplivajo na naša dejanja, naše počutje in naša čustva. Besede imajo moč, da spremenijo naše življenje in res ni vseeno katere beseda, kdaj in kako uporabljamo.\n\nVeliko lahko naredite že s pravo izbiro besed in prav o besedah se bomo pogovarjali na brezplačnem webinarju, na katerega vas vabim v torek, 14. aprila ob 20 uri.',
+        date: new Date(2026, 3, 14, 20, 0).toISOString(),
+        time: '20:00',
+        type: 'webinar',
+        location: '/?openWebinarSignup=1#aktualno',
         canonical: true
     };
 }
@@ -1420,6 +1434,15 @@ function mergeCanonicalEvents(events) {
     );
     if (!hasPohod) {
         list.push(getCanonicalPohodEvent());
+    }
+
+    const hasMocBesedeWebinar = list.some(e =>
+        e.id === CANONICAL_MOC_BESEDE_WEBINAR_ID
+        || ((String(e.title || '').toLowerCase().includes('moč besede') || String(e.title || '').toLowerCase().includes('moc besede'))
+            && dashboardEventsToLocalDateString(new Date(e.date)) === '2026-04-14')
+    );
+    if (!hasMocBesedeWebinar) {
+        list.push(getCanonicalMocBesedeWebinarEvent());
     }
 
     return list;
