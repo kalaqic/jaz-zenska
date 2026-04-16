@@ -460,6 +460,6 @@ function initMediaHeroSlider() {
         slides[currentSlide].classList.add('active');
     }
     
-    // Start the rotation - change slide every 5 seconds
-    setInterval(showNextSlide, 5000);
+    // Start the rotation - change slide every 3 seconds
+    setInterval(showNextSlide, 3000);
 }

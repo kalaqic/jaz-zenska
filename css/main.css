@@ -4168,92 +4168,107 @@ nav a:hover::after {
 
 /* About Showcase */
 .jaz-about-showcase {
-    margin: 120px 0;
+    margin: 120px 0 90px;
     position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding: 80px 0;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 12% 18%, rgba(233, 85, 139, 0.18) 0%, rgba(233, 85, 139, 0) 40%),
+        radial-gradient(circle at 88% 78%, rgba(153, 98, 122, 0.16) 0%, rgba(153, 98, 122, 0) 42%),
+        linear-gradient(135deg, #fff9fb 0%, #fff2f6 55%, #fdf0f4 100%);
 }
 
 .jaz-about-showcase::before {
     content: '';
     position: absolute;
-    top: 50%;
-    right: -100px;
-    transform: translateY(-50%);
-    width: 500px;
-    height: 500px;
-    background-image: url('../images/background-decorations.webp');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.7;
+    top: -120px;
+    left: -100px;
+    width: 340px;
+    height: 340px;
+    border-radius: 45%;
+    background: linear-gradient(135deg, rgba(233, 85, 139, 0.9) 0%, rgba(153, 98, 122, 0.8) 100%);
+    opacity: 0.2;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.jaz-about-showcase::after {
+    content: '';
+    position: absolute;
+    right: -120px;
+    bottom: -140px;
+    width: 420px;
+    height: 320px;
+    border-radius: 48%;
+    background: linear-gradient(145deg, rgba(241, 173, 203, 0.55) 0%, rgba(153, 98, 122, 0.25) 100%);
     z-index: 0;
     pointer-events: none;
 }
 
 .jaz-about-hero {
-    display: flex;
-    flex-direction: row;
+    max-width: 1320px;
+    margin: 0 auto 30px;
+    padding: 0 56px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 540px);
     align-items: center;
-    justify-content: center;
-    gap: 60px;
-    margin-bottom: 30px;
-    background: var(--white);
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 50px;
-    border-radius: 30px;
-    box-shadow: 0 15px 50px rgba(100, 56, 67, 0.15);
+    gap: 64px;
+    background: transparent;
     position: relative;
-    overflow: hidden;
+    z-index: 1;
 }
 
 .jaz-about-hero::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 5px;
-    height: 100%;
-    background: linear-gradient(180deg, var(--pinky) 0%, var(--mid-violet) 50%, var(--dark-violet) 100%);
-    z-index: 1;
+    top: 36px;
+    left: 36px;
+    width: calc(100% - 72px);
+    height: calc(100% - 72px);
+    border-radius: 34px;
+    border: 1px solid rgba(100, 56, 67, 0.14);
+    z-index: -1;
+    pointer-events: none;
 }
-
-
 
 .jaz-about-image {
     width: 100%;
-    max-width: 280px;
+    max-width: 540px;
+    aspect-ratio: 3197 / 3400;
     height: auto;
     display: block;
-    border-radius: 20px;
-    object-fit: contain;
+    border-radius: 28px;
+    object-fit: cover;
+    object-position: center top;
     flex-shrink: 0;
-    box-shadow: 0 10px 30px rgba(100, 56, 67, 0.2);
-    border: 3px solid var(--almost-white);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.jaz-about-image:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(100, 56, 67, 0.3);
+    justify-self: end;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    transition: none;
+    transform: translateY(-16px);
 }
 
 .jaz-about-text {
     padding: 0;
     text-align: left;
     background: transparent;
-    max-width: 500px;
+    max-width: 640px;
     flex-shrink: 0;
     position: relative;
 }
 
 .jaz-about-text h3 {
     font-family: 'Playfair Display', serif;
-    font-size: 38px;
+    font-size: clamp(42px, 5vw, 64px);
+    line-height: 1.06;
     color: var(--dark-violet);
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     position: relative;
-    padding-bottom: 15px;
+    padding-bottom: 18px;
 }
 
 .jaz-about-text h3::after {
@@ -4268,33 +4283,34 @@ nav a:hover::after {
 }
 
 .jaz-about-text p {
-    font-size: 18px;
-    line-height: 1.8;
+    font-size: clamp(16px, 1.4vw, 20px);
+    line-height: 1.85;
     color: var(--text-dark);
-    margin-top: 20px;
-    margin-bottom: 25px;
+    margin-top: 0;
+    margin-bottom: 34px;
+    max-width: 58ch;
 }
 
 .jaz-about-button {
     display: inline-block;
-    padding: 14px 32px;
-    background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%);
+    padding: 15px 36px;
+    background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
     color: var(--white);
     text-decoration: none;
     border-radius: 50px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 15px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.04em;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(100, 56, 67, 0.2);
-    margin-top: 10px;
+    box-shadow: 0 10px 28px rgba(100, 56, 67, 0.28);
+    margin-top: 4px;
 }
 
 .jaz-about-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(100, 56, 67, 0.3);
-    background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
+    box-shadow: 0 14px 30px rgba(100, 56, 67, 0.32);
+    background: linear-gradient(135deg, var(--dark-violet) 0%, var(--mid-violet) 100%);
 }
 
 .jaz-vision-mission {
@@ -6402,51 +6418,63 @@ nav a:hover::after {
     }
     
     /* Jaz About Hero - Mobile */
+    .jaz-about-showcase {
+        width: 100vw;
+        margin: 70px 0 70px;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding: 48px 0;
+    }
+
+    .jaz-about-showcase::before {
+        width: 220px;
+        height: 220px;
+        top: -90px;
+        left: -80px;
+    }
+
+    .jaz-about-showcase::after {
+        width: 260px;
+        height: 220px;
+        right: -90px;
+        bottom: -100px;
+    }
+
     .jaz-about-hero {
-        flex-direction: column;
-        gap: 40px;
-        padding: 40px 25px;
-    }
-    
-    .jaz-about-hero::before {
-        width: 100%;
-        height: 5px;
-        top: 0;
-        left: 0;
-        background: linear-gradient(90deg, var(--pinky) 0%, var(--mid-violet) 50%, var(--dark-violet) 100%);
-    }
-    
-    .jaz-about-image {
-        max-width: 250px;
-        width: 100%;
-        height: auto;
-        border-radius: 20px;
-    }
-    
-    .jaz-about-text {
+        grid-template-columns: 1fr;
+        gap: 32px;
         padding: 0;
-        text-align: center;
     }
-    
-    .jaz-about-text h3 {
-        font-size: 32px;
+
+    .jaz-about-hero::before {
+        top: 16px;
+        left: 12px;
+        width: calc(100% - 24px);
+        height: calc(100% - 32px);
+        border-radius: 24px;
     }
-    
-    .jaz-about-text h3::after {
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    
-    .jaz-about-text p {
-        font-size: 16px;
-    }
-    
-    .jaz-about-button {
-        padding: 12px 28px;
-        font-size: 14px;
+
+    .jaz-about-image {
+        max-width: 380px;
         width: 100%;
-        text-align: center;
+        border-radius: 22px;
+        justify-self: center;
+        order: 1;
+        transform: none;
+        border-bottom: 1px solid rgba(100, 56, 67, 0.28);
     }
+
+    .jaz-about-text {
+        padding: 0 18px;
+        text-align: left;
+        max-width: 100%;
+        order: 2;
+    }
+    
+    .jaz-about-text h3 { font-size: 38px; }
+    .jaz-about-text h3::after { left: 0; transform: none; }
+    .jaz-about-text p { font-size: 16px; line-height: 1.75; max-width: 100%; }
+    .jaz-about-button { padding: 13px 28px; font-size: 14px; }
     
     /* Vision Mission - Mobile */
     .jaz-vision-mission {
