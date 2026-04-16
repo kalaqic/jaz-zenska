@@ -790,6 +790,8 @@ async function loadClassroom(container) {
         'Meditativni ples za sproščanje',
         // Webinarji (niso tečaji) – ostanejo le pod »Webinarji«
         'Moja moč je v meni',
+        'Moč Besede | Webinar',
+        'Moc Besede | Webinar',
         '25 Stopnic do srece',
         '25 Stopnic do sreče'
     ];
@@ -798,6 +800,7 @@ async function loadClassroom(container) {
         if (coursesToDelete.includes(course.title)) return false;
         const t = String(course.title || '').toLowerCase();
         if (t.includes('stopnic')) return false;
+        if (t.includes('webinar')) return false;
         return true;
     });
     
@@ -813,6 +816,19 @@ async function loadClassroom(container) {
     `;
 
     const isGuest = currentUser.role === 'guest';
+    const hasMocBesedeAccess = !isGuest || purchasedCourses.includes('moc-besede');
+
+    // Render Moč besede as image card (no square text card)
+    html += `
+        <div class="extra-offer-image-row" style="margin-bottom: 20px;">
+            <a href="${hasMocBesedeAccess ? '/course?id=moc-besede' : '/jaz-zenska'}" class="extra-offer-image-link${hasMocBesedeAccess ? '' : ' locked'}" ${hasMocBesedeAccess ? '' : 'onclick="event.preventDefault(); showGuestJoinPopup();"'} >
+                <img src="images/moc besede tecaj.webp" alt="Moč besede">
+            </a>
+        </div>
+    `;
+
+    // Keep moc-besede out of generic square course grid
+    courses = courses.filter(course => course.id !== 'moc-besede');
     
     if (courses.length > 0) {
         html += '<div class="courses-grid">';
