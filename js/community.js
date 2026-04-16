@@ -813,22 +813,6 @@ async function loadClassroom(container) {
     `;
 
     const isGuest = currentUser.role === 'guest';
-    const hasMocBesedeAccess = !isGuest || purchasedCourses.includes('moc-besede');
-    // Keep "Moč besede" always as a featured card in webinar-like design
-    html += `
-        <div class="webinars-grid" style="margin-bottom: 24px;">
-            <div class="webinar-card ${hasMocBesedeAccess ? '' : 'locked'}" onclick="openCourse('moc-besede', ${hasMocBesedeAccess})">
-                <img src="images/moc besede.webp" alt="Moč besede" class="webinar-card-image">
-                <div class="webinar-title">Moč besede</div>
-                <div class="webinar-date">30-dnevna e-delavnica</div>
-                <div class="webinar-description">Spoznaj moč besed in kako z majhnimi spremembami v izražanju vplivaš na počutje, odnose in rezultate v življenju.</div>
-                ${!hasMocBesedeAccess ? '<div class="webinar-lock-note">Nimate dostopa do tega tečaja</div>' : ''}
-            </div>
-        </div>
-    `;
-
-    // Remove moc-besede from the generic grid so it doesn't appear as a purple card
-    courses = courses.filter(course => course.id !== 'moc-besede');
     
     if (courses.length > 0) {
         html += '<div class="courses-grid">';
@@ -2617,7 +2601,8 @@ async function loadCoursesAndWebinars(container) {
     } else {
         webinarsHtml += webinars.map(w => {
             const isStopnic = String(w.title || '').toLowerCase().includes('stopnic');
-            const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
+            const isMocBesede = String(w.title || '').toLowerCase().includes('moč besede') || String(w.title || '').toLowerCase().includes('moc besede');
+            const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : (isMocBesede ? 'images/moc besede fb.webp' : 'images/moja moc je v meni.webp');
             const wid = encodeURIComponent(String(w.id));
             const href = hasAccess ? `/course?webinar=${wid}` : '#';
             const lockedClass = hasAccess ? '' : ' locked';
