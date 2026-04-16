@@ -982,6 +982,7 @@ function getGuestLockedHtml() {
 // ===== WEBINARS SECTION =====
 // 25 Stopnic do sreče – uradni Vimeo replay (iframe src kot na vimeo embed strani)
 const STOPNIC_WEBINAR_VIMEO_URL = 'https://player.vimeo.com/video/1179302920?badge=0&autopause=0&player_id=0&app_id=58479';
+const MOC_BESEDE_WEBINAR_VIMEO_URL = 'https://player.vimeo.com/video/1183774557?badge=0&autopause=0&player_id=0&app_id=58479';
 
 /** Ensure 25 Stopnic webinar exists and has Vimeo replay (same flow as course player for «Moja moč je v meni»). */
 function applyStopnicWebinarDefaults(webinars) {
@@ -996,6 +997,14 @@ function applyStopnicWebinarDefaults(webinars) {
                 videoUrl: w.videoUrl || STOPNIC_WEBINAR_VIMEO_URL
             };
         }
+        if (t === 'Moč Besede | Webinar' || t === 'Moc Besede | Webinar' || t === 'Moč besede | Webinar' || t === 'Moc besede | Webinar') {
+            return {
+                ...w,
+                title: 'Moč Besede | Webinar',
+                videoId: w.videoId || '1183774557',
+                videoUrl: w.videoUrl || MOC_BESEDE_WEBINAR_VIMEO_URL
+            };
+        }
         return w;
     });
     const hasStopnic = list.some(w => String(w.title || '').trim() === '25 Stopnic do sreče');
@@ -1007,6 +1016,21 @@ function applyStopnicWebinarDefaults(webinars) {
             description: 'Webinar 25 stopnic do sreče — posnetek.',
             videoId: '1179302920',
             videoUrl: STOPNIC_WEBINAR_VIMEO_URL
+        });
+    }
+
+    const hasMocBesede = list.some(w => {
+        const t = String(w.title || '').trim().toLowerCase();
+        return t === 'moč besede | webinar' || t === 'moc besede | webinar';
+    });
+    if (!hasMocBesede) {
+        list.unshift({
+            id: '3',
+            title: 'Moč Besede | Webinar',
+            date: '14. aprila 2026',
+            description: 'Webinar Moč Besede.',
+            videoId: '1183774557',
+            videoUrl: MOC_BESEDE_WEBINAR_VIMEO_URL
         });
     }
     return list;
@@ -1052,6 +1076,14 @@ async function loadWebinars(container) {
                 description: 'Webinar 25 stopnic do sreče.',
                 videoId: '1179302920',
                 videoUrl: STOPNIC_WEBINAR_VIMEO_URL
+            },
+            {
+                id: '3',
+                title: 'Moč Besede | Webinar',
+                date: '14. aprila 2026',
+                description: 'Webinar Moč Besede.',
+                videoId: '1183774557',
+                videoUrl: MOC_BESEDE_WEBINAR_VIMEO_URL
             }
         ];
         localStorage.setItem('webinars', JSON.stringify(defaultWebinars));
@@ -1096,7 +1128,8 @@ async function loadWebinars(container) {
         html = '<div class="extra-offer-webinars-stack">';
         webinars.forEach(webinar => {
             const isStopnic = String(webinar.title || '').toLowerCase().includes('stopnic');
-            const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
+            const isMocBesede = String(webinar.title || '').toLowerCase().includes('moč besede') || String(webinar.title || '').toLowerCase().includes('moc besede');
+            const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : (isMocBesede ? 'images/moc besede fb.webp' : 'images/moja moc je v meni.webp');
             const hasAccess = !isGuest;
             const safeId = encodeURIComponent(String(webinar.id));
             const href = hasAccess ? `/course?webinar=${safeId}` : '/jaz-zenska';
