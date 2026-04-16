@@ -963,7 +963,7 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
     const contentArea = document.getElementById('courseContentArea');
     contentArea.innerHTML = `
         <div class="course-content-title">${episode.title}</div>
-        <div class="course-video">
+        <div class="course-video ${isWebinarCourse ? 'webinar-video' : ''}">
             ${episode.videoUrl ? `
                 <iframe
                     src="${episode.videoUrl}"
