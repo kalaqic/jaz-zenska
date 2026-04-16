@@ -822,7 +822,7 @@ async function loadClassroom(container) {
     html += `
         <div class="extra-offer-image-row" style="margin-bottom: 20px;">
             <a href="${hasMocBesedeAccess ? '/course?id=moc-besede' : '/jaz-zenska'}" class="extra-offer-image-link${hasMocBesedeAccess ? '' : ' locked'}" ${hasMocBesedeAccess ? '' : 'onclick="event.preventDefault(); showGuestJoinPopup();"'} >
-                <img src="images/moc besede tecaj.webp" alt="Moč besede">
+                <img src="images/moc besede.webp" alt="Moč besede">
             </a>
         </div>
     `;
