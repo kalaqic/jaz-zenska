@@ -318,10 +318,10 @@
                 setMessage('', '');
 
                 try {
-                    const response = await fetch('/api/jutranji-obred-signup', {
+                    const response = await fetch('/api/newsletter', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, email }),
+                        body: JSON.stringify({ name, email, type: 'jutranji_obred' }),
                     });
 
                     const data = await response.json();
