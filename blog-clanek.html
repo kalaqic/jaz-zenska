@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Članek – Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/blog-page.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/cms-pages.css">
+</head>
+<body class="cms-page">
+    <div class="top-bar"><div class="top-bar-content"><a href="/o-meni">O meni</a><a href="/media">Mediji</a><a href="/stik-z-nami">Stik z nami</a></div></div>
+    <header>
+        <div class="header-content">
+            <a href="/" class="header-logo"><img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska"></a>
+            <nav class="desktop-nav"><ul>
+                <li><a href="/jaz-zenska">Jaz Ženska</a></li>
+                <li><a href="/#aktualno">Aktualno</a></li>
+                <li><a href="/blog">Blog</a></li>
+            </ul></nav>
+        </div>
+    </header>
+
+    <section class="blog-page-section">
+        <div class="blog-page-container" id="cmsBlogArticle">
+            <div class="cms-loading" id="cmsBlogLoading">Nalaganje...</div>
+            <div id="cmsBlogNotFound" style="display:none;" class="cms-not-found">
+                <h1>Članek ni najden</h1>
+                <p><a href="/blog" class="cms-back">← Nazaj na blog</a></p>
+            </div>
+            <div id="cmsBlogContent" style="display:none;">
+                <p class="blog-page-subtitle" id="cmsBlogMeta"></p>
+                <h1 id="cmsBlogTitle"></h1>
+                <div class="cms-body blog-article-body" id="cmsBlogBody"></div>
+                <p style="margin-top:32px;"><a href="/blog" class="cms-back">← Nazaj na blog</a></p>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/cms-firebase.js"></script>
+    <script src="js/cms-public.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        function cmsGetBlogSlug() {
+            const m = window.location.pathname.match(/\/blog\/([^/]+)/);
+            if (m) return decodeURIComponent(m[1]);
+            return cmsGetQueryParam('slug');
+        }
+        document.addEventListener('DOMContentLoaded', async () => {
+            const post = await cmsLoadBlogBySlug(cmsGetBlogSlug());
+            document.getElementById('cmsBlogLoading').style.display = 'none';
+            if (!post) {
+                document.getElementById('cmsBlogNotFound').style.display = 'block';
+                return;
+            }
+            document.title = (post.title || 'Blog') + ' – Jaz Ženska';
+            document.getElementById('cmsBlogMeta').textContent = [post.category, post.dateLabel].filter(Boolean).join(' · ');
+            document.getElementById('cmsBlogTitle').textContent = post.title || '';
+            document.getElementById('cmsBlogBody').innerHTML = post.bodyHtml || '';
+            document.getElementById('cmsBlogContent').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

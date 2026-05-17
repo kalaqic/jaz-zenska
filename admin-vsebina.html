@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urejanje vsebine – Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <style>
+        body { background: #faf8f6; font-family: Montserrat, sans-serif; margin: 0; color: #2c2228; }
+        .cms-admin-header { background: #fff; border-bottom: 1px solid rgba(100,56,67,0.12); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .cms-admin-header h1 { font-family: 'Playfair Display', serif; margin: 0; font-size: 26px; color: #643843; }
+        .cms-admin-wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+        .cms-admin-tabs { display: flex; gap: 10px; margin-bottom: 24px; }
+        .cms-admin-tab { border: 2px solid #99627A; background: #fff; color: #643843; padding: 10px 22px; border-radius: 999px; font-weight: 600; cursor: pointer; }
+        .cms-admin-tab.active { background: linear-gradient(135deg, #99627A, #643843); color: #fff; }
+        .cms-admin-panel { display: none; }
+        .cms-admin-panel.active { display: block; }
+        .cms-admin-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 28px; align-items: start; }
+        @media (max-width: 900px) { .cms-admin-grid { grid-template-columns: 1fr; } }
+        .cms-admin-card { background: #fff; border-radius: 16px; padding: 22px; box-shadow: 0 8px 30px rgba(44,34,40,0.06); border: 1px solid rgba(153,98,122,0.12); }
+        .cms-admin-card h2 { font-family: 'Playfair Display', serif; margin: 0 0 18px; color: #643843; font-size: 22px; }
+        .cms-admin-field { margin-bottom: 14px; }
+        .cms-admin-field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #6b5b62; }
+        .cms-admin-field input, .cms-admin-field select, .cms-admin-field textarea { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid rgba(100,56,67,0.2); border-radius: 10px; font-family: inherit; font-size: 14px; }
+        .cms-admin-field textarea { min-height: 70px; resize: vertical; }
+        .cms-admin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .cms-admin-preview { width: 100%; max-height: 160px; object-fit: cover; border-radius: 10px; margin-top: 8px; background: #f5f0eb; }
+        .cms-editor-wrap { margin-bottom: 16px; }
+        .cms-editor-wrap .ql-container { min-height: 220px; font-size: 15px; }
+        .cms-admin-btn { background: linear-gradient(135deg, #99627A, #643843); color: #fff; border: 0; padding: 12px 24px; border-radius: 999px; font-weight: 600; cursor: pointer; font-size: 14px; }
+        .cms-admin-btn.secondary { background: #fff; color: #643843; border: 2px solid #99627A; }
+        .cms-admin-btn.small { padding: 6px 12px; font-size: 12px; }
+        .cms-admin-btn.danger { background: #a6232e; }
+        .cms-admin-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+        .cms-admin-list-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(100,56,67,0.1); }
+        .cms-admin-meta { display: block; font-size: 12px; color: #6b5b62; margin-top: 4px; }
+        .cms-admin-empty { color: #6b5b62; font-size: 14px; }
+        .cms-admin-denied { max-width: 520px; margin: 80px auto; text-align: center; padding: 32px; background: #fff; border-radius: 16px; }
+        .cms-hint { font-size: 12px; color: #6b5b62; margin-top: 4px; }
+        #cmsAdminApp { display: none; }
+    </style>
+</head>
+<body>
+    <div id="cmsAdminDenied" class="cms-admin-denied" style="display:none;">
+        <h1>Dostop zavrnjen</h1>
+        <p>Ta stran je na voljo samo administratorju.</p>
+        <p><a href="/login?next=/admin-vsebina">Prijava</a> · <a href="/">Domov</a></p>
+    </div>
+
+    <div id="cmsAdminApp">
+        <header class="cms-admin-header">
+            <div>
+                <h1>Urejanje vsebine</h1>
+                <p style="margin:4px 0 0;font-size:13px;color:#6b5b62;" id="cmsAdminUserEmail"></p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <a href="/" class="cms-admin-btn secondary" style="text-decoration:none;">Domača stran</a>
+                <a href="/dashboard" class="cms-admin-btn secondary" style="text-decoration:none;">Učilnica</a>
+                <button type="button" class="cms-admin-btn secondary" onclick="firebase.auth().signOut().then(()=>location.href='/login')">Odjava</button>
+            </div>
+        </header>
+
+        <main class="cms-admin-wrap">
+            <div class="cms-admin-tabs">
+                <button type="button" class="cms-admin-tab active" data-tab="Events">Dogodki</button>
+                <button type="button" class="cms-admin-tab" data-tab="Blogs">Blog</button>
+            </div>
+
+            <section id="cmsPanelEvents" class="cms-admin-panel active">
+                <div class="cms-admin-grid">
+                    <div class="cms-admin-card">
+                        <h2>Seznam dogodkov</h2>
+                        <div id="cmsEventList"></div>
+                    </div>
+                    <div class="cms-admin-card">
+                        <h2 id="cmsEventFormTitle">Nov dogodek</h2>
+                        <form id="cmsEventForm">
+                            <input type="hidden" id="cmsEventId">
+                            <div class="cms-admin-field"><label>Naslov *</label><input type="text" id="cmsEventTitle" required></div>
+                            <div class="cms-admin-row">
+                                <div class="cms-admin-field"><label>URL slug *</label><input type="text" id="cmsEventSlug" placeholder="moj-jutranji-obred"><p class="cms-hint">/dogodek/<em>slug</em></p></div>
+                                <div class="cms-admin-field"><label>Vrstni red (Aktualno)</label><input type="number" id="cmsEventSortOrder" value="0"></div>
+                            </div>
+                            <div class="cms-admin-field"><label>Oznaka (hero)</label><input type="text" id="cmsEventHeroLabel" placeholder="Delavnica"></div>
+                            <div class="cms-admin-field"><label>Kratek opis (hero)</label><textarea id="cmsEventHeroSubtitle"></textarea></div>
+                            <div class="cms-admin-field">
+                                <label>Hero slika</label>
+                                <input type="file" id="cmsEventHeroFile" accept="image/*">
+                                <input type="hidden" id="cmsEventHeroUrl">
+                                <img id="cmsEventHeroPreview" class="cms-admin-preview" alt="">
+                            </div>
+                            <div class="cms-admin-field">
+                                <label>Slika kartice (Aktualno)</label>
+                                <input type="file" id="cmsEventCardFile" accept="image/*">
+                                <input type="hidden" id="cmsEventCardUrl">
+                                <img id="cmsEventCardPreview" class="cms-admin-preview" alt="">
+                            </div>
+                            <div class="cms-admin-field"><label><input type="checkbox" id="cmsEventIsFree" checked> Brezplačen dogodek</label></div>
+                            <div id="cmsEventFreeFields">
+                                <div class="cms-admin-field"><label>MailerLite skupina ID (brezplačna prijava)</label><input type="text" id="cmsEventMailerliteGroupId" placeholder="ID skupine iz MailerLite"><p class="cms-hint">Najdete v MailerLite → Skupine</p></div>
+                            </div>
+                            <div id="cmsEventPaidFields" style="display:none;">
+                                <div class="cms-admin-row">
+                                    <div class="cms-admin-field"><label>Cena (€)</label><input type="number" step="0.01" id="cmsEventPrice"></div>
+                                    <div class="cms-admin-field"><label>Povezava za plačilo</label><input type="text" id="cmsEventCtaUrl" placeholder="/course-checkout"></div>
+                                </div>
+                            </div>
+                            <div class="cms-admin-field"><label>Gumb – besedilo</label><input type="text" id="cmsEventCtaLabel" placeholder="Brezplačne prijave"></div>
+                            <div class="cms-admin-row">
+                                <div class="cms-admin-field"><label>Status</label><select id="cmsEventStatus"><option value="draft">Osnutek</option><option value="published">Objavljeno</option></select></div>
+                                <div class="cms-admin-field" style="padding-top:28px;"><label><input type="checkbox" id="cmsEventShowHome" checked> Prikaži na domači (Aktualno)</label></div>
+                            </div>
+                            <div class="cms-editor-wrap"><label style="font-size:13px;font-weight:600;color:#6b5b62;">Vsebina strani</label><div id="cmsEventBodyEditor"></div></div>
+                            <div class="cms-admin-actions">
+                                <button type="submit" class="cms-admin-btn">Shrani dogodek</button>
+                                <button type="button" class="cms-admin-btn secondary" id="cmsEventResetBtn">Počisti</button>
+                                <button type="button" class="cms-admin-btn danger" id="cmsEventDeleteBtn" style="display:none;">Izbriši dogodek</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cmsPanelBlogs" class="cms-admin-panel">
+                <div class="cms-admin-grid">
+                    <div class="cms-admin-card">
+                        <h2>Seznam člankov</h2>
+                        <div id="cmsBlogList"></div>
+                    </div>
+                    <div class="cms-admin-card">
+                        <h2 id="cmsBlogFormTitle">Nov članek</h2>
+                        <form id="cmsBlogForm">
+                            <input type="hidden" id="cmsBlogId">
+                            <div class="cms-admin-field"><label>Naslov *</label><input type="text" id="cmsBlogTitle" required></div>
+                            <div class="cms-admin-row">
+                                <div class="cms-admin-field"><label>Slug *</label><input type="text" id="cmsBlogSlug"><p class="cms-hint">/blog/<em>slug</em></p></div>
+                                <div class="cms-admin-field"><label>Kategorija</label><input type="text" id="cmsBlogCategory" value="Blog"></div>
+                            </div>
+                            <div class="cms-admin-row">
+                                <div class="cms-admin-field"><label>Datum (prikaz)</label><input type="text" id="cmsBlogDateLabel" placeholder="6 marca, 2026"></div>
+                                <div class="cms-admin-field"><label>Vrstni red</label><input type="number" id="cmsBlogSortOrder" value="0"></div>
+                            </div>
+                            <div class="cms-admin-field"><label>Kratek opis (kartica)</label><textarea id="cmsBlogExcerpt"></textarea></div>
+                            <div class="cms-admin-field">
+                                <label>Naslovna slika</label>
+                                <input type="file" id="cmsBlogCoverFile" accept="image/*">
+                                <input type="hidden" id="cmsBlogCoverUrl">
+                                <img id="cmsBlogCoverPreview" class="cms-admin-preview" alt="">
+                            </div>
+                            <div class="cms-admin-field"><label>Status</label><select id="cmsBlogStatus"><option value="draft">Osnutek</option><option value="published">Objavljeno</option></select></div>
+                            <div class="cms-editor-wrap"><label style="font-size:13px;font-weight:600;color:#6b5b62;">Vsebina članka</label><div id="cmsBlogBodyEditor"></div></div>
+                            <div class="cms-admin-actions">
+                                <button type="submit" class="cms-admin-btn">Shrani članek</button>
+                                <button type="button" class="cms-admin-btn secondary" id="cmsBlogResetBtn">Počisti</button>
+                                <button type="button" class="cms-admin-btn danger" id="cmsBlogDeleteBtn" style="display:none;">Izbriši članek</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script src="js/cms-firebase.js"></script>
+    <script src="js/cms-admin.js"></script>
+</body>
+</html>

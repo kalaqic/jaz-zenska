@@ -3,6 +3,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // --- Public (no auth) ---
 
     // Consultation: anyone can read available slots (booking form). Writes only from backend (Admin SDK).
@@ -42,6 +48,17 @@ service cloud.firestore {
     match /webinars/{docId} {
       allow read: if request.auth != null;
       allow write: if false;
+    }
+
+    // Website CMS – public marketing events & blog posts
+    match /site_events/{docId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /blog_posts/{docId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow create, update, delete: if isAdmin();
     }
 
     // User progress (course progress) – logged-in users can read/write their own data

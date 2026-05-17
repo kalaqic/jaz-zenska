@@ -180,6 +180,11 @@ function initDashboard() {
     const roleLabels = { admin: 'Admin', member: 'Članica', guest: 'Gost' };
     roleEl.textContent = roleLabels[user.role] || (user.role === 'admin' ? 'Admin' : 'Članica');
     roleEl.className = `user-role ${user.role}`;
+
+    const adminCmsLink = document.getElementById('adminCmsLink');
+    if (adminCmsLink && user.role === 'admin') {
+        adminCmsLink.style.display = 'inline-flex';
+    }
     
     // Navigation
     // Left sidebar navigation (Tečaji / Webinarji / Koledar / Nastavitve)

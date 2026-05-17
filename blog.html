@@ -95,7 +95,7 @@
             <h1>Blog</h1>
             <p class="blog-page-subtitle">Odkrijte članke, nasvete in modrost o ženski moči, transformaciji in osebni rasti.</p>
             
-            <div class="blog-posts-grid">
+            <div class="blog-posts-grid" id="cms-blog-posts-grid">
                 <!-- Blog Post 4: 7 protipravil -->
                 <article class="blog-post-card" data-blog-id="4">
                     <div class="blog-post-image" style="background-image: url('images/anticinična.webp'); background-size: cover; background-position: center;">
@@ -237,7 +237,21 @@
     </div>
 
     <script src="js/main.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/cms-firebase.js"></script>
+    <script src="js/cms-public.js"></script>
     <script src="js/blog-page.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const posts = await cmsLoadPublishedBlogs();
+                cmsPrependBlogCards(document.getElementById('cms-blog-posts-grid'), posts);
+            } catch (err) {
+                console.warn('CMS blog:', err);
+            }
+        });
+    </script>
 </body>
 </html>
 

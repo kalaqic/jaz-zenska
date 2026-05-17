@@ -600,7 +600,7 @@
             <h2 class="current-event-title">Aktualno</h2>
             <p class="current-event-subtitle">AKTUALNI DOGODKI</p>
 
-            <div class="current-event-cards">
+            <div class="current-event-cards" id="cms-aktualno-cards">
                 <a href="pohod.html" class="current-event-card current-event-image-link">
                     <img src="images/pohod.webp" alt="Pohod 100 Žensk na Trško Goro" class="current-event-image">
                 </a>
@@ -1154,6 +1154,20 @@
         initFirebaseForScheduling();
     </script>
     <script src="js/main.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/cms-firebase.js"></script>
+    <script src="js/cms-public.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const events = await cmsLoadPublishedEvents();
+                cmsRenderAktualnoCards(document.getElementById('cms-aktualno-cards'), events);
+            } catch (err) {
+                console.warn('CMS aktualno:', err);
+            }
+        });
+    </script>
     <script>
         // Hero image slider (home hero: images/nebo.webp & images/ladja.webp)
         document.addEventListener('DOMContentLoaded', function () {

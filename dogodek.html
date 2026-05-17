@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dogodek – Jaz Ženska</title>
+    <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/cms-pages.css">
+    <style>
+        .cms-signup-modal-overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.55); z-index: 10000; padding: 20px; }
+        .cms-signup-modal-overlay.active { display: flex; }
+        .cms-signup-modal { background: #fff; border-radius: 16px; padding: 24px; max-width: 420px; width: 100%; position: relative; }
+        .cms-signup-modal input { width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid rgba(100,56,67,0.2); }
+        .cms-signup-modal button { width: 100%; border: 0; padding: 12px; border-radius: 999px; background: linear-gradient(135deg, #99627A, #643843); color: #fff; font-weight: 600; cursor: pointer; }
+        .cms-signup-msg { font-size: 14px; text-align: center; margin-top: 10px; min-height: 18px; }
+    </style>
+</head>
+<body class="cms-page">
+    <div class="top-bar"><div class="top-bar-content"><a href="/o-meni">O meni</a><a href="/media">Mediji</a><a href="/stik-z-nami">Stik z nami</a></div></div>
+    <header>
+        <div class="header-content">
+            <a href="/" class="header-logo"><img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska"></a>
+            <nav class="desktop-nav"><ul>
+                <li><a href="/jaz-zenska">Jaz Ženska</a></li>
+                <li><a href="/#aktualno">Aktualno</a></li>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/#affirmations">Meditacije</a></li>
+            </ul></nav>
+        </div>
+    </header>
+
+    <div id="cmsEventLoading" class="cms-loading">Nalaganje...</div>
+    <div id="cmsEventNotFound" class="cms-not-found" style="display:none;">
+        <h1>Dogodek ni najden</h1>
+        <p><a href="/#aktualno" class="cms-back">← Nazaj na aktualno</a></p>
+    </div>
+
+    <div id="cmsEventPage" style="display:none;">
+        <section class="cms-hero">
+            <div class="cms-hero-bg"><img id="cmsEventHeroImg" src="" alt=""></div>
+            <div class="cms-hero-inner">
+                <span class="cms-hero-label" id="cmsEventHeroLabel"></span>
+                <h1 id="cmsEventHeroTitle"></h1>
+                <p id="cmsEventHeroSubtitle"></p>
+            </div>
+        </section>
+        <section class="cms-section">
+            <div class="luxe-line"></div>
+            <div class="cms-body" id="cmsEventBody"></div>
+            <div class="cms-cta-wrap" id="cmsEventCtaWrap"></div>
+            <p style="text-align:center;"><a href="/#aktualno" class="cms-back">← Nazaj na aktualno</a></p>
+        </section>
+    </div>
+
+    <div class="cms-signup-modal-overlay" id="cmsSignupModal">
+        <div class="cms-signup-modal">
+            <h2 style="font-family:'Playfair Display',serif;color:#643843;text-align:center;">Prijava</h2>
+            <form id="cmsSignupForm">
+                <input type="text" id="cmsSignupName" placeholder="Vaše ime" required>
+                <input type="email" id="cmsSignupEmail" placeholder="Vaš email" required>
+                <button type="submit">PRIJAVI SE</button>
+                <div class="cms-signup-msg" id="cmsSignupMsg"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/cms-firebase.js"></script>
+    <script src="js/cms-public.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        let cmsCurrentEvent = null;
+
+        function cmsGetPageSlug() {
+            const m = window.location.pathname.match(/\/dogodek\/([^/]+)/);
+            if (m) return decodeURIComponent(m[1]);
+            return cmsGetQueryParam('slug');
+        }
+
+        function cmsRenderEventCta(event) {
+            const wrap = document.getElementById('cmsEventCtaWrap');
+            const label = event.ctaLabel || (event.isFree ? 'Brezplačne prijave' : 'Kupi');
+            if (event.isFree) {
+                const btn = document.createElement('button');
+                btn.className = 'cms-cta-btn';
+                btn.type = 'button';
+                btn.textContent = label;
+                btn.onclick = () => document.getElementById('cmsSignupModal').classList.add('active');
+                wrap.innerHTML = '';
+                wrap.appendChild(btn);
+                return;
+            }
+            const price = event.priceEur != null ? `${event.priceEur} €` : '';
+            wrap.innerHTML = price ? `<p class="cms-price">${price}</p>` : '';
+            if (event.ctaUrl) {
+                wrap.innerHTML += `<a href="${event.ctaUrl}" class="cms-cta-btn">${cmsEscapeHtml(label)}</a>`;
+            }
+        }
+
+        document.getElementById('cmsSignupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('cmsSignupName').value.trim();
+            const email = document.getElementById('cmsSignupEmail').value.trim();
+            const msg = document.getElementById('cmsSignupMsg');
+            try {
+                const res = await fetch('/api/newsletter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        mailerliteGroupId: cmsCurrentEvent && cmsCurrentEvent.mailerliteGroupId ? cmsCurrentEvent.mailerliteGroupId : undefined,
+                    }),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    msg.textContent = 'Uspešno ste prijavljeni.';
+                    msg.style.color = '#1f7a37';
+                    setTimeout(() => document.getElementById('cmsSignupModal').classList.remove('active'), 1200);
+                } else {
+                    msg.textContent = data.message || data.error || 'Napaka.';
+                    msg.style.color = '#a6232e';
+                }
+            } catch (err) {
+                msg.textContent = 'Napaka pri povezavi.';
+                msg.style.color = '#a6232e';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const slug = cmsGetPageSlug();
+            const event = await cmsLoadEventBySlug(slug);
+            document.getElementById('cmsEventLoading').style.display = 'none';
+            if (!event) {
+                document.getElementById('cmsEventNotFound').style.display = 'block';
+                return;
+            }
+            cmsCurrentEvent = event;
+            document.title = (event.title || 'Dogodek') + ' – Jaz Ženska';
+            document.getElementById('cmsEventHeroImg').src = event.heroImageUrl || '';
+            document.getElementById('cmsEventHeroImg').alt = event.title || '';
+            document.getElementById('cmsEventHeroLabel').textContent = event.heroLabel || '';
+            document.getElementById('cmsEventHeroTitle').textContent = event.title || '';
+            document.getElementById('cmsEventHeroSubtitle').textContent = event.heroSubtitle || '';
+            document.getElementById('cmsEventBody').innerHTML = event.bodyHtml || '';
+            cmsRenderEventCta(event);
+            document.getElementById('cmsEventPage').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
