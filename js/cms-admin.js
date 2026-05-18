@@ -1,12 +1,22 @@
 /* Admin CMS – events & blog (admin role only) */
 
+function cmsAdminFormatError(err) {
+    const code = err && (err.code || err.message);
+    if (code === 'permission-denied' || (err && String(err.message).includes('permission'))) {
+        return 'Manjkajo dovoljenja v Firebase. V Firebase Console objavite firestore.rules '
+            + '(firebase deploy --only firestore:rules). '
+            + 'Preverite tudi, da ima vaš uporabnik v users/{uid} polje role: "admin".';
+    }
+    return (err && err.message) || String(err);
+}
+
 let cmsEventEditor = null;
 let cmsBlogEditor = null;
 let cmsEditingEventId = null;
 let cmsEditingBlogId = null;
 
 async function cmsAdminEnsureAccess() {
-    await initCmsFirebase(true);
+    await initCmsFirebase();
 
     const user = await new Promise((resolve) => {
         const unsub = cmsAuth.onAuthStateChanged((u) => {
@@ -34,12 +44,30 @@ async function cmsAdminEnsureAccess() {
 }
 
 async function cmsAdminUploadImage(file, folder) {
-    if (!file || !cmsStorage) throw new Error('Nalaganje slik ni na voljo');
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const path = `cms/${folder}/${Date.now()}-${safeName}`;
-    const ref = cmsStorage.ref().child(path);
-    await ref.put(file);
-    return ref.getDownloadURL();
+    if (!file) throw new Error('Datoteka manjka');
+
+    const uploadCfg = cmsGetImageUploadConfig();
+    if (!uploadCfg || uploadCfg.provider !== 'cloudinary') {
+        throw new Error(
+            'Nalaganje datotek ni nastavljeno. V Vercel dodajte CLOUDINARY_CLOUD_NAME in CLOUDINARY_UPLOAD_PRESET, '
+            + 'ali prilepite URL slike v polje spodaj (npr. /images/... ali obstoječa povezava).'
+        );
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', uploadCfg.uploadPreset);
+    formData.append('folder', `jaz-zenska-cms/${folder}`);
+
+    const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${uploadCfg.cloudName}/image/upload`,
+        { method: 'POST', body: formData }
+    );
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+        throw new Error(data.error?.message || data.message || 'Napaka pri nalaganju na Cloudinary');
+    }
+    return data.secure_url;
 }
 
 function cmsAdminInitEditors() {
@@ -110,7 +138,15 @@ function cmsAdminResetBlogForm() {
 }
 
 async function cmsAdminLoadEventList() {
-    const snap = await cmsDb.collection('site_events').get();
+    let snap;
+    try {
+        snap = await cmsDb.collection('site_events').get();
+    } catch (err) {
+        console.error('cmsAdminLoadEventList:', err);
+        document.getElementById('cmsEventList').innerHTML =
+            '<p class="cms-admin-empty" style="color:#a6232e;">' + cmsEscapeHtml(cmsAdminFormatError(err)) + '</p>';
+        return;
+    }
     const list = document.getElementById('cmsEventList');
     const docs = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     docs.sort((a, b) => (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0));
@@ -143,7 +179,15 @@ async function cmsAdminLoadEventList() {
 }
 
 async function cmsAdminLoadBlogList() {
-    const snap = await cmsDb.collection('blog_posts').get();
+    let snap;
+    try {
+        snap = await cmsDb.collection('blog_posts').get();
+    } catch (err) {
+        console.error('cmsAdminLoadBlogList:', err);
+        document.getElementById('cmsBlogList').innerHTML =
+            '<p class="cms-admin-empty" style="color:#a6232e;">' + cmsEscapeHtml(cmsAdminFormatError(err)) + '</p>';
+        return;
+    }
     const list = document.getElementById('cmsBlogList');
     const docs = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     docs.sort((a, b) => (Number(b.sortOrder) || 0) - (Number(a.sortOrder) || 0));
@@ -283,11 +327,16 @@ async function cmsAdminSaveEvent(e) {
         payload.publishedAt = firebase.firestore.FieldValue.serverTimestamp();
     }
 
-    if (cmsEditingEventId) {
-        await cmsDb.collection('site_events').doc(cmsEditingEventId).update(payload);
-    } else {
-        payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-        await cmsDb.collection('site_events').add(payload);
+    try {
+        if (cmsEditingEventId) {
+            await cmsDb.collection('site_events').doc(cmsEditingEventId).update(payload);
+        } else {
+            payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            await cmsDb.collection('site_events').add(payload);
+        }
+    } catch (err) {
+        alert('Napaka pri shranjevanju: ' + cmsAdminFormatError(err));
+        return;
     }
 
     alert('Dogodek shranjen.');
@@ -322,11 +371,16 @@ async function cmsAdminSaveBlog(e) {
         payload.publishedAt = firebase.firestore.FieldValue.serverTimestamp();
     }
 
-    if (cmsEditingBlogId) {
-        await cmsDb.collection('blog_posts').doc(cmsEditingBlogId).update(payload);
-    } else {
-        payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-        await cmsDb.collection('blog_posts').add(payload);
+    try {
+        if (cmsEditingBlogId) {
+            await cmsDb.collection('blog_posts').doc(cmsEditingBlogId).update(payload);
+        } else {
+            payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            await cmsDb.collection('blog_posts').add(payload);
+        }
+    } catch (err) {
+        alert('Napaka pri shranjevanju: ' + cmsAdminFormatError(err));
+        return;
     }
 
     alert('Članek shranjen.');
@@ -334,9 +388,19 @@ async function cmsAdminSaveBlog(e) {
     cmsAdminResetBlogForm();
 }
 
+function cmsAdminBindImageUrlPreview(urlFieldId, previewId) {
+    const urlEl = document.getElementById(urlFieldId);
+    const preview = document.getElementById(previewId);
+    if (!urlEl || !preview) return;
+    urlEl.addEventListener('input', () => {
+        preview.src = urlEl.value.trim();
+    });
+}
+
 function cmsAdminBindImageUpload(inputId, urlFieldId, previewId, folder) {
     const input = document.getElementById(inputId);
     if (!input) return;
+    cmsAdminBindImageUrlPreview(urlFieldId, previewId);
     input.addEventListener('change', async () => {
         const file = input.files && input.files[0];
         if (!file) return;
@@ -346,7 +410,8 @@ function cmsAdminBindImageUpload(inputId, urlFieldId, previewId, folder) {
             document.getElementById(urlFieldId).value = url;
             document.getElementById(previewId).src = url;
         } catch (err) {
-            alert('Napaka pri nalaganju slike: ' + err.message);
+            console.error('cmsAdminUploadImage:', err);
+            alert('Napaka pri nalaganju slike: ' + cmsAdminFormatError(err));
         } finally {
             input.disabled = false;
             input.value = '';

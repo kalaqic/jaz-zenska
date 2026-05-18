@@ -1,28 +1,30 @@
 /* Shared Firebase init for CMS (public + admin) */
 let cmsDb = null;
 let cmsAuth = null;
-let cmsStorage = null;
+let cmsImageUploadConfig = null;
 let cmsInitPromise = null;
 
-async function initCmsFirebase(includeStorage) {
+async function initCmsFirebase() {
     if (cmsInitPromise) return cmsInitPromise;
 
     cmsInitPromise = (async () => {
         const response = await fetch('/api/firebase-config');
         if (!response.ok) throw new Error('Firebase config unavailable');
         const config = await response.json();
+        cmsImageUploadConfig = config.imageUpload || null;
         if (!firebase.apps.length) {
             firebase.initializeApp(config);
         }
         cmsAuth = firebase.auth();
         cmsDb = firebase.firestore();
-        if (includeStorage && typeof firebase.storage !== 'undefined') {
-            cmsStorage = firebase.storage();
-        }
-        return { db: cmsDb, auth: cmsAuth, storage: cmsStorage };
+        return { db: cmsDb, auth: cmsAuth, imageUpload: cmsImageUploadConfig };
     })();
 
     return cmsInitPromise;
+}
+
+function cmsGetImageUploadConfig() {
+    return cmsImageUploadConfig;
 }
 
 function cmsSlugify(text) {

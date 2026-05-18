@@ -1,7 +1,7 @@
 /* Public site: load published events & blog posts from Firestore */
 
 async function cmsLoadPublishedEvents() {
-    await initCmsFirebase(false);
+    await initCmsFirebase();
     const snap = await cmsDb.collection('site_events')
         .where('status', '==', 'published')
         .get();
@@ -12,7 +12,7 @@ async function cmsLoadPublishedEvents() {
 }
 
 async function cmsLoadPublishedBlogs() {
-    await initCmsFirebase(false);
+    await initCmsFirebase();
     const snap = await cmsDb.collection('blog_posts')
         .where('status', '==', 'published')
         .get();
@@ -23,7 +23,7 @@ async function cmsLoadPublishedBlogs() {
 }
 
 async function cmsLoadEventBySlug(slug) {
-    await initCmsFirebase(false);
+    await initCmsFirebase();
     const normalized = String(slug || '').trim().toLowerCase();
     if (!normalized) return null;
 
@@ -39,7 +39,7 @@ async function cmsLoadEventBySlug(slug) {
 }
 
 async function cmsLoadBlogBySlug(slug) {
-    await initCmsFirebase(false);
+    await initCmsFirebase();
     const normalized = String(slug || '').trim().toLowerCase();
     if (!normalized) return null;
 

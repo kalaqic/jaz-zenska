@@ -88,14 +88,16 @@
                             <div class="cms-admin-field"><label>Kratek opis (hero)</label><textarea id="cmsEventHeroSubtitle"></textarea></div>
                             <div class="cms-admin-field">
                                 <label>Hero slika</label>
+                                <input type="url" id="cmsEventHeroUrl" placeholder="https://... ali /images/...">
+                                <p class="cms-hint">URL ali naložite datoteko spodaj (Cloudinary)</p>
                                 <input type="file" id="cmsEventHeroFile" accept="image/*">
-                                <input type="hidden" id="cmsEventHeroUrl">
                                 <img id="cmsEventHeroPreview" class="cms-admin-preview" alt="">
                             </div>
                             <div class="cms-admin-field">
                                 <label>Slika kartice (Aktualno)</label>
+                                <input type="url" id="cmsEventCardUrl" placeholder="https://... ali /images/...">
+                                <p class="cms-hint">URL ali naložite datoteko spodaj</p>
                                 <input type="file" id="cmsEventCardFile" accept="image/*">
-                                <input type="hidden" id="cmsEventCardUrl">
                                 <img id="cmsEventCardPreview" class="cms-admin-preview" alt="">
                             </div>
                             <div class="cms-admin-field"><label><input type="checkbox" id="cmsEventIsFree" checked> Brezplačen dogodek</label></div>
@@ -146,8 +148,9 @@
                             <div class="cms-admin-field"><label>Kratek opis (kartica)</label><textarea id="cmsBlogExcerpt"></textarea></div>
                             <div class="cms-admin-field">
                                 <label>Naslovna slika</label>
+                                <input type="url" id="cmsBlogCoverUrl" placeholder="https://... ali /images/...">
+                                <p class="cms-hint">URL ali naložite datoteko spodaj</p>
                                 <input type="file" id="cmsBlogCoverFile" accept="image/*">
-                                <input type="hidden" id="cmsBlogCoverUrl">
                                 <img id="cmsBlogCoverPreview" class="cms-admin-preview" alt="">
                             </div>
                             <div class="cms-admin-field"><label>Status</label><select id="cmsBlogStatus"><option value="draft">Osnutek</option><option value="published">Objavljeno</option></select></div>
@@ -167,7 +170,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script src="js/cms-firebase.js"></script>
     <script src="js/cms-admin.js"></script>
