@@ -123,9 +123,9 @@ function initStepsAnimation() {
 
 
 // API Configuration
-// Production Vercel URL
-// For local testing, set window.API_BASE_URL = 'http://localhost:3000' in HTML before loading this script
-const API_BASE_URL = window.API_BASE_URL || 'https://jaz-zenska.vercel.app';
+// Default to same-origin so www.jazzenska.com calls its own /api routes
+// Optional override for local testing: window.API_BASE_URL = 'http://localhost:3000'
+const API_BASE_URL = window.API_BASE_URL || '';
 
 // Newsletter form submission (MailerLite via /api/newsletter)
 // Uses backend proxy to avoid CORS issues
@@ -192,7 +192,7 @@ function handleNewsletterSubmit(event) {
     }
     
     // Backend API endpoint (MailerLite)
-    const API_URL = `${API_BASE_URL}/api/newsletter`;
+    const API_URL = `${API_BASE_URL}/api/newsletter`; // same-origin by default
     
     // Prepare data for backend
     const requestData = {
@@ -1113,7 +1113,7 @@ function initSchedulingSystem() {
             const hour = selectedTime; // e.g., "09:00"
             
             // Backend API endpoint (MailerLite)
-            const API_URL = `${API_BASE_URL}/api/consultation`;
+            const API_URL = `${API_BASE_URL}/api/consultation`; // same-origin by default
             
             try {
                 // Send to backend proxy

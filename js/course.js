@@ -23,17 +23,75 @@ const MOC_BESSEDE_WORDS = [
     'ISKRENO UPORABLJANJE DA/NE (Govorimo da/ne zaradi občutka obveznosti, ker nam je nerodno, se počutimo kot da smo dolžni ali nam nekdo bo zameril)',
     'KAJ JE NAROBE S TABO',
     'IZGOVOR',
-    'PRETJERAVANJE',
+    'PRETERIVANJE',
     'NI POŠTENO',
     'NE OBUPAJ, NE ODNEHAJ, NE ZBOLI (Ne uporabljajte besedo zvezo česar ne želite)',
     'UPORABLJAJTE RESNICO'
 ];
+
+const MOC_BESEDE_UVOD_VIDEO_URL = 'https://player.vimeo.com/video/1179910844?badge=0&autopause=0&player_id=0&app_id=58479';
 
 function normalizeWordKey(s) {
     return String(s || '')
         .toUpperCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '');
+}
+
+/** Default Vimeo URLs: any normalized title string you use (chat, Firebase, or full list) can be a key. */
+const ISKRENO_VIMEO_URL =
+    'https://player.vimeo.com/video/1179913461?badge=0&autopause=0&player_id=0&app_id=58479';
+const KAJ_JE_NAROBE_S_TABO_VIMEO_URL =
+    'https://player.vimeo.com/video/1179915602?badge=0&autopause=0&player_id=0&app_id=58479';
+const IZGOVOR_VIMEO_URL =
+    'https://player.vimeo.com/video/1179916794?badge=0&autopause=0&player_id=0&app_id=58479';
+const PRETERIVANJE_VIMEO_URL =
+    'https://player.vimeo.com/video/1179924385?badge=0&autopause=0&player_id=0&app_id=58479';
+const NI_POSTENO_VIMEO_URL =
+    'https://player.vimeo.com/video/1179927314?badge=0&autopause=0&player_id=0&app_id=58479';
+const NE_OBUPAJ_ODNEHAJ_ZBOLI_VIMEO_URL =
+    'https://player.vimeo.com/video/1179928653?badge=0&autopause=0&player_id=0&app_id=58479';
+const UPORABLJAJTE_RESNICO_VIMEO_URL =
+    'https://player.vimeo.com/video/1179935455?badge=0&autopause=0&player_id=0&app_id=58479';
+const MOC_BESEDE_WORD_VIDEO_URLS = new Map([
+    [normalizeWordKey('RAZLAGA'), 'https://player.vimeo.com/video/1179913002?badge=0&autopause=0&player_id=0&app_id=58479'],
+    [normalizeWordKey('IZGOVOR'), IZGOVOR_VIMEO_URL],
+    [normalizeWordKey('IZGOVORI'), IZGOVOR_VIMEO_URL],
+    [normalizeWordKey('PRETERIVANJE'), PRETERIVANJE_VIMEO_URL],
+    [normalizeWordKey('PRETERAVANJE'), PRETERIVANJE_VIMEO_URL],
+    [normalizeWordKey('PRETJERAVANJE'), PRETERIVANJE_VIMEO_URL],
+    [normalizeWordKey('PRETIRAVANJE'), PRETERIVANJE_VIMEO_URL],
+    [normalizeWordKey('NI POŠTENO'), NI_POSTENO_VIMEO_URL],
+    [normalizeWordKey('NI POSTENO'), NI_POSTENO_VIMEO_URL],
+    [normalizeWordKey('KAJ JE NAROBE S TABO'), KAJ_JE_NAROBE_S_TABO_VIMEO_URL],
+    [normalizeWordKey('KAJ JE NAROBE STABO'), KAJ_JE_NAROBE_S_TABO_VIMEO_URL],
+    [normalizeWordKey('ISKRENO UPORABLJANJE DA/NE'), ISKRENO_VIMEO_URL],
+    [
+        normalizeWordKey(
+            'ISKRENO UPORABLJANJE DA/NE (Govorimo da/ne zaradi občutka obveznosti, ker nam je nerodno, se počutimo kot da smo dolžni ali nam nekdo bo zameril)'
+        ),
+        ISKRENO_VIMEO_URL
+    ],
+    [normalizeWordKey('NE OBUPAJ, NE ODNEHAJ, NE ZBOLI'), NE_OBUPAJ_ODNEHAJ_ZBOLI_VIMEO_URL],
+    [
+        normalizeWordKey(
+            'NE OBUPAJ, NE ODNEHAJ, NE ZBOLI (Ne uporabljajte besedo zvezo česar ne želite)'
+        ),
+        NE_OBUPAJ_ODNEHAJ_ZBOLI_VIMEO_URL
+    ],
+    [normalizeWordKey('UPORABLJAJTE RESNICO'), UPORABLJAJTE_RESNICO_VIMEO_URL]
+]);
+
+function applyMocBesedeDefaultVideoUrls(episodes) {
+    if (!Array.isArray(episodes)) return;
+    episodes.forEach(ep => {
+        const title = String(ep.title || '').trim();
+        if (!title) return;
+        const mapped = MOC_BESEDE_WORD_VIDEO_URLS.get(normalizeWordKey(title));
+        if (mapped && !String(ep.videoUrl || '').trim()) {
+            ep.videoUrl = mapped;
+        }
+    });
 }
 
 const MOC_BESSEDE_META = new Map();
@@ -66,8 +124,7 @@ Kje to čutite in kako!
 Sprostite se in nekajkrat globoko vdihnite v ta občutek, nato pa pomislite, kako lahko drugače poveste.
 
 Čez dan bodite pozorni na besedico moram, zapišite si stavke, ki vključujejo besedico moram in jih preoblikujte z drugimi, bolj spodbudnimi besedami.
-
-Moji zapiski:`
+`
 );
 
 setMocMeta(
@@ -226,7 +283,7 @@ function buildMocBesedeEpisodes(existingEpisodes = []) {
             id: '1',
             title: 'Uvod',
             description: 'Uvod v delavnico Moč besede.',
-            videoUrl: '',
+            videoUrl: MOC_BESEDE_UVOD_VIDEO_URL,
             duration: ''
         }
     ];
@@ -234,12 +291,14 @@ function buildMocBesedeEpisodes(existingEpisodes = []) {
     MOC_BESSEDE_WORDS.forEach((word, idx) => {
         const existing = byTitle.get(word);
         const meta = MOC_BESSEDE_META.get(normalizeWordKey(word));
+        const fromExisting = existing && existing.videoUrl ? String(existing.videoUrl).trim() : '';
+        const fromMap = MOC_BESEDE_WORD_VIDEO_URLS.get(normalizeWordKey(word)) || '';
         episodes.push({
             id: String(idx + 2),
             title: word,
             description: meta?.description || `Epizoda o besedi: ${word}`,
             exercise: meta?.exercise || `Zapišite 3 stavke, kjer besedo "${word}" zavestno zamenjate z bolj podporno in ljubečo različico.`,
-            videoUrl: existing && existing.videoUrl ? String(existing.videoUrl) : '',
+            videoUrl: fromExisting || fromMap,
             duration: existing && existing.duration ? String(existing.duration) : ''
         });
     });
@@ -341,10 +400,11 @@ const STOPNIC_WEBINAR_VIMEO_FALLBACK = 'https://player.vimeo.com/video/117930292
 function patchStopnicWebinarVideoUrls(webinars) {
     const list = Array.isArray(webinars) ? webinars.map(w => ({ ...w })) : [];
     return list.map(w => {
-        const t = String(w.title || '');
-        if (t === '25 Stopnic do srece' || t === '25 Stopnic do sreče') {
+        const t = String(w.title || '').trim();
+        if (t === '25 Stopnic do sreče' || t === '25 Stopnic do srece') {
             return {
                 ...w,
+                title: '25 Stopnic do sreče',
                 videoId: w.videoId || '1179302920',
                 videoUrl: w.videoUrl || STOPNIC_WEBINAR_VIMEO_FALLBACK
             };
@@ -432,11 +492,11 @@ async function loadCourse() {
     const isWebinar = !!webinarId && !courseId;
 
     if (!courseId && !webinarId) {
-        window.location.href = 'dashboard.html';
+        window.location.href = '/dashboard';
         return;
     }
 
-    // Firebase init runs asynchronously in course.html; wait a bit so Firestore reads don't fallback too early.
+    // Firebase init runs asynchronously in /course; wait a bit so Firestore reads don't fallback too early.
     await waitForFirestoreReady();
     
     let course = null;
@@ -472,8 +532,8 @@ async function loadCourse() {
         let webinar = webinars.find(w => String(w.id) === String(webinarId));
         if (!webinar && String(webinarId) === '2') {
             webinar = webinars.find(w => {
-                const t = String(w.title || '');
-                return t === '25 Stopnic do srece' || t === '25 Stopnic do sreče';
+                const t = String(w.title || '').trim();
+                return t === '25 Stopnic do sreče' || t === '25 Stopnic do srece';
             });
         }
         if (webinar) {
@@ -562,7 +622,7 @@ async function loadCourse() {
     }
     
     if (!course) {
-        window.location.href = 'dashboard.html';
+        window.location.href = '/dashboard';
         return;
     }
 
@@ -572,6 +632,11 @@ async function loadCourse() {
         course.episodes = firestoreEpisodes && firestoreEpisodes.length > 1
             ? firestoreEpisodes
             : buildMocBesedeEpisodes(course.episodes || []);
+        const uvodEpisode = (course.episodes || []).find(ep => String(ep.title || '').trim().toLowerCase() === 'uvod');
+        if (uvodEpisode && !String(uvodEpisode.videoUrl || '').trim()) {
+            uvodEpisode.videoUrl = MOC_BESEDE_UVOD_VIDEO_URL;
+        }
+        applyMocBesedeDefaultVideoUrls(course.episodes);
         // keep local cache in sync with canonical episode list
         const cachedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
         const idx = cachedCourses.findIndex(c => c.id === 'moc-besede');
@@ -889,7 +954,8 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
     const watched = await getWatchedEpisodes(course.id);
     const isWatched = watched.includes(episodeId);
     const isWebinarCourse = String(course.id).startsWith('webinar-');
-    const actionDone = isWebinarCourse ? false : await isEpisodeActionCompleted(course.id, episodeId);
+    const savedExerciseNote = isWebinarCourse ? '' : await getEpisodeExerciseNote(course.id, episodeId);
+    const actionDone = !!String(savedExerciseNote || '').trim();
     const commentsHtml = await buildCommentsHtml(course, episode);
     const exerciseText = episode.exercise || `Izberite eno situacijo danes in namesto izraza "${episode.title}" uporabite bolj podporno besedo.`;
     
@@ -908,7 +974,7 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
                     allowfullscreen
                     style="position:absolute;top:0;left:0;width:100%;height:100%;"
                 ></iframe>
-            ` : 'Video bo kmalu na voljo'}
+            ` : '<p class="course-video-placeholder">Ta video je zaseben.</p>'}
         </div>
 
         <div class="episode-nav-bar">
@@ -920,12 +986,14 @@ async function loadEpisodeContent(episodeId, course = null, element = null) {
 
         ${!isWebinarCourse ? `
         <div class="episode-exercise">
-            <h4>Vaja (naredi takoj)</h4>
+            <h4>Vaja:</h4>
             <p>${escapeHtmlCourse(exerciseText)}</p>
-            <label class="exercise-check">
-                <input type="checkbox" ${actionDone ? 'checked' : ''} onchange="toggleActionDone('${course.id}', '${episode.id}', this.checked)">
-                Označi, da si naredila vajo
-            </label>
+            <label class="exercise-note-label" for="exerciseNoteInput">Moji zapiski</label>
+            <textarea id="exerciseNoteInput" class="exercise-note-input" rows="5" placeholder="Sem napiši svoje zapiske o tej vaji...">${escapeHtmlCourse(savedExerciseNote)}</textarea>
+            <button type="button" class="save-exercise-note-btn" onclick="saveEpisodeExerciseNote('${course.id}', '${episode.id}')">Shrani svoje zapiske</button>
+            <div id="exerciseNoteStatus" class="exercise-note-status ${actionDone ? 'done' : ''}">
+                ${actionDone ? 'Vaja je označena kot narejena.' : 'Ko shraniš zapiske, se vaja označi kot narejena.'}
+            </div>
         </div>
         ` : ''}
 
@@ -986,58 +1054,83 @@ function goToAdjacentEpisode(direction) {
     loadEpisodeContent(String(targetEpisode.id), course, targetEl || null);
 }
 
-async function getCompletedActions(courseId) {
+async function getExerciseNotes(courseId) {
     const user = getCurrentUser();
     if (!user || !user.userId) {
-        const local = JSON.parse(localStorage.getItem('completedActions') || '{}');
-        return (local[courseId] || []).map(id => String(id));
+        const local = JSON.parse(localStorage.getItem('exerciseNotes') || '{}');
+        const notes = local[courseId] || {};
+        return notes && typeof notes === 'object' ? notes : {};
     }
     try {
         if (typeof db !== 'undefined') {
             const progressDoc = await db.collection('userProgress').doc(`${user.userId}_${courseId}`).get();
             if (progressDoc.exists) {
-                const completedActions = (progressDoc.data().completedActions || []).map(id => String(id));
-                const local = JSON.parse(localStorage.getItem('completedActions') || '{}');
-                local[courseId] = completedActions;
-                localStorage.setItem('completedActions', JSON.stringify(local));
-                return completedActions;
+                const notesRaw = progressDoc.data().exerciseNotes || {};
+                const notes = {};
+                Object.keys(notesRaw || {}).forEach(k => {
+                    notes[String(k)] = String(notesRaw[k] || '');
+                });
+                const local = JSON.parse(localStorage.getItem('exerciseNotes') || '{}');
+                local[courseId] = notes;
+                localStorage.setItem('exerciseNotes', JSON.stringify(local));
+                return notes;
             }
         }
     } catch (e) {
-        console.error('Error loading completed actions:', e);
+        console.error('Error loading exercise notes:', e);
     }
-    const local = JSON.parse(localStorage.getItem('completedActions') || '{}');
-    return (local[courseId] || []).map(id => String(id));
+    const local = JSON.parse(localStorage.getItem('exerciseNotes') || '{}');
+    const notes = local[courseId] || {};
+    return notes && typeof notes === 'object' ? notes : {};
 }
 
-async function isEpisodeActionCompleted(courseId, episodeId) {
-    const completed = await getCompletedActions(courseId);
-    return completed.includes(String(episodeId));
+async function getEpisodeExerciseNote(courseId, episodeId) {
+    const notes = await getExerciseNotes(courseId);
+    return String(notes[String(episodeId)] || '');
 }
 
-window.toggleActionDone = async function(courseId, episodeId, done) {
+window.saveEpisodeExerciseNote = async function(courseId, episodeId) {
     const user = getCurrentUser();
     const normalized = String(episodeId);
-    const completed = await getCompletedActions(courseId);
-    let next = [...completed];
-    if (done && !next.includes(normalized)) next.push(normalized);
-    if (!done) next = next.filter(id => id !== normalized);
+    const input = document.getElementById('exerciseNoteInput');
+    const status = document.getElementById('exerciseNoteStatus');
+    if (!input) return;
+    const noteValue = String(input.value || '');
 
-    const local = JSON.parse(localStorage.getItem('completedActions') || '{}');
+    const current = await getExerciseNotes(courseId);
+    const next = { ...(current || {}) };
+    if (noteValue.trim()) {
+        next[normalized] = noteValue;
+    } else {
+        delete next[normalized];
+    }
+
+    const local = JSON.parse(localStorage.getItem('exerciseNotes') || '{}');
     local[courseId] = next;
-    localStorage.setItem('completedActions', JSON.stringify(local));
+    localStorage.setItem('exerciseNotes', JSON.stringify(local));
 
     try {
         if (user && user.userId && typeof db !== 'undefined') {
             await db.collection('userProgress').doc(`${user.userId}_${courseId}`).set({
                 userId: user.userId,
                 courseId: courseId,
-                completedActions: next,
+                exerciseNotes: next,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
         }
+        if (status) {
+            if (noteValue.trim()) {
+                status.textContent = 'Vaja je označena kot narejena.';
+                status.classList.add('done');
+            } else {
+                status.textContent = 'Zapiski so prazni. Vaja ni označena kot narejena.';
+                status.classList.remove('done');
+            }
+        }
+        alert('Zapiski so shranjeni.');
     } catch (e) {
-        console.error('Error saving completed action:', e);
+        console.error('Error saving exercise note:', e);
+        alert('Pri shranjevanju zapiskov je prišlo do napake.');
     }
 };
 
@@ -1184,7 +1277,7 @@ function showCongratulationsPopup() {
             <div class="congratulations-icon">🎉</div>
             <h2 class="congratulations-title">Čestitamo!</h2>
             <p class="congratulations-message">Uspešno ste zaključili ta tečaj!</p>
-            <a href="dashboard.html" class="congratulations-btn">Nazaj na domačo stran</a>
+            <a href="/dashboard" class="congratulations-btn">Nazaj na domačo stran</a>
         </div>
     `;
     document.body.appendChild(popup);
@@ -1232,10 +1325,10 @@ function showNoAccessPopupCoursePage() {
             <h3>Nimate dostopa do te vsebine</h3>
             <p>Kupite ta tečaj v spletni trgovini ali se pridružite celotni skupini za 119 € in dobite dostop do vsega!</p>
             <div class="no-access-course-btns">
-                <a href="spletna-trgovina.html" class="no-acc-btn no-acc-btn-primary">Kupi tečaj</a>
-                <a href="jaz-zenska.html" class="no-acc-btn no-acc-btn-secondary">Celotna skupina (119 €)</a>
+                <a href="/spletna-trgovina" class="no-acc-btn no-acc-btn-primary">Kupi tečaj</a>
+                <a href="/jaz-zenska" class="no-acc-btn no-acc-btn-secondary">Celotna skupina (119 €)</a>
             </div>
-            <a href="dashboard.html" class="no-acc-back">← Nazaj na učilnico</a>
+            <a href="/dashboard" class="no-acc-back">← Nazaj na učilnico</a>
         </div>
     `;
     const style = document.createElement('style');

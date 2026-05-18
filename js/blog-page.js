@@ -38,11 +38,11 @@ const blogContent = {
             <p>Če misliš, da vsega tega ne zmoreš sama, potem te vabim, da se pridružiš <strong>skupini žensk</strong>, ki mislimo in čutimo enako. V skupnosti <strong>Jaz Ženska</strong> boš dobila nova <strong>znanja, orodja, vaje</strong>…, dobila boš <strong>razumevanje, varnost in podporo</strong>, dobila boš nove prijateljice in pridobila boš <strong>moč</strong>, da spreminjaš sebe in s tem narediš največ dobrega zase in za vse okoli sebe.</p>
             <p style="text-align: center; font-style: italic; margin: 30px 0 20px; font-size: 17px;">»Bodi sprememba, ki jo želiš videti v svetu!«<br><strong>Mahatma Gandhi</strong></p>
             <div style="text-align: center; margin: 30px 0;">
-                <a href="jaz-zenska.html" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; padding: 22px 60px; border-radius: 50px; font-size: 20px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4); font-family: 'Montserrat', sans-serif;">Več o Jaz ženska</a>
+                <a href="/jaz-zenska" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; padding: 22px 60px; border-radius: 50px; font-size: 20px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4); font-family: 'Montserrat', sans-serif;">Več o Jaz ženska</a>
             </div>
             <div class="blog-newsletter-cta">
                 <p class="blog-newsletter-text">Želite več navdihujočih vsebin, kot je ta?</p>
-                <a href="index.html#newsletter" class="blog-newsletter-button">Prijavite se na naše e-novice</a>
+                <a href="/#newsletter" class="blog-newsletter-button">Prijavite se na naše e-novice</a>
             </div>
         `
     },
@@ -102,14 +102,14 @@ const blogContent = {
             <p>Čeprav sem dejala, da univerzalnega recepta za srečo ni, pa obstaja kar nekaj nasvetov in priporočil, ki nam lahko pomagajo na naši poti do sreče. Zbrala in strnila sem jih v e-knjigi: <strong>25 stopnic do sreče</strong>, ki jo lahko dobite če kliknete na povezavo:</p>
             
             <div style="text-align: center; margin: 30px 0;">
-                <a href="ebook-signup.html" class="ebook-button" style="display: inline-block; background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%); color: var(--white); border: none; padding: 18px 40px; border-radius: 50px; font-size: 18px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(200, 142, 167, 0.4); transition: all 0.3s ease; font-family: 'Montserrat', sans-serif; text-decoration: none;">
+                <a href="/ebook-signup" class="ebook-button" style="display: inline-block; background: linear-gradient(135deg, var(--pinky) 0%, var(--mid-violet) 100%); color: var(--white); border: none; padding: 18px 40px; border-radius: 50px; font-size: 18px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(200, 142, 167, 0.4); transition: all 0.3s ease; font-family: 'Montserrat', sans-serif; text-decoration: none;">
                     Želim brezplačno e-knjigo
                 </a>
             </div>
             
             <div class="blog-newsletter-cta">
                 <p class="blog-newsletter-text">Želite več navdihujočih vsebin, kot je ta?</p>
-                <a href="index.html#newsletter" class="blog-newsletter-button">Prijavite se na naše e-novice</a>
+                <a href="/#newsletter" class="blog-newsletter-button">Prijavite se na naše e-novice</a>
             </div>
         `
     },
@@ -168,7 +168,7 @@ const blogContent = {
             <p>Sprašujem se, ali je naključje, da ravno letos začenjam s programom <strong>Jaz ženska</strong>, čeprav ga načrtujem že par let. Vse bolj verjamem, da sem morala počakati leto ognjenega konja, ko se energije odprejo in kličejo k <strong>aktivnemu in zavestnemu delovanju</strong>. Delo v skupini bo usklajeno z energijo ognjenega konja, vodeno in skrbno načrtovano. Ob tem pa bo potekalo tako, da bo vsaka od nas lahko sodelovala <strong>v svojemu ritmu</strong> in sledila svojim željam in ciljem.</p>
             
             <div style="text-align: center; margin: 30px 0;">
-                <a href="jaz-zenska.html" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; padding: 22px 60px; border-radius: 50px; font-size: 20px; font-weight: 700; text-decoration: none; text-align: center; transition: all 0.3s ease; cursor: pointer; border: none; box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4); font-family: 'Montserrat', sans-serif;">
+                <a href="/jaz-zenska" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; padding: 22px 60px; border-radius: 50px; font-size: 20px; font-weight: 700; text-decoration: none; text-align: center; transition: all 0.3s ease; cursor: pointer; border: none; box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4); font-family: 'Montserrat', sans-serif;">
                     Več o Jaz ženska
                 </a>
             </div>
@@ -179,7 +179,7 @@ const blogContent = {
             
             <div class="blog-newsletter-cta">
                 <p class="blog-newsletter-text">Želite več navdihujočih vsebin, kot je ta?</p>
-                <a href="index.html#newsletter" class="blog-newsletter-button">Prijavite se na naše e-novice</a>
+                <a href="/#newsletter" class="blog-newsletter-button">Prijavite se na naše e-novice</a>
             </div>
         `
     }

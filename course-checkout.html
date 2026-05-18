@@ -149,6 +149,30 @@
             cursor: not-allowed;
             transform: none;
         }
+        .course-checkout-btn-secondary {
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: transparent;
+            color: var(--luxe-violet);
+            padding: 18px 48px;
+            border: 2px solid rgba(100, 56, 67, 0.35);
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 12px;
+            text-decoration: none;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .course-checkout-btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(100, 56, 67, 0.12);
+            border-color: rgba(100, 56, 67, 0.55);
+        }
         .course-checkout-loading {
             display: none;
             text-align: center;
@@ -180,26 +204,27 @@
 <body class="course-checkout-page">
     <div class="top-bar">
         <div class="top-bar-content">
-            <a href="o-meni.html">O meni</a>
-            <a href="media.html">Mediji</a>
-            <a href="stik-z-nami.html">Stik z nami</a>
+            <a href="/o-meni">O meni</a>
+            <a href="/media">Mediji</a>
+            <a href="/stik-z-nami">Stik z nami</a>
+            <a href="/spletna-trgovina">Spletna trgovina</a>
         </div>
     </div>
     <header>
         <div class="header-content">
-            <a href="index.html" class="header-logo">
+            <a href="/" class="header-logo">
                 <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska Logo" width="200" height="60">
             </a>
             <nav class="desktop-nav">
                 <ul>
-                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
-                    <li><a href="index.html#aktualno">Aktualno</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="index.html#affirmations">Meditacije</a></li>
-                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
+                    <li><a href="/jaz-zenska">Jaz Ženska</a></li>
+                    <li><a href="/#aktualno">Aktualno</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/#affirmations">Meditacije</a></li>
+                    <li><a href="/spletna-ucilnica">Spletna Učilnica</a></li>
                 </ul>
             </nav>
-            <a href="index.html#newsletter" class="header-consultation-btn desktop-social">PRIJAVI SE NA E-NOVICE</a>
+            <a href="/#newsletter" class="header-consultation-btn desktop-social">PRIJAVI SE NA E-NOVICE</a>
             <button class="burger-menu" aria-label="Toggle menu"><span></span><span></span><span></span></button>
         </div>
     </header>
@@ -209,17 +234,18 @@
         </button>
         <div class="mobile-menu-content">
             <div class="mobile-top-links">
-                <a href="o-meni.html">O meni</a>
-                <a href="media.html">Mediji</a>
-                <a href="stik-z-nami.html">Stik z nami</a>
+                <a href="/o-meni">O meni</a>
+                <a href="/media">Mediji</a>
+                <a href="/stik-z-nami">Stik z nami</a>
+                <a href="/spletna-trgovina">Spletna trgovina</a>
             </div>
             <nav class="mobile-nav">
                 <ul>
-                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
-                    <li><a href="index.html#aktualno">Aktualno</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="index.html#affirmations">Meditacije</a></li>
-                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
+                    <li><a href="/jaz-zenska">Jaz Ženska</a></li>
+                    <li><a href="/#aktualno">Aktualno</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/#affirmations">Meditacije</a></li>
+                    <li><a href="/spletna-ucilnica">Spletna Učilnica</a></li>
                 </ul>
             </nav>
             <div class="mobile-social-icons">
@@ -233,7 +259,7 @@
     <section class="checkout-hero">
         <div class="luxe-line"></div>
         <h1>Plačilo tečaja</h1>
-        <p class="sub">Vnesite podatke in preusmerjeni boste na varno plačilo s karto.</p>
+        <p class="sub">Izberite način plačila: kartica ali bančno nakazilo.</p>
     </section>
 
     <div class="course-checkout-wrapper">
@@ -248,10 +274,11 @@
                     <input type="email" id="email" name="email" placeholder="vas@email.si" required autocomplete="email">
                 </div>
                 <div id="courseCheckoutError" class="course-checkout-error"></div>
-                <button type="submit" class="course-checkout-btn" id="courseCheckoutBtn">Plačaj 29 €</button>
+                <button type="submit" class="course-checkout-btn" id="courseCheckoutBtn">💳 Plačilo s kartico (27 €)</button>
+                <a href="/bank-transfer?product=moc-besede" class="course-checkout-btn-secondary">🏦 Bančno nakazilo (27 €)</a>
             </form>
             <div id="courseCheckoutLoading" class="course-checkout-loading">Priprava plačila...</div>
-            <a href="spletna-trgovina.html" class="checkout-back">← Nazaj na trgovino</a>
+            <a href="/spletna-trgovina" class="checkout-back">← Nazaj na trgovino</a>
         </div>
     </div>
 

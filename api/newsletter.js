@@ -17,6 +17,29 @@ function resolveGroupIds(body) {
     return [GROUPS.NEWSLETTER];
 }
 
+function signupTypeFrom(body) {
+    const rawType = String(body?.type || 'newsletter').toLowerCase();
+    if (rawType === 'ebook') return 'ebook';
+    if (rawType === 'jutranji_obred') return 'jutranji_obred';
+    return 'newsletter';
+}
+
+function successMessage(signupType, alreadyExists) {
+    if (signupType === 'ebook') {
+        return alreadyExists ? 'Already signed up for ebook' : 'Successfully signed up for ebook';
+    }
+    if (signupType === 'jutranji_obred') {
+        return alreadyExists ? 'Already signed up for jutranji obred' : 'Successfully signed up for jutranji obred';
+    }
+    return alreadyExists ? 'Already subscribed to newsletter' : 'Successfully subscribed to newsletter';
+}
+
+function failureMessage(signupType) {
+    if (signupType === 'ebook') return 'Failed to sign up for ebook';
+    if (signupType === 'jutranji_obred') return 'Failed to sign up for jutranji obred';
+    return 'Failed to subscribe to newsletter';
+}
+
 module.exports = async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, GET');
@@ -49,11 +72,20 @@ module.exports = async function handler(req, res) {
             }
         }
 
+        const signupType = signupTypeFrom(body);
         const groupIds = resolveGroupIds(body || {});
+
+        if (signupType === 'jutranji_obred' && !GROUPS.JUTRANJI_OBRED && !String(body?.mailerliteGroupId || '').trim()) {
+            return res.status(500).json({
+                error: 'Server configuration error',
+                message: 'MAILERLITE_GROUP_JUTRANJI_OBRED is not configured',
+            });
+        }
 
         const botCheck = detectBot(req, body);
         if (botCheck.isBot) {
-            return res.status(200).json({ success: true, message: 'Successfully subscribed' });
+            console.log('Bot detected:', botCheck.reason, 'IP:', req.headers['x-forwarded-for'] || 'unknown');
+            return res.status(200).json({ success: true, message: successMessage(signupType, false) });
         }
 
         const { email, name } = body || {};
@@ -69,7 +101,7 @@ module.exports = async function handler(req, res) {
         if (result.success) {
             return res.status(200).json({
                 success: true,
-                message: result.alreadyExists ? 'Already subscribed' : 'Successfully subscribed',
+                message: successMessage(signupType, result.alreadyExists),
                 alreadyExists: result.alreadyExists,
             });
         }
@@ -83,7 +115,7 @@ module.exports = async function handler(req, res) {
 
         console.error('MailerLite error:', result.error, 'Status:', result.status);
         return res.status(result.status >= 400 ? result.status : 500).json({
-            error: result.error || 'Failed to subscribe',
+            error: result.error || failureMessage(signupType),
             message: result.error,
         });
     } catch (error) {

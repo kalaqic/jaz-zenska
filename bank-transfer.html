@@ -217,9 +217,17 @@
             var p = new URLSearchParams(window.location.search);
             return p.get('product') === 'pohod';
         })();
+        var isMocBesede = (function() {
+            var p = new URLSearchParams(window.location.search);
+            return p.get('product') === 'moc-besede';
+        })();
         if (isPohod) {
             document.getElementById('bankHeader').textContent = '🏦 Bančno nakazilo – Pohod 100 Žensk na Trško Goro';
             document.getElementById('bankSubtitle').textContent = 'Vstopnica 27 € – vnesite podatke in prejmete račun z navodili za plačilo. Po plačilu vam pošljemo potrditev in številko udeleženke.';
+            document.getElementById('submitButtonText').textContent = 'Pošlji mi račun (27 €)';
+        } else if (isMocBesede) {
+            document.getElementById('bankHeader').textContent = '🏦 Bančno nakazilo – Moč besede';
+            document.getElementById('bankSubtitle').textContent = 'Tečaj 27 € – vnesite podatke in prejmete račun z navodili za plačilo. Po plačilu prejmete dostop do tečaja.';
             document.getElementById('submitButtonText').textContent = 'Pošlji mi račun (27 €)';
         }
 
@@ -270,7 +278,7 @@
                         email: email,
                         firstName: firstName,
                         lastName: lastName,
-                        product: isPohod ? 'pohod' : undefined
+                        product: isPohod ? 'pohod' : (isMocBesede ? 'moc-besede' : undefined)
                     }),
                 });
                 
@@ -295,11 +303,13 @@
                 
                 // Success
                 loading.classList.remove('active');
-                if (typeof fbq !== 'undefined') fbq('track', 'AddPaymentInfo', { content_name: isPohod ? 'Pohod 100 Žensk' : 'Skupnost JAZ ŽENSKA', value: isPohod ? 27 : 119, currency: 'EUR' });
+                if (typeof fbq !== 'undefined') fbq('track', 'AddPaymentInfo', { content_name: isPohod ? 'Pohod 100 Žensk' : (isMocBesede ? 'Moč besede' : 'Skupnost JAZ ŽENSKA'), value: (isPohod || isMocBesede) ? 27 : 119, currency: 'EUR' });
                 var successHtml = isPohod
                     ? '<p style="margin-bottom: 20px;">Hvala! Račun in navodila za plačilo so bili poslani na vaš email. Po opravljenem nakazilu vam bomo poslali potrditev in številko udeleženke.</p>'
-                    : '<p style="margin-bottom: 20px;">Hvala! Račun in navodila za plačilo so bili poslani na vaš email naslov.</p><p style="margin-bottom: 20px; font-size: 14px; color: #666;">Ker imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞</p>';
-                successHtml += '<a href="' + (isPohod ? 'pohod.html' : 'index.html') + '" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, var(--pinky, #c88ea7) 0%, var(--mid-violet, #99627a) 100%); color: var(--white, #ffffff); text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(200, 142, 167, 0.2); margin-top: 10px;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 8px 25px rgba(200, 142, 167, 0.3)\'" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 4px 15px rgba(200, 142, 167, 0.2)\'">Nazaj</a>';
+                    : isMocBesede
+                        ? '<p style="margin-bottom: 20px;">Hvala! Račun in navodila za plačilo za tečaj Moč besede so bili poslani na vaš email naslov.</p><p style="margin-bottom: 20px; font-size: 14px; color: #666;">Po plačilu prejmete dostop do tečaja v spletni učilnici.</p>'
+                        : '<p style="margin-bottom: 20px;">Hvala! Račun in navodila za plačilo so bili poslani na vaš email naslov.</p><p style="margin-bottom: 20px; font-size: 14px; color: #666;">Ker imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞</p>';
+                successHtml += '<a href="' + (isPohod ? '/pohod' : (isMocBesede ? '/o-tecaju' : '/')) + '" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, var(--pinky, #c88ea7) 0%, var(--mid-violet, #99627a) 100%); color: var(--white, #ffffff); text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(200, 142, 167, 0.2); margin-top: 10px;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 8px 25px rgba(200, 142, 167, 0.3)\'" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 4px 15px rgba(200, 142, 167, 0.2)\'">Nazaj</a>';
                 successMessage.innerHTML = successHtml;
                 successMessage.classList.add('active');
                 

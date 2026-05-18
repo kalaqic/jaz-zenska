@@ -120,8 +120,8 @@ module.exports = async function handler(req, res) {
                 }
             },
             
-            success_url: `${baseUrl}/checkout-success.html?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${baseUrl}/checkout.html`,
+            success_url: `${baseUrl}//checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${baseUrl}//checkout`,
             metadata: {
                 payment_method: 'card',
                 subscription_type: 'yearly',

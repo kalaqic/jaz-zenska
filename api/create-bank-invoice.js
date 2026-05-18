@@ -72,12 +72,15 @@ module.exports = async function handler(req, res) {
 
         const { email, firstName, lastName, product } = body;
 
-        // product: undefined or 'subscription' = group (119€); 'pohod' = pohod (27€)
+        // product: undefined or 'subscription' = group (119€); 'pohod' = pohod (27€); 'moc-besede' = course (27€)
         const isPohod = product === 'pohod';
-        const amountCents = isPohod ? 2700 : 11900; // 27 € or 119 €
+        const isMocBesede = product === 'moc-besede';
+        const amountCents = (isPohod || isMocBesede) ? 2700 : 11900; // 27 € or 119 €
         const description = isPohod
             ? 'Pohod 100 Žensk na Trško Goro – vstopnica 27 €'
-            : 'Skupnost JAZ ŽENSKA - Letna naročnina do 31. 12. 2027';
+            : isMocBesede
+                ? 'Moč besede – tečaj (enkratno 27 €)'
+                : 'Skupnost JAZ ŽENSKA - Letna naročnina do 31. 12. 2027';
 
         // Validate input
         if (!email || !firstName || !lastName) {
@@ -102,7 +105,7 @@ module.exports = async function handler(req, res) {
                 lastName: lastName,
                 payment_method: 'bank_transfer',
                 country: 'SI',
-                product: isPohod ? 'pohod' : 'subscription'
+                product: isPohod ? 'pohod' : (isMocBesede ? 'moc-besede' : 'subscription')
             }
         });
 
@@ -137,7 +140,7 @@ module.exports = async function handler(req, res) {
                 firstName: firstName,
                 lastName: lastName,
                 country: 'SI',
-                product: isPohod ? 'pohod' : 'subscription'
+                product: isPohod ? 'pohod' : (isMocBesede ? 'moc-besede' : 'subscription')
             }
         });
         
@@ -170,19 +173,21 @@ module.exports = async function handler(req, res) {
         await stripe.invoices.sendInvoice(finalizedInvoice.id);
         console.log('✅ Invoice email sent');
 
-        // Step 6: Add to MailerLite waiting-for-payment group (pohod = Trška Gora group, subscription = main waiting group)
+        // Step 6: Add to MailerLite waiting-for-payment group
         if (MAILERLITE_API_KEY) {
             try {
-                const waitingGroup = isPohod ? GROUPS.WAITING_POHOD : GROUPS.WAITING_FOR_PAYMENT;
+                const waitingGroup = isPohod
+                    ? GROUPS.WAITING_POHOD
+                    : (isMocBesede ? GROUPS.WAITING_MOC_BESEDE : GROUPS.WAITING_FOR_PAYMENT);
                 if (waitingGroup) {
                     const result = await addToMailerLite(email, `${firstName} ${lastName}`, [waitingGroup]);
                     if (result.success) {
-                        console.log('✅ Added to MailerLite waiting list:', isPohod ? 'pohod' : 'subscription');
+                        console.log('✅ Added to MailerLite waiting list:', isPohod ? 'pohod' : (isMocBesede ? 'moc-besede' : 'subscription'));
                     } else {
                         console.warn('⚠️ MailerLite (non-critical):', result.error);
                     }
-                } else if (isPohod) {
-                    console.warn('⚠️ MAILERLITE_GROUP_WAITING_POHOD not set – contact not added to waiting list');
+                } else if (isPohod || isMocBesede) {
+                    console.warn('⚠️ Waiting group env not set for product – contact not added to waiting list');
                 }
             } catch (mlError) {
                 console.warn('⚠️ MailerLite error (non-critical):', mlError.message);
@@ -203,7 +208,7 @@ module.exports = async function handler(req, res) {
                     createdAt: admin.firestore.FieldValue.serverTimestamp(),
                     amount: amountCents,
                     currency: 'eur',
-                    product: isPohod ? 'pohod' : 'subscription'
+                    product: isPohod ? 'pohod' : (isMocBesede ? 'moc-besede' : 'subscription')
                 };
                 await db.collection('waiting_payments').doc(customer.id).set(data);
                 console.log('✅ Added to Firebase waiting_payments');

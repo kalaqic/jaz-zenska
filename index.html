@@ -35,227 +35,6 @@
     
     <link rel="stylesheet" href="css/main.css">
     <style>
-        /* Webinar Signup Modal */
-        .webinar-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-        
-        .webinar-modal-overlay.active {
-            display: flex;
-        }
-        
-        .webinar-modal-content {
-            background: var(--white);
-            border-radius: 25px;
-            padding: 50px 40px;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: modalSlideIn 0.3s ease-out;
-            transition: opacity 0.5s ease-out;
-        }
-        
-        .webinar-modal-content.fade-out {
-            opacity: 0;
-        }
-        
-        .webinar-modal-overlay.fade-out {
-            opacity: 0;
-        }
-        
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .webinar-thank-you {
-            text-align: center;
-            display: none;
-        }
-        
-        .webinar-thank-you.active {
-            display: block;
-        }
-        
-        .webinar-thank-you-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 30px;
-            font-size: 40px;
-            color: var(--white);
-        }
-        
-        .webinar-thank-you-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            color: var(--dark-violet);
-            margin-bottom: 15px;
-        }
-        
-        .webinar-thank-you-message {
-            font-size: 18px;
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-        
-        .webinar-thank-you-close {
-            margin-top: 30px;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-            color: var(--white);
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Montserrat', sans-serif;
-            box-shadow: 0 4px 15px rgba(100, 56, 67, 0.2);
-        }
-        
-        .webinar-thank-you-close:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(100, 56, 67, 0.3);
-            background: linear-gradient(135deg, var(--dark-violet) 0%, var(--mid-violet) 100%);
-        }
-        
-        .webinar-modal-form.hidden {
-            display: none;
-        }
-        
-        .webinar-modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: transparent;
-            border: none;
-            font-size: 32px;
-            color: var(--text-light);
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .webinar-modal-close:hover {
-            background: var(--almost-white);
-            color: var(--dark-violet);
-        }
-        
-        .webinar-modal-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            color: var(--dark-violet);
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .webinar-modal-description {
-            font-size: 16px;
-            color: var(--text-light);
-            margin-bottom: 30px;
-            text-align: center;
-            line-height: 1.6;
-        }
-        
-        .webinar-modal-form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .webinar-modal-input {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid var(--almost-white);
-            border-radius: 15px;
-            font-size: 16px;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
-        
-        .webinar-modal-input:focus {
-            outline: none;
-            border-color: var(--mid-violet);
-            box-shadow: 0 0 0 3px rgba(153, 98, 122, 0.1);
-        }
-        
-        .webinar-modal-submit {
-            background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
-            color: var(--white);
-            padding: 15px 40px;
-            border: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 30px rgba(100, 56, 67, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .webinar-modal-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(100, 56, 67, 0.5);
-        }
-        
-        .webinar-modal-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .webinar-modal-message {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 14px;
-            display: none;
-        }
-        
-        .webinar-modal-message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-        
-        .webinar-modal-message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-        
         /* Individual Coaching Section */
         .coaching-section {
             margin-top: 30px;
@@ -412,31 +191,74 @@
                 width: 100%;
             }
         }
+
+        /* Moč besede offer card in Aktualno (copied trg container styles) */
+        #aktualno .trg-product {
+            --shop-ink: #3d2a33;
+            --shop-muted: #6f5a64;
+            --shop-accent: #99627A;
+            --shop-accent-dark: #643843;
+            --shop-card: #ffffff;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: stretch;
+            background: var(--shop-card);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 16px 48px rgba(61, 42, 51, 0.06), 0 0 0 1px rgba(61, 42, 51, 0.06);
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(153, 98, 122, 0.08);
+        }
+        #aktualno .trg-product-badge { position: absolute; top: 24px; right: 24px; padding: 6px 14px; background: linear-gradient(135deg, var(--shop-accent) 0%, var(--shop-accent-dark) 100%); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 6px; z-index: 2; }
+        #aktualno .trg-product-visual { position: relative; border-radius: 20px; overflow: hidden; aspect-ratio: 1/1; width: 100%; background: linear-gradient(145deg, #f0e6ec 0%, #e8dce3 100%); }
+        #aktualno .trg-product-visual img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+        #aktualno .trg-product-content h2 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--shop-ink); margin: 0 0 16px; line-height: 1.3; }
+        #aktualno .trg-product-content .trg-desc { font-size: 15px; line-height: 1.75; color: var(--shop-muted); margin: 0 0 24px; }
+        #aktualno .trg-product-content .trg-desc a { color: var(--shop-accent); font-weight: 600; text-decoration: none; }
+        #aktualno .trg-product-content .trg-desc a:hover { text-decoration: underline; }
+        #aktualno .trg-price-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 28px; }
+        #aktualno .trg-price { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--shop-accent); }
+        #aktualno .trg-cta { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, var(--shop-accent) 0%, var(--shop-accent-dark) 100%); color: #fff; padding: 18px 40px; border-radius: 50px; font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 700; text-decoration: none; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: 0 10px 32px rgba(153, 98, 122, 0.35); }
+        #aktualno .trg-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(153, 98, 122, 0.4); }
+        #aktualno .trg-cta svg { width: 18px; height: 18px; }
+        #aktualno .trg-cta-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--shop-accent); padding: 16px 32px; border-radius: 50px; font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; border: 2px solid var(--shop-accent); transition: background 0.25s ease, color 0.25s ease; }
+        #aktualno .trg-cta-secondary:hover { background: rgba(153, 98, 122, 0.08); color: var(--shop-accent-dark); }
+        #aktualno .trg-buttons { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+        #aktualno .trg-trust { margin-top: 28px; padding-top: 24px; border-top: 1px solid rgba(61, 42, 51, 0.08); display: flex; flex-wrap: wrap; gap: 20px; font-size: 13px; color: var(--shop-muted); }
+        #aktualno .trg-trust span { display: inline-flex; align-items: center; gap: 6px; }
+        #aktualno .trg-trust svg { width: 16px; height: 16px; flex-shrink: 0; }
+        @media (max-width: 768px) {
+            #aktualno .trg-product { grid-template-columns: 1fr; padding: 28px 20px; gap: 28px; }
+            #aktualno .trg-product-badge { top: 16px; right: 16px; }
+        }
     </style>
 </head>
 <body>
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-bar-content">
-            <a href="o-meni.html">O meni</a>
-            <a href="media.html">Mediji</a>
-            <a href="stik-z-nami.html">Stik z nami</a>
+            <a href="/o-meni">O meni</a>
+            <a href="/media">Mediji</a>
+            <a href="/stik-z-nami">Stik z nami</a>
+            <a href="/spletna-trgovina">Spletna trgovina</a>
         </div>
     </div>
 
     <!-- Header -->
     <header>
         <div class="header-content">
-            <a href="index.html" class="header-logo">
+            <a href="/" class="header-logo">
                 <img src="images/Jaz Zenska Logo Horizontal.webp" alt="Jaz Ženska Logo">
             </a>
             <nav class="desktop-nav">
                 <ul>
-                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="/jaz-zenska">Jaz Ženska</a></li>
                     <li><a href="#aktualno">Aktualno</a></li>
-                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="/blog">Blog</a></li>
                     <li><a href="#affirmations">Meditacije</a></li>
-                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
+                    <li><a href="/spletna-ucilnica">Spletna Učilnica</a></li>
                 </ul>
             </nav>
             <a href="#newsletter" class="header-consultation-btn desktop-social">PRIJAVI SE NA E-NOVICE</a>
@@ -458,17 +280,18 @@
         </button>
         <div class="mobile-menu-content">
             <div class="mobile-top-links">
-                <a href="o-meni.html">O meni</a>
-                <a href="media.html">Mediji</a>
-                <a href="stik-z-nami.html">Stik z nami</a>
+                <a href="/o-meni">O meni</a>
+                <a href="/media">Mediji</a>
+                <a href="/stik-z-nami">Stik z nami</a>
+                <a href="/spletna-trgovina">Spletna trgovina</a>
             </div>
             <nav class="mobile-nav">
                 <ul>
-                    <li><a href="jaz-zenska.html">Jaz Ženska</a></li>
+                    <li><a href="/jaz-zenska">Jaz Ženska</a></li>
                     <li><a href="#aktualno">Aktualno</a></li>
-                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="/blog">Blog</a></li>
                     <li><a href="#affirmations">Meditacije</a></li>
-                    <li><a href="spletna-ucilnica.html">Spletna Učilnica</a></li>
+                    <li><a href="/spletna-ucilnica">Spletna Učilnica</a></li>
                 </ul>
             </nav>
             <div class="mobile-social-icons">
@@ -485,11 +308,12 @@
             <div class="hero-content-left">
                 <span class="hero-label">SPOZNAJMO SE</span>
                 <h1><img src="images/zacetek se zacne zdaj.webp" alt="Nov začetek se začne zdaj!"></h1>
-                <a href="pridruzi-se.html" class="hero-cta-btn">PRIDRUŽI SE</a>
+                <a href="/pridruzi-se" class="hero-cta-btn">PRIDRUŽI SE</a>
         </div>
             <div class="hero-image-right">
                 <img src="images/nebo.webp" alt="Hero image" class="hero-slide active" fetchpriority="high">
                 <img src="images/ladja.webp" alt="Hero image" class="hero-slide">
+                <img src="images/hero 3.webp" alt="Hero image" class="hero-slide">
             </div>
         </div>
     </section>
@@ -541,12 +365,12 @@
             <!-- About Section -->
             <div class="jaz-about-showcase">
                 <div class="jaz-about-hero">
-                    <img src="images/gogalnica.webp" alt="Marjanca Trščinar Antić" class="jaz-about-image">
                     <div class="jaz-about-text">
                         <h3>Marjanca Trščinar Antić</h3>
                         <p>Žena, mati, babica, samostojna podjetnica, ki je v svojem življenju spoznala borbo, večkrat padla na kolena in se vedno znova pobrala z novim upanjem, žarom in odločnostjo, da nekaj spremeni in naredi, kar bo dobro za njeno družino, zanjo in tudi vse, ki jih na svoji poti srečuje. Na osnovi neprestanega učenja in dolgoletnega dela z ljudmi, predvsem pa na osnovi bogatih življenjskih izkušenj, svoje znanje podaja na enostaven, razumljiv in uporaben način.</p>
-                        <a href="o-meni.html" class="jaz-about-button">Preberi več</a>
+                        <a href="/o-meni" class="jaz-about-button">Preberi več</a>
                     </div>
+                    <img src="images/marjanca 3197 x  3400.webp" alt="Marjanca Trščinar Antić" class="jaz-about-image">
                 </div>
                 
                 <div class="jaz-vision-mission">
@@ -579,14 +403,14 @@
                                 <div class="jaz-media-content">
                                     <h4>Marjanca v medijih</h4>
                                     <p>Odkrijte intervjuje, članke in predstavitve, kjer Marjanca deli svojo modrost o ženski moči, transformaciji in osebni rasti.</p>
-                                    <a href="media.html" class="jaz-media-button">Oglej si vse medijske prispevke</a>
+                                    <a href="/media" class="jaz-media-button">Oglej si vse medijske prispevke</a>
                                 </div>
                             </div>
                         </div>
                         <div class="jaz-media-content-mobile">
                             <h4>Marjanca v medijih</h4>
                             <p>Odkrijte intervjuje, članke in predstavitve, kjer Marjanca deli svojo modrost o ženski moči, transformaciji in osebni rasti.</p>
-                            <a href="media.html" class="jaz-media-button">Oglej si vse medijske prispevke</a>
+                            <a href="/media" class="jaz-media-button">Oglej si vse medijske prispevke</a>
                         </div>
                     </div>
                 </div>
@@ -601,12 +425,14 @@
             <p class="current-event-subtitle">AKTUALNI DOGODKI</p>
 
             <div class="current-event-cards" id="cms-aktualno-cards">
-                <a href="pohod.html" class="current-event-card current-event-image-link">
+                <a href="/pohod" class="current-event-card current-event-image-link">
                     <img src="images/pohod.webp" alt="Pohod 100 Žensk na Trško Goro" class="current-event-image">
                 </a>
-
-                <a href="spletna-trgovina.html" class="current-event-card current-event-image-link">
-                    <img src="images/anticinična.webp" alt="Tečaj – Spletna trgovina" class="current-event-image">
+                <a href="/o-tecaju" class="current-event-card current-event-image-link">
+                    <img src="images/moc besede tecaj.webp" alt="Moč besede – Tečaj" class="current-event-image">
+                </a>
+                <a href="/jutranji-obred" class="current-event-card current-event-image-link">
+                    <img src="images/Jutrenji obred.webp" alt="Moj jutranji obred" class="current-event-image">
                 </a>
             </div>
             
@@ -620,7 +446,7 @@
                             <p>Spoznali se bova in ugotovili, ali vam lahko pomagam in na osnovi pogovora, vam bom pripravila načrt in program dela, ki bo prilagojen vam, vašim izzivom in vašim ciljem.</p>
                         </div>
                         <div class="coaching-buttons">
-                            <a href="o-meni.html" class="coaching-button coaching-button-secondary">Več o meni</a>
+                            <a href="/o-meni" class="coaching-button coaching-button-secondary">Več o meni</a>
                             <a href="#stik-z-nami" class="coaching-button coaching-button-primary" onclick="document.getElementById('schedule-btn')?.click(); return false;">Za brezplačen uvodni pogovor</a>
                     </div>
                 </div>
@@ -664,7 +490,7 @@
                     </div>
 
                 <div class="event-modal-actions">
-                    <a href="#" class="event-button-primary" id="webinar-register-modal-button">Prijavi se na webinar</a>
+                    <span class="event-button-primary" aria-disabled="true">Prijave so zaključene</span>
                 </div>
             </div>
         </div>
@@ -962,12 +788,12 @@
             <div class="footer-section">
                 <h3>NAVIGACIJA</h3>
                 <ul>
-                    <li><a href="o-meni.html">O meni</a></li>
+                    <li><a href="/o-meni">O meni</a></li>
                     <li><a href="#jaz-zenska">Naša zgodba</a></li>
-                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="/blog">Blog</a></li>
                     <li><a href="#affirmations">Meditacije</a></li>
-                    <li><a href="pravilnik-o-zasebnosti.html">Pravilnik o zasebnosti</a></li>
-                    <li><a href="splosni-pogoji.html">Splošni pogoji</a></li>
+                    <li><a href="/pravilnik-o-zasebnosti">Pravilnik o zasebnosti</a></li>
+                    <li><a href="/splosni-pogoji">Splošni pogoji</a></li>
                 </ul>
             </div>
         </div>
@@ -977,7 +803,7 @@
         <div class="footer-bottom">
             <p>Jaz Ženska © 2026. Vse pravice pridržane.</p>
             <p>Spletno stran izdelal in vzdržuje: <a href="https://www.linkedin.com/in/kalabic-david" target="_blank" rel="noopener noreferrer">David Kalabić</a></p>
-            <p><a href="pravilnik-o-zasebnosti.html" style="color: inherit; text-decoration: underline; opacity: 0.8;">Piškotki in politika zasebnosti</a></p>
+            <p><a href="/pravilnik-o-zasebnosti" style="color: inherit; text-decoration: underline; opacity: 0.8;">Piškotki in politika zasebnosti</a></p>
             
             <div class="footer-social">
                 <a href="https://www.facebook.com/profile.php?id=61571491331153" target="_blank" rel="noopener noreferrer"><img src="images/svg/facebook.svg" alt="Facebook"></a>
@@ -1014,7 +840,7 @@
                 <h3>Uporabljamo piškotke</h3>
                 <p>Ta spletna stran uporablja piškotke za zagotavljanje pravilnega delovanja, analizo obiska in izboljšanje uporabniške izkušnje.</p>
                 <p class="cookie-banner-links">
-                    Več informacij najdeš v <a href="pravilnik-o-zasebnosti.html">Pravilniku o zasebnosti</a> in Politiki piškotkov.
+                    Več informacij najdeš v <a href="/pravilnik-o-zasebnosti">Pravilniku o zasebnosti</a> in Politiki piškotkov.
                 </p>
             </div>
             <div class="cookie-banner-buttons">
@@ -1078,48 +904,6 @@
             <div class="cookie-settings-footer">
                 <button class="cookie-btn cookie-btn-reject" id="cookieSettingsReject">Zavrni vse</button>
                 <button class="cookie-btn cookie-btn-accept" id="cookieSettingsSave">Shrani nastavitve</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Webinar Signup Modal -->
-    <div class="webinar-modal-overlay" id="webinarModal">
-        <div class="webinar-modal-content">
-            <button class="webinar-modal-close" id="webinarModalClose" aria-label="Zapri">&times;</button>
-            <h2 class="webinar-modal-title">Prijavi se na brezplačen webinar</h2>
-            <p class="webinar-modal-description">Vnesite vaš email naslov in se prijavite na brezplačni webinar <strong>Moja moč je v meni</strong>.</p>
-            <form class="webinar-modal-form" id="webinarSignupForm" data-form-start-time="">
-                <!-- Honeypot fields - hidden from users but bots will fill them -->
-                <input type="text" name="are_you_a_bot" id="webinar_are_you_a_bot" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
-                <input type="text" name="website" id="webinar_website" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
-                <input type="text" name="company" id="webinar_company" style="display:none; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
-                <input type="hidden" name="form_start_time" id="webinar_form_start_time">
-                <input 
-                    type="text" 
-                    class="webinar-modal-input" 
-                    id="webinarName" 
-                    placeholder="Vaše ime" 
-                    required
-                >
-                <input 
-                    type="email" 
-                    class="webinar-modal-input" 
-                    id="webinarEmail" 
-                    placeholder="Vaš email naslov" 
-                    required
-                >
-                <button type="submit" class="webinar-modal-submit" id="webinarSubmitBtn">
-                    Prijavi se na brezplačen webinar
-                </button>
-                <div class="webinar-modal-message" id="webinarMessage"></div>
-            </form>
-            
-            <div class="webinar-thank-you" id="webinarThankYou">
-                <div class="webinar-thank-you-icon">✓</div>
-                <h2 class="webinar-thank-you-title">Hvala!</h2>
-                <p class="webinar-thank-you-message">Vaša prijava je bila uspešna, hvala!</p>
-                <p class="webinar-thank-you-message" style="margin-top: 15px; font-size: 14px; color: #666;">Ker imamo nov naslov obstaja možnost da bo naše sporočilo poletelo med nezazeleno pošto torej prosimo da preverite tudi tam. 🌞</p>
-                <button class="webinar-thank-you-close" onclick="closeWebinarModal()">Zapri</button>
             </div>
         </div>
     </div>
@@ -1192,141 +976,10 @@
             setInterval(() => {
                 currentHeroIndex = (currentHeroIndex + 1) % heroSlides.length;
                 showHeroSlide(currentHeroIndex);
-            }, 7000); // change every 5 seconds
+            }, 2500); // change every 4 seconds
         });
     </script>
     <script>
-        // Webinar Signup Modal
-        const webinarModal = document.getElementById('webinarModal');
-        const webinarModalClose = document.getElementById('webinarModalClose');
-        const webinarSignupForm = document.getElementById('webinarSignupForm');
-        const webinarNameInput = document.getElementById('webinarName');
-        const webinarEmailInput = document.getElementById('webinarEmail');
-        const webinarSubmitBtn = document.getElementById('webinarSubmitBtn');
-        const webinarMessage = document.getElementById('webinarMessage');
-        const webinarThankYou = document.getElementById('webinarThankYou');
-
-        // Capitalize first letter of name field
-        if (webinarNameInput) {
-            webinarNameInput.addEventListener('input', function(e) {
-                const value = e.target.value;
-                if (value.length > 0) {
-                    e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
-                }
-            });
-        }
-
-        // Open modal when clicking webinar signup buttons
-        function openWebinarModal() {
-            webinarModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            // Track form start time for bot detection
-            const formStartTimeInput = document.getElementById('webinar_form_start_time');
-            if (formStartTimeInput) {
-                formStartTimeInput.value = Date.now().toString();
-            }
-        }
-
-        // Close modal
-        function closeWebinarModal() {
-            webinarModal.classList.remove('active', 'fade-out');
-            webinarModal.querySelector('.webinar-modal-content').classList.remove('fade-out');
-            document.body.style.overflow = '';
-            webinarMessage.classList.remove('success', 'error');
-            webinarMessage.style.display = 'none';
-            webinarSignupForm.reset();
-            webinarSignupForm.classList.remove('hidden');
-            webinarThankYou.classList.remove('active');
-            webinarNameInput.disabled = false;
-            webinarEmailInput.disabled = false;
-        }
-
-        // Close button
-        if (webinarModalClose) {
-            webinarModalClose.addEventListener('click', closeWebinarModal);
-        }
-
-        // Close on overlay click
-        if (webinarModal) {
-            webinarModal.addEventListener('click', function(e) {
-                if (e.target === webinarModal) {
-                    closeWebinarModal();
-                }
-            });
-        }
-
-        // Close on Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && webinarModal && webinarModal.classList.contains('active')) {
-                closeWebinarModal();
-            }
-        });
-
-        // Handle form submission
-        if (webinarSignupForm) {
-            webinarSignupForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const name = webinarNameInput.value.trim();
-                const email = webinarEmailInput.value.trim();
-                
-                if (!name) {
-                    showWebinarMessage('Prosimo, vnesite vaše ime.', 'error');
-                    return;
-                }
-                
-                if (!email) {
-                    showWebinarMessage('Prosimo, vnesite email naslov.', 'error');
-                    return;
-                }
-
-                // Disable submit button
-                webinarSubmitBtn.disabled = true;
-                webinarSubmitBtn.textContent = 'Prijavljanje...';
-
-                try {
-                    const response = await fetch('/api/webinar-signup', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            email: email,
-                            name: name,
-                            are_you_a_bot: (document.getElementById('webinar_are_you_a_bot')?.value || '').trim(),
-                            website: (document.getElementById('webinar_website')?.value || '').trim(),
-                            company: (document.getElementById('webinar_company')?.value || '').trim(),
-                            form_start_time: parseInt(document.getElementById('webinar_form_start_time')?.value || Date.now())
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok || response.status === 409) {
-                        // Hide form and show thank you message
-                        webinarSignupForm.classList.add('hidden');
-                        webinarThankYou.classList.add('active');
-                    } else {
-                        showWebinarMessage(data.message || 'Napaka pri prijavi. Prosimo, poskusite znova.', 'error');
-                        webinarSubmitBtn.disabled = false;
-                        webinarSubmitBtn.textContent = 'Prijavi se na brezplačen webinar';
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    showWebinarMessage('Napaka pri povezavi. Prosimo, poskusite znova.', 'error');
-                    webinarSubmitBtn.disabled = false;
-                    webinarSubmitBtn.textContent = 'Prijavi se na brezplačen webinar';
-                }
-            });
-        }
-
-        function showWebinarMessage(message, type) {
-            webinarMessage.textContent = message;
-            webinarMessage.className = 'webinar-modal-message ' + type;
-            webinarMessage.style.display = 'block';
-        }
-
-        // Update webinar signup buttons to open modal
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize form start time tracking
             const newsletterForm = document.querySelector('.newsletter-form');
@@ -1347,14 +1000,6 @@
                     });
                 }
             }
-            
-            const webinarButtons = document.querySelectorAll('#webinar-register-button, #webinar-register-modal-button');
-            webinarButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openWebinarModal();
-                });
-            });
         });
     </script>
     <script>if(typeof fbq!=='undefined')fbq('track','ViewContent',{content_name:'Domača stran'});</script>

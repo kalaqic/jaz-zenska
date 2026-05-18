@@ -263,7 +263,7 @@
     </style>
 </head>
 <body>
-    <a href="index.html" class="back-home-btn">← Nazaj na domačo stran</a>
+    <a href="/" class="back-home-btn">← Nazaj na domačo stran</a>
     <div class="login-page">
         <div class="login-accent-blur login-accent-blur-1" aria-hidden="true"></div>
         <div class="login-accent-blur login-accent-blur-2" aria-hidden="true"></div>
@@ -285,7 +285,7 @@
             </div>
             <button type="submit" class="login-button" id="loginButton">Prijavi se</button>
         </form>
-        <p class="login-no-account">Še nimaš računa? <a href="jaz-zenska.html">Pridruži se nam!</a></p>
+        <p class="login-no-account">Še nimaš računa? <a href="/jaz-zenska">Pridruži se nam!</a></p>
         <div class="forgot-password">
             <a href="#" onclick="handleForgotPassword(event)">Pozabljeno geslo?</a>
         </div>
@@ -391,7 +391,7 @@
                 // Meta Pixel: successful login
                 if (typeof fbq !== 'undefined') fbq('track', 'CompleteRegistration', { content_name: 'Moj račun' });
                 // Redirect to dashboard
-                window.location.href = 'dashboard.html';
+                window.location.href = '/dashboard';
             } catch (error) {
                 let errorMessageText = 'Napaka pri prijavi';
                 

@@ -49,7 +49,7 @@ function getCurrentUser() {
             // Try to get from Firebase
             return null; // Will trigger redirect in initDashboard
         }
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return null;
     }
     return JSON.parse(userStr);
@@ -71,12 +71,12 @@ async function handleLogout() {
         // Clear localStorage
         localStorage.removeItem('currentUser');
         // Redirect to login
-        window.location.href = 'login.html';
+        window.location.href = '/login';
     } catch (error) {
         console.error('Error logging out:', error);
         // Clear localStorage anyway and redirect
         localStorage.removeItem('currentUser');
-        window.location.href = 'login.html';
+        window.location.href = '/login';
     }
 }
 
@@ -161,7 +161,7 @@ function initDashboard() {
         // Check localStorage as fallback
         const currentUser = localStorage.getItem('currentUser');
         if (!currentUser) {
-            window.location.href = 'login.html';
+            window.location.href = '/login';
             return;
         }
     }
@@ -170,7 +170,7 @@ function initDashboard() {
     
     const user = getCurrentUser();
     if (!user) {
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return;
     }
     
@@ -229,9 +229,9 @@ function buildCourseResumeUrl(courseId, episodeId) {
     const e = encodeURIComponent(String(episodeId));
     if (String(courseId).startsWith('webinar-')) {
         const wid = String(courseId).replace(/^webinar-/, '');
-        return `course.html?webinar=${encodeURIComponent(wid)}&episode=${e}`;
+        return `/course?webinar=${encodeURIComponent(wid)}&episode=${e}`;
     }
-    return `course.html?id=${encodeURIComponent(courseId)}&episode=${e}`;
+    return `/course?id=${encodeURIComponent(courseId)}&episode=${e}`;
 }
 
 async function renderResumeInRightPanel(statsEl, user) {
@@ -323,7 +323,7 @@ async function renderResumeInRightPanel(statsEl, user) {
                 <div style="font-weight:800; color:var(--dark-violet); font-size:14px; font-family:'Playfair Display',serif;">${escapeHtml(courseTitle)}</div>
                 <div style="color:var(--text-light); font-size:12px; margin-top:6px; line-height:1.45;">${escapeHtml(episodeTitle)}${epLabel ? ` · ${escapeHtml(epLabel)}` : ''}</div>
                 <p style="margin:10px 0 0; font-size:12px; color:var(--text-light);">Za nadaljevanje potrebuješ dostop.</p>
-                <a href="jaz-zenska.html" class="right-resume-btn">Več o dostopu</a>
+                <a href="/jaz-zenska" class="right-resume-btn">Več o dostopu</a>
             </div>`;
         return;
     }
@@ -382,9 +382,9 @@ function renderRightPanel() {
             ` : upcomingEvents.map(evt => {
                 const d = new Date(evt._dt);
                 const dateStr = toLocalDateStringCal(d);
-                const evtIdJs = evt.id != null && evt.id !== '' ? JSON.stringify(String(evt.id)) : 'null';
+                const evtId = evt.id != null && evt.id !== '' ? String(evt.id) : '';
                 return `
-                    <div class="right-list-item" onclick="openCalendarForDay('${dateStr}', ${evtIdJs})">
+                    <div class="right-list-item js-open-calendar-day" data-date="${escapeHtml(dateStr)}" data-event-id="${escapeHtml(evtId)}">
                         <div class="right-list-item-title">${escapeHtml(evt.title || 'Dogodek')}</div>
                         <div class="right-list-item-meta">🗓 ${escapeHtml(d.toLocaleDateString('sl-SI', { year:'numeric', month:'long', day:'numeric' }))}</div>
                     </div>
@@ -407,6 +407,13 @@ function renderRightPanel() {
             `).join('')}
         </div>
     `;
+    upcomingEl.querySelectorAll('.js-open-calendar-day').forEach(el => {
+        el.addEventListener('click', () => {
+            const date = el.getAttribute('data-date') || '';
+            const eventId = el.getAttribute('data-event-id') || null;
+            if (date) window.openCalendarForDay(date, eventId);
+        });
+    });
 }
 
 async function loadMiniWeekCalendar() {
@@ -502,8 +509,13 @@ window.openCalendarForDay = async function(dateStr, eventId) {
     }
     full.classList.add('show');
     document.body.style.overflow = 'hidden';
-    await loadCalendar();
-    await showDayEvents(dateStr, eventId);
+    try {
+        await loadCalendar();
+        await showDayEvents(dateStr, eventId);
+    } catch (error) {
+        console.error('openCalendarForDay failed:', error);
+        openFullCalendarModal();
+    }
 };
 
 window.closeFullCalendarModal = function() {
@@ -783,6 +795,8 @@ async function loadClassroom(container) {
         'Meditativni ples za sproščanje',
         // Webinarji (niso tečaji) – ostanejo le pod »Webinarji«
         'Moja moč je v meni',
+        'Moč Besede | Webinar',
+        'Moc Besede | Webinar',
         '25 Stopnic do srece',
         '25 Stopnic do sreče'
     ];
@@ -791,6 +805,7 @@ async function loadClassroom(container) {
         if (coursesToDelete.includes(course.title)) return false;
         const t = String(course.title || '').toLowerCase();
         if (t.includes('stopnic')) return false;
+        if (t.includes('webinar')) return false;
         return true;
     });
     
@@ -807,20 +822,17 @@ async function loadClassroom(container) {
 
     const isGuest = currentUser.role === 'guest';
     const hasMocBesedeAccess = !isGuest || purchasedCourses.includes('moc-besede');
-    // Keep "Moč besede" always as a featured card in webinar-like design
+
+    // Render Moč besede as image card (no square text card)
     html += `
-        <div class="webinars-grid" style="margin-bottom: 24px;">
-            <div class="webinar-card ${hasMocBesedeAccess ? '' : 'locked'}" onclick="openCourse('moc-besede', ${hasMocBesedeAccess})">
-                <img src="images/moc besede.webp" alt="Moč besede" class="webinar-card-image">
-                <div class="webinar-title">Moč besede</div>
-                <div class="webinar-date">30-dnevna e-delavnica</div>
-                <div class="webinar-description">Spoznaj moč besed in kako z majhnimi spremembami v izražanju vplivaš na počutje, odnose in rezultate v življenju.</div>
-                ${!hasMocBesedeAccess ? '<div class="webinar-lock-note">Nimate dostopa do tega tečaja</div>' : ''}
-            </div>
+        <div class="extra-offer-image-row" style="margin-bottom: 20px;">
+            <a href="${hasMocBesedeAccess ? '/course?id=moc-besede' : '/jaz-zenska'}" class="extra-offer-image-link${hasMocBesedeAccess ? '' : ' locked'}" ${hasMocBesedeAccess ? '' : 'onclick="event.preventDefault(); showGuestJoinPopup();"'} >
+                <img src="images/moc besede tecaj.webp" alt="Moč besede">
+            </a>
         </div>
     `;
 
-    // Remove moc-besede from the generic grid so it doesn't appear as a purple card
+    // Keep moc-besede out of generic square course grid
     courses = courses.filter(course => course.id !== 'moc-besede');
     
     if (courses.length > 0) {
@@ -848,35 +860,33 @@ async function loadClassroom(container) {
 }
 
 function getCourseBuyUrl(courseId) {
-    if (courseId === 'moc-besede') return 'o-tecaju.html';
-    return 'spletna-trgovina.html';
+    if (courseId === 'moc-besede') return '/o-tecaju';
+    return '/spletna-trgovina';
 }
 
 function openCourse(courseId, hasAccess = true) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if (currentUser.role === 'guest' && !hasAccess) {
-        window.location.href = getCourseBuyUrl(courseId);
+        showGuestJoinPopup();
         return;
     }
-    window.location.href = `course.html?id=${courseId}`;
+    window.location.href = `/course?id=${courseId}`;
 }
 
-function showNoAccessPopup() {
-    const existing = document.getElementById('noAccessModal');
+function showGuestJoinPopup() {
+    const existing = document.getElementById('guestJoinModal');
     if (existing) {
         existing.classList.add('show');
         return;
     }
     const overlay = document.createElement('div');
-    overlay.id = 'noAccessModal';
+    overlay.id = 'guestJoinModal';
     overlay.className = 'no-access-modal';
     overlay.innerHTML = `
         <div class="no-access-modal-content">
-            <h3 class="no-access-title">Nimate dostopa do te vsebine</h3>
-            <p class="no-access-text">Kupite ta tečaj v spletni trgovini ali se pridružite celotni skupini za 119 € in dobite dostop do vsega!</p>
+            <h3 class="no-access-title">Dostop do vseh vsebin v spletni učilnici imajo samo članice skupnosti.</h3>
             <div class="no-access-buttons">
-                <a href="spletna-trgovina.html" class="no-access-btn no-access-btn-primary">Kupi tečaj</a>
-                <a href="jaz-zenska.html" class="no-access-btn no-access-btn-secondary">Celotna skupina (119 €)</a>
+                <a href="/jaz-zenska" class="no-access-btn no-access-btn-primary">Pridruži se</a>
             </div>
             <button type="button" class="no-access-close" aria-label="Zapri">&times;</button>
         </div>
@@ -888,21 +898,58 @@ function showNoAccessPopup() {
     });
     document.body.appendChild(overlay);
     document.body.appendChild(document.createElement('style')).textContent = `
-        .no-access-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 20000; align-items: center; justify-content: center; padding: 20px; }
+        .no-access-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); z-index: 20000; align-items: center; justify-content: center; padding: 20px; }
         .no-access-modal.show { display: flex; }
-        .no-access-modal-content { background: var(--white); border-radius: 20px; padding: 40px; max-width: 440px; width: 100%; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .no-access-title { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark-violet); margin: 0 0 16px; }
-        .no-access-text { color: var(--text-dark); font-size: 16px; line-height: 1.7; margin: 0 0 28px; }
-        .no-access-buttons { display: flex; flex-direction: column; gap: 12px; }
-        .no-access-btn { display: block; text-align: center; padding: 14px 24px; border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; }
-        .no-access-btn-primary { background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; box-shadow: 0 6px 24px rgba(100,56,67,0.35); }
+        .no-access-modal-content { background: linear-gradient(160deg, #fff 0%, #fbf8fa 100%); border-radius: 22px; padding: 34px 30px 30px; max-width: 460px; width: 100%; position: relative; box-shadow: 0 24px 70px rgba(0,0,0,0.35); border: 1px solid rgba(153,98,122,0.22); }
+        .no-access-title { font-family: 'Playfair Display', serif; font-size: 25px; line-height: 1.35; color: var(--dark-violet); margin: 0 0 22px; text-align: center; }
+        .no-access-buttons { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+        .no-access-btn { display: block; text-align: center; padding: 14px 24px; border-radius: 50px; font-size: 16px; font-weight: 700; text-decoration: none; transition: all 0.3s ease; min-width: 180px; }
+        .no-access-btn-primary { background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: white; box-shadow: 0 8px 28px rgba(100,56,67,0.35); }
         .no-access-btn-primary:hover { transform: translateY(-2px); }
-        .no-access-btn-secondary { background: var(--main-white); color: var(--dark-violet); border: 2px solid var(--mid-violet); }
-        .no-access-btn-secondary:hover { background: rgba(153,98,122,0.1); }
         .no-access-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 28px; color: var(--text-light); cursor: pointer; line-height: 1; padding: 0; }
         .no-access-close:hover { color: var(--dark-violet); }
     `;
     overlay.classList.add('show');
+}
+
+function ensureGuestLockedVisualOverrides() {
+    if (document.getElementById('guestLockedVisualOverrides')) return;
+    const style = document.createElement('style');
+    style.id = 'guestLockedVisualOverrides';
+    style.textContent = `
+        .guest-locked-muted::before {
+            background: linear-gradient(90deg, #c8c8c8 0%, #d9d9d9 100%) !important;
+        }
+        .guest-locked-muted {
+            border-color: rgba(180, 180, 180, 0.45) !important;
+            box-shadow: 0 14px 36px rgba(44, 34, 40, 0.06), 0 0 0 1px rgba(180, 180, 180, 0.25) !important;
+        }
+        .guest-locked-btn-disabled {
+            background: #b8b8b8 !important;
+            border: 1px solid #b8b8b8 !important;
+            color: #fff !important;
+            box-shadow: none !important;
+            transform: none !important;
+            cursor: not-allowed !important;
+            text-decoration: none !important;
+        }
+        .guest-locked-btn-disabled:hover {
+            background: #b8b8b8 !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+        a.extra-offer-image-link.locked {
+            cursor: not-allowed !important;
+            text-decoration: none !important;
+            outline: none !important;
+        }
+        a.extra-offer-image-link.locked img {
+            filter: grayscale(100%) !important;
+            opacity: 0.72 !important;
+            box-shadow: none !important;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // Locked content message for guests (calendar, webinars)
@@ -922,7 +969,7 @@ function getGuestLockedHtml() {
             <p style="margin: 0 0 12px; color: var(--text-dark); font-size: 16px; line-height: 1.6;">
                 Želite dostop do vseh tečajev?
             </p>
-            <a href="jaz-zenska.html" style="
+            <a href="/jaz-zenska" style="
                 display: inline-block;
                 background: linear-gradient(135deg, #99627A 0%, #643843 100%);
                 color: #fff;
@@ -940,33 +987,55 @@ function getGuestLockedHtml() {
 // ===== WEBINARS SECTION =====
 // 25 Stopnic do sreče – uradni Vimeo replay (iframe src kot na vimeo embed strani)
 const STOPNIC_WEBINAR_VIMEO_URL = 'https://player.vimeo.com/video/1179302920?badge=0&autopause=0&player_id=0&app_id=58479';
+const MOC_BESEDE_WEBINAR_VIMEO_URL = 'https://player.vimeo.com/video/1183774557?badge=0&autopause=0&player_id=0&app_id=58479';
 
 /** Ensure 25 Stopnic webinar exists and has Vimeo replay (same flow as course player for «Moja moč je v meni»). */
 function applyStopnicWebinarDefaults(webinars) {
     let list = Array.isArray(webinars) ? webinars.map(w => ({ ...w })) : [];
     list = list.map(w => {
-        const t = String(w.title || '');
-        if (t === '25 Stopnic do srece' || t === '25 Stopnic do sreče') {
+        const t = String(w.title || '').trim();
+        if (t === '25 Stopnic do sreče' || t === '25 Stopnic do srece') {
             return {
                 ...w,
+                title: '25 Stopnic do sreče',
                 videoId: w.videoId || '1179302920',
                 videoUrl: w.videoUrl || STOPNIC_WEBINAR_VIMEO_URL
             };
         }
+        if (t === 'Moč Besede | Webinar' || t === 'Moc Besede | Webinar' || t === 'Moč besede | Webinar' || t === 'Moc besede | Webinar') {
+            return {
+                ...w,
+                title: 'Moč Besede | Webinar',
+                videoId: w.videoId || '1183774557',
+                videoUrl: w.videoUrl || MOC_BESEDE_WEBINAR_VIMEO_URL
+            };
+        }
         return w;
     });
-    const hasStopnic = list.some(w => {
-        const t = String(w.title || '');
-        return t === '25 Stopnic do srece' || t === '25 Stopnic do sreče';
-    });
+    const hasStopnic = list.some(w => String(w.title || '').trim() === '25 Stopnic do sreče');
     if (!hasStopnic) {
         list.unshift({
             id: '2',
-            title: '25 Stopnic do srece',
+            title: '25 Stopnic do sreče',
             date: '9. marca 2026',
             description: 'Webinar 25 stopnic do sreče — posnetek.',
             videoId: '1179302920',
             videoUrl: STOPNIC_WEBINAR_VIMEO_URL
+        });
+    }
+
+    const hasMocBesede = list.some(w => {
+        const t = String(w.title || '').trim().toLowerCase();
+        return t === 'moč besede | webinar' || t === 'moc besede | webinar';
+    });
+    if (!hasMocBesede) {
+        list.unshift({
+            id: '3',
+            title: 'Moč Besede | Webinar',
+            date: '14. aprila 2026',
+            description: 'Webinar Moč Besede.',
+            videoId: '1183774557',
+            videoUrl: MOC_BESEDE_WEBINAR_VIMEO_URL
         });
     }
     return list;
@@ -977,13 +1046,13 @@ function getStopnicWebinarReplayUrl() {
         let webinars = JSON.parse(localStorage.getItem('webinars') || '[]');
         webinars = applyStopnicWebinarDefaults(webinars);
         const row = webinars.find(w => {
-            const t = String(w.title || '');
-            return t === '25 Stopnic do srece' || t === '25 Stopnic do sreče';
+            const t = String(w.title || '').trim();
+            return t === '25 Stopnic do sreče' || t === '25 Stopnic do srece';
         });
         const id = row ? row.id : '2';
-        return `course.html?webinar=${encodeURIComponent(id)}`;
+        return `/course?webinar=${encodeURIComponent(id)}`;
     } catch (e) {
-        return 'course.html?webinar=2';
+        return '/course?webinar=2';
     }
 }
 
@@ -1007,11 +1076,19 @@ async function loadWebinars(container) {
             },
             {
                 id: '2',
-                title: '25 Stopnic do srece',
+                title: '25 Stopnic do sreče',
                 date: '9. marca 2026',
                 description: 'Webinar 25 stopnic do sreče.',
                 videoId: '1179302920',
                 videoUrl: STOPNIC_WEBINAR_VIMEO_URL
+            },
+            {
+                id: '3',
+                title: 'Moč Besede | Webinar',
+                date: '14. aprila 2026',
+                description: 'Webinar Moč Besede.',
+                videoId: '1183774557',
+                videoUrl: MOC_BESEDE_WEBINAR_VIMEO_URL
             }
         ];
         localStorage.setItem('webinars', JSON.stringify(defaultWebinars));
@@ -1056,10 +1133,11 @@ async function loadWebinars(container) {
         html = '<div class="extra-offer-webinars-stack">';
         webinars.forEach(webinar => {
             const isStopnic = String(webinar.title || '').toLowerCase().includes('stopnic');
-            const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
+            const isMocBesede = String(webinar.title || '').toLowerCase().includes('moč besede') || String(webinar.title || '').toLowerCase().includes('moc besede');
+            const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : (isMocBesede ? 'images/moc besede fb.webp' : 'images/moja moc je v meni.webp');
             const hasAccess = !isGuest;
             const safeId = encodeURIComponent(String(webinar.id));
-            const href = hasAccess ? `course.html?webinar=${safeId}` : 'jaz-zenska.html';
+            const href = hasAccess ? `/course?webinar=${safeId}` : '/jaz-zenska';
             const lockedClass = hasAccess ? '' : ' locked';
             html += `
                 <div class="extra-offer-image-row">
@@ -1077,7 +1155,7 @@ async function loadWebinars(container) {
 
 function showStopnicWebinarPopup(hasAccess = true) {
     if (!hasAccess) {
-        window.location.href = 'jaz-zenska.html';
+        window.location.href = '/jaz-zenska';
         return;
     }
     window.location.href = getStopnicWebinarReplayUrl();
@@ -1093,7 +1171,7 @@ function closeStopnicWebinarPopup() {
 
 function openWebinar(webinarId, hasAccess = true) {
     if (!hasAccess) {
-        window.location.href = 'jaz-zenska.html';
+        showGuestJoinPopup();
         return;
     }
     
@@ -1108,7 +1186,7 @@ function openWebinar(webinarId, hasAccess = true) {
     }
     
     // Open in course-style layout (progress bar + episode list)
-    window.location.href = `course.html?webinar=${encodeURIComponent(webinar.id)}`;
+    window.location.href = `/course?webinar=${encodeURIComponent(webinar.id)}`;
 }
 
 function closeWebinarModal() {
@@ -1310,6 +1388,7 @@ let currentCalendarDate = new Date();
 
 const CANONICAL_STOPNIC_ID = 'stopnic-webinar-2026';
 const CANONICAL_POHOD_ID = 'pohod-100-zensk-trska-2026-05';
+const CANONICAL_MOC_BESEDE_WEBINAR_ID = 'moc-besede-webinar-2026-04-14';
 const LEGACY_POHOD_EVENT_ID = 'pohod-100-zensk-trska-2026';
 
 function dashboardEventsToLocalDateString(d) {
@@ -1328,9 +1407,22 @@ function getCanonicalPohodEvent() {
         time: '08:00',
         type: 'real-life',
         location: 'Sevno – ob vznožju Trške gore (zbir ob 8:00)',
-        externalUrl: 'pohod.html',
+        externalUrl: '/pohod',
         externalLabel: 'Rezerviraj svoje mesto',
         image: 'images/pohod.webp',
+        canonical: true
+    };
+}
+
+function getCanonicalMocBesedeWebinarEvent() {
+    return {
+        id: CANONICAL_MOC_BESEDE_WEBINAR_ID,
+        title: 'Webinar Moč besede',
+        description: 'Ali verjameš, da naše misli in besede vplivajo na naša dejanja, naše počutje in naša čustva. Besede imajo moč, da spremenijo naše življenje in res ni vseeno katere beseda, kdaj in kako uporabljamo.\n\nVeliko lahko naredite že s pravo izbiro besed in prav o besedah se bomo pogovarjali na brezplačnem webinarju, na katerega vas vabim v torek, 14. aprila ob 20 uri.',
+        date: new Date(2026, 3, 14, 20, 0).toISOString(),
+        time: '20:00',
+        type: 'webinar',
+        location: '/?openWebinarSignup=1#aktualno',
         canonical: true
     };
 }
@@ -1342,13 +1434,13 @@ function mergeCanonicalEvents(events) {
     list = list.filter(e => dashboardEventsToLocalDateString(new Date(e.date)) !== '2026-02-06');
 
     list = list.filter(e => !(
-        e.title === '25 Stopnic do sreče'
+        (e.title === '25 Stopnic do sreče' || e.title === '25 Stopnic do srece')
         && e.date
         && (String(e.date).startsWith('2026-03-05') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 5))
     ));
 
     const hasStopnic = list.some(e =>
-        e.title === '25 Stopnic do sreče'
+        (e.title === '25 Stopnic do sreče' || e.title === '25 Stopnic do srece')
         && e.date
         && (String(e.date).startsWith('2026-03-09') || (new Date(e.date).getMonth() === 2 && new Date(e.date).getDate() === 9))
     );
@@ -1380,6 +1472,15 @@ function mergeCanonicalEvents(events) {
     );
     if (!hasPohod) {
         list.push(getCanonicalPohodEvent());
+    }
+
+    const hasMocBesedeWebinar = list.some(e =>
+        e.id === CANONICAL_MOC_BESEDE_WEBINAR_ID
+        || ((String(e.title || '').toLowerCase().includes('moč besede') || String(e.title || '').toLowerCase().includes('moc besede'))
+            && dashboardEventsToLocalDateString(new Date(e.date)) === '2026-04-14')
+    );
+    if (!hasMocBesedeWebinar) {
+        list.push(getCanonicalMocBesedeWebinarEvent());
     }
 
     return list;
@@ -2155,23 +2256,26 @@ async function loadProfile() {
 
 function renderActiveWork(container) {
     if (!container) return;
+    const user = getCurrentUser() || {};
+    const isGuest = user.role === 'guest';
+    ensureGuestLockedVisualOverrides();
     container.innerHTML = `
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
-            <div class="guest-locked-block" style="margin:0;">
+            <div class="guest-locked-block ${isGuest ? 'guest-locked-muted' : ''}" style="margin:0; border-top:4px solid ${isGuest ? '#c3c3c3' : '#d4af37'};">
                 <div class="guest-locked-inner">
                     <h3 class="guest-locked-title">Vprašalnik</h3>
                     <p class="guest-locked-lead">Odpri vprašalnik in spremljaj svoj napredek skozi delo na sebi.</p>
                     <div class="guest-locked-buttons">
-                        <button type="button" class="guest-locked-btn guest-locked-btn-primary" onclick="openSidebarTab('questionnaire')">Odpri vprašalnik</button>
+                        <button type="button" class="guest-locked-btn guest-locked-btn-primary ${isGuest ? 'guest-locked-btn-disabled' : ''}" onclick="${isGuest ? 'showGuestJoinPopup()' : `openSidebarTab('questionnaire')`}">Odpri vprašalnik</button>
                     </div>
                 </div>
             </div>
-            <div class="guest-locked-block" style="margin:0;">
+            <div class="guest-locked-block ${isGuest ? 'guest-locked-muted' : ''}" style="margin:0; border-top:4px solid ${isGuest ? '#c3c3c3' : '#d4af37'};">
                 <div class="guest-locked-inner">
                     <h3 class="guest-locked-title">Kolo življenja</h3>
                     <p class="guest-locked-lead">Oceni 8 področij življenja in shrani svoj trenutni vpogled.</p>
                     <div class="guest-locked-buttons">
-                        <button type="button" class="guest-locked-btn guest-locked-btn-primary" onclick="openSidebarTab('life-wheel')">Odpri kolo življenja</button>
+                        <button type="button" class="guest-locked-btn guest-locked-btn-primary ${isGuest ? 'guest-locked-btn-disabled' : ''}" onclick="${isGuest ? 'showGuestJoinPopup()' : `openSidebarTab('life-wheel')`}">Odpri kolo življenja</button>
                     </div>
                 </div>
             </div>
@@ -2499,6 +2603,7 @@ async function loadLifeWheel(container) {
 
 async function loadCoursesAndWebinars(container) {
     if (!container) return;
+    ensureGuestLockedVisualOverrides();
     await loadClassroom(container);
     let webinars = JSON.parse(localStorage.getItem('webinars') || '[]') || [];
     webinars = applyStopnicWebinarDefaults(webinars);
@@ -2517,13 +2622,14 @@ async function loadCoursesAndWebinars(container) {
     } else {
         webinarsHtml += webinars.map(w => {
             const isStopnic = String(w.title || '').toLowerCase().includes('stopnic');
-            const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : 'images/moja moc je v meni.webp';
+            const isMocBesede = String(w.title || '').toLowerCase().includes('moč besede') || String(w.title || '').toLowerCase().includes('moc besede');
+            const cardImage = isStopnic ? 'images/aktualen dogodek 2.webp' : (isMocBesede ? 'images/moc besede fb.webp' : 'images/moja moc je v meni.webp');
             const wid = encodeURIComponent(String(w.id));
-            const href = hasAccess ? `course.html?webinar=${wid}` : 'jaz-zenska.html';
+            const href = hasAccess ? `/course?webinar=${wid}` : '#';
             const lockedClass = hasAccess ? '' : ' locked';
             return `
                 <div class="extra-offer-image-row">
-                    <a href="${href}" class="extra-offer-image-link${lockedClass}">
+                    <a href="${href}" class="extra-offer-image-link${lockedClass}" ${hasAccess ? '' : 'onclick="event.preventDefault(); showGuestJoinPopup();"'}>
                         <img src="${cardImage}" alt="${escapeHtml(w.title || 'Webinar')}">
                     </a>
                 </div>
@@ -2539,7 +2645,7 @@ function renderExtraOffer(container) {
     container.innerHTML = `
         <h3 class="extra-offer-subtitle">Pohodi</h3>
         <div class="extra-offer-image-row">
-            <a href="pohod.html" class="extra-offer-image-link">
+            <a href="/pohod" class="extra-offer-image-link">
                 <img src="images/pohod.webp" alt="100 žensk na Trško goro">
             </a>
         </div>
@@ -2547,6 +2653,11 @@ function renderExtraOffer(container) {
 }
 
 window.openSidebarTab = function(tab) {
+    const user = getCurrentUser() || {};
+    if (user.role === 'guest' && (tab === 'questionnaire' || tab === 'life-wheel')) {
+        showGuestJoinPopup();
+        return;
+    }
     currentSidebarTab = tab;
     document.querySelectorAll('[data-sidebar].sidebar-item').forEach(x => {
         x.classList.toggle('active', x.getAttribute('data-sidebar') === tab);
@@ -2713,7 +2824,7 @@ window.showProfileTab = function(tab) {
                         <h3 class="guest-locked-title">Vprašalnik je del članstva</h3>
                         <p class="guest-locked-lead">Ko se pridružiš skupini, dobiš dostop do celotnega vprašalnika, vseh webinarjev in vseh tečajev v učilnici.</p>
                         <div class="guest-locked-buttons">
-                            <a href="jaz-zenska.html" class="guest-locked-btn guest-locked-btn-primary">Odkleni dostop</a>
+                            <a href="/jaz-zenska" class="guest-locked-btn guest-locked-btn-primary">Odkleni dostop</a>
                         </div>
                     </div>
                 </div>
@@ -2813,16 +2924,16 @@ async function saveProfile() {
 
 // handleLogout is already defined above with Firebase integration
 
-// Initialize on page load (only if not already initialized by dashboard.html)
-// dashboard.html handles initialization after Firebase is ready
+// Initialize on page load (only if not already initialized by /dashboard)
+// /dashboard handles initialization after Firebase is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
-        // Only init if not already done by dashboard.html
+        // Only init if not already done by /dashboard
         if (!window.dashboardInitialized) {
             initDashboard();
         }
     });
 } else {
-    // DOM already loaded, but check if dashboard.html will handle it
-    // dashboard.html handles initialization after Firebase is ready
+    // DOM already loaded, but check if /dashboard will handle it
+    // /dashboard handles initialization after Firebase is ready
 }

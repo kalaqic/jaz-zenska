@@ -1505,7 +1505,7 @@
         }
         
         .webinar-card {
-            background: linear-gradient(135deg, #fffcfd 0%, #fff9fb 50%, #fef8fa 100%);
+            background: #ffffff;
             border-radius: 20px;
             padding: 22px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(100, 56, 67, 0.04);
@@ -2236,7 +2236,7 @@
                 <div class="user-role" id="userRole"></div>
             </div>
                     <div class="user-info">
-                <a href="index.html" class="back-home-btn">← Nazaj na domačo stran</a>
+                <a href="/" class="back-home-btn">← Nazaj na domačo stran</a>
                 <a href="/admin-vsebina" class="back-home-btn" id="adminCmsLink" style="display:none;">Urejanje vsebine</a>
                 <button class="logout-btn" onclick="handleLogout()">Odjavi se</button>
             </div>
@@ -2358,7 +2358,7 @@
                 <p style="color: var(--text-dark); font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
                     Posnetek webinarja je na voljo v spletni učilnici — enak predvajalnik kot pri »Moja moč je v meni«.
                 </p>
-                <a href="course.html?webinar=2" style="
+                <a href="/course?webinar=2" style="
                     display: inline-block;
                     background: linear-gradient(135deg, var(--mid-violet) 0%, var(--dark-violet) 100%);
                     color: var(--white);
@@ -2496,7 +2496,7 @@
                     if (!user) {
                         // User not logged in, redirect to login immediately
                         localStorage.removeItem('currentUser');
-                        window.location.href = 'login.html';
+                        window.location.href = '/login';
                         return;
                     }
                     
@@ -2548,7 +2548,7 @@
                     if (!authChecked) {
                         const currentUser = localStorage.getItem('currentUser');
                         if (!currentUser) {
-                            window.location.href = 'login.html';
+                            window.location.href = '/login';
                         }
                     }
                 }, 3000);
@@ -2557,7 +2557,7 @@
                 // If Firebase completely fails, check localStorage as last resort
                 const currentUser = localStorage.getItem('currentUser');
                 if (!currentUser) {
-                    window.location.href = 'login.html';
+                    window.location.href = '/login';
                 } else {
                     // Show warning that Firebase is not available
                     console.warn('Firebase initialization failed, using localStorage fallback');
@@ -2595,7 +2595,7 @@
                     } else if (authChecked && (!auth || !auth.currentUser)) {
                         clearInterval(checkAuth);
                         // Already redirected, but just in case
-                        window.location.href = 'login.html';
+                        window.location.href = '/login';
                     }
                 }, 100);
                 
@@ -2603,7 +2603,7 @@
                 setTimeout(() => {
                     clearInterval(checkAuth);
                     if (!authChecked) {
-                        window.location.href = 'login.html';
+                        window.location.href = '/login';
                     }
                     if (loadingOverlay) {
                         loadingOverlay.classList.add('hidden');

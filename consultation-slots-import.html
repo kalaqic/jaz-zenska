@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consultation Slots Import</title>
+  <link rel="icon" type="image/png" href="images/logo/logo jaz zenska.webp">
+  <style>
+    body { margin: 0; font-family: 'Montserrat', Arial, sans-serif; background: #f8f9fb; color: #2c2228; }
+    .wrap { max-width: 980px; margin: 32px auto; padding: 0 16px; }
+    .card { background: #fff; border: 1px solid rgba(100,56,67,0.12); border-radius: 16px; box-shadow: 0 12px 30px rgba(0,0,0,0.06); padding: 22px; margin-bottom: 16px; }
+    h1 { margin: 0 0 10px; font-size: 28px; color: #643843; }
+    .muted { color: #6b5b62; font-size: 14px; line-height: 1.6; }
+    label { display: block; margin: 0 0 8px; font-weight: 700; font-size: 14px; color: #643843; }
+    select, textarea, input { width: 100%; border: 1px solid rgba(100,56,67,0.2); border-radius: 10px; padding: 10px 12px; box-sizing: border-box; font-size: 14px; font-family: inherit; background: #fff; }
+    textarea { min-height: 280px; line-height: 1.45; resize: vertical; white-space: pre; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    button { border: none; border-radius: 999px; padding: 11px 16px; font-weight: 700; cursor: pointer; }
+    .btn-primary { background: linear-gradient(135deg, #99627A 0%, #643843 100%); color: #fff; }
+    .btn-secondary { background: #f1ecee; color: #643843; border: 1px solid rgba(100,56,67,0.14); }
+    .status { margin-top: 12px; padding: 10px 12px; border-radius: 10px; font-size: 14px; display: none; white-space: pre-wrap; }
+    .ok { background: #edf8ef; color: #1b6f32; border: 1px solid #bfe6c8; display: block; }
+    .err { background: #fff1f1; color: #9c2d2d; border: 1px solid #efc0c0; display: block; }
+    code { background: #f7f1f3; padding: 2px 5px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Konzultacije — Import terminov</h1>
+      <p class="muted">
+        Uvoz v Firestore kolekcijo <code>consultationSlots</code>. Podprt je JSON array zapisov:
+        <code>available</code> (boolean), <code>date</code> (YYYY-MM-DD), <code>time</code> (string).
+        Zahtevan je admin račun.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <label for="mergeMode">Način zapisa</label>
+          <select id="mergeMode">
+            <option value="merge">Merge (posodobi obstoječe)</option>
+            <option value="overwrite">Overwrite (prepiši dokument)</option>
+          </select>
+        </div>
+        <div>
+          <label for="jsonFile">Naloži JSON datoteko (opcijsko)</label>
+          <input id="jsonFile" type="file" accept=".json,application/json">
+        </div>
+      </div>
+
+      <label for="payload" style="margin-top: 12px;">Vsebina za uvoz (JSON)</label>
+      <textarea id="payload"></textarea>
+
+      <div class="actions">
+        <button class="btn-secondary" type="button" onclick="fillExample()">Vstavi primer</button>
+        <button class="btn-primary" type="button" onclick="runImport()">Uvozi v Firestore</button>
+      </div>
+
+      <div id="status" class="status"></div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script>
+    let auth, db;
+
+    function setStatus(msg, ok) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = 'status ' + (ok ? 'ok' : 'err');
+    }
+
+    function fillExample() {
+      document.getElementById('payload').value = JSON.stringify([
+        { available: true, date: '2026-02-25', time: '10' },
+        { available: true, date: '2026-02-25', time: '11' },
+        { available: true, date: '2026-02-26', time: '09:30' }
+      ], null, 2);
+    }
+
+    function parseJsonInput(raw) {
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) throw new Error('JSON mora biti array.');
+      return arr.map((it, idx) => {
+        const date = String(it.date || '').trim();
+        const time = String(it.time || '').trim();
+        const available = typeof it.available === 'boolean' ? it.available : true;
+        if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+          throw new Error(`Neveljaven date na indexu ${idx}. Uporabi YYYY-MM-DD.`);
+        }
+        if (!time) throw new Error(`Manjka time na indexu ${idx}.`);
+        return { available, date, time };
+      });
+    }
+
+    async function assertAdmin() {
+      const user = auth.currentUser;
+      if (!user) throw new Error('Nisi prijavljena.');
+      const doc = await db.collection('users').doc(user.uid).get();
+      if (!doc.exists) throw new Error('Uporabniški dokument ne obstaja.');
+      const role = (doc.data().role || '').toLowerCase();
+      if (role !== 'admin') throw new Error('Dostop dovoljen samo za admin.');
+    }
+
+    async function runImport() {
+      try {
+        setStatus('Uvoz se pripravlja ...', true);
+        await assertAdmin();
+
+        const mergeMode = document.getElementById('mergeMode').value;
+        const raw = document.getElementById('payload').value.trim();
+        if (!raw) throw new Error('Vnesi podatke za uvoz.');
+
+        const rows = parseJsonInput(raw);
+        const batch = db.batch();
+        rows.forEach((row) => {
+          const docId = `${row.date}_${row.time}`.replace(/[^\w.-]/g, '_');
+          const ref = db.collection('consultationSlots').doc(docId);
+          const data = {
+            available: row.available,
+            date: row.date,
+            time: row.time
+          };
+          if (mergeMode === 'overwrite') {
+            batch.set(ref, data);
+          } else {
+            batch.set(ref, data, { merge: true });
+          }
+        });
+        await batch.commit();
+        setStatus(`Uspešno uvoženo: ${rows.length} zapisov v consultationSlots.`, true);
+      } catch (e) {
+        setStatus(`Napaka pri uvozu: ${e.message || e}`, false);
+      }
+    }
+
+    document.getElementById('jsonFile').addEventListener('change', async function(ev) {
+      const file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const text = await file.text();
+      document.getElementById('payload').value = text;
+    });
+
+    (async function init() {
+      try {
+        const response = await fetch('/api/firebase-config');
+        if (!response.ok) throw new Error('Ni mogoče naložiti Firebase config.');
+        const firebaseConfig = await response.json();
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+
+        auth.onAuthStateChanged(async (user) => {
+          if (!user) {
+            setStatus('Za uporabo te strani se prijavi.', false);
+            return;
+          }
+          try {
+            await assertAdmin();
+            setStatus('Prijavljena kot admin. Pripravljeno za uvoz.', true);
+          } catch (e) {
+            setStatus(e.message || 'Nimaš admin dostopa.', false);
+          }
+        });
+      } catch (e) {
+        setStatus(`Init napaka: ${e.message || e}`, false);
+      }
+    })();
+  </script>
+</body>
+</html>
+
