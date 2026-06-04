@@ -2,6 +2,17 @@
 
 // Media data with full content
 const mediaData = {
+    9: {
+        image: 'images/media/zenske-pohod.webp',
+        cardImage: 'images/media/pohod.webp',
+        title: '100 navdušenih pohodnic tudi letos na Trško goro',
+        description: `
+            <p>Navdušene pohodnice so se tudi letos odpravile na čudovit potep. Na vrhu jih je čakala meditacija s pticami in obljuba, da se prihodnje leto spet zberejo.</p>
+            <p>Pred dnevi je potekal drugi pohod 100 žensk na Trško goro, ki je veliko več kot vinorodna gorica. Je zelena oaza nad reko Krko, posejana z vinogradi in zidanicami, kjer so se ljudje od nekdaj družili, se veselili, prepevali, delali in živeli.</p>
+        `,
+        link: 'https://slovenskenovice.delo.si/novice/slovenija/100-navdusenih-pohodnic-tudi-letos-na-tursko-goro-foto',
+        linkText: 'Preberi celoten članek'
+    },
     7: {
         image: 'images/media/kaval.webp',
         title: 'Moja moč je v meni – Bistro Kaval, Brusnice',

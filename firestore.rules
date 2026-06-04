@@ -52,13 +52,13 @@ service cloud.firestore {
 
     // Website CMS – public marketing events & blog posts
     match /site_events/{docId} {
-      allow read: if resource.data.status == 'published' || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow read, write: if isAdmin();
+      allow read: if resource != null && resource.data.status == 'published';
     }
 
     match /blog_posts/{docId} {
-      allow read: if resource.data.status == 'published' || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow read, write: if isAdmin();
+      allow read: if resource != null && resource.data.status == 'published';
     }
 
     // User progress (course progress) – logged-in users can read/write their own data

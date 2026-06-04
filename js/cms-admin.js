@@ -3,9 +3,9 @@
 function cmsAdminFormatError(err) {
     const code = err && (err.code || err.message);
     if (code === 'permission-denied' || (err && String(err.message).includes('permission'))) {
-        return 'Manjkajo dovoljenja v Firebase. V Firebase Console objavite firestore.rules '
-            + '(firebase deploy --only firestore:rules). '
-            + 'Preverite tudi, da ima vaš uporabnik v users/{uid} polje role: "admin".';
+        return 'Firestore še ne pozna zbirk site_events / blog_posts (pravila niso objavljena v oblaku). '
+            + 'Odprite Firebase Console → Firestore → Rules, prilepite vsebino datoteke firestore.rules iz repozitorija in kliknite Publish. '
+            + 'Če ste admin v aplikaciji, je skoraj vedno to — ne manjkajoča vloga.';
     }
     return (err && err.message) || String(err);
 }
@@ -38,7 +38,11 @@ async function cmsAdminEnsureAccess() {
         return false;
     }
 
-    document.getElementById('cmsAdminUserEmail').textContent = user.email || '';
+    const emailEl = document.getElementById('cmsAdminUserEmail');
+    if (emailEl) {
+        emailEl.textContent = (user.email || '') + ' · UID: ' + user.uid;
+        emailEl.title = 'Firestore: users/' + user.uid + ' → role: ' + role;
+    }
     document.getElementById('cmsAdminApp').style.display = 'block';
     return true;
 }
