@@ -180,6 +180,11 @@ function initDashboard() {
     const roleLabels = { admin: 'Admin', member: 'Članica', guest: 'Gost' };
     roleEl.textContent = roleLabels[user.role] || (user.role === 'admin' ? 'Admin' : 'Članica');
     roleEl.className = `user-role ${user.role}`;
+
+    const adminCmsLink = document.getElementById('adminCmsLink');
+    if (adminCmsLink && user.role === 'admin') {
+        adminCmsLink.style.display = 'inline-flex';
+    }
     
     // Navigation
     // Left sidebar navigation (Tečaji / Webinarji / Koledar / Nastavitve)
@@ -1382,9 +1387,9 @@ window.completeWelcome = async function() {
 let currentCalendarDate = new Date();
 
 const CANONICAL_STOPNIC_ID = 'stopnic-webinar-2026';
-const CANONICAL_POHOD_ID = 'pohod-100-zensk-trska-2026-05';
 const CANONICAL_MOC_BESEDE_WEBINAR_ID = 'moc-besede-webinar-2026-04-14';
 const LEGACY_POHOD_EVENT_ID = 'pohod-100-zensk-trska-2026';
+const POHOD_EVENT_ID_MAY_2026 = 'pohod-100-zensk-trska-2026-05';
 
 function dashboardEventsToLocalDateString(d) {
     const y = d.getFullYear();
@@ -1393,20 +1398,11 @@ function dashboardEventsToLocalDateString(d) {
     return y + '-' + m + '-' + day;
 }
 
-function getCanonicalPohodEvent() {
-    return {
-        id: CANONICAL_POHOD_ID,
-        title: 'Pohod 100 žensk na Trško goro',
-        description: 'Vabim te, da se nam pridružiš na pohodu 100 žensk na Trško Goro. Zbor ob 8:00 v Sevnu ob vznožju Trške gore.\n\nTrška Gora je veliko več kot vinorodno področje – zelena oaza nad reko Krko, posejana z vinogradi in zidanicami, na vrhu pa Marijina cerkev in mogočne lipe. Spust v dolino bo lahkoten ob druženju; pohod vodi Marjanca Trščinar Antić.',
-        date: new Date(2026, 4, 23, 8, 0).toISOString(),
-        time: '08:00',
-        type: 'real-life',
-        location: 'Sevno – ob vznožju Trške gore (zbir ob 8:00)',
-        externalUrl: '/pohod',
-        externalLabel: 'Rezerviraj svoje mesto',
-        image: 'images/pohod.webp',
-        canonical: true
-    };
+function isPohodCalendarEvent(e) {
+    if (!e) return false;
+    if (e.id === LEGACY_POHOD_EVENT_ID || e.id === POHOD_EVENT_ID_MAY_2026) return true;
+    const t = String(e.title || '').toLowerCase();
+    return t.includes('tršk') && (t.includes('pohod') || t.includes('100 žensk') || t.includes('100 zensk'));
 }
 
 function getCanonicalMocBesedeWebinarEvent() {
@@ -1452,22 +1448,8 @@ function mergeCanonicalEvents(events) {
         });
     }
 
-    // Remove zastarel 23. marec (zdaj je 23. maj); sicer bi ostal duplikat z napačnim dnem
-    list = list.filter(e => {
-        if (e.id === LEGACY_POHOD_EVENT_ID) return false;
-        const t = String(e.title || '').toLowerCase();
-        const ds = dashboardEventsToLocalDateString(new Date(e.date));
-        if (t.includes('tršk') && ds === '2026-03-23') return false;
-        return true;
-    });
-
-    const hasPohod = list.some(e =>
-        e.id === CANONICAL_POHOD_ID
-        || (e.title && String(e.title).toLowerCase().includes('tršk') && dashboardEventsToLocalDateString(new Date(e.date)) === '2026-05-23')
-    );
-    if (!hasPohod) {
-        list.push(getCanonicalPohodEvent());
-    }
+    // Pohod na Trško goro je potekel – ne prikazuj več v koledarju
+    list = list.filter(e => !isPohodCalendarEvent(e));
 
     const hasMocBesedeWebinar = list.some(e =>
         e.id === CANONICAL_MOC_BESEDE_WEBINAR_ID
@@ -2638,12 +2620,9 @@ async function loadCoursesAndWebinars(container) {
 function renderExtraOffer(container) {
     if (!container) return;
     container.innerHTML = `
-        <h3 class="extra-offer-subtitle">Pohodi</h3>
-        <div class="extra-offer-image-row">
-            <a href="/pohod" class="extra-offer-image-link">
-                <img src="images/pohod.webp" alt="100 žensk na Trško goro">
-            </a>
-        </div>
+        <p style="font-size:14px;color:var(--text-light);line-height:1.6;margin:0;">
+            Trenutno ni dodatne ponudbe.
+        </p>
     `;
 }
 

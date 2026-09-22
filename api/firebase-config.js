@@ -28,7 +28,13 @@ module.exports = async function handler(req, res) {
         });
     }
 
-    // Return Firebase configuration
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME || '';
+    const uploadPreset =
+        process.env.CLOUDINARY_UPLOAD_PRESET ||
+        process.env.CLOUDINARY_UPLOAD_NAME ||
+        '';
+
+    // Return Firebase configuration (+ optional CMS image upload via Cloudinary)
     const firebaseConfig = {
         apiKey: FIREBASE_API_KEY,
         authDomain: "jaz-zenska.firebaseapp.com",
@@ -37,6 +43,14 @@ module.exports = async function handler(req, res) {
         messagingSenderId: "406513810063",
         appId: "1:406513810063:web:a485e483153ef402fb8efa"
     };
+
+    if (cloudName && uploadPreset) {
+        firebaseConfig.imageUpload = {
+            provider: 'cloudinary',
+            cloudName,
+            uploadPreset,
+        };
+    }
 
     return res.status(200).json(firebaseConfig);
 }

@@ -1,10 +1,43 @@
-// Vercel Serverless Function for Newsletter + Ebook + Jutranji obred signup (MailerLite)
-// POST body: { email, name, type?: 'newsletter' | 'ebook' | 'jutranji_obred' } — default type is 'newsletter'
+// Vercel Serverless Function for Newsletter + Ebook + event signups (MailerLite)
+// POST body: { email, name, type?, mailerliteGroupId? }
 const { detectBot } = require('../lib/bot-filter');
 const { addToMailerLite, GROUPS, MAILERLITE_API_KEY } = require('../lib/mailerlite');
 
 if (!MAILERLITE_API_KEY) {
     console.error('ERROR: MAILERLITE_API_KEY environment variable is not set!');
+}
+
+function resolveGroupIds(body) {
+    const customGroup = String(body.mailerliteGroupId || '').trim();
+    if (customGroup) return [customGroup];
+
+    const rawType = String(body.type || 'newsletter').toLowerCase();
+    if (rawType === 'ebook') return [GROUPS.EBOOK];
+    if (rawType === 'jutranji_obred') return GROUPS.JUTRANJI_OBRED ? [GROUPS.JUTRANJI_OBRED] : [GROUPS.NEWSLETTER];
+    return [GROUPS.NEWSLETTER];
+}
+
+function signupTypeFrom(body) {
+    const rawType = String(body?.type || 'newsletter').toLowerCase();
+    if (rawType === 'ebook') return 'ebook';
+    if (rawType === 'jutranji_obred') return 'jutranji_obred';
+    return 'newsletter';
+}
+
+function successMessage(signupType, alreadyExists) {
+    if (signupType === 'ebook') {
+        return alreadyExists ? 'Already signed up for ebook' : 'Successfully signed up for ebook';
+    }
+    if (signupType === 'jutranji_obred') {
+        return alreadyExists ? 'Already signed up for jutranji obred' : 'Successfully signed up for jutranji obred';
+    }
+    return alreadyExists ? 'Already subscribed to newsletter' : 'Successfully subscribed to newsletter';
+}
+
+function failureMessage(signupType) {
+    if (signupType === 'ebook') return 'Failed to sign up for ebook';
+    if (signupType === 'jutranji_obred') return 'Failed to sign up for jutranji obred';
+    return 'Failed to subscribe to newsletter';
 }
 
 module.exports = async function handler(req, res) {
@@ -39,14 +72,10 @@ module.exports = async function handler(req, res) {
             }
         }
 
-        const { email, name, type = 'newsletter', are_you_a_bot, form_start_time } = body || {};
-        const rawType = String(type).toLowerCase();
-        const signupType = rawType === 'ebook' ? 'ebook' : (rawType === 'jutranji_obred' ? 'jutranji_obred' : 'newsletter');
-        const groupIds = signupType === 'ebook'
-            ? [GROUPS.EBOOK]
-            : (signupType === 'jutranji_obred' ? [GROUPS.JUTRANJI_OBRED] : [GROUPS.NEWSLETTER]);
+        const signupType = signupTypeFrom(body);
+        const groupIds = resolveGroupIds(body || {});
 
-        if (signupType === 'jutranji_obred' && !GROUPS.JUTRANJI_OBRED) {
+        if (signupType === 'jutranji_obred' && !GROUPS.JUTRANJI_OBRED && !String(body?.mailerliteGroupId || '').trim()) {
             return res.status(500).json({
                 error: 'Server configuration error',
                 message: 'MAILERLITE_GROUP_JUTRANJI_OBRED is not configured',
@@ -56,12 +85,10 @@ module.exports = async function handler(req, res) {
         const botCheck = detectBot(req, body);
         if (botCheck.isBot) {
             console.log('Bot detected:', botCheck.reason, 'IP:', req.headers['x-forwarded-for'] || 'unknown');
-            const botMessage = signupType === 'ebook'
-                ? 'Successfully signed up for ebook'
-                : (signupType === 'jutranji_obred' ? 'Successfully signed up for jutranji obred' : 'Successfully subscribed to newsletter');
-            return res.status(200).json({ success: true, message: botMessage });
+            return res.status(200).json({ success: true, message: successMessage(signupType, false) });
         }
 
+        const { email, name } = body || {};
         if (!email || !name) {
             return res.status(400).json({ error: 'Missing required fields: email, name' });
         }
@@ -74,13 +101,7 @@ module.exports = async function handler(req, res) {
         if (result.success) {
             return res.status(200).json({
                 success: true,
-                message: result.alreadyExists
-                    ? (signupType === 'ebook'
-                        ? 'Already signed up for ebook'
-                        : (signupType === 'jutranji_obred' ? 'Already signed up for jutranji obred' : 'Already subscribed to newsletter'))
-                    : (signupType === 'ebook'
-                        ? 'Successfully signed up for ebook'
-                        : (signupType === 'jutranji_obred' ? 'Successfully signed up for jutranji obred' : 'Successfully subscribed to newsletter')),
+                message: successMessage(signupType, result.alreadyExists),
                 alreadyExists: result.alreadyExists,
             });
         }
@@ -94,9 +115,7 @@ module.exports = async function handler(req, res) {
 
         console.error('MailerLite error:', result.error, 'Status:', result.status);
         return res.status(result.status >= 400 ? result.status : 500).json({
-            error: result.error || (signupType === 'ebook'
-                ? 'Failed to sign up for ebook'
-                : (signupType === 'jutranji_obred' ? 'Failed to sign up for jutranji obred' : 'Failed to subscribe to newsletter')),
+            error: result.error || failureMessage(signupType),
             message: result.error,
         });
     } catch (error) {
