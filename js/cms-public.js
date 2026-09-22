@@ -54,9 +54,21 @@ async function cmsLoadBlogBySlug(slug) {
     return { id: doc.id, ...doc.data() };
 }
 
+function cmsIsRetiredPohodEvent(event) {
+    const slug = String(event && event.slug || '').toLowerCase();
+    const title = String(event && event.title || '').toLowerCase();
+    const url = String(event && (event.cardImageUrl || event.heroImageUrl || event.ctaUrl) || '').toLowerCase();
+    return slug.includes('pohod')
+        || slug.includes('trsk')
+        || title.includes('pohod')
+        || title.includes('tršk')
+        || title.includes('trsk')
+        || url.includes('pohod');
+}
+
 function cmsRenderAktualnoCards(container, events) {
     if (!container) return;
-    const homepage = events.filter((e) => e.showOnHomepage !== false);
+    const homepage = events.filter((e) => e.showOnHomepage !== false && !cmsIsRetiredPohodEvent(e));
     if (!homepage.length) return;
 
     const cardsHtml = homepage.map((event) => {

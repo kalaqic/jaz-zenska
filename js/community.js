@@ -2620,16 +2620,9 @@ async function loadCoursesAndWebinars(container) {
 function renderExtraOffer(container) {
     if (!container) return;
     container.innerHTML = `
-        <h3 class="extra-offer-subtitle">Iz medijev</h3>
-        <p style="font-size:14px;color:var(--text-light);line-height:1.6;margin:0 0 16px;">
-            Pohod 100 žensk na Trško goro je bil uspešno zaključen. O dogodku pišejo tudi Slovenske novice.
+        <p style="font-size:14px;color:var(--text-light);line-height:1.6;margin:0;">
+            Trenutno ni dodatne ponudbe.
         </p>
-        <div class="extra-offer-image-row">
-            <a href="/media" class="extra-offer-image-link">
-                <img src="images/pohod.webp" alt="100 navdušenih pohodnic na Trško goro">
-            </a>
-        </div>
-        <a href="/media" style="display:inline-block;margin-top:12px;color:var(--mid-violet);font-weight:600;font-size:14px;">Preberi članek v medijih →</a>
     `;
 }
 
